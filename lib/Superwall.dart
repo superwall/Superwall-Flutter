@@ -125,8 +125,6 @@ import 'package:superwallkit_flutter/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/SuperwallDelegate.dart';
 import 'package:superwallkit_flutter/SuperwallOptions.dart';
 
-import 'package:flutter/services.dart';
-
 /// The primary class for integrating Superwall into your application.
 /// After configuring via `configure(apiKey: purchaseController: options: completion:)`,
 /// it provides access to all its features via instance functions and variables.
