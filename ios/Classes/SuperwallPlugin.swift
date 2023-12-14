@@ -23,7 +23,7 @@ public class SuperwallPlugin: NSObject {
           return
         }
 
-        Superwall.shared.delegate = BridgingCreatorPlugin.shared.plugin(for: bridgedDelegateProxyPlugin)
+        Superwall.shared.delegate = BridgingCreatorPlugin.shared.bridge(for: bridgedDelegateProxyPlugin)
 
       case "getLogLevel":
         // Implement logic to get log level
@@ -137,7 +137,7 @@ public class SuperwallPlugin: NSObject {
             return nil
           }
 
-          let purchaseController: PurchaseController? = BridgingCreatorPlugin.shared.plugin(for: bridgedPurchaseControllerProxyPlugin)
+          let purchaseController: PurchaseController? = BridgingCreatorPlugin.shared.bridge(for: bridgedPurchaseControllerProxyPlugin)
           return purchaseController
         }()
 
@@ -147,6 +147,28 @@ public class SuperwallPlugin: NSObject {
 
         // Returning nil instead of the result from configure because we want to use the Dart
         // instance of Superwall, not a native variant
+        result(nil)
+
+      case "dismiss":
+        Task {
+          await Superwall.shared.dismiss()
+          result(nil)
+        }
+
+      case "registerEvent":
+        guard let event: String = call.argument(for: "event") else {
+          result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for registerEvent", details: nil))
+          return
+        }
+
+        let params: [String: Any]? = call.argument(for: "event")
+
+        Superwall.shared.register(event: event, params: params) {
+          if let featureBlockProxyBridge: CompletionBlockProxyBridge = call.bridge(for: "featureBlockProxyBridge") {
+            featureBlockProxyBridge.callCompletionBlock()
+          }
+        }
+
         result(nil)
 
       default:

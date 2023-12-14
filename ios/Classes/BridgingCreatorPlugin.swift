@@ -12,14 +12,14 @@ public class BridgingCreatorPlugin: NSObject, FlutterPlugin {
   static var shared: BridgingCreatorPlugin!
 
   private let registrar: FlutterPluginRegistrar
-  private var plugins: [String: Any] = [:]
+  private var instances: [String: Any] = [:]
 
   init(registrar: FlutterPluginRegistrar) {
     self.registrar = registrar
   }
 
-  func plugin<T>(for channelName: String) -> T? {
-    return plugins[channelName] as? T
+  func bridge<T>(for channelName: String) -> T? {
+    return instances[channelName] as? T
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -39,6 +39,8 @@ public class BridgingCreatorPlugin: NSObject, FlutterPlugin {
         result(createSuperwallDelegateProxyPlugin())
       case "createPurchaseControllerProxyPlugin":
         result(createPurchaseControllerProxyPlugin())
+      case "createCompletionBlockProxyBridge":
+        result(createCompletionBlockProxyBridge())
       default:
         result(FlutterMethodNotImplemented)
     }
@@ -51,7 +53,7 @@ extension BridgingCreatorPlugin {
     let channel = FlutterMethodChannel(name: name, binaryMessenger: registrar.messenger())
 
     let plugin = SuperwallPlugin(channel: channel)
-    plugins.updateValue(plugin, forKey: name)
+    instances.updateValue(plugin, forKey: name)
 
     registrar.addMethodCallDelegate(plugin, channel: channel)
 
@@ -65,7 +67,7 @@ extension BridgingCreatorPlugin {
     let channel = FlutterMethodChannel(name: name, binaryMessenger: registrar.messenger())
 
     let plugin = SuperwallDelegateProxyPlugin(channel: channel)
-    plugins.updateValue(plugin, forKey: name)
+    instances.updateValue(plugin, forKey: name)
 
     registrar.addMethodCallDelegate(plugin, channel: channel)
 
@@ -79,7 +81,21 @@ extension BridgingCreatorPlugin {
     let channel = FlutterMethodChannel(name: name, binaryMessenger: registrar.messenger())
 
     let plugin = PurchaseControllerProxyPlugin(channel: channel)
-    plugins.updateValue(plugin, forKey: name)
+    instances.updateValue(plugin, forKey: name)
+
+    registrar.addMethodCallDelegate(plugin, channel: channel)
+
+    return name
+  }
+}
+
+extension BridgingCreatorPlugin {
+  func createCompletionBlockProxyBridge() -> String {
+    let name = "\(CompletionBlockProxyBridge.name)-\(UUID().uuidString)"
+    let channel = FlutterMethodChannel(name: name, binaryMessenger: registrar.messenger())
+
+    let plugin = CompletionBlockProxyBridge(channel: channel)
+    instances.updateValue(plugin, forKey: name)
 
     registrar.addMethodCallDelegate(plugin, channel: channel)
 

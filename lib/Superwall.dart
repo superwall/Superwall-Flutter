@@ -5,6 +5,7 @@ import 'package:superwallkit_flutter/PaywallInfo.dart';
 import 'package:superwallkit_flutter/PurchaseController.dart';
 import 'package:superwallkit_flutter/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/SuperwallDelegate.dart';
+import 'package:superwallkit_flutter/private/CompletionBlockProxy.dart';
 import 'package:superwallkit_flutter/private/PurchaseControllerProxy.dart';
 import 'package:superwallkit_flutter/private/SuperwallDelegateProxy.dart';
 import 'package:superwallkit_flutter/SuperwallOptions.dart';
@@ -175,3 +176,44 @@ class Superwall {
   }
 }
 
+//region PublicPresentation
+
+// TODO
+class PaywallPresentationHandler {}
+
+/// Extension for public presentation functionalities in Superwall.
+extension PublicPresentation on Superwall {
+  /// Dismisses the presented paywall, if one exists.
+  Future<void> dismiss() async {
+    await _channel.invokeMethod('dismiss');
+  }
+
+  /// Registers an event to access a feature, potentially showing a paywall.
+  ///
+  /// Shows a paywall based on the event, user matching campaign rules, and subscription status.
+  /// Requires creating a campaign and adding the event on the Superwall Dashboard.
+  /// The shown paywall is determined by campaign rules and user assignments.
+  Future<void> registerEvent(String event, {Map<String, dynamic>? params, PaywallPresentationHandler? handler, Function? feature}) async {
+    CompletionBlockProxy? featureBlockProxy = null;
+    if (feature != null) {
+      final bridge = await BridgingCreator.createCompletionBlockProxyBridge();
+
+      // Store the Dart proxy and native side bridge
+      featureBlockProxy = CompletionBlockProxy(
+        bridge: bridge,
+        block: (dynamic arguments) {
+          feature();
+        },
+      );
+    }
+
+    await _channel.invokeMethod('registerEvent', {
+      'event': event,
+      'params': params,
+      'handler': handler,
+      'featureBlockProxyBridge': featureBlockProxy?.bridge,
+    });
+  }
+}
+
+//endregion

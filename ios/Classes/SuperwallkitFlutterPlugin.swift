@@ -17,7 +17,6 @@ public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
       SubscriptionStatusPlugin.self,
       LogLevelPlugin.self,
       PaywallInfoPlugin.self,
-      PublicPresentationPlugin.self,
       PurchaseResultPlugin.self,
       RestorationResultPlugin.self
     ]
@@ -36,6 +35,15 @@ public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
 extension FlutterMethodCall {
   func argument<T>(for key: String) -> T? {
     return (arguments as? [String: Any])?[key] as? T
+  }
+
+  // Make sure to provide the key here.
+  func bridge<T>(for key: String) -> T? {
+    guard let channelName: String = argument(for: key) else {
+      print("WARNING: Unable to find bridge argument for \(key)")
+      return nil
+    }
+    return BridgingCreatorPlugin.shared.bridge(for: channelName)
   }
 }
 

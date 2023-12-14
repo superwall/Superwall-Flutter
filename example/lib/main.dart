@@ -3,10 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:superwallkit_flutter/PurchaseController.dart';
 import 'package:superwallkit_flutter/Superwall.dart';
-import 'package:superwallkit_flutter/PublicPresentation.dart';
 import 'package:superwallkit_flutter/SuperwallDelegate.dart';
 import 'package:superwallkit_flutter_example/RCPurchaseController.dart';
 
@@ -27,12 +24,12 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   @override
   void initState() {
     super.initState();
-    configureSuperwall();
+    configureSuperwall(false);
     initPlatformState();
   }
 
   // Configure Superwall
-  Future<void> configureSuperwall() async {
+  Future<void> configureSuperwall(bool useRevenueCat) async {
     try {
       // MARK: Step 1 - Create your Purchase Controller
       /// Create an `RCPurchaseController()` wherever Superwall and RevenueCat are being initialized.
@@ -45,7 +42,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       /// Always configure Superwall first. Pass in the `purchaseController` you just created.
       await Superwall.configure(
           apiKey,
-          purchaseController: purchaseController
+          purchaseController: useRevenueCat ? purchaseController : null
       );
 
       Superwall.shared.setDelegate(this);
@@ -53,7 +50,9 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
       /// Always configure RevenueCat after Superwall and keep Superwall's
       /// subscription status up-to-date with RevenueCat's.
-      purchaseController.configureAndSyncSubscriptionStatus();
+      if (useRevenueCat) {
+        purchaseController.configureAndSyncSubscriptionStatus();
+      }
 
     } catch (e) {
       // Handle any errors that occur during configuration
@@ -88,7 +87,10 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
     try {
       await Superwall.shared.registerEvent(
         'flutter',
-        params: null
+        params: null,
+        feature: () {
+          print("Executing feature block");
+        }
       );
       print('Register method called successfully.');
     } catch (e) {
