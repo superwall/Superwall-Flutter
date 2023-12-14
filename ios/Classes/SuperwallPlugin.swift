@@ -2,26 +2,28 @@ import Flutter
 import UIKit
 import SuperwallKit
 
-public class SuperwallPlugin: NSObject, FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "SWK_SuperwallPlugin", binaryMessenger: registrar.messenger())
-    let instance = SuperwallPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
+extension SuperwallPlugin: FlutterPlugin {
+  public static func register(with registrar: FlutterPluginRegistrar) {}
+}
+
+public class SuperwallPlugin: NSObject {
+  static let name: String = "SuperwallPlugin"
+
+  let channel: FlutterMethodChannel
+
+  init(channel: FlutterMethodChannel) {
+    self.channel = channel
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
-      case "getDelegate":
-        // Implement logic to get the delegate
-        let delegate = Superwall.shared.delegate
-        result(delegate)
-
       case "setDelegate":
-        // Implement logic to set the delegate
-        if let args = call.arguments as? [String: Any], let delegate = args["delegate"] as? SuperwallDelegate {
-          Superwall.shared.delegate = delegate
+        guard let bridgedDelegateProxyPlugin: String = call.argument(for: "bridgedDelegateProxyPlugin") else {
+          result(call.badArgs)
+          return
         }
-        result(nil)
+
+        Superwall.shared.delegate = BridgingCreatorPlugin.shared.plugin(for: bridgedDelegateProxyPlugin)
 
       case "getLogLevel":
         // Implement logic to get log level
@@ -125,12 +127,20 @@ public class SuperwallPlugin: NSObject, FlutterPlugin {
 
       case "configure":
         // Implement logic to configure the Superwall instance
-        guard let apiKey: String = call.argument(for: "apiKey_iOS") else {
+        guard let apiKey: String = call.argument(for: "apiKey") else {
           result(nil)
           return
         }
 
-        let purchaseController: PurchaseController? = call.argument(for: "purchaseController")
+        let purchaseController: PurchaseController? = {
+          guard let bridgedPurchaseControllerProxyPlugin: String = call.argument(for: "bridgedPurchaseControllerProxyPlugin") else {
+            return nil
+          }
+
+          let purchaseController: PurchaseController? = BridgingCreatorPlugin.shared.plugin(for: bridgedPurchaseControllerProxyPlugin)
+          return purchaseController
+        }()
+
         let options: SuperwallOptions? = call.argument(for: "options")
 
         Superwall.configure(apiKey: apiKey, purchaseController: purchaseController, options: options)

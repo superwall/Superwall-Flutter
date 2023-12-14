@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:superwallkit_flutter/PurchaseController.dart';
 import 'package:superwallkit_flutter/Superwall.dart';
 import 'package:superwallkit_flutter/PublicPresentation.dart';
+import 'package:superwallkit_flutter/SuperwallDelegate.dart';
+import 'package:superwallkit_flutter_example/RCPurchaseController.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +21,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   String _platformVersion = 'Unknown';
 
   @override
@@ -28,12 +34,27 @@ class _MyAppState extends State<MyApp> {
   // Configure Superwall
   Future<void> configureSuperwall() async {
     try {
+      // MARK: Step 1 - Create your Purchase Controller
+      /// Create an `RCPurchaseController()` wherever Superwall and RevenueCat are being initialized.
+      RCPurchaseController purchaseController = RCPurchaseController();
+
+      // Get Superwall API Key
+      String apiKey = Platform.isIOS ? "pk_5f6d9ae96b889bc2c36ca0f2368de2c4c3d5f6119aacd3d2" : "pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85";
+
+      // MARK: Step 2 - Configure Superwall
+      /// Always configure Superwall first. Pass in the `purchaseController` you just created.
       await Superwall.configure(
-          APIKey.crossPlatform(
-              iosApiKey: 'pk_5f6d9ae96b889bc2c36ca0f2368de2c4c3d5f6119aacd3d2',
-              androidApiKey: 'pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85'
-          )
+          apiKey,
+          purchaseController: purchaseController
       );
+
+      Superwall.shared.setDelegate(this);
+
+      // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
+      /// Always configure RevenueCat after Superwall and keep Superwall's
+      /// subscription status up-to-date with RevenueCat's.
+      purchaseController.configureAndSyncSubscriptionStatus();
+
     } catch (e) {
       // Handle any errors that occur during configuration
       print('Failed to configure Superwall: $e');
@@ -98,5 +119,17 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+
+  @override
+  void handleCustomPaywallAction(String name) {
+    // TODO: implement handleCustomPaywallAction
+    print("Handle custom action");
+  }
+
+  @override
+  void willPresentPaywall(String paywallInfo) {
+    // TODO: implement willPresentPaywall
+    print("Will present");
   }
 }
