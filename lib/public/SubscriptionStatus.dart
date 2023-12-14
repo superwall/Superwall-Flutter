@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 
 class SubscriptionStatus {
   final _SubscriptionStatusType _type;
-  static const MethodChannel _channel = MethodChannel('SWK_SubscriptionStatusPlugin');
+  static const MethodChannel _channel = MethodChannel('SWK_SubscriptionStatusBridge');
 
   const SubscriptionStatus._(this._type);
 

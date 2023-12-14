@@ -18,7 +18,7 @@ class PublicPresentationPlugin : FlutterPlugin, MethodCallHandler {
     private val scope = CoroutineScope(Dispatchers.Main)
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_PublicPresentationPlugin")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_PublicPresentationBridge")
         channel.setMethodCallHandler(this)
     }
 

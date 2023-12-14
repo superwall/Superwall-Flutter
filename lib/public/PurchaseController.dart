@@ -1,5 +1,5 @@
-import 'package:superwallkit_flutter/PurchaseResult.dart';
-import 'package:superwallkit_flutter/RestorationResult.dart';
+import 'package:superwallkit_flutter/public/PurchaseResult.dart';
+import 'package:superwallkit_flutter/public/RestorationResult.dart';
 
 /// The abstract class that handles Superwall's subscription-related logic.
 ///

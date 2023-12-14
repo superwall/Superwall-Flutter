@@ -2,10 +2,10 @@ import Flutter
 import UIKit
 import SuperwallKit
 
-public class LogLevelPlugin: NSObject, FlutterPlugin {
+public class LogLevelBridge: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "SWK_LogLevelPlugin", binaryMessenger: registrar.messenger())
-    let instance = LogLevelPlugin()
+    let channel = FlutterMethodChannel(name: "SWK_LogLevelBridge", binaryMessenger: registrar.messenger())
+    let instance = LogLevelBridge()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
   

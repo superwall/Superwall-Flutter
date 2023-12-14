@@ -29,7 +29,7 @@ enum LogLevel {
   }
 
   static Future<String> _fetchDescriptionFromNative(LogLevel level) async {
-    final MethodChannel _channel = MethodChannel('SWK_LogLevelPlugin');
+    final MethodChannel _channel = MethodChannel('SWK_LogLevelBridge');
     final String description = await _channel.invokeMethod('getLogLevelDescription', {'level': level.value});
     return description;
   }

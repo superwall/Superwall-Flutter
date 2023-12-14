@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/PaywallInfo.dart';
-import 'package:superwallkit_flutter/SubscriptionStatus.dart';
-import 'package:superwallkit_flutter/SuperwallEventInfo.dart';
+import 'package:superwallkit_flutter/public/PaywallInfo.dart';
+import 'package:superwallkit_flutter/public/SubscriptionStatus.dart';
+import 'package:superwallkit_flutter/public/SuperwallEventInfo.dart';
 
 abstract class SuperwallDelegate {
   // /// Called when the property `subscriptionStatus` of `Superwall` changes.

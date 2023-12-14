@@ -2,12 +2,12 @@ import Flutter
 import UIKit
 import SuperwallKit
 
-extension SuperwallPlugin: FlutterPlugin {
+extension SuperwallBridge: FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {}
 }
 
-public class SuperwallPlugin: NSObject {
-  static let name: String = "SuperwallPlugin"
+public class SuperwallBridge: NSObject {
+  static let name: String = "SuperwallBridge"
 
   let channel: FlutterMethodChannel
 
@@ -18,12 +18,12 @@ public class SuperwallPlugin: NSObject {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
       case "setDelegate":
-        guard let bridgedDelegateProxyPlugin: String = call.argument(for: "bridgedDelegateProxyPlugin") else {
+        guard let delegateProxyBridge: String = call.argument(for: "delegateProxyBridge") else {
           result(call.badArgs)
           return
         }
 
-        Superwall.shared.delegate = BridgingCreatorPlugin.shared.bridge(for: bridgedDelegateProxyPlugin)
+        Superwall.shared.delegate = BridgingCreator.shared.bridge(for: delegateProxyBridge)
 
       case "getLogLevel":
         // Implement logic to get log level
@@ -133,11 +133,11 @@ public class SuperwallPlugin: NSObject {
         }
 
         let purchaseController: PurchaseController? = {
-          guard let bridgedPurchaseControllerProxyPlugin: String = call.argument(for: "bridgedPurchaseControllerProxyPlugin") else {
+          guard let purchaseControllerProxyBridge: String = call.argument(for: "purchaseControllerProxyBridge") else {
             return nil
           }
 
-          let purchaseController: PurchaseController? = BridgingCreatorPlugin.shared.bridge(for: bridgedPurchaseControllerProxyPlugin)
+          let purchaseController: PurchaseController? = BridgingCreator.shared.bridge(for: purchaseControllerProxyBridge)
           return purchaseController
         }()
 

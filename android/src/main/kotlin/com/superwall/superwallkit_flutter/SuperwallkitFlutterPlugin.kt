@@ -26,13 +26,13 @@ class SuperwallkitFlutterPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
     // Define the list of plugin types that conform to FlutterPlugin.
     // Make sure each plugin type conforms to `FlutterPlugin`.
     val pluginInstances = listOf(
-      SubscriptionStatusPlugin(),
-      LogLevelPlugin(),
-      PaywallInfoPlugin(),
-      PublicPresentationPlugin(),
-      PurchaseResultPlugin(),
-      RestorationResultPlugin(),
-      SuperwallPlugin()
+      SubscriptionStatusBridge(),
+      LogLevelBridge(),
+      PaywallInfoBridge(),
+      PublicPresentationBridge(),
+      PurchaseResultBridge(),
+      RestorationResultBridge(),
+      SuperwallBridge()
     )
 
     // Iterate over the plugin instances and call `onAttachedToEngine` on each one

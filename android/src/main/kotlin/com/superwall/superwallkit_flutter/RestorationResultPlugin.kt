@@ -11,7 +11,7 @@ class RestorationResultPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_RestorationResultPlugin")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_RestorationResultBridge")
         channel.setMethodCallHandler(this)
     }
 

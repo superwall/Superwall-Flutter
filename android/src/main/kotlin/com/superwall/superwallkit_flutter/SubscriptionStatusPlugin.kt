@@ -12,7 +12,7 @@ class SubscriptionStatusPlugin: FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_SubscriptionStatusPlugin")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_SubscriptionStatusBridge")
         channel.setMethodCallHandler(this)
     }
 

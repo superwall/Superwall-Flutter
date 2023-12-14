@@ -3,20 +3,20 @@ import 'package:flutter/services.dart';
 typedef Bridge = String;
 
 class BridgingCreator {
-  static const MethodChannel _channel = MethodChannel('SWK_BridgingCreatorPlugin');
+  static const MethodChannel _channel = MethodChannel('SWK_BridgingCreator');
 
-  static Future<Bridge> createSuperwallPlugin() async {
-    final channelName = await _channel.invokeMethod("createSuperwallPlugin");
+  static Future<Bridge> createSuperwallBridge() async {
+    final channelName = await _channel.invokeMethod("createSuperwallBridge");
     return channelName;
   }
 
-  static Future<Bridge> createSuperwallDelegateProxyPlugin() async {
-    final channelName = await _channel.invokeMethod("createSuperwallDelegateProxyPlugin");
+  static Future<Bridge> createSuperwallDelegateProxyBridge() async {
+    final channelName = await _channel.invokeMethod("createSuperwallDelegateProxyBridge");
     return channelName;
   }
 
-  static Future<Bridge> createPurchaseControllerProxyPlugin() async {
-    final channelName = await _channel.invokeMethod("createPurchaseControllerProxyPlugin");
+  static Future<Bridge> createPurchaseControllerProxyBridge() async {
+    final channelName = await _channel.invokeMethod("createPurchaseControllerProxyBridge");
     return channelName;
   }
 

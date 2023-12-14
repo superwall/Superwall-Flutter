@@ -1,14 +1,14 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/BridgingCreator.dart';
-import 'package:superwallkit_flutter/LogLevel.dart';
-import 'package:superwallkit_flutter/PaywallInfo.dart';
-import 'package:superwallkit_flutter/PurchaseController.dart';
-import 'package:superwallkit_flutter/SubscriptionStatus.dart';
-import 'package:superwallkit_flutter/SuperwallDelegate.dart';
+import 'package:superwallkit_flutter/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/public/LogLevel.dart';
+import 'package:superwallkit_flutter/public/PaywallInfo.dart';
+import 'package:superwallkit_flutter/public/PurchaseController.dart';
+import 'package:superwallkit_flutter/public/SubscriptionStatus.dart';
+import 'package:superwallkit_flutter/public/SuperwallDelegate.dart';
 import 'package:superwallkit_flutter/private/CompletionBlockProxy.dart';
 import 'package:superwallkit_flutter/private/PurchaseControllerProxy.dart';
 import 'package:superwallkit_flutter/private/SuperwallDelegateProxy.dart';
-import 'package:superwallkit_flutter/SuperwallOptions.dart';
+import 'package:superwallkit_flutter/public/SuperwallOptions.dart';
 
 /// The primary class for integrating Superwall into your application.
 /// After configuring via `configure(apiKey: purchaseController: options: completion:)`,
@@ -36,13 +36,13 @@ class Superwall {
   SuperwallDelegateProxy? delegateProxy = null;
   void setDelegate(SuperwallDelegate newDelegate) async {
     // Create a native side bridge
-    final bridgedDelegateProxyPlugin = await BridgingCreator.createSuperwallDelegateProxyPlugin();
+    final delegateProxyBridge = await BridgingCreator.createSuperwallDelegateProxyBridge();
 
     // Store the Dart proxy
-    delegateProxy = SuperwallDelegateProxy(channel: MethodChannel(bridgedDelegateProxyPlugin), delegate: newDelegate);
+    delegateProxy = SuperwallDelegateProxy(channel: MethodChannel(delegateProxyBridge), delegate: newDelegate);
 
     // Set the native instance as the delegate
-    _channel.invokeMethod('setDelegate', {'bridgedDelegateProxyPlugin': bridgedDelegateProxyPlugin});
+    _channel.invokeMethod('setDelegate', {'delegateProxyBridge': delegateProxyBridge});
   }
 
   // Asynchronous method to get logLevel
@@ -142,26 +142,29 @@ class Superwall {
   static Future<Superwall> configure(String apiKey, {PurchaseController? purchaseController, SuperwallOptions? options, Function? completion}) async {
     // TODO: Pass purchase controller and options as primitives
 
-    String? bridgedPurchaseControllerProxyPlugin = null;
+    String? purchaseControllerProxyBridge = null;
     if (purchaseController != null) {
-      // Create a proxy plugin for the non-null purchaseController
-      bridgedPurchaseControllerProxyPlugin = await BridgingCreator.createPurchaseControllerProxyPlugin();
+      // Create a proxy bridge for the non-null purchaseController
+      purchaseControllerProxyBridge = await BridgingCreator.createPurchaseControllerProxyBridge();
 
       // Store the Dart proxy
-      purchaseControllerProxy = PurchaseControllerProxy(channel: MethodChannel(bridgedPurchaseControllerProxyPlugin), purchaseController: purchaseController);
+      purchaseControllerProxy = PurchaseControllerProxy(
+          channel: MethodChannel(purchaseControllerProxyBridge),
+          purchaseController: purchaseController
+      );
     }
 
     // Create native Superwall
-    String superwallPlugin = await BridgingCreator.createSuperwallPlugin();
+    String superwallBridge = await BridgingCreator.createSuperwallBridge();
 
     // Create a Superwall proxy
-    MethodChannel channel = MethodChannel(superwallPlugin);
+    MethodChannel channel = MethodChannel(superwallBridge);
     Superwall proxy = Superwall._privateConstructor(channel);
     _superwall = proxy;
 
     await channel.invokeMethod('configure', {
       'apiKey': apiKey,
-      'bridgedPurchaseControllerProxyPlugin': bridgedPurchaseControllerProxyPlugin,
+      'purchaseControllerProxyBridge': purchaseControllerProxyBridge,
       'options': options,
     });
 

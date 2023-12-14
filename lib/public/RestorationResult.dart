@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 class RestorationResult {
   final _RestorationResultType _type;
   final Object? _data;
-  static const MethodChannel _channel = MethodChannel('SWK_RestorationResultPlugin');
+  static const MethodChannel _channel = MethodChannel('SWK_RestorationResultBridge');
 
   const RestorationResult._(this._type, [this._data]);
 

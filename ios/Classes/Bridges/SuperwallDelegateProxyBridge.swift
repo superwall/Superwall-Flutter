@@ -2,12 +2,12 @@ import Flutter
 import UIKit
 import SuperwallKit
 
-extension SuperwallDelegateProxyPlugin: FlutterPlugin {
+extension SuperwallDelegateProxyBridge: FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {}
 }
 
-public class SuperwallDelegateProxyPlugin: NSObject, Bridgeable, SuperwallDelegate {
-  static let name: String = "SuperwallDelegateProxyPlugin"
+public class SuperwallDelegateProxyBridge: NSObject, Bridgeable, SuperwallDelegate {
+  static let name: String = "SuperwallDelegateProxyBridge"
 
   let channel: FlutterMethodChannel
 

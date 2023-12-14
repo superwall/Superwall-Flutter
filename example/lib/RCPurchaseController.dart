@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:superwallkit_flutter/PurchaseController.dart';
-import 'package:superwallkit_flutter/PurchaseResult.dart';
-import 'package:superwallkit_flutter/RestorationResult.dart';
-import 'package:superwallkit_flutter/SubscriptionStatus.dart';
-import 'package:superwallkit_flutter/Superwall.dart';
+import 'package:superwallkit_flutter/public/PurchaseController.dart';
+import 'package:superwallkit_flutter/public/PurchaseResult.dart';
+import 'package:superwallkit_flutter/public/RestorationResult.dart';
+import 'package:superwallkit_flutter/public/SubscriptionStatus.dart';
+import 'package:superwallkit_flutter/public/Superwall.dart';
 
 class RCPurchaseController extends PurchaseController {
   // MARK: Configure and sync subscription Status

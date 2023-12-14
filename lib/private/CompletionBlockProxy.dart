@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/BridgingCreator.dart';
+import 'package:superwallkit_flutter/private/BridgingCreator.dart';
 
 class CompletionBlockProxy {
   Bridge bridge;

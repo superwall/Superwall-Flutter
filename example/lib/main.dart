@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/Superwall.dart';
-import 'package:superwallkit_flutter/SuperwallDelegate.dart';
+import 'package:superwallkit_flutter/public/Superwall.dart';
+import 'package:superwallkit_flutter/public/SuperwallDelegate.dart';
 import 'package:superwallkit_flutter_example/RCPurchaseController.dart';
 
 void main() {
@@ -23,8 +23,10 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
   @override
   void initState() {
+    bool useRevenueCat = true;
+
     super.initState();
-    configureSuperwall(false);
+    configureSuperwall(useRevenueCat);
     initPlatformState();
   }
 

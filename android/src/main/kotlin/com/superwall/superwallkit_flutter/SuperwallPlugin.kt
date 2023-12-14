@@ -18,7 +18,7 @@ class SuperwallPlugin: FlutterPlugin, MethodChannel.MethodCallHandler, ActivityP
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         this.flutterPluginBinding = flutterPluginBinding
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_SuperwallPlugin")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_SuperwallBridge")
         channel.setMethodCallHandler(this)
     }
 

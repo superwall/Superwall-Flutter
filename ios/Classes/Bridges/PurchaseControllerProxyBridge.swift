@@ -3,12 +3,12 @@ import StoreKit
 import UIKit
 import SuperwallKit
 
-extension PurchaseControllerProxyPlugin: FlutterPlugin {
+extension PurchaseControllerProxyBridge: FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {}
 }
 
-public class PurchaseControllerProxyPlugin: NSObject, Bridgeable, PurchaseController {
-  static let name: String = "PurchaseControllerProxyPlugin"
+public class PurchaseControllerProxyBridge: NSObject, Bridgeable, PurchaseController {
+  static let name: String = "PurchaseControllerProxyBridge"
 
   let channel: FlutterMethodChannel
 

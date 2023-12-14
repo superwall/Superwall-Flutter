@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/PaywallInfo.dart';
+import 'package:superwallkit_flutter/public/PaywallInfo.dart';
 
 // TODO: Implement these classes
 class TriggerResult {}
@@ -16,7 +16,7 @@ class PaywallPresentationRequestStatusReason {}
 class SuperwallEvent {
   final _SuperwallEventType _type;
   final Object? _data;
-  static const MethodChannel _channel = MethodChannel('SWK_SuperwallEventPlugin');
+  static const MethodChannel _channel = MethodChannel('SWK_SuperwallEventBridge');
 
   const SuperwallEvent._(this._type, [this._data]);
 

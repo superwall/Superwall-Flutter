@@ -1,10 +1,10 @@
 import Flutter
 import SuperwallKit
 
-public class SubscriptionStatusPlugin: NSObject, FlutterPlugin {
+public class SubscriptionStatusBridge: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "SWK_SubscriptionStatusPlugin", binaryMessenger: registrar.messenger())
-    let instance = SubscriptionStatusPlugin()
+    let channel = FlutterMethodChannel(name: "SWK_SubscriptionStatusBridge", binaryMessenger: registrar.messenger())
+    let instance = SubscriptionStatusBridge()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
   

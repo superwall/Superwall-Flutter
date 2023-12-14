@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 class PurchaseResult {
   final _PurchaseResultType _type;
   final Object? _data;
-  static const MethodChannel _channel = MethodChannel('SWK_PurchaseResultPlugin');
+  static const MethodChannel _channel = MethodChannel('SWK_PurchaseResultBridge');
 
   const PurchaseResult._(this._type, [this._data]);
 

@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/LogLevel.dart';
+import 'package:superwallkit_flutter/public/LogLevel.dart';
 
 /// Options for configuring Superwall, including paywall presentation and appearance.
 class SuperwallOptions {

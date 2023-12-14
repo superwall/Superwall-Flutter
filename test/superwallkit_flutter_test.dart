@@ -1,7 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:superwallkit_flutter/superwallkit_flutter.dart';
-import 'package:superwallkit_flutter/superwallkit_flutter_platform_interface.dart';
-import 'package:superwallkit_flutter/superwallkit_flutter_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 // class MockSuperwallkitFlutterPlatform

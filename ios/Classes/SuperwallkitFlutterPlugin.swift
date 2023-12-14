@@ -6,7 +6,7 @@ import SuperwallKit
 public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    BridgingCreatorPlugin.register(with: registrar)
+    BridgingCreator.register(with: registrar)
 
     // TODO: REMOVE THIS
 
@@ -14,11 +14,11 @@ public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
     // Make sure each plugin type conforms to `FlutterPlugin`.
     // Add additional classes using Xcode, not Android Studio.
     let pluginTypes: [FlutterPlugin.Type] = [
-      SubscriptionStatusPlugin.self,
-      LogLevelPlugin.self,
-      PaywallInfoPlugin.self,
-      PurchaseResultPlugin.self,
-      RestorationResultPlugin.self
+      SubscriptionStatusBridge.self,
+      LogLevelBridge.self,
+      PaywallInfoBridge.self,
+      PurchaseResultBridge.self,
+      RestorationResultBridge.self
     ]
 
     // Iterate over the plugin types and call the `register(with:)` method on each one.
@@ -43,7 +43,7 @@ extension FlutterMethodCall {
       print("WARNING: Unable to find bridge argument for \(key)")
       return nil
     }
-    return BridgingCreatorPlugin.shared.bridge(for: channelName)
+    return BridgingCreator.shared.bridge(for: channelName)
   }
 }
 

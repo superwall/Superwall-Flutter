@@ -1,13 +1,14 @@
 import Flutter
 import SuperwallKit
 
-public class PurchaseResultPlugin: NSObject, FlutterPlugin {
+public class RestorationResultBridge: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "SWK_PurchaseResultPlugin", binaryMessenger: registrar.messenger())
-    let instance = PurchaseResultPlugin()
+    let channel = FlutterMethodChannel(name: "SWK_RestorationResultBridge", binaryMessenger: registrar.messenger())
+    let instance = RestorationResultBridge()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
   
+  // TODO
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     if call.method == "isEqualTo" {
       guard let args = call.arguments as? [String: Any],
@@ -17,10 +18,9 @@ public class PurchaseResultPlugin: NSObject, FlutterPlugin {
         return
       }
       
-      // TODO
       // Implement equality logic here based on the result1 and result2 strings
       // and the optional data associated with them if necessary.
-      let isEqual = (result1 == result2)
+      let isEqual = (result1 == result2) // Simplified example; adjust as needed
       result(isEqual)
     } else {
       result(FlutterMethodNotImplemented)

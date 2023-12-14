@@ -10,7 +10,7 @@ class PurchaseResultPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_PurchaseResultPlugin")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_PurchaseResultBridge")
         channel.setMethodCallHandler(this)
     }
 
