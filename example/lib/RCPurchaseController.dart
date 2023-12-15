@@ -3,11 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:superwallkit_flutter/public/PurchaseController.dart';
-import 'package:superwallkit_flutter/public/PurchaseResult.dart';
-import 'package:superwallkit_flutter/public/RestorationResult.dart';
-import 'package:superwallkit_flutter/public/SubscriptionStatus.dart';
-import 'package:superwallkit_flutter/public/Superwall.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart'
+    hide LogLevel; // Import Superwall and hide LogLevel to avoid conflicts with RevenueCat's LogLevel
 
 class RCPurchaseController extends PurchaseController {
   // MARK: Configure and sync subscription Status
@@ -16,7 +13,8 @@ class RCPurchaseController extends PurchaseController {
   configureAndSyncSubscriptionStatus() async {
     // Configure RevenueCat
     await Purchases.setLogLevel(LogLevel.debug);
-    PurchasesConfiguration configuration = Platform.isIOS ? PurchasesConfiguration("appl_XmYQBWbTAFiwLeWrBJOeeJJtTql") : PurchasesConfiguration("goog_DCSOujJzRNnPmxdgjOwdOOjwilC");
+    PurchasesConfiguration configuration =
+        Platform.isIOS ? PurchasesConfiguration("appl_XmYQBWbTAFiwLeWrBJOeeJJtTql") : PurchasesConfiguration("goog_DCSOujJzRNnPmxdgjOwdOOjwilC");
     await Purchases.configure(configuration);
 
     // Listen for changes

@@ -1,5 +1,5 @@
-import 'package:superwallkit_flutter/public/PurchaseResult.dart';
-import 'package:superwallkit_flutter/public/RestorationResult.dart';
+import 'package:superwallkit_flutter/src/public/PurchaseResult.dart';
+import 'package:superwallkit_flutter/src/public/RestorationResult.dart';
 
 /// The abstract class that handles Superwall's subscription-related logic.
 ///
@@ -32,5 +32,3 @@ abstract class PurchaseController {
   /// **Note**: `restored` does not imply the user has an active subscription, it just mean the restore had no errors.
   Future<RestorationResult> restorePurchases();
 }
-
-

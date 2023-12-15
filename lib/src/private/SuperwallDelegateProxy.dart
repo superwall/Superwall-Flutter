@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/public/SuperwallDelegate.dart';
+import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
 
 class SuperwallDelegateProxy {
   MethodChannel channel;

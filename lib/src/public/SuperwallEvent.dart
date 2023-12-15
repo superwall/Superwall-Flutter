@@ -1,16 +1,25 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/public/PaywallInfo.dart';
+import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 
 // TODO: Implement these classes
 class TriggerResult {}
+
 class StoreProduct {}
+
 class TransactionError {}
+
 class StoreTransaction {}
+
 class RestoreType {}
+
 class TransactionProduct {}
+
 class Survey {}
+
 class SurveyOption {}
+
 class PaywallPresentationRequestStatus {}
+
 class PaywallPresentationRequestStatusReason {}
 
 class SuperwallEvent {
@@ -39,8 +48,7 @@ class SuperwallEvent {
   static const SuperwallEvent sessionStart = SuperwallEvent._(_SuperwallEventType.sessionStart);
 
   // When device attributes are sent to the backend.
-  static SuperwallEvent deviceAttributes(Map<String, dynamic> attributes) =>
-      SuperwallEvent._(_SuperwallEventType.deviceAttributes, attributes);
+  static SuperwallEvent deviceAttributes(Map<String, dynamic> attributes) => SuperwallEvent._(_SuperwallEventType.deviceAttributes, attributes);
 
   // When the user's subscription status changes.
   static const SuperwallEvent subscriptionStatusDidChange = SuperwallEvent._(_SuperwallEventType.subscriptionStatusDidChange);
@@ -50,8 +58,7 @@ class SuperwallEvent {
 
   // When a user opens the app via a deep link.
   // The raw value of this event can be added to a campaign to trigger a paywall.
-  static SuperwallEvent deepLink(String url) =>
-      SuperwallEvent._(_SuperwallEventType.deepLink, url);
+  static SuperwallEvent deepLink(String url) => SuperwallEvent._(_SuperwallEventType.deepLink, url);
 
   // When the tracked event matches an event added as a paywall trigger in a campaign.
   // The result of firing the trigger is accessible in the `result` associated value.
@@ -59,16 +66,13 @@ class SuperwallEvent {
       SuperwallEvent._(_SuperwallEventType.triggerFire, {'eventName': eventName, 'result': result});
 
   // When a paywall is opened.
-  static SuperwallEvent paywallOpen(PaywallInfo paywallInfo) =>
-      SuperwallEvent._(_SuperwallEventType.paywallOpen, paywallInfo);
+  static SuperwallEvent paywallOpen(PaywallInfo paywallInfo) => SuperwallEvent._(_SuperwallEventType.paywallOpen, paywallInfo);
 
   // When a paywall is closed.
-  static SuperwallEvent paywallClose(PaywallInfo paywallInfo) =>
-      SuperwallEvent._(_SuperwallEventType.paywallClose, paywallInfo);
+  static SuperwallEvent paywallClose(PaywallInfo paywallInfo) => SuperwallEvent._(_SuperwallEventType.paywallClose, paywallInfo);
 
   // When a user manually dismisses a paywall.
-  static SuperwallEvent paywallDecline(PaywallInfo paywallInfo) =>
-      SuperwallEvent._(_SuperwallEventType.paywallDecline, paywallInfo);
+  static SuperwallEvent paywallDecline(PaywallInfo paywallInfo) => SuperwallEvent._(_SuperwallEventType.paywallDecline, paywallInfo);
 
   // When the payment sheet is displayed to the user.
   static SuperwallEvent transactionStart(StoreProduct product, PaywallInfo paywallInfo) =>
@@ -102,12 +106,10 @@ class SuperwallEvent {
       SuperwallEvent._(_SuperwallEventType.transactionRestore, {'restoreType': restoreType, 'paywallInfo': paywallInfo});
 
   // When the transaction took > 5 seconds to show the payment sheet.
-  static SuperwallEvent transactionTimeout(PaywallInfo paywallInfo) =>
-      SuperwallEvent._(_SuperwallEventType.transactionTimeout, paywallInfo);
+  static SuperwallEvent transactionTimeout(PaywallInfo paywallInfo) => SuperwallEvent._(_SuperwallEventType.transactionTimeout, paywallInfo);
 
   // When the user attributes are set.
-  static SuperwallEvent userAttributes(Map<String, dynamic> attributes) =>
-      SuperwallEvent._(_SuperwallEventType.userAttributes, attributes);
+  static SuperwallEvent userAttributes(Map<String, dynamic> attributes) => SuperwallEvent._(_SuperwallEventType.userAttributes, attributes);
 
   // When the user purchased a non recurring product.
   static SuperwallEvent nonRecurringProductPurchase(TransactionProduct product, PaywallInfo paywallInfo) =>
@@ -134,8 +136,7 @@ class SuperwallEvent {
       SuperwallEvent._(_SuperwallEventType.paywallWebviewLoadStart, paywallInfo);
 
   // When a paywall's website fails to load.
-  static SuperwallEvent paywallWebviewLoadFail(PaywallInfo paywallInfo) =>
-      SuperwallEvent._(_SuperwallEventType.paywallWebviewLoadFail, paywallInfo);
+  static SuperwallEvent paywallWebviewLoadFail(PaywallInfo paywallInfo) => SuperwallEvent._(_SuperwallEventType.paywallWebviewLoadFail, paywallInfo);
 
   // When a paywall's website completes loading.
   static SuperwallEvent paywallWebviewLoadComplete(PaywallInfo paywallInfo) =>
@@ -159,8 +160,8 @@ class SuperwallEvent {
 
   // When the response to a paywall survey is recorded.
   static SuperwallEvent surveyResponse(Survey survey, SurveyOption selectedOption, String? customResponse, PaywallInfo paywallInfo) =>
-      SuperwallEvent._(_SuperwallEventType.surveyResponse, {'survey': survey, 'selectedOption': selectedOption, 'customResponse': customResponse, 'paywallInfo': paywallInfo});
-
+      SuperwallEvent._(_SuperwallEventType.surveyResponse,
+          {'survey': survey, 'selectedOption': selectedOption, 'customResponse': customResponse, 'paywallInfo': paywallInfo});
 
   // Information about the paywall presentation request
   static SuperwallEvent paywallPresentationRequest(PaywallPresentationRequestStatus status, PaywallPresentationRequestStatusReason? reason) =>

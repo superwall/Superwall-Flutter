@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/public/Superwall.dart';
-import 'package:superwallkit_flutter/public/SuperwallDelegate.dart';
-import 'package:superwallkit_flutter_example/RCPurchaseController.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
+
+import 'RCPurchaseController.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,10 +42,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
       // MARK: Step 2 - Configure Superwall
       /// Always configure Superwall first. Pass in the `purchaseController` you just created.
-      await Superwall.configure(
-          apiKey,
-          purchaseController: useRevenueCat ? purchaseController : null
-      );
+      await Superwall.configure(apiKey, purchaseController: useRevenueCat ? purchaseController : null);
 
       Superwall.shared.setDelegate(this);
 
@@ -55,13 +52,11 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       if (useRevenueCat) {
         purchaseController.configureAndSyncSubscriptionStatus();
       }
-
     } catch (e) {
       // Handle any errors that occur during configuration
       print('Failed to configure Superwall: $e');
     }
   }
-
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
@@ -87,13 +82,9 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   // Method to call when the button is tapped
   Future<void> onRegisterTapped() async {
     try {
-      await Superwall.shared.registerEvent(
-        'flutter',
-        params: null,
-        feature: () {
-          print("Executing feature block");
-        }
-      );
+      await Superwall.shared.registerEvent('flutter', params: null, feature: () {
+        print("Executing feature block");
+      });
       print('Register method called successfully.');
     } catch (e) {
       // Handle any errors that occur during registration

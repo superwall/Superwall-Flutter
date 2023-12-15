@@ -1,5 +1,4 @@
-import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/public/SuperwallEvent.dart';
+import 'package:superwallkit_flutter/src/public/SuperwallEvent.dart';
 
 class SuperwallEventInfo {
   final SuperwallEvent event;

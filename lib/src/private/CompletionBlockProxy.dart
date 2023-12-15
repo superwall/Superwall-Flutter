@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 class CompletionBlockProxy {
   Bridge bridge;
@@ -7,7 +7,7 @@ class CompletionBlockProxy {
 
   late final MethodChannel channel;
 
-  CompletionBlockProxy({required this.bridge, required this.block}): channel = MethodChannel(bridge) {
+  CompletionBlockProxy({required this.bridge, required this.block}) : channel = MethodChannel(bridge) {
     bridge.associate(this);
     channel.setMethodCallHandler(_handleMethodCall);
   }

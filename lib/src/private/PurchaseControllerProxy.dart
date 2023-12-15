@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/public/PurchaseController.dart';
+import 'package:superwallkit_flutter/src/public/PurchaseController.dart';
 
 class PurchaseControllerProxy {
   MethodChannel channel;
