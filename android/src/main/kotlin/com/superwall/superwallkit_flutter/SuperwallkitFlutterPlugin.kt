@@ -7,9 +7,8 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
-class SuperwallkitFlutterPlugin: FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware {
-  private lateinit var channel: MethodChannel
-  private var currentActivity: Activity? = null
+class SuperwallkitFlutterPlugin: FlutterPlugin, ActivityAware {
+  var currentActivity: Activity? = null
 
   companion object {
     private var instance: SuperwallkitFlutterPlugin? = null
@@ -19,35 +18,16 @@ class SuperwallkitFlutterPlugin: FlutterPlugin, MethodChannel.MethodCallHandler,
   }
 
   init {
+    print("INIT CALLED");
     instance = this
   }
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    // Define the list of plugin types that conform to FlutterPlugin.
-    // Make sure each plugin type conforms to `FlutterPlugin`.
-    val pluginInstances = listOf(
-      SubscriptionStatusBridge(),
-      LogLevelBridge(),
-      PaywallInfoBridge(),
-      PublicPresentationBridge(),
-      PurchaseResultBridge(),
-      RestorationResultBridge(),
-      SuperwallBridge()
-    )
-
-    // Iterate over the plugin instances and call `onAttachedToEngine` on each one
-    pluginInstances.forEach { plugin ->
-      plugin.onAttachedToEngine(flutterPluginBinding)
-    }
+    print("ON ATTACHED TO ENGINE CALLED");
+    BridgingCreator.shared.onAttachedToEngine(flutterPluginBinding)
   }
 
-  override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-    result.notImplemented()
-  }
-
-  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
 
   //region ActivityAware
 
@@ -74,6 +54,19 @@ fun <T> MethodCall.argumentForKey(key: String): T? {
   return this.argument(key)
 }
 
-fun MethodChannel.Result.badArgsError(method: String) {
+fun <T> MethodCall.bridgeForKey(key: String): T? {
+  val channelName = this.argument<String>(key)
+  if (channelName == null) {
+    println("WARNING: Unable to find bridge argument for $key")
+    return null
+  }
+  return BridgingCreator.shared.bridge(channelName)
+}
+
+fun MethodChannel.Result.badArgs(call: MethodCall) {
+  return badArgs(call.method)
+}
+
+fun MethodChannel.Result.badArgs(method: String) {
   return error("BAD_ARGS", "Missing or invalid arguments for '$method'", null)
 }

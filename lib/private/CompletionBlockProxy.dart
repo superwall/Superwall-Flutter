@@ -4,8 +4,7 @@ import 'package:superwallkit_flutter/private/BridgingCreator.dart';
 class CompletionBlockProxy {
   Bridge bridge;
   Function(dynamic?) block;
-
-  late final MethodChannel channel;
+  final MethodChannel channel;
 
   CompletionBlockProxy({required this.bridge, required this.block}): channel = MethodChannel(bridge) {
     bridge.associate(this);

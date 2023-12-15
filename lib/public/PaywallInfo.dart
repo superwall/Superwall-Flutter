@@ -34,29 +34,28 @@ class PaywallInfo {
     // ... initialize remaining fields
   });
 
-  static Future<PaywallInfo?> getPaywallInfo() async {
-    final MethodChannel _channel = MethodChannel('SWK_PaywallInfo');
-    final Map<dynamic, dynamic>? data = await _channel.invokeMethod('getPaywallInfo');
-
-    if (data != null) {
-      return PaywallInfo(
-        identifier: data['identifier'],
-        experiment: data['experiment'],
-        triggerSessionId: data['triggerSessionId'],
-        products: List<String>.from(data['products']),
-        productIds: List<String>.from(data['productIds']),
-        name: data['name'],
-        url: data['url'],
-        // ... map other fields
-        presentedBy: data['presentedBy'],
-        presentationSourceType: data['presentationSourceType'],
-        // ... map more fields
-        isFreeTrialAvailable: data['isFreeTrialAvailable'],
-        surveys: List<String>.from(data['surveys']), // Assuming surveys are represented as a list of strings or some simple type
-        // ... map remaining fields
-      );
-    }
-
-    return null;
-  }
+  // static Future<PaywallInfo?> getPaywallInfo() async {
+  //   final Map<dynamic, dynamic>? data = await _channel.invokeMethod('getPaywallInfo');
+  //
+  //   if (data != null) {
+  //     return PaywallInfo(
+  //       identifier: data['identifier'],
+  //       experiment: data['experiment'],
+  //       triggerSessionId: data['triggerSessionId'],
+  //       products: List<String>.from(data['products']),
+  //       productIds: List<String>.from(data['productIds']),
+  //       name: data['name'],
+  //       url: data['url'],
+  //       // ... map other fields
+  //       presentedBy: data['presentedBy'],
+  //       presentationSourceType: data['presentationSourceType'],
+  //       // ... map more fields
+  //       isFreeTrialAvailable: data['isFreeTrialAvailable'],
+  //       surveys: List<String>.from(data['surveys']), // Assuming surveys are represented as a list of strings or some simple type
+  //       // ... map remaining fields
+  //     );
+  //   }
+  //
+  //   return null;
+  // }
 }

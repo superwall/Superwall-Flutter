@@ -14,7 +14,7 @@ class SuperwallDelegateProxy {
     switch (call.method) {
       case 'willPresentPaywall':
         // TODO
-        delegate.willPresentPaywall("test");
+        delegate.willPresentPaywall("");
         break;
       case 'handleCustomPaywallAction':
         final name = call.arguments['name'];

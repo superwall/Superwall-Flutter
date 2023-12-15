@@ -14,20 +14,22 @@ import 'package:superwallkit_flutter/public/SuperwallOptions.dart';
 /// After configuring via `configure(apiKey: purchaseController: options: completion:)`,
 /// it provides access to all its features via instance functions and variables.
 class Superwall {
-  MethodChannel _channel;
+  final Bridge bridge;
+  final MethodChannel _channel;
 
-  // Static instance for the singleton
-  static Superwall? _superwall = null;
-
-  // // Private constructor for assertion error
-  Superwall._privateConstructor(this._channel) {
-    _channel.setMethodCallHandler(_handleMethodCall);
-  }
+  static final Superwall _superwall = Superwall._privateConstructor(BridgingCreator.createSuperwallBridge());
+  static bool _configureCalled = false;
 
   // Getter for the shared instance
   static Superwall get shared {
-    assert(_superwall != null, "Superwall is not initialized. Call Superwall.configure() first.");
-    return _superwall ??= Superwall._privateConstructor(MethodChannel(""));
+    assert(_configureCalled == true, "Superwall is not initialized. Call Superwall.configure() first.");
+    return _superwall;
+  }
+
+  // // Private constructor for assertion error
+  Superwall._privateConstructor(this.bridge): _channel = MethodChannel(bridge) {
+    bridge.associate(this);
+    _channel.setMethodCallHandler(_handleMethodCall);
   }
 
   Future<void> _handleMethodCall(MethodCall call) async {}
@@ -36,7 +38,7 @@ class Superwall {
   SuperwallDelegateProxy? delegateProxy = null;
   void setDelegate(SuperwallDelegate newDelegate) async {
     // Create a native side bridge
-    final delegateProxyBridge = await BridgingCreator.createSuperwallDelegateProxyBridge();
+    final delegateProxyBridge = BridgingCreator.createSuperwallDelegateProxyBridge();
 
     // Store the Dart proxy
     delegateProxy = SuperwallDelegateProxy(channel: MethodChannel(delegateProxyBridge), delegate: newDelegate);
@@ -145,7 +147,7 @@ class Superwall {
     String? purchaseControllerProxyBridge = null;
     if (purchaseController != null) {
       // Create a proxy bridge for the non-null purchaseController
-      purchaseControllerProxyBridge = await BridgingCreator.createPurchaseControllerProxyBridge();
+      purchaseControllerProxyBridge = BridgingCreator.createPurchaseControllerProxyBridge();
 
       // Store the Dart proxy
       purchaseControllerProxy = PurchaseControllerProxy(
@@ -154,15 +156,7 @@ class Superwall {
       );
     }
 
-    // Create native Superwall
-    String superwallBridge = await BridgingCreator.createSuperwallBridge();
-
-    // Create a Superwall proxy
-    MethodChannel channel = MethodChannel(superwallBridge);
-    Superwall proxy = Superwall._privateConstructor(channel);
-    _superwall = proxy;
-
-    await channel.invokeMethod('configure', {
+    await _superwall._channel.invokeMethod('configure', {
       'apiKey': apiKey,
       'purchaseControllerProxyBridge': purchaseControllerProxyBridge,
       'options': options,
@@ -175,7 +169,14 @@ class Superwall {
 
     // Provide this instance as opposed to what we'd get from the native side
     // so that consumers can call dart functions on this
-    return proxy;
+    _configureCalled = true;
+    return _superwall;
+  }
+}
+
+extension Checker on MethodChannel {
+  Future<T?> invokeMethodAsync<T>(String method, [ dynamic arguments ]) {
+    return invokeMethod(method, arguments);
   }
 }
 
@@ -199,7 +200,7 @@ extension PublicPresentation on Superwall {
   Future<void> registerEvent(String event, {Map<String, dynamic>? params, PaywallPresentationHandler? handler, Function? feature}) async {
     CompletionBlockProxy? featureBlockProxy = null;
     if (feature != null) {
-      final bridge = await BridgingCreator.createCompletionBlockProxyBridge();
+      final bridge = BridgingCreator.createCompletionBlockProxyBridge();
 
       // Store the Dart proxy and native side bridge
       featureBlockProxy = CompletionBlockProxy(

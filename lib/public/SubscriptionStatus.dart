@@ -1,14 +1,18 @@
 import 'package:flutter/services.dart';
+import 'package:superwallkit_flutter/private/BridgingCreator.dart';
 
 class SubscriptionStatus {
   final _SubscriptionStatusType _type;
-  static const MethodChannel _channel = MethodChannel('SWK_SubscriptionStatusBridge');
+  final Bridge bridge;
+  final MethodChannel channel;
 
-  const SubscriptionStatus._(this._type);
+  SubscriptionStatus._privateConstructor(this._type, this.bridge): channel = MethodChannel(bridge) {
+    bridge.associate(this);
+  }
 
-  static const SubscriptionStatus active = SubscriptionStatus._(_SubscriptionStatusType.active);
-  static const SubscriptionStatus inactive = SubscriptionStatus._(_SubscriptionStatusType.inactive);
-  static const SubscriptionStatus unknown = SubscriptionStatus._(_SubscriptionStatusType.unknown);
+  static final SubscriptionStatus active = SubscriptionStatus._privateConstructor(_SubscriptionStatusType.active, BridgingCreator.createSubscriptionStatusBridge());
+  static final SubscriptionStatus inactive = SubscriptionStatus._privateConstructor(_SubscriptionStatusType.inactive, BridgingCreator.createSubscriptionStatusBridge());
+  static final SubscriptionStatus unknown = SubscriptionStatus._privateConstructor(_SubscriptionStatusType.unknown, BridgingCreator.createSubscriptionStatusBridge());
 
   int get rawValue => _type.value;
 
@@ -26,7 +30,7 @@ class SubscriptionStatus {
   }
 
   Future<String> get description async {
-    final String description = await _channel.invokeMethod('getDescription', {'status': _type.toString()});
+    final String description = await channel.invokeMethod('getDescription', {'status': _type.value});
     return description;
   }
 }

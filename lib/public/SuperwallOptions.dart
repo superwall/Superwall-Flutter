@@ -32,8 +32,6 @@ class SuperwallOptions {
   /// The log scope and level to print to the console.
   Logging logging;
 
-  static const MethodChannel _channel = MethodChannel('SWK_SuperwallOptionsPlugin');
-
   SuperwallOptions({
     // required this.paywalls,
     this.networkEnvironment = NetworkEnvironment.release,

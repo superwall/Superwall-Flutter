@@ -15,12 +15,10 @@ class PurchaseControllerProxy {
       case 'purchaseProduct':
         final productId = call.arguments['productId'];
         final purchaseResult = await purchaseController.purchase(productId);
-        // TODO
-        return purchaseResult.toString();
+        return purchaseResult.toJson();
       case 'restorePurchases':
         final restorationResult = await purchaseController.restorePurchases();
-        // TODO
-        return restorationResult.toString();
+        return restorationResult.toJson();
     }
   }
 }

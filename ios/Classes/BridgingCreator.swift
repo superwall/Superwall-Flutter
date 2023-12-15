@@ -2,14 +2,24 @@ import Flutter
 import UIKit
 import SuperwallKit
 
-protocol Bridgeable {
-  static var name: String { get }
-}
-
 /// Creates a method channel for a particular unique instance of a class
 public class BridgingCreator: NSObject, FlutterPlugin {
   // TODO: CHANGE
   static var shared: BridgingCreator!
+
+  struct Constants {
+    static let bridgeMap: [String: BaseBridge.Type] = [
+      "LogLevelBridge": LogLevelBridge.self,
+      "PaywallInfoBridge": PaywallInfoBridge.self,
+      "PurchaseControllerProxyBridge": PurchaseControllerProxyBridge.self,
+      "PurchaseResultBridge": PurchaseResultBridge.self,
+      "RestorationResultBridge": RestorationResultBridge.self,
+      "SubscriptionStatusBridge": SubscriptionStatusBridge.self,
+      "SuperwallDelegateProxyBridge": SuperwallDelegateProxyBridge.self,
+      "CompletionBlockProxyBridge": CompletionBlockProxyBridge.self,
+      "SuperwallBridge": SuperwallBridge.self,
+    ]
+  }
 
   private let registrar: FlutterPluginRegistrar
   private var instances: [String: Any] = [:]
@@ -25,80 +35,41 @@ public class BridgingCreator: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "SWK_BridgingCreator", binaryMessenger: registrar.messenger())
 
-    let plugin = BridgingCreator(registrar: registrar)
-    BridgingCreator.shared = plugin
+    let bridge = BridgingCreator(registrar: registrar)
+    BridgingCreator.shared = bridge
 
-    registrar.addMethodCallDelegate(plugin, channel: channel)
+    registrar.addMethodCallDelegate(bridge, channel: channel)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
-      case "createSuperwallBridge":
-        result(createSuperwallBridge())
-      case "createSuperwallDelegateProxyBridge":
-        result(createSuperwallDelegateProxyBridge())
-      case "createPurchaseControllerProxyBridge":
-        result(createPurchaseControllerProxyBridge())
-      case "createCompletionBlockProxyBridge":
-        result(createCompletionBlockProxyBridge())
+      case "createBridge":
+        guard
+          let bridgeName: String = call.argument(for: "bridgeName"),
+          let channelName: String = call.argument(for: "channelName") else {
+          print("WARNING: Unable to create bridge")
+          return
+        }
+
+        createBridge(bridgeName: bridgeName, channelName: channelName)
+        result(nil)
+
       default:
         result(FlutterMethodNotImplemented)
     }
   }
-}
 
-extension BridgingCreator {
-  func createSuperwallBridge() -> String {
-    let name = "\(SuperwallBridge.name)-\(UUID().uuidString)"
-    let channel = FlutterMethodChannel(name: name, binaryMessenger: registrar.messenger())
+  private func createBridge(bridgeName: String, channelName: String) {
+    let channel = FlutterMethodChannel(name: channelName, binaryMessenger: registrar.messenger())
 
-    let plugin = SuperwallBridge(channel: channel)
-    instances.updateValue(plugin, forKey: name)
+    guard let classType = BridgingCreator.Constants.bridgeMap[bridgeName] else {
+      assertionFailure("Unable to find a bridge type for \(bridgeName). Make sure to add to BridgingCreator.swift")
+      return
+    }
 
-    registrar.addMethodCallDelegate(plugin, channel: channel)
+    let bridge = classType.init(channel: channel)
+    instances.updateValue(bridge, forKey: channelName)
 
-    return name
-  }
-}
-
-extension BridgingCreator {
-  func createSuperwallDelegateProxyBridge() -> String {
-    let name = "\(SuperwallDelegateProxyBridge.name)-\(UUID().uuidString)"
-    let channel = FlutterMethodChannel(name: name, binaryMessenger: registrar.messenger())
-
-    let plugin = SuperwallDelegateProxyBridge(channel: channel)
-    instances.updateValue(plugin, forKey: name)
-
-    registrar.addMethodCallDelegate(plugin, channel: channel)
-
-    return name
-  }
-}
-
-extension BridgingCreator {
-  func createPurchaseControllerProxyBridge() -> String {
-    let name = "\(PurchaseControllerProxyBridge.name)-\(UUID().uuidString)"
-    let channel = FlutterMethodChannel(name: name, binaryMessenger: registrar.messenger())
-
-    let plugin = PurchaseControllerProxyBridge(channel: channel)
-    instances.updateValue(plugin, forKey: name)
-
-    registrar.addMethodCallDelegate(plugin, channel: channel)
-
-    return name
-  }
-}
-
-extension BridgingCreator {
-  func createCompletionBlockProxyBridge() -> String {
-    let name = "\(CompletionBlockProxyBridge.name)-\(UUID().uuidString)"
-    let channel = FlutterMethodChannel(name: name, binaryMessenger: registrar.messenger())
-
-    let plugin = CompletionBlockProxyBridge(channel: channel)
-    instances.updateValue(plugin, forKey: name)
-
-    registrar.addMethodCallDelegate(plugin, channel: channel)
-
-    return name
+    registrar.addMethodCallDelegate(bridge, channel: channel)
   }
 }

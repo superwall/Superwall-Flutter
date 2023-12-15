@@ -2,28 +2,17 @@ import Flutter
 import UIKit
 import SuperwallKit
 
-extension SuperwallBridge: FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {}
-}
-
-public class SuperwallBridge: NSObject {
-  static let name: String = "SuperwallBridge"
-
-  let channel: FlutterMethodChannel
-
-  init(channel: FlutterMethodChannel) {
-    self.channel = channel
-  }
+public class SuperwallBridge: BaseBridge {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
       case "setDelegate":
-        guard let delegateProxyBridge: String = call.argument(for: "delegateProxyBridge") else {
+        guard let delegateProxyBridge: SuperwallDelegate = call.bridge(for: "delegateProxyBridge") else {
           result(call.badArgs)
           return
         }
 
-        Superwall.shared.delegate = BridgingCreator.shared.bridge(for: delegateProxyBridge)
+        Superwall.shared.delegate = delegateProxyBridge
 
       case "getLogLevel":
         // Implement logic to get log level
@@ -128,7 +117,7 @@ public class SuperwallBridge: NSObject {
       case "configure":
         // Implement logic to configure the Superwall instance
         guard let apiKey: String = call.argument(for: "apiKey") else {
-          result(nil)
+          result(call.badArgs)
           return
         }
 
@@ -141,6 +130,7 @@ public class SuperwallBridge: NSObject {
           return purchaseController
         }()
 
+        // TODO
         let options: SuperwallOptions? = call.argument(for: "options")
 
         Superwall.configure(apiKey: apiKey, purchaseController: purchaseController, options: options)
@@ -157,11 +147,11 @@ public class SuperwallBridge: NSObject {
 
       case "registerEvent":
         guard let event: String = call.argument(for: "event") else {
-          result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments for registerEvent", details: nil))
+          result(call.badArgs)
           return
         }
 
-        let params: [String: Any]? = call.argument(for: "event")
+        let params: [String: Any]? = call.argument(for: "params")
 
         Superwall.shared.register(event: event, params: params) {
           if let featureBlockProxyBridge: CompletionBlockProxyBridge = call.bridge(for: "featureBlockProxyBridge") {

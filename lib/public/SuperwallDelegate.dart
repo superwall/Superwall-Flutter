@@ -18,6 +18,7 @@ abstract class SuperwallDelegate {
 
   /// Called right before the paywall is presented.
   // void willPresentPaywall(PaywallInfo paywallInfo);
+  // TODO
   void willPresentPaywall(String paywallInfo);
 
   // /// Called right after the paywall is dismissed.

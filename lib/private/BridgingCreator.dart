@@ -1,29 +1,45 @@
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
 
 typedef Bridge = String;
 
 class BridgingCreator {
   static const MethodChannel _channel = MethodChannel('SWK_BridgingCreator');
 
-  static Future<Bridge> createSuperwallBridge() async {
-    final channelName = await _channel.invokeMethod("createSuperwallBridge");
+  static String _createBridge(String bridgeName) {
+    final instanceIdentifier = Uuid().v4();
+    final channelName = bridgeName + "-" + instanceIdentifier;
+    _invokeCreation(bridgeName, channelName);
     return channelName;
   }
 
-  static Future<Bridge> createSuperwallDelegateProxyBridge() async {
-    final channelName = await _channel.invokeMethod("createSuperwallDelegateProxyBridge");
-    return channelName;
+  static _invokeCreation(String bridgeName, String channelName) async {
+    await _channel.invokeMethod("createBridge", { "bridgeName" : bridgeName, "channelName" : channelName});
   }
 
-  static Future<Bridge> createPurchaseControllerProxyBridge() async {
-    final channelName = await _channel.invokeMethod("createPurchaseControllerProxyBridge");
-    return channelName;
+  //region Creators
+
+  static Bridge createSuperwallBridge() {
+    return _createBridge("SuperwallBridge");
   }
 
-  static Future<Bridge> createCompletionBlockProxyBridge() async {
-    final channelName = await _channel.invokeMethod("createCompletionBlockProxyBridge");
-    return channelName;
+  static Bridge createSuperwallDelegateProxyBridge() {
+    return _createBridge("SuperwallDelegateProxyBridge");
   }
+
+  static Bridge createPurchaseControllerProxyBridge() {
+    return _createBridge("PurchaseControllerProxyBridge");
+  }
+
+  static Bridge createCompletionBlockProxyBridge() {
+    return _createBridge("CompletionBlockProxyBridge");
+  }
+
+  static Bridge createSubscriptionStatusBridge() {
+    return _createBridge("SubscriptionStatusBridge");
+  }
+
+  //endregion
 }
 
 // Stores a reference to a dart instance that receives responses from the native side.

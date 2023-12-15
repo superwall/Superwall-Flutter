@@ -69,4 +69,5 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.0.0'
 
     implementation "com.superwall.sdk:superwall-android:1.0.0-alpha.26"
+    implementation 'com.android.billingclient:billing:6.1.0'
 }

@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 class PurchaseResult {
   final _PurchaseResultType _type;
   final Object? _data;
-  static const MethodChannel _channel = MethodChannel('SWK_PurchaseResultBridge');
 
   const PurchaseResult._(this._type, [this._data]);
 
@@ -33,22 +32,20 @@ class PurchaseResult {
   /// The associated `Error` should be sent back for further handling.
   static PurchaseResult failed(Object error) => PurchaseResult._(_PurchaseResultType.failed, error);
 
-  bool get isCancelled => _type == _PurchaseResultType.cancelled;
-  bool get isPurchased => _type == _PurchaseResultType.purchased;
-  bool get isRestored => _type == _PurchaseResultType.restored;
-  bool get isPending => _type == _PurchaseResultType.pending;
-
   /// If the purchase failed, this returns the associated error.
   Object? get error => _type == _PurchaseResultType.failed ? _data : null;
 
-  Future<bool> isEqualTo(PurchaseResult other) async {
-    final bool isEqual = await _channel.invokeMethod('isEqualTo', {
-      'result1': _type.toString(),
-      'result2': other._type.toString(),
-      'data1': _data,
-      'data2': other._data,
-    });
-    return isEqual;
+  // Serializes the PurchaseResult instance into a map
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = {
+      'type': _type.toString().split('.').last,
+    };
+
+    if (_data != null) {
+      json['error'] = error?.toString();
+    }
+
+    return json;
   }
 }
 

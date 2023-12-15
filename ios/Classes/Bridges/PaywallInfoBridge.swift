@@ -1,13 +1,7 @@
 import Flutter
 import SuperwallKit
 
-public class PaywallInfoBridge: NSObject, FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "SWK_PaywallInfo", binaryMessenger: registrar.messenger())
-    let instance = PaywallInfoBridge()
-    registrar.addMethodCallDelegate(instance, channel: channel)
-  }
-  
+public class PaywallInfoBridge: BaseBridge {
   // TODO
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     if call.method == "getPaywallInfo" {

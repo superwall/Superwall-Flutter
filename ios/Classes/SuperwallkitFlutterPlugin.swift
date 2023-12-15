@@ -4,27 +4,8 @@ import SuperwallKit
 
 
 public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
-
   public static func register(with registrar: FlutterPluginRegistrar) {
     BridgingCreator.register(with: registrar)
-
-    // TODO: REMOVE THIS
-
-    // Define the list of plugin types that conform to FlutterPlugin.
-    // Make sure each plugin type conforms to `FlutterPlugin`.
-    // Add additional classes using Xcode, not Android Studio.
-    let pluginTypes: [FlutterPlugin.Type] = [
-      SubscriptionStatusBridge.self,
-      LogLevelBridge.self,
-      PaywallInfoBridge.self,
-      PurchaseResultBridge.self,
-      RestorationResultBridge.self
-    ]
-
-    // Iterate over the plugin types and call the `register(with:)` method on each one.
-    pluginTypes.forEach { pluginType in
-      pluginType.register(with: registrar)
-    }
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -49,7 +30,7 @@ extension FlutterMethodCall {
 
 extension FlutterMethodCall {
   var badArgs: FlutterError {
-    return FlutterError(code: "BAD_ARGS", message: "Missing or invalid arguments for '\(method)'", details: nil)
+    return FlutterError.badArgs(for: method)
   }
 }
 

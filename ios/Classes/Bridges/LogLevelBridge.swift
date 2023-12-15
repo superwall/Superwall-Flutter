@@ -2,13 +2,7 @@ import Flutter
 import UIKit
 import SuperwallKit
 
-public class LogLevelBridge: NSObject, FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "SWK_LogLevelBridge", binaryMessenger: registrar.messenger())
-    let instance = LogLevelBridge()
-    registrar.addMethodCallDelegate(instance, channel: channel)
-  }
-  
+public class LogLevelBridge: BaseBridge {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     guard let args = call.arguments as? [String: Any],
           let levelValue = args["level"] as? Int,

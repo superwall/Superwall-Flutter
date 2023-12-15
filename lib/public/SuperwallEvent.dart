@@ -16,7 +16,6 @@ class PaywallPresentationRequestStatusReason {}
 class SuperwallEvent {
   final _SuperwallEventType _type;
   final Object? _data;
-  static const MethodChannel _channel = MethodChannel('SWK_SuperwallEventBridge');
 
   const SuperwallEvent._(this._type, [this._data]);
 
