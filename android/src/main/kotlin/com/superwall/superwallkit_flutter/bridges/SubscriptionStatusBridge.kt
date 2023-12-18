@@ -7,7 +7,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.Result
 
-class SubscriptionStatusBridge(channel: MethodChannel) : BaseBridge(channel) {
+class SubscriptionStatusBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding) {
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
             "getDescription" -> {

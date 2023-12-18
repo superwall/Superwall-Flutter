@@ -15,9 +15,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
 
-class BridgingCreator(private val registrar: Registrar) : MethodCallHandler {
+class BridgingCreator(private val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : MethodCallHandler {
     private val instances: MutableMap<String, Any> = mutableMapOf()
 
     companion object {
@@ -35,18 +34,18 @@ class BridgingCreator(private val registrar: Registrar) : MethodCallHandler {
             "CompletionBlockProxyBridge" to CompletionBlockProxyBridge::class.java,
             "SuperwallBridge" to SuperwallBridge::class.java,
         )
+
+        fun register(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+            val channel = MethodChannel(flutterPluginBinding.binaryMessenger, "SWK_BridgingCreator")
+            val bridge = BridgingCreator(flutterPluginBinding)
+            shared = bridge
+            channel.setMethodCallHandler(bridge)
+        }
     }
 
     // Generic function to retrieve a bridge instance
     fun <T> bridge(channelName: String): T? {
         return instances[channelName] as? T
-    }
-
-    fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        val channel = MethodChannel(registrar.messenger(), "SWK_BridgingCreator")
-        val bridge = BridgingCreator(registrar)
-        shared = bridge
-        channel.setMethodCallHandler(bridge)
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
@@ -60,6 +59,7 @@ class BridgingCreator(private val registrar: Registrar) : MethodCallHandler {
                     result.success(null)
                 } else {
                     println("WARNING: Unable to create bridge")
+                    result.badArgs(call)
                 }
             }
             else -> result.notImplemented()
@@ -67,18 +67,26 @@ class BridgingCreator(private val registrar: Registrar) : MethodCallHandler {
     }
 
     private fun createBridge(bridgeName: String, channelName: String) {
-        val channel = MethodChannel(registrar.messenger(), channelName)
+        val channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
 
         val classType = bridgeMap[bridgeName]
-        if (classType != null) {
-            val bridgeClass = classType.kotlin
-            val constructor = bridgeClass.constructors.firstOrNull()
-                ?: throw IllegalStateException("No suitable constructor found for $bridgeClass")
+        classType?.let { classType ->
+            try {
+                // Use Java reflection to find the constructor
+                val constructor = classType.getConstructor(MethodChannel::class.java, FlutterPlugin.FlutterPluginBinding::class.java)
 
-            val bridge = constructor.call(channel) as BaseBridge
-            instances[channelName] = bridge
-            channel.setMethodCallHandler(bridge)
-        } else {
+                // Create an instance of the bridge
+                val bridge = constructor.newInstance(channel, flutterPluginBinding) as BaseBridge
+
+                instances[channelName] = bridge
+                channel.setMethodCallHandler(bridge)
+
+            } catch (e: NoSuchMethodException) {
+                throw AssertionError("No suitable constructor found for $classType", e)
+            } catch (e: Exception) {
+                throw AssertionError("Error creating an instance of $classType", e)
+            }
+        } ?: run {
             throw AssertionError("Unable to find a bridge type for $bridgeName. Make sure to add to BridgingCreator.")
         }
     }

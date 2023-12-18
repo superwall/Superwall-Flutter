@@ -22,8 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SuperwallBridge(channel: MethodChannel) : BaseBridge(channel), FlutterPlugin, ActivityProvider {
-
+class SuperwallBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding), ActivityProvider {
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "setDelegate" -> {
@@ -212,15 +211,4 @@ class SuperwallBridge(channel: MethodChannel) : BaseBridge(channel), FlutterPlug
     override fun getCurrentActivity(): Activity? {
         return SuperwallkitFlutterPlugin.currentActivity
     }
-
-    //region FlutterPlugin
-
-    private lateinit var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding
-    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        this.flutterPluginBinding = binding
-    }
-
-    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
-
-    //endregion
 }

@@ -156,11 +156,16 @@ class Superwall {
       );
     }
 
-    await _superwall._channel.invokeMethod('configure', {
-      'apiKey': apiKey,
-      'purchaseControllerProxyBridge': purchaseControllerProxyBridge,
-      'options': options,
-    });
+    try {
+      await _superwall._channel.invokeMethod('configure', {
+        'apiKey': apiKey,
+        'purchaseControllerProxyBridge': purchaseControllerProxyBridge,
+        'options': options,
+      });
+    } catch (e) {
+      // Handle any errors that occur during configuration
+      print('Failed to configure Superwall: $e');
+    }
 
     // TODO: is this the best way to handle completion handlers?
     if (completion != null) {

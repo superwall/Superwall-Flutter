@@ -6,9 +6,9 @@ import io.flutter.plugin.common.MethodChannel
 import com.superwall.sdk.delegate.PurchaseResult
 import com.superwall.sdk.delegate.RestorationResult
 import com.android.billingclient.api.SkuDetails
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 
-class PurchaseControllerProxyBridge(channel: MethodChannel) : BaseBridge(channel),
-    PurchaseController {
+class PurchaseControllerProxyBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding), PurchaseController {
 
     // PurchaseController
 

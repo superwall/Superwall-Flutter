@@ -13,7 +13,7 @@ class RCPurchaseController extends PurchaseController {
   // MARK: Configure and sync subscription Status
   /// Makes sure that Superwall knows the customers subscription status by
   /// changing `Superwall.shared.subscriptionStatus`
-  configureAndSyncSubscriptionStatus() async {
+  Future<void> configureAndSyncSubscriptionStatus() async {
     // Configure RevenueCat
     await Purchases.setLogLevel(LogLevel.debug);
     PurchasesConfiguration configuration = Platform.isIOS ? PurchasesConfiguration("appl_XmYQBWbTAFiwLeWrBJOeeJJtTql") : PurchasesConfiguration("goog_DCSOujJzRNnPmxdgjOwdOOjwilC");
@@ -22,7 +22,7 @@ class RCPurchaseController extends PurchaseController {
     // Listen for changes
     Purchases.addCustomerInfoUpdateListener((customerInfo) {
       // Gets called whenever new CustomerInfo is available
-      bool hasActiveSubscription = customerInfo.entitlements.active.length > 0; // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
+      bool hasActiveSubscription = customerInfo.entitlements.active.isNotEmpty; // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
       if (hasActiveSubscription) {
         Superwall.shared.setSubscriptionStatus(SubscriptionStatus.active);
       } else {
@@ -39,7 +39,7 @@ class RCPurchaseController extends PurchaseController {
     try {
       CustomerInfo customerInfo = await Purchases.purchaseProduct(productId);
       // TODO handle .restored logic (see below)
-      if (customerInfo.entitlements.active.length > 0) {
+      if (customerInfo.entitlements.active.isNotEmpty) {
         return PurchaseResult.purchased;
       } else {
         return PurchaseResult.failed("No active subscriptions found.");

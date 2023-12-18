@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       /// Always configure RevenueCat after Superwall and keep Superwall's
       /// subscription status up-to-date with RevenueCat's.
       if (useRevenueCat) {
-        purchaseController.configureAndSyncSubscriptionStatus();
+        await purchaseController.configureAndSyncSubscriptionStatus();
       }
 
     } catch (e) {

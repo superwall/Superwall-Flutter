@@ -1,6 +1,7 @@
 package com.superwall.superwallkit_flutter
 
 import android.app.Activity
+import android.os.Debug
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -18,13 +19,15 @@ class SuperwallkitFlutterPlugin: FlutterPlugin, ActivityAware {
   }
 
   init {
-    print("INIT CALLED");
+//    if (BuildConfig.DEBUG) {
+//      Debug.waitForDebugger()
+//    }
+
     instance = this
   }
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    print("ON ATTACHED TO ENGINE CALLED");
-    BridgingCreator.shared.onAttachedToEngine(flutterPluginBinding)
+    BridgingCreator.register(flutterPluginBinding)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}

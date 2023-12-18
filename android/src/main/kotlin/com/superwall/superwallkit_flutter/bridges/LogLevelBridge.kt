@@ -2,11 +2,12 @@ package com.superwall.superwallkit_flutter.bridges
 
 import LogLevel
 import com.superwall.superwallkit_flutter.badArgs
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.Result
 
-class LogLevelBridge(channel: MethodChannel) : BaseBridge(channel) {
+class LogLevelBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding) {
     override fun onMethodCall(call: MethodCall, result: Result) {
         val levelValue = call.argument<Int>("level")
         val logLevel = levelValue?.let { findLogLevel(it) }
