@@ -44,99 +44,99 @@ class Superwall {
     delegateProxy = SuperwallDelegateProxy(channel: MethodChannel(delegateProxyBridge), delegate: newDelegate);
 
     // Set the native instance as the delegate
-    _channel.invokeMethod('setDelegate', {'delegateProxyBridge': delegateProxyBridge});
+    _channel.invokeBridgeMethod('setDelegate', {'delegateProxyBridge': delegateProxyBridge});
   }
 
   // Asynchronous method to get logLevel
   Future<LogLevel> getLogLevel() async {
-    final logLevelResult = await _channel.invokeMethod('getLogLevel');
+    final logLevelResult = await _channel.invokeBridgeMethod('getLogLevel');
     // TODO: Convert logLevelResult to LogLevel enum
     return LogLevel.values.firstWhere((element) => element.toString() == logLevelResult);
   }
 
   // Method to set logLevel
   void setLogLevel(LogLevel newLogLevel) {
-    _channel.invokeMethod('setLogLevel', {'logLevel': newLogLevel.toString()});
+    _channel.invokeBridgeMethod('setLogLevel', {'logLevel': newLogLevel.toString()});
   }
 
   // Asynchronous method to get userAttributes
   Future<Map<String, dynamic>> getUserAttributes() async {
-    final attributes = await _channel.invokeMethod('getUserAttributes');
+    final attributes = await _channel.invokeBridgeMethod('getUserAttributes');
     return Map<String, dynamic>.from(attributes);
   }
 
   // Asynchronous method to get the current user's id
   Future<String> getUserId() async {
-    return await _channel.invokeMethod('getUserId');
+    return await _channel.invokeBridgeMethod('getUserId');
   }
 
   // Asynchronous method to check if the user is logged in to Superwall
   Future<bool> getIsLoggedIn() async {
-    return await _channel.invokeMethod('getIsLoggedIn');
+    return await _channel.invokeBridgeMethod('getIsLoggedIn');
   }
 
   // Asynchronous method to get the presented paywall view controller
   // TODO:This is a placeholder implementation as Dart does not have a direct equivalent for UIViewController
   Future<dynamic> getPresentedViewController() async {
-    return await _channel.invokeMethod('getPresentedViewController');
+    return await _channel.invokeBridgeMethod('getPresentedViewController');
   }
 
   // Asynchronous method to get the latest PaywallInfo object
   Future<PaywallInfo?> getLatestPaywallInfo() async {
-    final paywallInfo = await _channel.invokeMethod('getLatestPaywallInfo');
+    final paywallInfo = await _channel.invokeBridgeMethod('getLatestPaywallInfo');
     // TODO: Convert paywallInfo to PaywallInfo
     return paywallInfo as PaywallInfo?;
   }
 
   // Asynchronous method to get the subscription status of the user
   Future<SubscriptionStatus> getSubscriptionStatus() async {
-    final rawValue = await _channel.invokeMethod('getSubscriptionStatus');
+    final rawValue = await _channel.invokeBridgeMethod('getSubscriptionStatus');
     return SubscriptionStatus.fromRawValue(rawValue);
   }
 
   // Asynchronous method to set the subscription status of the user
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
-    await _channel.invokeMethod('setSubscriptionStatus', {'status': status.rawValue });
+    await _channel.invokeBridgeMethod('setSubscriptionStatus', {'status': status.rawValue });
   }
 
   // Asynchronous method to check if Superwall has finished configuring
   Future<bool> getIsConfigured() async {
-    return await _channel.invokeMethod('getIsConfigured');
+    return await _channel.invokeBridgeMethod('getIsConfigured');
   }
 
   // Asynchronous method to set the configured state of Superwall
   Future<void> setIsConfigured(bool configured) async {
-    await _channel.invokeMethod('setIsConfigured', {'configured': configured});
+    await _channel.invokeBridgeMethod('setIsConfigured', {'configured': configured});
   }
 
   // Asynchronous method to check if a paywall is currently being presented
   Future<bool> getIsPaywallPresented() async {
-    return await _channel.invokeMethod('getIsPaywallPresented');
+    return await _channel.invokeBridgeMethod('getIsPaywallPresented');
   }
 
   // Asynchronous method to preload all paywalls
   Future<void> preloadAllPaywalls() async {
-    await _channel.invokeMethod('preloadAllPaywalls');
+    await _channel.invokeBridgeMethod('preloadAllPaywalls');
   }
 
   // Asynchronous method to preload paywalls for specific event names
   Future<void> preloadPaywallsForEvents(Set<String> eventNames) async {
-    await _channel.invokeMethod('preloadPaywallsForEvents', {'eventNames': eventNames.toList()});
+    await _channel.invokeBridgeMethod('preloadPaywallsForEvents', {'eventNames': eventNames.toList()});
   }
 
   // Asynchronous method to handle deep links for paywall previews
   Future<bool> handleDeepLink(Uri url) async {
-    return await _channel.invokeMethod('handleDeepLink', {'url': url.toString()});
+    return await _channel.invokeBridgeMethod('handleDeepLink', {'url': url.toString()});
   }
 
   // Asynchronous method to toggle the paywall loading spinner
   Future<void> togglePaywallSpinner(bool isHidden) async {
-    await _channel.invokeMethod('togglePaywallSpinner', {'isHidden': isHidden});
+    await _channel.invokeBridgeMethod('togglePaywallSpinner', {'isHidden': isHidden});
   }
 
   // Asynchronous method to reset the user ID, on-device paywall assignments, and stored data
   Future<void> reset() async {
-    await _channel.invokeMethod('reset');
+    await _channel.invokeBridgeMethod('reset');
   }
 
   // Asynchronous method to configure the Superwall instance. Proxies must always be stored.
@@ -157,7 +157,7 @@ class Superwall {
     }
 
     try {
-      await _superwall._channel.invokeMethod('configure', {
+      await _superwall._channel.invokeBridgeMethod('configure', {
         'apiKey': apiKey,
         'purchaseControllerProxyBridge': purchaseControllerProxyBridge,
         'options': options,
@@ -194,7 +194,7 @@ class PaywallPresentationHandler {}
 extension PublicPresentation on Superwall {
   /// Dismisses the presented paywall, if one exists.
   Future<void> dismiss() async {
-    await _channel.invokeMethod('dismiss');
+    await _channel.invokeBridgeMethod('dismiss');
   }
 
   /// Registers an event to access a feature, potentially showing a paywall.
@@ -216,7 +216,7 @@ extension PublicPresentation on Superwall {
       );
     }
 
-    await _channel.invokeMethod('registerEvent', {
+    await _channel.invokeBridgeMethod('registerEvent', {
       'event': event,
       'params': params,
       'handler': handler,

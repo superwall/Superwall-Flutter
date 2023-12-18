@@ -19,9 +19,9 @@ class SuperwallkitFlutterPlugin: FlutterPlugin, ActivityAware {
   }
 
   init {
-//    if (BuildConfig.DEBUG) {
-//      Debug.waitForDebugger()
-//    }
+    if (BuildConfig.DEBUG) {
+      Debug.waitForDebugger()
+    }
 
     instance = this
   }

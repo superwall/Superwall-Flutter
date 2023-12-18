@@ -30,7 +30,7 @@ class SubscriptionStatus {
   }
 
   Future<String> get description async {
-    final String description = await channel.invokeMethod('getDescription', {'status': _type.value});
+    final String description = await channel.invokeBridgeMethod('getDescription', {'status': _type.value});
     return description;
   }
 }

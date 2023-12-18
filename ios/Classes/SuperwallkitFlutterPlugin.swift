@@ -18,10 +18,9 @@ extension FlutterMethodCall {
     return (arguments as? [String: Any])?[key] as? T
   }
 
-  // Make sure to provide the key here.
+  // Make sure to provide the key for the bridge, not the bridge itself.
   func bridge<T>(for key: String) -> T? {
     guard let channelName: String = argument(for: key) else {
-      print("WARNING: Unable to find bridge argument for \(key)")
       return nil
     }
     return BridgingCreator.shared.bridge(for: channelName)
