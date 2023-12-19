@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 class SubscriptionStatus {
   final _SubscriptionStatusType _type;

@@ -1,14 +1,14 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/private/BridgingCreator.dart';
-import 'package:superwallkit_flutter/public/LogLevel.dart';
-import 'package:superwallkit_flutter/public/PaywallInfo.dart';
-import 'package:superwallkit_flutter/public/PurchaseController.dart';
-import 'package:superwallkit_flutter/public/SubscriptionStatus.dart';
-import 'package:superwallkit_flutter/public/SuperwallDelegate.dart';
-import 'package:superwallkit_flutter/private/CompletionBlockProxy.dart';
-import 'package:superwallkit_flutter/private/PurchaseControllerProxy.dart';
-import 'package:superwallkit_flutter/private/SuperwallDelegateProxy.dart';
-import 'package:superwallkit_flutter/public/SuperwallOptions.dart';
+import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/public/LogLevel.dart';
+import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
+import 'package:superwallkit_flutter/src/public/PurchaseController.dart';
+import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
+import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
+import 'package:superwallkit_flutter/src/private/CompletionBlockProxy.dart';
+import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
+import 'package:superwallkit_flutter/src/private/SuperwallDelegateProxy.dart';
+import 'package:superwallkit_flutter/src/public/SuperwallOptions.dart';
 
 /// The primary class for integrating Superwall into your application.
 /// After configuring via `configure(apiKey: purchaseController: options: completion:)`,

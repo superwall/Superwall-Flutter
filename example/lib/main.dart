@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/public/Superwall.dart';
-import 'package:superwallkit_flutter/public/SuperwallDelegate.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import 'package:superwallkit_flutter_example/RCPurchaseController.dart';
 
 void main() {

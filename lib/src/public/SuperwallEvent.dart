@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/public/PaywallInfo.dart';
+import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 
 // TODO: Implement these classes
 class TriggerResult {}
