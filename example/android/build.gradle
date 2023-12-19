@@ -3,6 +3,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://mvn.superwall.com/release' }
     }
 
     dependencies {
