@@ -19,7 +19,7 @@ class SuperwallkitFlutterPlugin: FlutterPlugin, ActivityAware {
   }
 
   init {
-    if (BuildConfig.DEBUG) {
+    if (BuildConfig.DEBUG && BuildConfig.WAIT_FOR_DEBUGGER) {
       Debug.waitForDebugger()
     }
 
@@ -57,10 +57,10 @@ fun <T> MethodCall.argumentForKey(key: String): T? {
   return this.argument(key)
 }
 
+// Make sure to provide the key for the bridge, not the bridge itself.
 fun <T> MethodCall.bridgeForKey(key: String): T? {
   val channelName = this.argument<String>(key)
   if (channelName == null) {
-    println("WARNING: Unable to find bridge argument for $key")
     return null
   }
   return BridgingCreator.shared.bridge(channelName)

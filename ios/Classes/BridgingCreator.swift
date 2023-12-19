@@ -29,7 +29,23 @@ public class BridgingCreator: NSObject, FlutterPlugin {
   }
 
   func bridge<T>(for channelName: String) -> T? {
-    return instances[channelName] as? T
+    var instance = instances[channelName] as? T
+
+    if instance == nil {
+      guard let bridgeName = channelName.components(separatedBy: "-").first else {
+        assertionFailure("Unable to parse bridge name from \(channelName).")
+        return nil
+      }
+
+      instance = createBridge(bridgeName: bridgeName, channelName: channelName) as? T
+
+      guard instance != nil else {
+        assertionFailure("Unable to create bridge name from \(channelName).")
+        return nil
+      }
+    }
+
+    return instance
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -59,17 +75,19 @@ public class BridgingCreator: NSObject, FlutterPlugin {
     }
   }
 
-  private func createBridge(bridgeName: String, channelName: String) {
+  @discardableResult private func createBridge(bridgeName: String, channelName: String) -> BaseBridge? {
     let channel = FlutterMethodChannel(name: channelName, binaryMessenger: registrar.messenger())
 
     guard let classType = BridgingCreator.Constants.bridgeMap[bridgeName] else {
       assertionFailure("Unable to find a bridge type for \(bridgeName). Make sure to add to BridgingCreator.swift")
-      return
+      return nil
     }
 
     let bridge = classType.init(channel: channel)
     instances.updateValue(bridge, forKey: channelName)
 
     registrar.addMethodCallDelegate(bridge, channel: channel)
+
+    return bridge
   }
 }

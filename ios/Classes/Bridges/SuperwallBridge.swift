@@ -13,6 +13,7 @@ public class SuperwallBridge: BaseBridge {
         }
 
         Superwall.shared.delegate = delegateProxyBridge
+        result(nil)
 
       case "getLogLevel":
         // Implement logic to get log level

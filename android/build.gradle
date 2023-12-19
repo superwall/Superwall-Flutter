@@ -6,7 +6,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://mvn.superwall.com/release' }
     }
 
     dependencies {
@@ -19,7 +18,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://mvn.superwall.com/release' }
     }
 }
 
@@ -61,6 +59,20 @@ android {
                showStandardStreams = true
             }
         }
+    }
+
+    // Read from local.properties
+    def localPropertiesFile = rootProject.file('local.properties')
+    def localProperties = new Properties()
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.withInputStream { localProperties.load(it) }
+    }
+
+    // Set a default value if the property is not found
+    def waitForDebugger = localProperties.getProperty('WAIT_FOR_DEBUGGER', 'false')
+
+    defaultConfig {
+        buildConfigField "boolean", "WAIT_FOR_DEBUGGER", waitForDebugger
     }
 }
 

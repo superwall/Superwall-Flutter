@@ -45,8 +45,23 @@ class BridgingCreator(private val flutterPluginBinding: FlutterPlugin.FlutterPlu
 
     // Generic function to retrieve a bridge instance
     fun <T> bridge(channelName: String): T? {
-        return instances[channelName] as? T
+        var instance = instances[channelName] as? T
+
+        if (instance == null) {
+            val bridgeName = channelName.substringBefore("-")
+            if (bridgeName.isEmpty()) {
+                throw AssertionError("Unable to parse bridge name from $channelName.")
+            }
+
+            instance = createBridge(bridgeName, channelName) as? T
+            if (instance == null) {
+                throw AssertionError("Unable to create bridge for $channelName.")
+            }
+        }
+
+        return instance
     }
+
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when (call.method) {
@@ -66,7 +81,7 @@ class BridgingCreator(private val flutterPluginBinding: FlutterPlugin.FlutterPlu
         }
     }
 
-    private fun createBridge(bridgeName: String, channelName: String) {
+    private fun createBridge(bridgeName: String, channelName: String): BaseBridge? {
         val channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
 
         val classType = bridgeMap[bridgeName]
@@ -80,6 +95,7 @@ class BridgingCreator(private val flutterPluginBinding: FlutterPlugin.FlutterPlu
 
                 instances[channelName] = bridge
                 channel.setMethodCallHandler(bridge)
+                return bridge
 
             } catch (e: NoSuchMethodException) {
                 throw AssertionError("No suitable constructor found for $classType", e)
