@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
+/// An enum representing the subscription status of the user.
 class SubscriptionStatus {
   final _SubscriptionStatusType _type;
   final Bridge bridge;
@@ -10,36 +11,54 @@ class SubscriptionStatus {
     bridge.associate(this);
   }
 
-  static final SubscriptionStatus active = SubscriptionStatus._privateConstructor(_SubscriptionStatusType.active, BridgingCreator.createSubscriptionStatusBridge());
-  static final SubscriptionStatus inactive = SubscriptionStatus._privateConstructor(_SubscriptionStatusType.inactive, BridgingCreator.createSubscriptionStatusBridge());
-  static final SubscriptionStatus unknown = SubscriptionStatus._privateConstructor(_SubscriptionStatusType.unknown, BridgingCreator.createSubscriptionStatusBridge());
-
-  int get rawValue => _type.value;
-
-  static SubscriptionStatus fromRawValue(int value) {
-    switch (value) {
-      case 0:
-        return SubscriptionStatus.active;
-      case 1:
-        return SubscriptionStatus.inactive;
-      case 2:
-        return SubscriptionStatus.unknown;
-      default:
-        throw ArgumentError('Invalid integer value for SubscriptionStatus');
-    }
-  }
+  static final SubscriptionStatus active = SubscriptionStatus._privateConstructor(_SubscriptionStatusType.active, BridgingCreator.createSubscriptionStatusActiveBridge());
+  static final SubscriptionStatus inactive = SubscriptionStatus._privateConstructor(_SubscriptionStatusType.inactive, BridgingCreator.createSubscriptionStatusInactiveBridge());
+  static final SubscriptionStatus unknown = SubscriptionStatus._privateConstructor(_SubscriptionStatusType.unknown, BridgingCreator.createSubscriptionStatusUnknownBridge());
 
   Future<String> get description async {
-    final String description = await channel.invokeBridgeMethod('getDescription', {'status': _type.value});
+    final String description = await channel.invokeBridgeMethod('getDescription');
     return description;
+  }
+
+  // String toJson() {
+  //   return _type.toJson();
+  // }
+
+  static SubscriptionStatus fromJson(String json) {
+    return _SubscriptionStatusTypeExtension.fromJson(json);
   }
 }
 
 enum _SubscriptionStatusType {
-  active(0),
-  inactive(1),
-  unknown(2);
+  active,
+  inactive,
+  unknown,
+}
 
-  final int value;
-  const _SubscriptionStatusType(this.value);
+extension _SubscriptionStatusTypeExtension on _SubscriptionStatusType {
+  // String toJson() {
+  //   switch (this) {
+  //     case _SubscriptionStatusType.active:
+  //       return 'active';
+  //     case _SubscriptionStatusType.inactive:
+  //       return 'inactive';
+  //     case _SubscriptionStatusType.unknown:
+  //       return 'unknown';
+  //     default:
+  //       throw ArgumentError('Invalid SubscriptionStatus value');
+  //   }
+  // }
+
+  static SubscriptionStatus fromJson(String json) {
+    switch (json) {
+      case 'active':
+        return SubscriptionStatus.active;
+      case 'inactive':
+        return SubscriptionStatus.inactive;
+      case 'unknown':
+        return SubscriptionStatus.unknown;
+      default:
+        throw ArgumentError('Invalid SubscriptionStatus value: $json');
+    }
+  }
 }

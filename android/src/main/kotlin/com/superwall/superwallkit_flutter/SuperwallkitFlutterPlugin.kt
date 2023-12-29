@@ -2,11 +2,15 @@ package com.superwall.superwallkit_flutter
 
 import android.app.Activity
 import android.os.Debug
+import com.superwall.sdk.misc.runOnUiThread
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class SuperwallkitFlutterPlugin: FlutterPlugin, ActivityAware {
   var currentActivity: Activity? = null
@@ -72,4 +76,32 @@ fun MethodChannel.Result.badArgs(call: MethodCall) {
 
 fun MethodChannel.Result.badArgs(method: String) {
   return error("BAD_ARGS", "Missing or invalid arguments for '$method'", null)
+}
+
+fun MethodChannel.invokeMethodOnMain(method: String, arguments: Any?) {
+  runOnUiThread {
+    invokeMethod(method, arguments);
+  }
+}
+
+suspend fun MethodChannel.asyncInvokeMethodOnMain(method: String, arguments: Any?): Any? = suspendCancellableCoroutine { continuation ->
+  runOnUiThread {
+    invokeMethod(method, arguments, object : MethodChannel.Result {
+      override fun success(result: Any?) {
+        continuation.resume(result)
+      }
+
+      override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
+        continuation.resumeWithException(
+          RuntimeException("Error invoking method: $errorCode, $errorMessage")
+        )
+      }
+
+      override fun notImplemented() {
+        continuation.resumeWithException(
+          UnsupportedOperationException("Method not implemented: $method")
+        )
+      }
+    })
+  }
 }

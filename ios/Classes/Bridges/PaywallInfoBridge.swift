@@ -1,24 +1,40 @@
 import Flutter
 import SuperwallKit
 
-public class PaywallInfoBridge: BaseBridge {
-  // TODO
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    if call.method == "getPaywallInfo" {
-//      let paywallInfo: 
-//      let data: [String: Any?] = [
-//        "identifier": paywallInfo.identifier,
-//        "experiment": paywallInfo.experiment, // Make sure to convert to a suitable format
-//        "triggerSessionId": paywallInfo.triggerSessionId,
-//        "products": paywallInfo.products.map { $0.identifier }, // Assuming Product has an identifier
-//        "productIds": paywallInfo.productIds,
-//        "name": paywallInfo.name,
-//        "url": paywallInfo.url.absoluteString,
-//        // ... map other fields
-//      ]
-      result(FlutterMethodNotImplemented)
-    } else {
-      result(FlutterMethodNotImplemented)
-    }
+extension PaywallInfo {
+  func toJson() -> [String: Any] {
+    var dict = [String: Any]()
+    dict["identifier"] = identifier
+    dict["experiment"] = experiment?.toJson()
+    dict["triggerSessionId"] = triggerSessionId
+    dict["products"] = products.map { $0.toJson() }
+    dict["productIds"] = productIds
+    dict["name"] = name
+    dict["url"] = url.absoluteString
+    dict["presentedByEventWithName"] = presentedByEventWithName
+    dict["presentedByEventWithId"] = presentedByEventWithId
+    dict["presentedByEventAt"] = presentedByEventAt
+    dict["presentedBy"] = presentedBy
+    dict["presentationSourceType"] = presentationSourceType
+    dict["responseLoadStartTime"] = responseLoadStartTime
+    dict["responseLoadCompleteTime"] = responseLoadCompleteTime
+    dict["responseLoadFailTime"] = responseLoadFailTime
+    dict["responseLoadDuration"] = responseLoadDuration
+    dict["webViewLoadStartTime"] = webViewLoadStartTime
+    dict["webViewLoadCompleteTime"] = webViewLoadCompleteTime
+    dict["webViewLoadFailTime"] = webViewLoadFailTime
+    dict["webViewLoadDuration"] = webViewLoadDuration
+    dict["productsLoadStartTime"] = productsLoadStartTime
+    dict["productsLoadCompleteTime"] = productsLoadCompleteTime
+    dict["productsLoadFailTime"] = productsLoadFailTime
+    dict["productsLoadDuration"] = productsLoadDuration
+    dict["paywalljsVersion"] = paywalljsVersion
+    dict["isFreeTrialAvailable"] = isFreeTrialAvailable
+    dict["featureGatingBehavior"] = featureGatingBehavior.toJson()
+    dict["closeReason"] = closeReason.toJson()
+    dict["localNotifications"] = localNotifications.map { $0.toJson() }
+    dict["computedPropertyRequests"] = computedPropertyRequests.map { $0.toJson() }
+    dict["surveys"] = surveys.map { $0.toJson() }
+    return dict
   }
 }

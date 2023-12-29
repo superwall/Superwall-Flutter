@@ -10,6 +10,7 @@ import io.flutter.plugin.common.MethodChannel
 import android.net.Uri
 import com.superwall.sdk.delegate.SubscriptionStatus
 import com.superwall.sdk.misc.ActivityProvider
+import com.superwall.sdk.paywall.presentation.PaywallPresentationHandler
 import com.superwall.sdk.paywall.presentation.dismiss
 import com.superwall.sdk.paywall.presentation.register
 import com.superwall.superwallkit_flutter.BridgingCreator
@@ -82,16 +83,18 @@ class SuperwallBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugi
                 result.notImplemented()
             }
             "getSubscriptionStatus" -> {
-                val statusStateFlow = Superwall.instance.subscriptionStatus
-                val status = statusStateFlow.value
-                result.success(status.rawValue)
+                val status = Superwall.instance.subscriptionStatus.value
+                val json = status.toJson()
+                result.success(json)
             }
             "setSubscriptionStatus" -> {
-                val statusRawValue = call.argumentForKey<Int>("status")
-                statusRawValue?.let {
-                    val status = SubscriptionStatus.fromRawValue(statusRawValue)
-                    Superwall.instance.setSubscriptionStatus(status)
+                val subscriptionStatusBridge = call.bridgeForKey<SubscriptionStatusBridge>("subscriptionStatusBridge")
+                subscriptionStatusBridge?.let {
+                    Superwall.instance.setSubscriptionStatus(it.status)
+                } ?: run {
+                    result.badArgs(call)
                 }
+
                 result.success(null)
             }
             "getIsConfigured" -> {
@@ -192,7 +195,12 @@ class SuperwallBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugi
                 event?.let { event ->
                     val params = call.argument<Map<String, Any>>("params")
 
-                    Superwall.instance.register(event, params) {
+                    val handlerProxyBridge: PaywallPresentationHandlerProxyBridge? = call.bridgeForKey<PaywallPresentationHandlerProxyBridge>("handlerProxyBridge")
+                    val handler: PaywallPresentationHandler? = handlerProxyBridge?.let {
+                        it.handler
+                    }
+
+                    Superwall.instance.register(event, params, handler) {
                         val featureBlockProxyBridge = call.bridgeForKey<CompletionBlockProxyBridge>("featureBlockProxyBridge")
                         featureBlockProxyBridge?.let {
                             it.callCompletionBlock()

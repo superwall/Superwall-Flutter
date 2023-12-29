@@ -1,7 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
 import 'package:superwallkit_flutter/src/public/LogLevel.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
+import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart';
 import 'package:superwallkit_flutter/src/public/PurchaseController.dart';
 import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
@@ -90,13 +92,25 @@ class Superwall {
 
   // Asynchronous method to get the subscription status of the user
   Future<SubscriptionStatus> getSubscriptionStatus() async {
-    final rawValue = await _channel.invokeBridgeMethod('getSubscriptionStatus');
-    return SubscriptionStatus.fromRawValue(rawValue);
+    final json = await _channel.invokeBridgeMethod('getSubscriptionStatus');
+    return SubscriptionStatus.fromJson(json);
   }
 
   // Asynchronous method to set the subscription status of the user
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
-    await _channel.invokeBridgeMethod('setSubscriptionStatus', {'status': status.rawValue });
+    Bridge bridge(SubscriptionStatus status) {
+      if (status == SubscriptionStatus.active) {
+        return BridgingCreator.createSubscriptionStatusActiveBridge();
+      }
+      else if (status == SubscriptionStatus.inactive) {
+        return BridgingCreator.createSubscriptionStatusInactiveBridge();
+      }
+      else {
+        return BridgingCreator.createSubscriptionStatusUnknownBridge();
+      }
+    }
+    final subscriptionStatusBridge = bridge(status);
+    await _channel.invokeBridgeMethod('setSubscriptionStatus', {'subscriptionStatusBridge': subscriptionStatusBridge});
   }
 
   // Asynchronous method to check if Superwall has finished configuring
@@ -142,7 +156,7 @@ class Superwall {
   // Asynchronous method to configure the Superwall instance. Proxies must always be stored.
   static PurchaseControllerProxy? purchaseControllerProxy = null;
   static Future<Superwall> configure(String apiKey, {PurchaseController? purchaseController, SuperwallOptions? options, Function? completion}) async {
-    // TODO: Pass purchase controller and options as primitives
+    // TODO: Pass options as primitives
 
     String? purchaseControllerProxyBridge = null;
     if (purchaseController != null) {
@@ -187,9 +201,6 @@ extension Checker on MethodChannel {
 
 //region PublicPresentation
 
-// TODO
-class PaywallPresentationHandler {}
-
 /// Extension for public presentation functionalities in Superwall.
 extension PublicPresentation on Superwall {
   /// Dismisses the presented paywall, if one exists.
@@ -216,11 +227,22 @@ extension PublicPresentation on Superwall {
       );
     }
 
+    PaywallPresentationHandlerProxy? handlerProxy = null;
+    if (handler != null) {
+      final bridge = BridgingCreator.createPaywallPresentationHandlerProxyBridge();
+
+      // Store the Dart proxy and native side bridge
+      handlerProxy = PaywallPresentationHandlerProxy(
+        bridge: bridge,
+        paywallPresentationHandler: handler
+      );
+    }
+
     await _channel.invokeBridgeMethod('registerEvent', {
       'event': event,
       'params': params,
-      'handler': handler,
-      'featureBlockProxyBridge': featureBlockProxy?.bridge,
+      'handlerProxyBridge': handlerProxy?.bridge,
+      'featureBlockProxyBridge': featureBlockProxy?.bridge
     });
   }
 }

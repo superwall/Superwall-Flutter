@@ -1,7 +1,7 @@
 import Flutter
-import UIKit
 import SuperwallKit
 
+// TODO
 public class LogLevelBridge: BaseBridge {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     guard let args = call.arguments as? [String: Any],

@@ -2,12 +2,11 @@ package com.superwall.superwallkit_flutter
 
 import com.superwall.superwallkit_flutter.bridges.BaseBridge
 import com.superwall.superwallkit_flutter.bridges.CompletionBlockProxyBridge
-import com.superwall.superwallkit_flutter.bridges.LogLevelBridge
-import com.superwall.superwallkit_flutter.bridges.PaywallInfoBridge
+import com.superwall.superwallkit_flutter.bridges.PaywallPresentationHandlerProxyBridge
 import com.superwall.superwallkit_flutter.bridges.PurchaseControllerProxyBridge
-import com.superwall.superwallkit_flutter.bridges.PurchaseResultBridge
-import com.superwall.superwallkit_flutter.bridges.RestorationResultBridge
-import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusBridge
+import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusActiveBridge
+import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusInactiveBridge
+import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusUnknownBridge
 import com.superwall.superwallkit_flutter.bridges.SuperwallBridge
 import com.superwall.superwallkit_flutter.bridges.SuperwallDelegateProxyBridge
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -24,15 +23,14 @@ class BridgingCreator(private val flutterPluginBinding: FlutterPlugin.FlutterPlu
 
         // Define a map of bridge names to their respective classes
         private val bridgeMap: Map<String, Class<out BaseBridge>> = mapOf(
-            "LogLevelBridge" to LogLevelBridge::class.java,
-            "PaywallInfoBridge" to PaywallInfoBridge::class.java,
-            "PurchaseControllerProxyBridge" to PurchaseControllerProxyBridge::class.java,
-            "PurchaseResultBridge" to PurchaseResultBridge::class.java,
-            "RestorationResultBridge" to RestorationResultBridge::class.java,
-            "SubscriptionStatusBridge" to SubscriptionStatusBridge::class.java,
-            "SuperwallDelegateProxyBridge" to SuperwallDelegateProxyBridge::class.java,
-            "CompletionBlockProxyBridge" to CompletionBlockProxyBridge::class.java,
             "SuperwallBridge" to SuperwallBridge::class.java,
+            "SuperwallDelegateProxyBridge" to SuperwallDelegateProxyBridge::class.java,
+            "PurchaseControllerProxyBridge" to PurchaseControllerProxyBridge::class.java,
+            "CompletionBlockProxyBridge" to CompletionBlockProxyBridge::class.java,
+            "SubscriptionStatusActiveBridge" to SubscriptionStatusActiveBridge::class.java,
+            "SubscriptionStatusInactiveBridge" to SubscriptionStatusInactiveBridge::class.java,
+            "SubscriptionStatusUnknownBridge" to SubscriptionStatusUnknownBridge::class.java,
+            "PaywallPresentationHandlerProxyBridge" to PaywallPresentationHandlerProxyBridge::class.java,
         )
 
         fun register(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -106,4 +104,8 @@ class BridgingCreator(private val flutterPluginBinding: FlutterPlugin.FlutterPlu
             throw AssertionError("Unable to find a bridge type for $bridgeName. Make sure to add to BridgingCreator.")
         }
     }
+}
+
+fun String.toJson(): Map<String, String> {
+    return mapOf("value" to this)
 }

@@ -1,17 +1,12 @@
-import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
-
-// TODO: Implement these classes
-class TriggerResult {}
-class StoreProduct {}
-class TransactionError {}
-class StoreTransaction {}
-class RestoreType {}
-class TransactionProduct {}
-class Survey {}
-class SurveyOption {}
-class PaywallPresentationRequestStatus {}
-class PaywallPresentationRequestStatusReason {}
+import 'package:superwallkit_flutter/src/public/PaywallPresentationRequestStatus.dart';
+import 'package:superwallkit_flutter/src/public/RestoreType.dart';
+import 'package:superwallkit_flutter/src/public/StoreProduct.dart';
+import 'package:superwallkit_flutter/src/public/StoreTransaction.dart';
+import 'package:superwallkit_flutter/src/public/Survey.dart';
+import 'package:superwallkit_flutter/src/public/TransactionError.dart';
+import 'package:superwallkit_flutter/src/public/TransactionProduct.dart';
+import 'package:superwallkit_flutter/src/public/TriggerResult.dart';
 
 class SuperwallEvent {
   final _SuperwallEventType _type;
@@ -171,12 +166,6 @@ class SuperwallEvent {
 
   // When the user chose the close button on a survey instead of responding.
   static const SuperwallEvent surveyClose = SuperwallEvent._(_SuperwallEventType.surveyClose);
-
-  // TODO
-  // // Method to get the string description of the event.
-  // Future<String> get description async {
-  //   return await _channel.invokeMethod('getDescription', {'type': _type.toString()});
-  // }
 }
 
 enum _SuperwallEventType {

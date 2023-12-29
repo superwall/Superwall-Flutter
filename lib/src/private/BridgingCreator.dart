@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:uuid/uuid.dart';
 
 typedef Bridge = String;
@@ -45,8 +46,20 @@ class BridgingCreator {
     return _createBridge("CompletionBlockProxyBridge");
   }
 
-  static Bridge createSubscriptionStatusBridge() {
-    return _createBridge("SubscriptionStatusBridge");
+  static Bridge createSubscriptionStatusActiveBridge() {
+    return _createBridge("SubscriptionStatusActiveBridge");
+  }
+
+  static Bridge createSubscriptionStatusInactiveBridge() {
+    return _createBridge("SubscriptionStatusInactiveBridge");
+  }
+
+  static Bridge createSubscriptionStatusUnknownBridge() {
+    return _createBridge("SubscriptionStatusUnknownBridge");
+  }
+
+  static Bridge createPaywallPresentationHandlerProxyBridge() {
+    return _createBridge("PaywallPresentationHandlerProxyBridge");
   }
 
   //endregion
@@ -68,11 +81,23 @@ extension MethodChannelBridging on MethodChannel {
   }
 }
 
+extension FlutterMethodCall on MethodCall {
+  T? argument<T>(String key) {
+    return arguments[key] as T?;
+  }
+}
+
 // Stores a reference to a dart instance that receives responses from the native side.
 extension BridgeAssociation on Bridge {
   static final List<dynamic> associatedInstances = [];
 
   associate(dynamic dartInstance) {
     BridgeAssociation.associatedInstances.add(dartInstance);
+  }
+}
+
+extension JsonString on String {
+  static String fromJson(Map<dynamic, dynamic> json) {
+    return json["value"];
   }
 }

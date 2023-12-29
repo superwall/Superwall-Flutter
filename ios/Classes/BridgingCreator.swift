@@ -9,15 +9,14 @@ public class BridgingCreator: NSObject, FlutterPlugin {
 
   struct Constants {
     static let bridgeMap: [String: BaseBridge.Type] = [
-      "LogLevelBridge": LogLevelBridge.self,
-      "PaywallInfoBridge": PaywallInfoBridge.self,
-      "PurchaseControllerProxyBridge": PurchaseControllerProxyBridge.self,
-      "PurchaseResultBridge": PurchaseResultBridge.self,
-      "RestorationResultBridge": RestorationResultBridge.self,
-      "SubscriptionStatusBridge": SubscriptionStatusBridge.self,
-      "SuperwallDelegateProxyBridge": SuperwallDelegateProxyBridge.self,
-      "CompletionBlockProxyBridge": CompletionBlockProxyBridge.self,
       "SuperwallBridge": SuperwallBridge.self,
+      "SuperwallDelegateProxyBridge": SuperwallDelegateProxyBridge.self,
+      "PurchaseControllerProxyBridge": PurchaseControllerProxyBridge.self,
+      "CompletionBlockProxyBridge": CompletionBlockProxyBridge.self,
+      "SubscriptionStatusActiveBridge": SubscriptionStatusActiveBridge.self,
+      "SubscriptionStatusInactiveBridge": SubscriptionStatusInactiveBridge.self,
+      "SubscriptionStatusUnknownBridge": SubscriptionStatusUnknownBridge.self,
+      "PaywallPresentationHandlerProxyBridge": PaywallPresentationHandlerProxyBridge.self,
     ]
   }
 
@@ -89,5 +88,11 @@ public class BridgingCreator: NSObject, FlutterPlugin {
     registrar.addMethodCallDelegate(bridge, channel: channel)
 
     return bridge
+  }
+}
+
+extension String {
+  func toJson() -> [String: String] {
+    return ["value": self]
   }
 }

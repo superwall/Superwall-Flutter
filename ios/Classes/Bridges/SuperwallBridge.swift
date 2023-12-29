@@ -1,5 +1,4 @@
 import Flutter
-import UIKit
 import SuperwallKit
 
 public class SuperwallBridge: BaseBridge {
@@ -58,13 +57,18 @@ public class SuperwallBridge: BaseBridge {
 
       case "getSubscriptionStatus":
         // Implement logic to get the subscription status of the user
-        result(Superwall.shared.subscriptionStatus.rawValue)
+        let status = Superwall.shared.subscriptionStatus
+        let json = status.toJson()
+        result(json)
 
       case "setSubscriptionStatus":
         // Implement logic to set the subscription status of the user
-        if let args = call.arguments as? [String: Any], let statusRawValue = args["status"] as? Int, let status = SubscriptionStatus(rawValue: statusRawValue) {
-          Superwall.shared.subscriptionStatus = status
+        guard let subscriptionStatusBridge: SubscriptionStatusBridge = call.bridge(for: "subscriptionStatusBridge") else {
+          result(call.badArgs)
+          return
         }
+
+        Superwall.shared.subscriptionStatus = subscriptionStatusBridge.status
         result(nil)
 
       case "getIsConfigured":
@@ -154,7 +158,15 @@ public class SuperwallBridge: BaseBridge {
 
         let params: [String: Any]? = call.argument(for: "params")
 
-        Superwall.shared.register(event: event, params: params) {
+        let handler: PaywallPresentationHandler? = {
+          guard let handlerProxyBridge: PaywallPresentationHandlerProxyBridge = call.bridge(for: "handlerProxyBridge") else {
+            return nil
+          }
+
+          return handlerProxyBridge.handler
+        }()
+
+        Superwall.shared.register(event: event, params: params, handler: handler) {
           if let featureBlockProxyBridge: CompletionBlockProxyBridge = call.bridge(for: "featureBlockProxyBridge") {
             featureBlockProxyBridge.callCompletionBlock()
           }

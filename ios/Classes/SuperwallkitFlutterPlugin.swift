@@ -2,7 +2,6 @@ import Flutter
 import UIKit
 import SuperwallKit
 
-
 public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     BridgingCreator.register(with: registrar)

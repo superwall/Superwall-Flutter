@@ -1,5 +1,4 @@
 import Flutter
-import UIKit
 import SuperwallKit
 
 public class CompletionBlockProxyBridge: BaseBridge {

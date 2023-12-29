@@ -7,36 +7,41 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.Result
 
-class SubscriptionStatusBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding) {
-    override fun onMethodCall(call: MethodCall, result: Result) {
+open class SubscriptionStatusBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding) {
+    open val status: SubscriptionStatus
+        get() = throw AssertionError("Subclasses must implement")
+
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "getDescription" -> {
-                val statusRawValue = call.argument<Int?>("status")
-                if (statusRawValue != null) {
-                    val status = SubscriptionStatus.fromRawValue(statusRawValue)
-                    val description = status.toString()
-                    result.success(description)
-                } else {
-                    result.badArgs(call)
-                }
+                val description = status.toString()
+                result.success(description)
             }
             else -> result.notImplemented()
         }
     }
 }
 
-// Extension to convert an integer to a SubscriptionStatus
-fun SubscriptionStatus.Companion.fromRawValue(value: Int) = when(value) {
-    0 -> SubscriptionStatus.ACTIVE
-    1 -> SubscriptionStatus.INACTIVE
-    2 -> SubscriptionStatus.UNKNOWN
-    else -> throw IllegalArgumentException("Invalid integer for SubscriptionStatus")
+// Define the subclasses for each subscription status
+class SubscriptionStatusActiveBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : SubscriptionStatusBridge(channel, flutterPluginBinding) {
+    override val status: SubscriptionStatus
+        get() = SubscriptionStatus.ACTIVE
 }
 
-// Extension to get the integer value of a SubscriptionStatus instance
-val SubscriptionStatus.rawValue: Int
-    get() = when(this) {
-        SubscriptionStatus.ACTIVE -> 0
-        SubscriptionStatus.INACTIVE -> 1
-        SubscriptionStatus.UNKNOWN -> 2
+class SubscriptionStatusInactiveBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : SubscriptionStatusBridge(channel, flutterPluginBinding) {
+    override val status: SubscriptionStatus
+        get() = SubscriptionStatus.INACTIVE
+}
+
+class SubscriptionStatusUnknownBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : SubscriptionStatusBridge(channel, flutterPluginBinding) {
+    override val status: SubscriptionStatus
+        get() = SubscriptionStatus.UNKNOWN
+}
+
+fun SubscriptionStatus.toJson(): String {
+    return when (this) {
+        SubscriptionStatus.ACTIVE -> "active"
+        SubscriptionStatus.INACTIVE -> "inactive"
+        SubscriptionStatus.UNKNOWN -> "unknown"
     }
+}

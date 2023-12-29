@@ -86,9 +86,24 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   // Method to call when the button is tapped
   Future<void> onRegisterTapped() async {
     try {
+      PaywallPresentationHandler handler = PaywallPresentationHandler();
+      handler.onPresent((paywallInfo) {
+        print("Handler (onPresent): ${paywallInfo.name}");
+      });
+      handler.onDismiss((paywallInfo) {
+        print("Handler (onDismiss): ${paywallInfo.name}");
+      });
+      handler.onError((error) {
+        print("Handler (onError): ${error}");
+      });
+      handler.onSkip((skipReason) {
+        print("Handler (onSkip): ${skipReason}");
+      });
+
       await Superwall.shared.registerEvent(
         'flutter',
         params: null,
+        handler: handler,
         feature: () {
           print("Executing feature block");
         }
@@ -125,14 +140,60 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   }
 
   @override
-  void handleCustomPaywallAction(String name) {
-    // TODO: implement handleCustomPaywallAction
-    print("Handle custom action");
+  void didDismissPaywall(PaywallInfo paywallInfo) {
+    print("didDismissPaywall: " + paywallInfo.toString());
   }
 
   @override
-  void willPresentPaywall(String paywallInfo) {
-    // TODO: implement willPresentPaywall
-    print("Will present");
+  void didPresentPaywall(PaywallInfo paywallInfo) {
+    print("didPresentPaywall: " + paywallInfo.toString());
+  }
+
+  @override
+  void handleCustomPaywallAction(String name) {
+    print("handleCustomPaywallAction: " + name.toString());
+  }
+
+  @override
+  void handleLog(String level, String scope, String? message, Map<String, dynamic>? info, String error) {
+    // TODO: implement handleLog
+  }
+
+  @override
+  void handleSuperwallEvent(SuperwallEventInfo eventInfo) {
+    print("handleSuperwallEvent: " + eventInfo.toString());
+  }
+
+  @override
+  void paywallWillOpenDeepLink(Uri url) {
+    print("paywallWillOpenDeepLink: " + url.toString());
+  }
+
+  @override
+  void paywallWillOpenURL(Uri url) {
+    print("paywallWillOpenURL: " + url.toString());
+  }
+
+  @override
+  void subscriptionStatusDidChange(SubscriptionStatus newValue) {
+    print("subscriptionStatusDidChange: " + newValue.toString());
+  }
+
+  @override
+  void willDismissPaywall(PaywallInfo paywallInfo) {
+    print("willDismissPaywall: " + paywallInfo.toString());
+  }
+
+  @override
+  void willPresentPaywall(PaywallInfo paywallInfo) {
+    printSubscriptionStatus();
+    print("willPresentPaywall: " + paywallInfo.toString());
+  }
+
+  void printSubscriptionStatus() async {
+    final status = await Superwall.shared.getSubscriptionStatus();
+    final description = await status.description;
+
+    print("Status: " + description);
   }
 }

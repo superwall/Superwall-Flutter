@@ -1,6 +1,5 @@
 import Flutter
 import StoreKit
-import UIKit
 import SuperwallKit
 
 public class PurchaseControllerProxyBridge: BaseBridge, PurchaseController {
