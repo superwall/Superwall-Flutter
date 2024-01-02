@@ -5,8 +5,6 @@
   <br />
 </p>
 
-----------------
-
 [Superwall](https://superwall.com/) lets you remotely configure every aspect of your paywall — helping you find winners quickly.
 
 ## Superwall
