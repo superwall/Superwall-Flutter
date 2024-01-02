@@ -7,9 +7,6 @@
 
 ----------------
 
-> [!CAUTION]
-> This is a pre-release version of the Flutter for Superwall SDK, and is not yet ready for apps in Production.
-
 [Superwall](https://superwall.com/) lets you remotely configure every aspect of your paywall — helping you find winners quickly.
 
 ## Superwall
