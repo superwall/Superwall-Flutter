@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
       // MARK: Step 2 - Configure Superwall
       /// Always configure Superwall first. Pass in the `purchaseController` you just created.
-      await Superwall.configure(
+      Superwall.configure(
           apiKey,
           purchaseController: useRevenueCat ? purchaseController : null
       );
@@ -100,6 +100,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         print("Handler (onSkip): ${skipReason}");
       });
 
+      // TODO check await
       await Superwall.shared.registerEvent(
         'flutter',
         params: null,
@@ -141,17 +142,17 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
   @override
   void didDismissPaywall(PaywallInfo paywallInfo) {
-    print("didDismissPaywall: " + paywallInfo.toString());
+    print("didDismissPaywall: $paywallInfo");
   }
 
   @override
   void didPresentPaywall(PaywallInfo paywallInfo) {
-    print("didPresentPaywall: " + paywallInfo.toString());
+    print("didPresentPaywall: $paywallInfo");
   }
 
   @override
   void handleCustomPaywallAction(String name) {
-    print("handleCustomPaywallAction: " + name.toString());
+    print("handleCustomPaywallAction: $name");
   }
 
   @override
@@ -161,39 +162,39 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
   @override
   void handleSuperwallEvent(SuperwallEventInfo eventInfo) {
-    print("handleSuperwallEvent: " + eventInfo.toString());
+    print("handleSuperwallEvent: $eventInfo");
   }
 
   @override
   void paywallWillOpenDeepLink(Uri url) {
-    print("paywallWillOpenDeepLink: " + url.toString());
+    print("paywallWillOpenDeepLink: $url");
   }
 
   @override
   void paywallWillOpenURL(Uri url) {
-    print("paywallWillOpenURL: " + url.toString());
+    print("paywallWillOpenURL: $url");
   }
 
   @override
   void subscriptionStatusDidChange(SubscriptionStatus newValue) {
-    print("subscriptionStatusDidChange: " + newValue.toString());
+    print("subscriptionStatusDidChange: $newValue");
   }
 
   @override
   void willDismissPaywall(PaywallInfo paywallInfo) {
-    print("willDismissPaywall: " + paywallInfo.toString());
+    print("willDismissPaywall: $paywallInfo");
   }
 
   @override
   void willPresentPaywall(PaywallInfo paywallInfo) {
     printSubscriptionStatus();
-    print("willPresentPaywall: " + paywallInfo.toString());
+    print("willPresentPaywall: $paywallInfo");
   }
 
   void printSubscriptionStatus() async {
     final status = await Superwall.shared.getSubscriptionStatus();
     final description = await status.description;
 
-    print("Status: " + description);
+    print("Status: $description");
   }
 }

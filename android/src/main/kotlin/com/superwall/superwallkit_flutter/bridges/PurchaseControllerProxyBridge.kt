@@ -40,7 +40,7 @@ class PurchaseControllerProxyBridge(channel: MethodChannel, flutterPluginBinding
             "cancelled" -> PurchaseResult.Cancelled()
             "purchased" -> PurchaseResult.Purchased()
             // TODO: Update Android
-//            "restored" -> Restored()
+            "restored" -> PurchaseResult.Purchased()
             "pending" -> PurchaseResult.Pending()
             "failed" -> {
                 val errorDescription = dictionary["error"] as? String

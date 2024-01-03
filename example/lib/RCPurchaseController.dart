@@ -32,10 +32,22 @@ class RCPurchaseController extends PurchaseController {
   @override
   Future<PurchaseResult> purchase(String productId) async {
     try {
+      DateTime purchaseDate = DateTime.now();
       CustomerInfo customerInfo = await Purchases.purchaseProduct(productId);
-      // TODO handle .restored logic (see below)
       if (customerInfo.entitlements.active.isNotEmpty) {
-        return PurchaseResult.purchased;
+        DateTime? latestTransactionPurchaseDate = customerInfo.getLatestTransactionPurchaseDate();
+
+        // If no latest transaction date is found, consider it as a new purchase.
+        bool isNewPurchase = (latestTransactionPurchaseDate == null);
+
+        // If the current date (`purchaseDate`) is after the latestTransactionPurchaseDate,
+        bool purchaseHappenedInThePast = latestTransactionPurchaseDate?.isBefore(purchaseDate) ?? false;
+
+        if (!isNewPurchase && purchaseHappenedInThePast) {
+          return PurchaseResult.restored;
+        } else {
+          return PurchaseResult.purchased;
+        }
       } else {
         return PurchaseResult.failed("No active subscriptions found.");
       }
@@ -66,8 +78,21 @@ class RCPurchaseController extends PurchaseController {
   }
 }
 
-class CustomInfoTransaction {
-  static String? purchaseDate(CustomerInfo customerInfo) {
-    // customerInfo.activeSubscriptions.first;
+extension CustomerInfoAdditions on CustomerInfo {
+  DateTime? getLatestTransactionPurchaseDate() {
+    Map<String, String> allPurchaseDates = this.allPurchaseDates;
+    if (allPurchaseDates.entries.isEmpty) {
+      return null;
+    }
+
+    DateTime latestDate = DateTime.fromMillisecondsSinceEpoch(0);
+    allPurchaseDates.forEach((key, value) {
+      DateTime date = DateTime.parse(value);
+      if (date.isAfter(latestDate)) {
+        latestDate = date;
+      }
+    });
+
+    return latestDate;
   }
 }
