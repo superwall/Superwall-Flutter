@@ -58,7 +58,7 @@ class RCPurchaseController extends PurchaseController {
       } else if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
         return PurchaseResult.cancelled;
       } else {
-        return PurchaseResult.failed(e);
+        return PurchaseResult.failed(e.message ?? "Purchase failed in RCPurchaseController");
       }
     }
   }
@@ -73,7 +73,7 @@ class RCPurchaseController extends PurchaseController {
       return RestorationResult.restored;
     } on PlatformException catch (e) {
       // Error restoring purchases
-      return RestorationResult.failed(e);
+      return RestorationResult.failed(e.message ?? "Purchase failed in RCPurchaseController");
     }
   }
 }

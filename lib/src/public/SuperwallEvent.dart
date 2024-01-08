@@ -155,10 +155,10 @@ class SuperwallEvent {
   static SuperwallEvent surveyResponse(Survey survey, SurveyOption selectedOption, String? customResponse, PaywallInfo paywallInfo) =>
       SuperwallEvent._(_SuperwallEventType.surveyResponse, {'survey': survey, 'selectedOption': selectedOption, 'customResponse': customResponse, 'paywallInfo': paywallInfo});
 
-
-  // Information about the paywall presentation request
-  static SuperwallEvent paywallPresentationRequest(PaywallPresentationRequestStatus status, PaywallPresentationRequestStatusReason? reason) =>
-      SuperwallEvent._(_SuperwallEventType.paywallPresentationRequest, {'status': status, 'reason': reason});
+  // TODO
+  // // Information about the paywall presentation request
+  // static SuperwallEvent paywallPresentationRequest(PaywallPresentationRequestStatus status, PaywallPresentationRequestStatusReason? reason) =>
+  //     SuperwallEvent._(_SuperwallEventType.paywallPresentationRequest, {'status': status, 'reason': reason});
 
   // When the first touch was detected on the UIWindow of the app.
   // This is only registered if there's an active `touches_began` trigger on your dashboard.

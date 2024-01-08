@@ -17,12 +17,19 @@ extension FlutterMethodCall {
     return (arguments as? [String: Any])?[key] as? T
   }
 
-  // Make sure to provide the key for the bridge, not the bridge itself.
-  func bridge<T>(for key: String) -> T? {
-    guard let channelName: String = argument(for: key) else {
+  // Make sure to provide the key for the bridge (which provides the bridgeId)
+  func bridgeInstance<T>(for key: String) -> T? {
+    guard let bridgeId: String = argument(for: key) else {
       return nil
     }
-    return BridgingCreator.shared.bridge(for: channelName)
+
+    return BridgingCreator.shared.bridgeInstance(for: bridgeId)
+  }
+}
+
+extension BridgeId {
+  func bridgeInstance<T>() -> T? {
+    return BridgingCreator.shared.bridgeInstance(for: self)
   }
 }
 
@@ -33,14 +40,42 @@ extension FlutterMethodCall {
 }
 
 extension FlutterMethodChannel {
-  func invokeMethod(_ method: String, arguments: Any? = nil) async -> Any? {
+  @discardableResult func invokeMethod(_ method: String, arguments: Any? = nil) async -> Any? {
     return await withCheckedContinuation { continuation in
-      invokeMethod(method, arguments: arguments) { result in
-        continuation.resume(returning: result)
+      DispatchQueue.main.async { [weak self] in
+        guard let self else { return }
+        invokeMethod(method, arguments: arguments) { result in
+          continuation.resume(returning: result)
+        }
       }
     }
   }
 }
+
+extension Dictionary where Key == String {
+  func argument<T>(for key: String) -> T? {
+    return self[key] as? T
+  }
+}
+
+extension FlutterMethodChannel {
+  private static var bridgeIdKey: UInt8 = 0
+
+  var bridgeId: String {
+    get {
+      guard let name = objc_getAssociatedObject(self, &FlutterMethodChannel.bridgeIdKey) as? String else {
+        assertionFailure("bridgeId must be set at initialization of FlutterMethodChannel")
+        return ""
+      }
+
+      return name
+    }
+    set(newValue) {
+      objc_setAssociatedObject(self, &FlutterMethodChannel.bridgeIdKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+  }
+}
+
 
 // TODO: Remove
 extension FlutterError {

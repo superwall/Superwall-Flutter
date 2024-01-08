@@ -1,54 +1,58 @@
+import 'package:flutter/services.dart';
+import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/public/Experiment.dart';
 
 /// The reason the paywall presentation was skipped.
-class PaywallSkippedReason {
-  final _PaywallSkippedReasonType _type;
-  final Experiment? experiment;
+abstract class PaywallSkippedReason {
+  final BridgeId bridgeId;
 
-  const PaywallSkippedReason._private(this._type, {this.experiment});
-
-  static PaywallSkippedReason holdout(Experiment experiment) => PaywallSkippedReason._private(_PaywallSkippedReasonType.holdout, experiment: experiment);
-  static const PaywallSkippedReason noRuleMatch = PaywallSkippedReason._private(_PaywallSkippedReasonType.noRuleMatch);
-  static const PaywallSkippedReason eventNotFound = PaywallSkippedReason._private(_PaywallSkippedReasonType.eventNotFound);
-  static const PaywallSkippedReason userIsSubscribed = PaywallSkippedReason._private(_PaywallSkippedReasonType.userIsSubscribed);
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> data = {'type': _type.toString()};
-    if (_type == _PaywallSkippedReasonType.holdout) {
-      data['experiment'] = experiment?.toJson();
-    }
-    return data;
+  PaywallSkippedReason._privateConstructor(this.bridgeId) {
+    bridgeId.associate(this);
   }
 
-  static PaywallSkippedReason fromJson(Map<dynamic, dynamic> json) {
-    final typeStr = json['type'] as String;
-    switch (typeStr) {
-      case 'holdout':
-        final experimentJson = json['experiment'] as Map<String, dynamic>?;
-        if (experimentJson != null) {
-          final experiment = Experiment.fromJson(experimentJson);
-          return PaywallSkippedReason.holdout(experiment);
-        }
-        throw const FormatException('Experiment data missing for holdout type');
-
-      case 'noRuleMatch':
-        return PaywallSkippedReason.noRuleMatch;
-
-      case 'eventNotFound':
-        return PaywallSkippedReason.eventNotFound;
-
-      case 'userIsSubscribed':
-        return PaywallSkippedReason.userIsSubscribed;
-
-      default:
-        throw const FormatException('Unknown PaywallSkippedReason type');
+  static PaywallSkippedReason? createReasonFrom(BridgeId bridgeId) {
+    // TODO: Improve this. Identifier should be implementation detail of BridgingCreator
+    if (bridgeId.bridgeClass == "PaywallSkippedReasonHoldoutBridge") {
+      return PaywallSkippedReasonHoldout._privateConstructor(bridgeId);
+    } else if (bridgeId.bridgeClass == "PaywallSkippedReasonNoRuleMatchBridge") {
+      return PaywallSkippedReasonNoRuleMatch._privateConstructor(bridgeId);
+    } else if (bridgeId.bridgeClass == "PaywallSkippedReasonEventNotFoundBridge") {
+      return PaywallSkippedReasonEventNotFound._privateConstructor(bridgeId);
+    } else if (bridgeId.bridgeClass == "PaywallSkippedReasonUserIsSubscribedBridge") {
+      return PaywallSkippedReasonUserIsSubscribed._privateConstructor(bridgeId);
     }
+
+    return null;
+  }
+
+  Future<String> get description async {
+    final description = await bridgeId.communicator.invokeBridgeMethod('getDescription');
+    return description;
   }
 }
 
-enum _PaywallSkippedReasonType {
-  holdout,
-  noRuleMatch,
-  eventNotFound,
-  userIsSubscribed
+class PaywallSkippedReasonHoldout extends PaywallSkippedReason {
+  Future<Experiment> get experiment async {
+    BridgeId experimentBridgeId = await bridgeId.communicator.invokeBridgeMethod('getExperimentBridgeId');
+    Experiment experiment = Experiment(bridgeId: experimentBridgeId);
+    return experiment;
+  }
+
+  PaywallSkippedReasonHoldout._privateConstructor(BridgeId bridgeId)
+      : super._privateConstructor(bridgeId);
+}
+
+class PaywallSkippedReasonNoRuleMatch extends PaywallSkippedReason {
+  PaywallSkippedReasonNoRuleMatch._privateConstructor(BridgeId bridgeId)
+      : super._privateConstructor(bridgeId);
+}
+
+class PaywallSkippedReasonEventNotFound extends PaywallSkippedReason {
+  PaywallSkippedReasonEventNotFound._privateConstructor(BridgeId bridgeId)
+      : super._privateConstructor(bridgeId);
+}
+
+class PaywallSkippedReasonUserIsSubscribed extends PaywallSkippedReason {
+  PaywallSkippedReasonUserIsSubscribed._privateConstructor(BridgeId bridgeId)
+      : super._privateConstructor(bridgeId);
 }

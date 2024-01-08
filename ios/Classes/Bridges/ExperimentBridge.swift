@@ -1,12 +1,32 @@
 import Flutter
 import SuperwallKit
 
-extension Experiment {
-  func toJson() -> [String: Any] {
-    var dict = [String: Any]()
-    dict["id"] = id
-    dict["groupId"] = groupId
-    dict["variant"] = variant.toJson()
-    return dict
+public class ExperimentBridge: BridgeInstance {
+  override class func bridgeClass() -> BridgeClass {
+    return "ExperimentBridge"
+  }
+
+  let experiment: Experiment
+
+  required init(bridgeId: BridgeId, initializationArgs: [String : Any]? = nil) {
+    guard let experiment = initializationArgs?["experiment"] as? Experiment else {
+      fatalError("Attempting to create `ExperimentBridge` without providing `experiment`.")
+    }
+    
+    self.experiment = experiment
+    super.init(bridgeId: bridgeId, initializationArgs: initializationArgs)
+  }
+
+  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    switch call.method {
+      case "getId":
+        let id = experiment.id
+        result(id)
+      case "getDescription":
+        let description = experiment.description
+        result(description)
+      default:
+        result(FlutterMethodNotImplemented)
+    }
   }
 }

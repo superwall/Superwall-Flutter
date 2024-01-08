@@ -1,3 +1,4 @@
+import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/public/Variant.dart';
 
 /// A campaign experiment that was assigned to a user.
@@ -10,30 +11,17 @@ import 'package:superwallkit_flutter/src/public/Variant.dart';
 ///
 /// To learn more, read [our docs](https://docs.superwall.com/docs/home#how-it-work
 class Experiment {
-  /// The id of the experiment.
-  final String id;
+  final BridgeId bridgeId;
 
-  /// The id of the experiment group.
-  final String groupId;
+  Experiment({required this.bridgeId});
 
-  /// Information about the experiment variant.
-  final Variant variant;
+  Future<String> get id async {
+    final id = await bridgeId.communicator.invokeBridgeMethod('getId');
+    return id;
+  }
 
-  Experiment({
-    required this.id,
-    required this.groupId,
-    required this.variant,
-  });
-
-  factory Experiment.fromJson(Map<dynamic, dynamic> json) => Experiment(
-    id: json['id'],
-    groupId: json['groupId'],
-    variant: Variant.fromJson(json['variant']),
-  );
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'groupId': groupId,
-    'variant': variant.toJson(),
-  };
+  Future<String> get description async {
+    final description = await bridgeId.communicator.invokeBridgeMethod('getDescription');
+    return description;
+  }
 }

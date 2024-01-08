@@ -1,8 +1,8 @@
 import Flutter
 import SuperwallKit
 
-public class CompletionBlockProxyBridge: BaseBridge {
+public class CompletionBlockProxyBridge: BridgeInstance {
   func callCompletionBlock(value: Any? = nil) {
-    channel.invokeMethod("callCompletionBlock", arguments: value)
+    communicator.invokeMethod("callCompletionBlock", arguments: value)
   }
 }

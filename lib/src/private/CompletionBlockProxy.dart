@@ -2,13 +2,12 @@ import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 class CompletionBlockProxy {
-  Bridge bridge;
+  BridgeId bridgeId;
   Function(dynamic?) block;
-  final MethodChannel channel;
 
-  CompletionBlockProxy({required this.bridge, required this.block}): channel = MethodChannel(bridge) {
-    bridge.associate(this);
-    channel.setMethodCallHandler(_handleMethodCall);
+  CompletionBlockProxy({required this.bridgeId, required this.block}) {
+    bridgeId.associate(this);
+    bridgeId.communicator.setMethodCallHandler(_handleMethodCall);
   }
 
   // Handle method calls from native

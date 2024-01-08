@@ -1,13 +1,18 @@
 package com.superwall.superwallkit_flutter.bridges
 
 import LogLevel
+import android.content.Context
 import com.superwall.superwallkit_flutter.badArgs
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.Result
 
-class LogLevelBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding) {
+class LogLevelBridge(
+    context: Context,
+    bridgeId: BridgeId,
+    initializationArgs: Map<String, Any>? = null
+) : BridgeInstance(context, bridgeId, initializationArgs) {
     override fun onMethodCall(call: MethodCall, result: Result) {
         val levelValue = call.argument<Int>("level")
         val logLevel = levelValue?.let { findLogLevel(it) }

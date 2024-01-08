@@ -1,40 +1,36 @@
 import Flutter
 import SuperwallKit
 
+public class PaywallInfoBridge: BridgeInstance {
+  override class func bridgeClass() -> BridgeClass {
+    return "PaywallInfoBridge"
+  }
+
+  let paywallInfo: PaywallInfo
+
+  required init(bridgeId: BridgeId, initializationArgs: [String : Any]? = nil) {
+    guard let paywallInfo = initializationArgs?["paywallInfo"] as? PaywallInfo else {
+      fatalError("Attempting to create `PaywallInfoBridge` without providing `paywallInfo`.")
+    }
+
+    self.paywallInfo = paywallInfo
+    super.init(bridgeId: bridgeId, initializationArgs: initializationArgs)
+  }
+
+  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    // TODO
+    switch call.method {
+      case "getName":
+        let name = paywallInfo.name
+        result(name)
+      default:
+        result(FlutterMethodNotImplemented)
+    }
+  }
+}
+
 extension PaywallInfo {
-  func toJson() -> [String: Any] {
-    var dict = [String: Any]()
-    dict["identifier"] = identifier
-    dict["experiment"] = experiment?.toJson()
-    dict["triggerSessionId"] = triggerSessionId
-    dict["products"] = products.map { $0.toJson() }
-    dict["productIds"] = productIds
-    dict["name"] = name
-    dict["url"] = url.absoluteString
-    dict["presentedByEventWithName"] = presentedByEventWithName
-    dict["presentedByEventWithId"] = presentedByEventWithId
-    dict["presentedByEventAt"] = presentedByEventAt
-    dict["presentedBy"] = presentedBy
-    dict["presentationSourceType"] = presentationSourceType
-    dict["responseLoadStartTime"] = responseLoadStartTime
-    dict["responseLoadCompleteTime"] = responseLoadCompleteTime
-    dict["responseLoadFailTime"] = responseLoadFailTime
-    dict["responseLoadDuration"] = responseLoadDuration
-    dict["webViewLoadStartTime"] = webViewLoadStartTime
-    dict["webViewLoadCompleteTime"] = webViewLoadCompleteTime
-    dict["webViewLoadFailTime"] = webViewLoadFailTime
-    dict["webViewLoadDuration"] = webViewLoadDuration
-    dict["productsLoadStartTime"] = productsLoadStartTime
-    dict["productsLoadCompleteTime"] = productsLoadCompleteTime
-    dict["productsLoadFailTime"] = productsLoadFailTime
-    dict["productsLoadDuration"] = productsLoadDuration
-    dict["paywalljsVersion"] = paywalljsVersion
-    dict["isFreeTrialAvailable"] = isFreeTrialAvailable
-    dict["featureGatingBehavior"] = featureGatingBehavior.toJson()
-    dict["closeReason"] = closeReason.toJson()
-    dict["localNotifications"] = localNotifications.map { $0.toJson() }
-    dict["computedPropertyRequests"] = computedPropertyRequests.map { $0.toJson() }
-    dict["surveys"] = surveys.map { $0.toJson() }
-    return dict
+  func createBridgeId() -> BridgeId {
+    return BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallInfoBridge.bridgeClass(), initializationArgs: ["paywallInfo": self]).bridgeId
   }
 }

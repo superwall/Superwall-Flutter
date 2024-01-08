@@ -1,68 +1,48 @@
 package com.superwall.superwallkit_flutter.bridges
 
 import android.app.Activity
+import android.content.Context
 import com.superwall.sdk.delegate.subscription_controller.PurchaseController
 import io.flutter.plugin.common.MethodChannel
 import com.superwall.sdk.delegate.PurchaseResult
 import com.superwall.sdk.delegate.RestorationResult
 import com.android.billingclient.api.SkuDetails
-import com.superwall.sdk.misc.runOnUiThread
 import com.superwall.superwallkit_flutter.asyncInvokeMethodOnMain
+import com.superwall.superwallkit_flutter.bridgeInstance
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import kotlinx.coroutines.future.asDeferred
-import kotlinx.coroutines.suspendCancellableCoroutine
-import java.util.concurrent.CompletableFuture
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
-class PurchaseControllerProxyBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding), PurchaseController {
+class PurchaseControllerProxyBridge(
+    context: Context,
+    bridgeId: BridgeId,
+    initializationArgs: Map<String, Any>? = null
+) : BridgeInstance(context, bridgeId, initializationArgs), PurchaseController {
 
     // PurchaseController
 
     override suspend fun purchase(activity: Activity, product: SkuDetails): PurchaseResult {
-        val purchaseResult = channel.asyncInvokeMethodOnMain("purchaseProduct", mapOf("productId" to product.getSku())) as? Map<String, Any>
-            ?: throw PurchaseControllerProxyPluginError()
+        val purchaseResultBridgeId = communicator.asyncInvokeMethodOnMain("purchaseProduct", mapOf("productId" to product.sku)) as? BridgeId
+        val purchaseResultBridge = purchaseResultBridgeId?.bridgeInstance() as? PurchaseResultBridge
 
-        return parsePurchaseResultFromJson(purchaseResult)
+        if (purchaseResultBridge == null) {
+            println("WARNING: Unexpected result")
+            return PurchaseResult.Failed(PurchaseControllerProxyPluginError());
+        }
+
+        return purchaseResultBridge.purchaseResult
     }
 
     override suspend fun restorePurchases(): RestorationResult {
-        val restorationResult = channel.asyncInvokeMethodOnMain("restorePurchases", null) as? Map<String, Any>
-            ?: throw PurchaseControllerProxyPluginError()
+        val restorationResultBridgeId = communicator.asyncInvokeMethodOnMain("restorePurchases") as? BridgeId
+        val restorationResultBridge = restorationResultBridgeId?.bridgeInstance() as? RestorationResultBridge
 
-        return parseRestorationResultFromJson(restorationResult)
-    }
-
-    private fun parsePurchaseResultFromJson(dictionary: Map<String, Any>): PurchaseResult {
-        val type = dictionary["type"] as? String ?: throw PurchaseControllerProxyJsonError()
-
-        return when (type) {
-            "cancelled" -> PurchaseResult.Cancelled()
-            "purchased" -> PurchaseResult.Purchased()
-            // TODO: Update Android
-            "restored" -> PurchaseResult.Purchased()
-            "pending" -> PurchaseResult.Pending()
-            "failed" -> {
-                val errorDescription = dictionary["error"] as? String
-                PurchaseResult.Failed(PurchaseControllerProxyJsonError())
-            }
-            else -> throw PurchaseControllerProxyJsonError()
+        if (restorationResultBridge == null) {
+            println("WARNING: Unexpected result")
+            return RestorationResult.Failed(PurchaseControllerProxyPluginError())
         }
+
+        return restorationResultBridge.restorationResult
     }
 
-    private fun parseRestorationResultFromJson(dictionary: Map<String, Any>): RestorationResult {
-        val type = dictionary["type"] as? String ?: throw PurchaseControllerProxyJsonError()
-
-        return when (type) {
-            "restored" -> RestorationResult.Restored()
-            "failed" -> {
-                val errorDescription = dictionary["error"] as? String
-                RestorationResult.Failed(PurchaseControllerProxyJsonError())
-            }
-            else -> throw PurchaseControllerProxyJsonError()
-        }
-    }
 }
 
 class PurchaseControllerProxyPluginError : Exception()
-class PurchaseControllerProxyJsonError : Exception()

@@ -1,26 +1,28 @@
 package com.superwall.superwallkit_flutter.bridges
 
+import android.content.Context
 import com.superwall.sdk.paywall.presentation.PaywallPresentationHandler
 import com.superwall.superwallkit_flutter.invokeMethodOnMain
-import com.superwall.superwallkit_flutter.toJson
-import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.plugin.common.MethodChannel
 
-class PaywallPresentationHandlerProxyBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding) {
+class PaywallPresentationHandlerProxyBridge(
+    context: Context,
+    bridgeId: BridgeId,
+    initializationArgs: Map<String, Any>? = null
+) : BridgeInstance(context, bridgeId, initializationArgs) {
     val handler: PaywallPresentationHandler by lazy {
         PaywallPresentationHandler().apply {
             onPresent {
-                channel.invokeMethodOnMain("onPresent", mapOf("paywallInfo" to it.toJson()))
+                communicator.invokeMethodOnMain("onPresent", mapOf("paywallInfoBridgeId" to it.createBridgeId()))
             }
             onDismiss {
-                channel.invokeMethodOnMain("onDismiss", mapOf("paywallInfo" to it.toJson()))
+                communicator.invokeMethodOnMain("onDismiss", mapOf("paywallInfoBridgeId" to it.createBridgeId()))
             }
 
             onError {
-                channel.invokeMethodOnMain("onError", mapOf("error" to it.toString().toJson()))
+                communicator.invokeMethodOnMain("onError", mapOf("errorString" to it.toString()))
             }
             onSkip {
-                channel.invokeMethodOnMain("onSkip", mapOf("paywallSkippedReason" to it.toJson()))
+                communicator.invokeMethodOnMain("onSkip", mapOf("paywallSkippedReasonBridgeId" to it.createBridgeId()))
             }
         }
     }

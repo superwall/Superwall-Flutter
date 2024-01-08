@@ -87,21 +87,22 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   Future<void> onRegisterTapped() async {
     try {
       PaywallPresentationHandler handler = PaywallPresentationHandler();
-      handler.onPresent((paywallInfo) {
-        print("Handler (onPresent): ${paywallInfo.name}");
+      handler.onPresent((paywallInfo) async {
+        String name = await paywallInfo.name;
+        print("Handler (onPresent): $name");
       });
-      handler.onDismiss((paywallInfo) {
-        print("Handler (onDismiss): ${paywallInfo.name}");
+      handler.onDismiss((paywallInfo) async {
+        String name = await paywallInfo.name;
+        print("Handler (onDismiss): $name");
       });
       handler.onError((error) {
         print("Handler (onError): ${error}");
       });
       handler.onSkip((skipReason) {
-        print("Handler (onSkip): ${skipReason}");
+        handleSkipReason(skipReason);
       });
 
-      // TODO check await
-      await Superwall.shared.registerEvent(
+      Superwall.shared.registerEvent(
         'flutter',
         params: null,
         handler: handler,
@@ -113,6 +114,25 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
     } catch (e) {
       // Handle any errors that occur during registration
       print('Failed to call register method: $e');
+    }
+  }
+
+  void handleSkipReason(PaywallSkippedReason skipReason) async {
+    final description = await skipReason.description;
+
+    if (skipReason is PaywallSkippedReasonHoldout) {
+      final experiment = await skipReason.experiment;
+      final experimentId = await experiment.id;
+      print("Holdout with experiment: ${experimentId}");
+      print("Handler (onSkip): $description");
+    } else if (skipReason is PaywallSkippedReasonNoRuleMatch) {
+      print("Handler (onSkip): $description");
+    } else if (skipReason is PaywallSkippedReasonEventNotFound) {
+      print("Handler (onSkip): $description");
+    } else if (skipReason is PaywallSkippedReasonUserIsSubscribed) {
+      print("Handler (onSkip): $description");
+    } else {
+      print("Handler (onSkip): Unknown skip reason");
     }
   }
 

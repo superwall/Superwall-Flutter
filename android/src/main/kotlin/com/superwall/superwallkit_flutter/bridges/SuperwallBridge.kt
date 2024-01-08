@@ -1,6 +1,7 @@
 package com.superwall.superwallkit_flutter.bridges
 
 import android.app.Activity
+import android.content.Context
 import com.superwall.sdk.Superwall
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.delegate.SuperwallDelegate
@@ -8,8 +9,9 @@ import com.superwall.sdk.delegate.subscription_controller.PurchaseController
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import android.net.Uri
-import com.superwall.sdk.delegate.SubscriptionStatus
+import com.android.billingclient.api.Purchase
 import com.superwall.sdk.misc.ActivityProvider
+import com.superwall.sdk.misc.runOnUiThread
 import com.superwall.sdk.paywall.presentation.PaywallPresentationHandler
 import com.superwall.sdk.paywall.presentation.dismiss
 import com.superwall.sdk.paywall.presentation.register
@@ -17,17 +19,20 @@ import com.superwall.superwallkit_flutter.BridgingCreator
 import com.superwall.superwallkit_flutter.SuperwallkitFlutterPlugin
 import com.superwall.superwallkit_flutter.argumentForKey
 import com.superwall.superwallkit_flutter.badArgs
-import com.superwall.superwallkit_flutter.bridgeForKey
-import io.flutter.embedding.engine.plugins.FlutterPlugin
+import com.superwall.superwallkit_flutter.bridgeInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SuperwallBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : BaseBridge(channel, flutterPluginBinding), ActivityProvider {
+class SuperwallBridge(
+    context: Context,
+    bridgeId: BridgeId,
+    initializationArgs: Map<String, Any>? = null
+) : BridgeInstance(context, bridgeId, initializationArgs), ActivityProvider {
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "setDelegate" -> {
-                val delegateProxyBridge = call.bridgeForKey<SuperwallDelegate?>("delegateProxyBridge")
+                val delegateProxyBridge = call.bridgeInstance<SuperwallDelegate?>("delegateProxyBridgeId")
                 delegateProxyBridge?.let {
                     Superwall.instance.delegate = it
                 } ?: run {
@@ -82,13 +87,12 @@ class SuperwallBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugi
 //                result.success(paywallInfo?.toMap())
                 result.notImplemented()
             }
-            "getSubscriptionStatus" -> {
-                val status = Superwall.instance.subscriptionStatus.value
-                val json = status.toJson()
-                result.success(json)
+            "getSubscriptionStatusBridgeId" -> {
+                val subscriptionStatusBridgeId = Superwall.instance.subscriptionStatus.value.createBridgeId()
+                result.success(subscriptionStatusBridgeId)
             }
             "setSubscriptionStatus" -> {
-                val subscriptionStatusBridge = call.bridgeForKey<SubscriptionStatusBridge>("subscriptionStatusBridge")
+                val subscriptionStatusBridge = call.bridgeInstance<SubscriptionStatusBridge>("subscriptionStatusBridgeId")
                 subscriptionStatusBridge?.let {
                     Superwall.instance.setSubscriptionStatus(it.status)
                 } ?: run {
@@ -161,18 +165,17 @@ class SuperwallBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugi
                 result.success(null)
             }
             "configure" -> {
-                val apiKey: String? = call.argument("apiKey")
+                val apiKey = call.argumentForKey<String>("apiKey")
                 apiKey?.let { apiKey ->
-                    val purchaseController: PurchaseController? = call.argument<String>("purchaseControllerProxyBridge")?.let { purchaseControllerProxyBridge ->
-                        BridgingCreator.shared.bridge(purchaseControllerProxyBridge)
-                    }
+                    val purchaseControllerProxyBridge =
+                        call.bridgeInstance<PurchaseControllerProxyBridge?>("purchaseControllerProxyBridgeId")
 
                     val options: SuperwallOptions? = call.argument("options")
 
                     Superwall.configure(
-                        applicationContext = this@SuperwallBridge.flutterPluginBinding.applicationContext,
+                        applicationContext = this@SuperwallBridge.context,
                         apiKey = apiKey,
-                        purchaseController = purchaseController,
+                        purchaseController = purchaseControllerProxyBridge,
                         options = options,
                         activityProvider = this@SuperwallBridge
                     )
@@ -195,13 +198,11 @@ class SuperwallBridge(channel: MethodChannel, flutterPluginBinding: FlutterPlugi
                 event?.let { event ->
                     val params = call.argument<Map<String, Any>>("params")
 
-                    val handlerProxyBridge: PaywallPresentationHandlerProxyBridge? = call.bridgeForKey<PaywallPresentationHandlerProxyBridge>("handlerProxyBridge")
-                    val handler: PaywallPresentationHandler? = handlerProxyBridge?.let {
-                        it.handler
-                    }
+                    val handlerProxyBridge = call.bridgeInstance<PaywallPresentationHandlerProxyBridge?>("handlerProxyBridgeId")
+                    val handler: PaywallPresentationHandler? = handlerProxyBridge?.handler
 
                     Superwall.instance.register(event, params, handler) {
-                        val featureBlockProxyBridge = call.bridgeForKey<CompletionBlockProxyBridge>("featureBlockProxyBridge")
+                        val featureBlockProxyBridge = call.bridgeInstance<CompletionBlockProxyBridge>("featureBlockProxyBridgeId")
                         featureBlockProxyBridge?.let {
                             it.callCompletionBlock()
                         }

@@ -1,17 +1,17 @@
 import Flutter
 import SuperwallKit
 
-public class SuperwallBridge: BaseBridge {
-
+public class SuperwallBridge: BridgeInstance {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
       case "setDelegate":
-        guard let delegateProxyBridge: SuperwallDelegate = call.bridge(for: "delegateProxyBridge") else {
+        guard let delegateProxyBridge: SuperwallDelegate = call.bridgeInstance(for: "delegateProxyBridgeId") else {
           result(call.badArgs)
           return
         }
 
         Superwall.shared.delegate = delegateProxyBridge
+
         result(nil)
 
       case "getLogLevel":
@@ -55,15 +55,14 @@ public class SuperwallBridge: BaseBridge {
           result(nil)
         }
 
-      case "getSubscriptionStatus":
+      case "getSubscriptionStatusBridgeId":
         // Implement logic to get the subscription status of the user
-        let status = Superwall.shared.subscriptionStatus
-        let json = status.toJson()
-        result(json)
+        let subscriptionStatusBridgeId = Superwall.shared.subscriptionStatus.createBridgeId()
+        result(subscriptionStatusBridgeId)
 
       case "setSubscriptionStatus":
         // Implement logic to set the subscription status of the user
-        guard let subscriptionStatusBridge: SubscriptionStatusBridge = call.bridge(for: "subscriptionStatusBridge") else {
+        guard let subscriptionStatusBridge: SubscriptionStatusBridge = call.bridgeInstance(for: "subscriptionStatusBridgeId") else {
           result(call.badArgs)
           return
         }
@@ -126,19 +125,12 @@ public class SuperwallBridge: BaseBridge {
           return
         }
 
-        let purchaseController: PurchaseController? = {
-          guard let purchaseControllerProxyBridge: String = call.argument(for: "purchaseControllerProxyBridge") else {
-            return nil
-          }
-
-          let purchaseController: PurchaseController? = BridgingCreator.shared.bridge(for: purchaseControllerProxyBridge)
-          return purchaseController
-        }()
+        let purchaseControllerProxyBridge: PurchaseControllerProxyBridge? = call.bridgeInstance(for: "purchaseControllerProxyBridgeId")
 
         // TODO
         let options: SuperwallOptions? = call.argument(for: "options")
 
-        Superwall.configure(apiKey: apiKey, purchaseController: purchaseController, options: options)
+        Superwall.configure(apiKey: apiKey, purchaseController: purchaseControllerProxyBridge, options: options)
 
         // Returning nil instead of the result from configure because we want to use the Dart
         // instance of Superwall, not a native variant
@@ -159,7 +151,7 @@ public class SuperwallBridge: BaseBridge {
         let params: [String: Any]? = call.argument(for: "params")
 
         let handler: PaywallPresentationHandler? = {
-          guard let handlerProxyBridge: PaywallPresentationHandlerProxyBridge = call.bridge(for: "handlerProxyBridge") else {
+          guard let handlerProxyBridge: PaywallPresentationHandlerProxyBridge = call.bridgeInstance(for: "handlerProxyBridgeId") else {
             return nil
           }
 
@@ -167,7 +159,7 @@ public class SuperwallBridge: BaseBridge {
         }()
 
         Superwall.shared.register(event: event, params: params, handler: handler) {
-          if let featureBlockProxyBridge: CompletionBlockProxyBridge = call.bridge(for: "featureBlockProxyBridge") {
+          if let featureBlockProxyBridge: CompletionBlockProxyBridge = call.bridgeInstance(for: "featureBlockProxyBridgeId") {
             featureBlockProxyBridge.callCompletionBlock()
           }
         }

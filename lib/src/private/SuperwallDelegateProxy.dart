@@ -5,34 +5,35 @@ import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
 
 class SuperwallDelegateProxy {
-  MethodChannel channel;
+  BridgeId bridgeId;
   SuperwallDelegate delegate;
 
-  SuperwallDelegateProxy({required this.channel, required this.delegate}) {
-    channel.setMethodCallHandler(_handleMethodCall);
+  SuperwallDelegateProxy({required this.bridgeId, required this.delegate}) {
+    bridgeId.associate(this);
+    bridgeId.communicator.setMethodCallHandler(_handleMethodCall);
   }
 
   // Handle method calls from native
   Future<void> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'willPresentPaywall':
-        final json = call.argument("paywallInfo");
-        final paywallInfo = PaywallInfo.fromJson(json);
+        final bridgeId = call.bridgeId("paywallInfoBridgeId");
+        final paywallInfo = PaywallInfo(bridgeId: bridgeId);
         delegate.willPresentPaywall(paywallInfo);
         break;
       case 'didPresentPaywall':
-        final json = call.argument("paywallInfo");
-        final paywallInfo = PaywallInfo.fromJson(json);
+        final bridgeId = call.bridgeId("paywallInfoBridgeId");
+        final paywallInfo = PaywallInfo(bridgeId: bridgeId);
         delegate.didPresentPaywall(paywallInfo);
         break;
       case 'willDismissPaywall':
-        final json = call.argument("paywallInfo");
-        final paywallInfo = PaywallInfo.fromJson(json);
+        final bridgeId = call.bridgeId("paywallInfoBridgeId");
+        final paywallInfo = PaywallInfo(bridgeId: bridgeId);
         delegate.willDismissPaywall(paywallInfo);
         break;
       case 'didDismissPaywall':
-        final json = call.argument("paywallInfo");
-        final paywallInfo = PaywallInfo.fromJson(json);
+        final bridgeId = call.bridgeId("paywallInfoBridgeId");
+        final paywallInfo = PaywallInfo(bridgeId: bridgeId);
         delegate.didDismissPaywall(paywallInfo);
         break;
       case 'handleCustomPaywallAction':
@@ -40,9 +41,11 @@ class SuperwallDelegateProxy {
         delegate.handleCustomPaywallAction(name);
         break;
       case 'subscriptionStatusDidChange':
-        final json = call.argument("newValue");
-        final status = SubscriptionStatus.fromJson(json);
-        delegate.subscriptionStatusDidChange(status);
+        final bridgeId = call.argument("subscriptionStatusBridgeId");
+        final status = SubscriptionStatus.subscriptionStatusFrom(bridgeId);
+        if (status != null) {
+          delegate.subscriptionStatusDidChange(status);
+        }
         break;
       case 'paywallWillOpenURL':
         final url = call.argument("url");

@@ -1,41 +1,43 @@
 package com.superwall.superwallkit_flutter.bridges
 
+import android.content.Context
 import com.superwall.sdk.paywall.presentation.PaywallInfo
-import toJson
+import com.superwall.superwallkit_flutter.BridgingCreator
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
 
-fun PaywallInfo.toJson(): Map<String, Any?> {
-    val json = mutableMapOf<String, Any?>()
-    json["databaseId"] = databaseId
-    json["identifier"] = identifier
-    json["experiment"] = experiment?.toJson()
-    json["triggerSessionId"] = triggerSessionId
-    json["products"] = products.map { it.toJson() }
-    json["productIds"] = productIds
-    json["name"] = name
-    json["url"] = url.toString()
-    json["presentedByEventWithName"] = presentedByEventWithName
-    json["presentedByEventWithId"] = presentedByEventWithId
-    json["presentedByEventAt"] = presentedByEventAt
-    json["presentedBy"] = presentedBy
-    json["presentationSourceType"] = presentationSourceType
-    json["responseLoadStartTime"] = responseLoadStartTime
-    json["responseLoadCompleteTime"] = responseLoadCompleteTime
-    json["responseLoadFailTime"] = responseLoadFailTime
-    json["responseLoadDuration"] = responseLoadDuration
-    json["webViewLoadStartTime"] = webViewLoadStartTime
-    json["webViewLoadCompleteTime"] = webViewLoadCompleteTime
-    json["webViewLoadFailTime"] = webViewLoadFailTime
-    json["webViewLoadDuration"] = webViewLoadDuration
-    json["productsLoadStartTime"] = productsLoadStartTime
-    json["productsLoadCompleteTime"] = productsLoadCompleteTime
-    json["productsLoadFailTime"] = productsLoadFailTime
-    json["productsLoadDuration"] = productsLoadDuration
-    json["paywalljsVersion"] = paywalljsVersion
-    json["isFreeTrialAvailable"] = isFreeTrialAvailable
-    json["featureGatingBehavior"] = featureGatingBehavior.toJson()
-    json["closeReason"] = closeReason?.toJson()
-//     json["localNotifications"] = localNotifications.map { it.toJson() }
-//     json["computedPropertyRequests"] = computedPropertyRequests.map { it.toJson() }
-    json["surveys"] = surveys.map { it.toJson() }
-    return json
+class PaywallInfoBridge(
+    context: Context,
+    bridgeId: BridgeId,
+    initializationArgs: Map<String, Any>? = null
+) : BridgeInstance(context, bridgeId, initializationArgs) {
+
+    companion object {
+        fun bridgeClass(): BridgeClass = "PaywallInfoBridge"
+    }
+
+    val paywallInfo: PaywallInfo
+
+    init {
+        val tempPaywallInfo = initializationArgs?.get("paywallInfo") as? PaywallInfo
+        paywallInfo = tempPaywallInfo ?: throw IllegalArgumentException("Attempting to create `PaywallInfoBridge` without providing `paywallInfo`.")
+    }
+
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        when (call.method) {
+            "getName" -> {
+                val name = paywallInfo.name
+                result.success(name)
+            }
+            else -> result.notImplemented()
+        }
+    }
+}
+
+fun PaywallInfo.createBridgeId(): BridgeId {
+    val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
+        bridgeClass = PaywallInfoBridge.bridgeClass(),
+        initializationArgs = mapOf("paywallInfo" to this)
+    )
+    return bridgeInstance.bridgeId
 }

@@ -3,12 +3,14 @@ package com.superwall.superwallkit_flutter
 import android.app.Activity
 import android.os.Debug
 import com.superwall.sdk.misc.runOnUiThread
+import com.superwall.superwallkit_flutter.bridges.BridgeId
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.WeakHashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -61,13 +63,14 @@ fun <T> MethodCall.argumentForKey(key: String): T? {
   return this.argument(key)
 }
 
-// Make sure to provide the key for the bridge, not the bridge itself.
-fun <T> MethodCall.bridgeForKey(key: String): T? {
-  val channelName = this.argument<String>(key)
-  if (channelName == null) {
-    return null
-  }
-  return BridgingCreator.shared.bridge(channelName)
+// Make sure to provide the key for the bridge (which provides the bridgeId)
+fun <T> MethodCall.bridgeInstance(key: String): T? {
+  val bridgeId = this.argument<String>(key) ?: return null
+  return BridgingCreator.shared.bridgeInstance(bridgeId)
+}
+
+fun <T> BridgeId.bridgeInstance(): T? {
+  return BridgingCreator.shared.bridgeInstance(this)
 }
 
 fun MethodChannel.Result.badArgs(call: MethodCall) {
@@ -78,13 +81,13 @@ fun MethodChannel.Result.badArgs(method: String) {
   return error("BAD_ARGS", "Missing or invalid arguments for '$method'", null)
 }
 
-fun MethodChannel.invokeMethodOnMain(method: String, arguments: Any?) {
+fun MethodChannel.invokeMethodOnMain(method: String, arguments: Any? = null) {
   runOnUiThread {
     invokeMethod(method, arguments);
   }
 }
 
-suspend fun MethodChannel.asyncInvokeMethodOnMain(method: String, arguments: Any?): Any? = suspendCancellableCoroutine { continuation ->
+suspend fun MethodChannel.asyncInvokeMethodOnMain(method: String, arguments: Any? = null): Any? = suspendCancellableCoroutine { continuation ->
   runOnUiThread {
     invokeMethod(method, arguments, object : MethodChannel.Result {
       override fun success(result: Any?) {
@@ -104,4 +107,28 @@ suspend fun MethodChannel.asyncInvokeMethodOnMain(method: String, arguments: Any
       }
     })
   }
+}
+
+fun <T> Map<String, Any?>.argument(key: String): T? {
+  return this[key] as? T
+}
+
+object MethodChannelAssociations {
+  private val bridgeIds = WeakHashMap<MethodChannel, String>()
+
+  fun setBridgeId(methodChannel: MethodChannel, bridgeId: String) {
+    bridgeIds[methodChannel] = bridgeId
+  }
+
+  fun getBridgeId(methodChannel: MethodChannel): String {
+    return bridgeIds[methodChannel] ?: throw IllegalStateException("bridgeId must be set at initialization of MethodChannel")
+  }
+}
+
+fun MethodChannel.setBridgeId(bridgeId: String) {
+  MethodChannelAssociations.setBridgeId(this, bridgeId)
+}
+
+fun MethodChannel.getBridgeId(): String {
+  return MethodChannelAssociations.getBridgeId(this)
 }

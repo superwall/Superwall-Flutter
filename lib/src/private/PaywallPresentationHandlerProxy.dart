@@ -5,37 +5,39 @@ import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart'
 import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
 
 class PaywallPresentationHandlerProxy {
-  Bridge bridge;
-  final MethodChannel channel;
+  BridgeId bridgeId;
   PaywallPresentationHandler paywallPresentationHandler;
 
   PaywallPresentationHandlerProxy({
-    required this.bridge,
+    required this.bridgeId,
     required this.paywallPresentationHandler
-  }): channel = MethodChannel(bridge) {
-    bridge.associate(this);
-    channel.setMethodCallHandler(_handleMethodCall);
+  }) {
+    bridgeId.associate(this);
+    bridgeId.communicator.setMethodCallHandler(_handleMethodCall);
   }
 
   // Handle method calls from native
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'onPresent':
-        final json = call.argument("paywallInfo");
-        final paywallInfo = PaywallInfo.fromJson(json);
+        final bridgeId = call.bridgeId("paywallInfoBridgeId");
+        final paywallInfo = PaywallInfo(bridgeId: bridgeId);
+
         paywallPresentationHandler.onPresentHandler?.call(paywallInfo);
       case 'onDismiss':
-        final json = call.argument("paywallInfo");
-        final paywallInfo = PaywallInfo.fromJson(json);
+        final bridgeId = call.bridgeId("paywallInfoBridgeId");
+        final paywallInfo = PaywallInfo(bridgeId: bridgeId);
+
         paywallPresentationHandler.onDismissHandler?.call(paywallInfo);
       case 'onError':
-        final json = call.argument("error");
-        final error = JsonString.fromJson(json);
-        paywallPresentationHandler.onErrorHandler?.call(error);
+        final errorString = call.argument("errorString");
+        paywallPresentationHandler.onErrorHandler?.call(errorString);
       case 'onSkip':
-        final json = call.argument("paywallSkippedReason");
-        final paywallInfo = PaywallSkippedReason.fromJson(json);
-        paywallPresentationHandler.onSkipHandler?.call(paywallInfo);
+        final bridgeId = call.bridgeId("paywallSkippedReasonBridgeId");
+        final paywallSkipReason = PaywallSkippedReason.createReasonFrom(bridgeId);
+        if (paywallSkipReason == null) { return; }
+
+        paywallPresentationHandler.onSkipHandler?.call(paywallSkipReason);
       default:
         throw UnimplementedError('Method ${call.method} not implemented.');
     }

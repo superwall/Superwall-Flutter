@@ -2,10 +2,9 @@ import Flutter
 import SuperwallKit
 
 // Abstract base class for subscription status enum
-public class SubscriptionStatusBridge: BaseBridge {
+public class SubscriptionStatusBridge: BridgeInstance {
   var status: SubscriptionStatus {
-    assertionFailure("Subclasses must implement")
-    return .unknown
+    fatalError("Subclasses must implement")
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -20,26 +19,41 @@ public class SubscriptionStatusBridge: BaseBridge {
 }
 
 public class SubscriptionStatusActiveBridge: SubscriptionStatusBridge {
+  override class func bridgeClass() -> BridgeClass {
+    return "SubscriptionStatusActiveBridge"
+  }
+
   override var status: SubscriptionStatus { .active }
 }
 
 public class SubscriptionStatusInactiveBridge: SubscriptionStatusBridge {
+  override class func bridgeClass() -> BridgeClass {
+    return "SubscriptionStatusInactiveBridge"
+  }
+
   override var status: SubscriptionStatus { .inactive }
 }
 
 public class SubscriptionStatusUnknownBridge: SubscriptionStatusBridge {
+  override class func bridgeClass() -> BridgeClass {
+    return "SubscriptionStatusUnknownBridge"
+  }
+
   override var status: SubscriptionStatus { .unknown }
 }
 
 extension SubscriptionStatus {
-  func toJson() -> String {
+  func createBridgeId() -> BridgeId {
     switch self {
       case .active:
-        return "active"
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: SubscriptionStatusActiveBridge.bridgeClass())
+        return bridgeInstance.bridgeId
       case .inactive:
-        return "inactive"
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: SubscriptionStatusInactiveBridge.bridgeClass())
+        return bridgeInstance.bridgeId
       case .unknown:
-        return "unknown"
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: SubscriptionStatusUnknownBridge.bridgeClass())
+        return bridgeInstance.bridgeId
     }
   }
 }
