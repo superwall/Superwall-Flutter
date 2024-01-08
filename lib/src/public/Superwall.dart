@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
+import 'package:superwallkit_flutter/src/public/IdentityOptions.dart';
 import 'package:superwallkit_flutter/src/public/LogLevel.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart';
@@ -68,7 +69,7 @@ class Superwall {
     final delegateProxy = SuperwallDelegateProxy(bridgeId: BridgingCreator.createSuperwallDelegateProxyBridgeId(), delegate: newDelegate);
 
     // Set the native instance as the delegate
-    bridgeId.communicator.invokeBridgeMethod('setDelegate', {'delegateProxyBridgeId': delegateProxy.bridgeId });
+    await bridgeId.communicator.invokeBridgeMethod('setDelegate', {'delegateProxyBridgeId': delegateProxy.bridgeId });
   }
 
   // Asynchronous method to get logLevel
@@ -80,11 +81,11 @@ class Superwall {
     return LogLevel.values.firstWhere((element) => element.toString() == logLevelResult);
   }
 
-  // Method to set logLevel
+  // Asynchronous method to set logLevel
   Future<void> setLogLevel(LogLevel newLogLevel) async {
     await _waitForBridgeInstanceCreation();
 
-    bridgeId.communicator.invokeBridgeMethod('setLogLevel', {'logLevel': newLogLevel.toString()});
+    await bridgeId.communicator.invokeBridgeMethod('setLogLevel', {'logLevel': newLogLevel.toString()});
   }
 
   // Asynchronous method to get userAttributes
@@ -93,6 +94,13 @@ class Superwall {
 
     final attributes = await bridgeId.communicator.invokeBridgeMethod('getUserAttributes');
     return Map<String, dynamic>.from(attributes);
+  }
+
+  // Asynchronous method to set userAttributes
+  Future<void> setUserAttributes(Map<String, dynamic> userAttributes) async {
+    await _waitForBridgeInstanceCreation();
+
+    await bridgeId.communicator.invokeBridgeMethod('setUserAttributes', {'userAttributes': userAttributes});
   }
 
   // Asynchronous method to get the current user's id
@@ -233,7 +241,7 @@ class Superwall {
     }
 
     try {
-      _superwall.bridgeId.communicator.invokeBridgeMethod('configure', {
+      await _superwall.bridgeId.communicator.invokeBridgeMethod('configure', {
         'apiKey': apiKey,
         'purchaseControllerProxyBridgeId': purchaseControllerProxy?.bridgeId,
         'options': options,
@@ -297,6 +305,22 @@ extension PublicPresentation on Superwall {
       'params': params,
       'handlerProxyBridgeId': handlerProxy?.bridgeId,
       'featureBlockProxyBridgeId': featureBlockProxy?.bridgeId
+    });
+  }
+}
+
+//endregion
+
+//region PublicPresentation
+
+/// Extension for public identity functionalities in Superwall.
+extension PublicIdentity on Superwall {
+  Future<void> identify(String userId, [IdentityOptions? options]) async {
+    await _waitForBridgeInstanceCreation();
+
+    await bridgeId.communicator.invokeBridgeMethod('identify', {
+      "userId": userId,
+      "restorePaywallAssignments": options?.restorePaywallAssignments
     });
   }
 }

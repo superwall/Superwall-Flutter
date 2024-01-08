@@ -5,17 +5,17 @@ import android.content.Context
 import com.superwall.sdk.Superwall
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.delegate.SuperwallDelegate
-import com.superwall.sdk.delegate.subscription_controller.PurchaseController
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import android.net.Uri
-import com.android.billingclient.api.Purchase
+import com.superwall.sdk.identity.IdentityOptions
+import com.superwall.sdk.identity.identify
+import com.superwall.sdk.identity.setUserAttributes
 import com.superwall.sdk.misc.ActivityProvider
 import com.superwall.sdk.misc.runOnUiThread
 import com.superwall.sdk.paywall.presentation.PaywallPresentationHandler
 import com.superwall.sdk.paywall.presentation.dismiss
 import com.superwall.sdk.paywall.presentation.register
-import com.superwall.superwallkit_flutter.BridgingCreator
 import com.superwall.superwallkit_flutter.SuperwallkitFlutterPlugin
 import com.superwall.superwallkit_flutter.argumentForKey
 import com.superwall.superwallkit_flutter.badArgs
@@ -35,11 +35,10 @@ class SuperwallBridge(
                 val delegateProxyBridge = call.bridgeInstance<SuperwallDelegate?>("delegateProxyBridgeId")
                 delegateProxyBridge?.let {
                     Superwall.instance.delegate = it
+                    result.success(null)
                 } ?: run {
                     result.badArgs(call)
                 }
-
-                result.success(null)
             }
             "getLogLevel" -> {
                 // TODO
@@ -58,16 +57,28 @@ class SuperwallBridge(
                 result.notImplemented()
             }
             "getUserAttributes" -> {
-                // TODO: Fix IdentityManager class in Android
-//                val attributes = Superwall.instance.getUserAttributes()
-//                result.success(attributes)
-                result.notImplemented()
+                // TODO: Replace with sync functionality once fixed in Android SDK
+                CoroutineScope(Dispatchers.IO).launch {
+                    val attributes = Superwall.instance.getUserAttributes()
+                    runOnUiThread {
+                        result.success(attributes)
+                    }
+                }
+            }
+            "setUserAttributes" -> {
+                val userAttributes = call.argument<Map<String, Any?>>("userAttributes")
+                userAttributes?.let {
+                    Superwall.instance.setUserAttributes(userAttributes)
+                    result.success(null)
+                } ?: run {
+                    result.badArgs(call)
+                }
             }
             "getUserId" -> {
-                // TODO: Add to Android
-//                val userId = Superwall.instance.userId
-//                result.success(userId)
-                result.notImplemented()
+                // Implement logic to get the current user's id
+                // TODO: Add this once fixed in Android SDK
+//                result.success(Superwall.instance.userId)
+                result.success("")
             }
             "getIsLoggedIn" -> {
                 // TODO: Add to Android
@@ -95,11 +106,10 @@ class SuperwallBridge(
                 val subscriptionStatusBridge = call.bridgeInstance<SubscriptionStatusBridge>("subscriptionStatusBridgeId")
                 subscriptionStatusBridge?.let {
                     Superwall.instance.setSubscriptionStatus(it.status)
+                    result.success(null)
                 } ?: run {
                     result.badArgs(call)
                 }
-
-                result.success(null)
             }
             "getIsConfigured" -> {
                 // TODO: Add to Android
@@ -155,10 +165,10 @@ class SuperwallBridge(
                 val isHidden = call.argumentForKey<Boolean>("isHidden")
                 isHidden?.let {
                     Superwall.instance.togglePaywallSpinner(isHidden = it)
+                    result.success(null)
                 } ?: run {
                     result.badArgs(call)
                 }
-                result.success(null)
             }
             "reset" -> {
                 Superwall.instance.reset()
@@ -212,6 +222,20 @@ class SuperwallBridge(
                     result.badArgs(call)
                 }
             }
+
+            "identify" -> {
+                val userId = call.argument<String>("userId")
+                userId?.let {
+                    val restorePaywallAssignments = call.argument<Boolean?>("restorePaywallAssignments")
+                    val options = restorePaywallAssignments?.let { IdentityOptions(it) }
+
+                    Superwall.instance.identify(userId, options)
+                    result.success(null)
+                } ?: run {
+                    result.badArgs(call)
+                }
+            }
+
 
             else -> result.notImplemented()
         }

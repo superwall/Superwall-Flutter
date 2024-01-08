@@ -117,6 +117,35 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
     }
   }
 
+  Future<void> performAction() async {
+    try {
+      IdentityOptions options = IdentityOptions(restorePaywallAssignments: true);
+      await Superwall.shared.identify("123456", options);
+      String userId = await Superwall.shared.getUserId();
+      print(userId);
+
+      await Superwall.shared.setUserAttributes({"someAttribute": "someValue"});
+      Map<String, dynamic> attributes1 = await Superwall.shared.getUserAttributes();
+      print(attributes1);
+
+      await Superwall.shared.setUserAttributes({"jack": "lost", "kate": "antman"});
+      Map<String, dynamic> attributes2 = await Superwall.shared.getUserAttributes();
+      print(attributes2);
+
+      await Superwall.shared.setUserAttributes({"jack": "123", "kate": {"tv": "series"}});
+      Map<String, dynamic> attributes3 = await Superwall.shared.getUserAttributes();
+      print(attributes3);
+
+      await Superwall.shared.reset();
+
+      Map<String, dynamic> attributes4 = await Superwall.shared.getUserAttributes();
+      print(attributes4);
+
+    } catch (e) {
+      print('Failed perform action: $e');
+    }
+  }
+
   void handleSkipReason(PaywallSkippedReason skipReason) async {
     final description = await skipReason.description;
 
@@ -152,6 +181,10 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
               ElevatedButton(
                 onPressed: onRegisterTapped,
                 child: const Text('Register event'),
+              ),
+              ElevatedButton(
+                onPressed: performAction,
+                child: const Text('Perform action'),
               ),
             ],
           ),

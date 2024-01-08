@@ -13,3 +13,4 @@ export 'src/public/SuperwallEventInfo.dart';
 export 'src/public/SuperwallOptions.dart';
 export 'src/public/PaywallPresentationHandler.dart';
 export 'src/public/PaywallSkippedReason.dart';
+export 'src/public/IdentityOptions.dart';

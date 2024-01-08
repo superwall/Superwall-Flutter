@@ -29,6 +29,16 @@ public class SuperwallBridge: BridgeInstance {
         // Implement logic to get user attributes
         result(Superwall.shared.userAttributes)
 
+      case "setUserAttributes":
+        guard let userAttributes: [String: Any?] = call.argument(for: "userAttributes") else {
+          result(call.badArgs)
+          return
+        }
+
+        Superwall.shared.setUserAttributes(userAttributes)
+
+        result(nil)
+
       case "getUserId":
         // Implement logic to get the current user's id
         result(Superwall.shared.userId)
@@ -163,6 +173,24 @@ public class SuperwallBridge: BridgeInstance {
             featureBlockProxyBridge.callCompletionBlock()
           }
         }
+
+        result(nil)
+
+      case "identify":
+        guard let userId: String = call.argument(for: "userId") else {
+          result(call.badArgs)
+          return
+        }
+
+        let options: IdentityOptions? = {
+          guard let restorePaywallAssignments: Bool = call.argument(for: "restorePaywallAssignments") else {
+            return nil
+          }
+
+          return IdentityOptions(restorePaywallAssignments: restorePaywallAssignments)
+        }()
+
+        Superwall.shared.identify(userId: userId, options: options)
 
         result(nil)
 
