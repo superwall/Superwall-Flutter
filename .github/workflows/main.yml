@@ -1,0 +1,82 @@
+name: Update SuperwallKit Version in docs
+
+on:
+  push:
+    branches:
+      - ${{ secrets.SOURCE_BRANCH }}
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install required tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Get current version from pubspec.yaml
+        id: get_current_version
+        run: |
+          CURRENT_VERSION=$(grep 'version:' pubspec.yaml | cut -d ':' -f 2 | xargs)
+          echo "Current version: $CURRENT_VERSION"
+          echo "::set-output name=current_version::$CURRENT_VERSION"
+
+      - name: Check version in docs repository
+        id: check_docs_repo
+        env:
+          ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          DOCS_REPO_URL: ${{ secrets.DOCS_REPO_URL }}
+          DOCS_FILE_PATH: ${{ secrets.DOCS_FILE_PATH }}
+          DOCS_BRANCH: ${{ secrets.DOCS_BRANCH }}
+        run: |
+          # Fetch the file from the docs repo
+          FILE_CONTENT=$(curl -f -H "Authorization: token $ACCESS_TOKEN" \
+                            -H "Accept: application/vnd.github.v3.raw" \
+                            $DOCS_REPO_URL/contents/$DOCS_FILE_PATH?ref=$DOCS_BRANCH)
+          if [ $? -ne 0 ]; then
+            echo "Error fetching file from docs repository"
+            exit 1
+          fi
+          # Extract the version from the file
+          DOCS_REPO_VERSION=$(echo "$FILE_CONTENT" | grep 'superwallkit_flutter:' | cut -d ':' -f 2 | xargs)
+          echo "Docs repo version: $DOCS_REPO_VERSION"
+          # Compare versions
+          if [ "$DOCS_REPO_VERSION" != "${{ steps.get_current_version.outputs.current_version }}" ]; then
+            echo "::set-output name=update_required::true"
+          else
+            echo "::set-output name=update_required::false"
+          fi
+
+      - name: Update Version in Docs Repository
+        if: steps.check_docs_repo.outputs.update_required == 'true'
+        env:
+          ACCESS_TOKEN: ${{ secrets.REPO_ACCESS_TOKEN }}
+          NEW_VERSION: ${{ steps.get_current_version.outputs.current_version }}
+          DOCS_REPO: ${{ secrets.DOCS_REPO }}
+        run: |
+          # Dynamic branch naming
+          BRANCH_NAME="update-version-${NEW_VERSION}"
+          # Clone the other repository
+          git clone https://github.com/$DOCS_REPO.git
+          cd repo
+          # Update the file
+          sed -i "s/superwallkit_flutter: ^.*/superwallkit_flutter: ^$NEW_VERSION/" ${{ secrets.DOCS_FILE_PATH }}
+          # Commit and push changes
+          git checkout -b $BRANCH_NAME
+          git config user.name 'GitHub Action'
+          git config user.email 'action@github.com'
+          git add ${{ secrets.DOCS_FILE_PATH }}
+          git commit -m "Update superwallkit_flutter version to $NEW_VERSION"
+          git push --set-upstream origin $BRANCH_NAME
+
+      - name: Create Pull Request
+        if: steps.check_docs_repo.outputs.update_required == 'true'
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          branch: $BRANCH_NAME
+          title: "Update superwallkit_flutter version to ${{ steps.get_current_version.outputs.current_version }}"
+          body: "This PR updates the superwallkit_flutter version in installation-via-pubspec.mdx. \n\nRequesting review from ${{ secrets.PR_REVIEWER }}."
