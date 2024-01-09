@@ -27,13 +27,13 @@ jobs:
       - name: Check version in docs repository
         id: check_docs_repo
         env:
-          ACCESS_TOKEN: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
+          DOCS_REPO_ACCESS_TOKEN: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
           DOCS_REPO_URL: ${{ secrets.DOCS_REPO_URL }}
           DOCS_FILE_PATH: ${{ secrets.DOCS_FILE_PATH }}
           DOCS_BRANCH: ${{ secrets.DOCS_BRANCH }}
         run: |
           # Fetch the file from the docs repo
-          FILE_CONTENT=$(curl -f -H "Authorization: token $ACCESS_TOKEN" \
+          FILE_CONTENT=$(curl -f -H "Authorization: token $DOCS_REPO_ACCESS_TOKEN" \
                             -H "Accept: application/vnd.github.v3.raw" \
                             $DOCS_REPO_URL/contents/$DOCS_FILE_PATH?ref=$DOCS_BRANCH)
           if [ $? -ne 0 ]; then
@@ -53,7 +53,7 @@ jobs:
       - name: Update Version in Docs Repository
         if: steps.check_docs_repo.outputs.update_required == 'true'
         env:
-          ACCESS_TOKEN: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
+          DOCS_REPO_ACCESS_TOKEN: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
           NEW_VERSION: ${{ steps.get_current_version.outputs.current_version }}
           DOCS_REPO: ${{ secrets.DOCS_REPO }}
         run: |
