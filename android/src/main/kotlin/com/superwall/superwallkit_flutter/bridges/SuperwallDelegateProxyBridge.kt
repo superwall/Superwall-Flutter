@@ -14,6 +14,7 @@ class SuperwallDelegateProxyBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs), SuperwallDelegate {
+    companion object { fun bridgeClass(): BridgeClass = "SuperwallDelegateProxyBridge" }
 
     override fun willPresentPaywall(paywallInfo: PaywallInfo) {
         communicator.invokeMethodOnMain("willPresentPaywall", mapOf("paywallInfoBridgeId" to paywallInfo.createBridgeId()))

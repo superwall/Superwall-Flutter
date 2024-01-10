@@ -34,7 +34,7 @@ class PaywallPresentationHandlerProxy {
         paywallPresentationHandler.onErrorHandler?.call(errorString);
       case 'onSkip':
         final bridgeId = call.bridgeId("paywallSkippedReasonBridgeId");
-        final paywallSkipReason = PaywallSkippedReason.createReasonFrom(bridgeId);
+        final paywallSkipReason = PaywallSkippedReason.createReasonFromBridgeId(bridgeId);
         if (paywallSkipReason == null) { return; }
 
         paywallPresentationHandler.onSkipHandler?.call(paywallSkipReason);

@@ -19,7 +19,7 @@ public class PaywallSkippedReasonBridge: BridgeInstance {
 }
 
 public class PaywallSkippedReasonHoldoutBridge: PaywallSkippedReasonBridge {
-  override class func bridgeClass() -> BridgeClass { return "PaywallSkippedReasonHoldoutBridge" }
+  class override var bridgeClass: BridgeClass { "PaywallSkippedReasonHoldoutBridge" }
   override var reason: PaywallSkippedReason { internalReason }
 
   let internalReason: PaywallSkippedReason
@@ -41,7 +41,7 @@ public class PaywallSkippedReasonHoldoutBridge: PaywallSkippedReasonBridge {
           return
         }
 
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: ExperimentBridge.bridgeClass(), initializationArgs: ["experiment": experiment])
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: ExperimentBridge.bridgeClass, initializationArgs: ["experiment": experiment])
         result(bridgeInstance.bridgeId)
 
       default:
@@ -51,17 +51,17 @@ public class PaywallSkippedReasonHoldoutBridge: PaywallSkippedReasonBridge {
 }
 
 public class PaywallSkippedReasonNoRuleMatchBridge: PaywallSkippedReasonBridge {
-  override class func bridgeClass() -> BridgeClass { return "PaywallSkippedReasonNoRuleMatchBridge" }
+  class override var bridgeClass: BridgeClass { "PaywallSkippedReasonNoRuleMatchBridge" }
   override var reason: PaywallSkippedReason { .noRuleMatch }
 }
 
 public class PaywallSkippedReasonEventNotFoundBridge: PaywallSkippedReasonBridge {
-  override class func bridgeClass() -> BridgeClass { return "PaywallSkippedReasonEventNotFoundBridge" }
+  class override var bridgeClass: BridgeClass { "PaywallSkippedReasonEventNotFoundBridge" }
   override var reason: PaywallSkippedReason { .eventNotFound }
 }
 
 public class PaywallSkippedReasonUserIsSubscribedBridge: PaywallSkippedReasonBridge {
-  override class func bridgeClass() -> BridgeClass { return "PaywallSkippedReasonUserIsSubscribedBridge" }
+  class override var bridgeClass: BridgeClass { "PaywallSkippedReasonUserIsSubscribedBridge" }
   override var reason: PaywallSkippedReason { .userIsSubscribed }
 }
 
@@ -69,19 +69,19 @@ extension PaywallSkippedReason {
   func createBridgeId() -> BridgeId {
     switch self {
       case .holdout(_):
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonHoldoutBridge.bridgeClass(), initializationArgs: ["reason": self])
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonHoldoutBridge.bridgeClass, initializationArgs: ["reason": self])
         return bridgeInstance.bridgeId
 
       case .noRuleMatch:
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonNoRuleMatchBridge.bridgeClass(), initializationArgs: ["reason": self])
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonNoRuleMatchBridge.bridgeClass, initializationArgs: ["reason": self])
         return bridgeInstance.bridgeId
 
       case .eventNotFound:
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonEventNotFoundBridge.bridgeClass(), initializationArgs: ["reason": self])
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonEventNotFoundBridge.bridgeClass, initializationArgs: ["reason": self])
         return bridgeInstance.bridgeId
 
       case .userIsSubscribed:
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonUserIsSubscribedBridge.bridgeClass(), initializationArgs: ["reason": self])
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonUserIsSubscribedBridge.bridgeClass, initializationArgs: ["reason": self])
         return bridgeInstance.bridgeId
 
     }

@@ -9,13 +9,7 @@ class ExperimentBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass {
-            return "ExperimentBridge"
-        }
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "ExperimentBridge" }
     val experiment: Experiment
 
     init {

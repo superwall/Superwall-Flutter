@@ -20,15 +20,19 @@ import com.superwall.superwallkit_flutter.SuperwallkitFlutterPlugin
 import com.superwall.superwallkit_flutter.argumentForKey
 import com.superwall.superwallkit_flutter.badArgs
 import com.superwall.superwallkit_flutter.bridgeInstance
+import com.superwall.superwallkit_flutter.json.JsonExtensions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import superwallOptionsFromJson
 
 class SuperwallBridge(
     context: Context,
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs), ActivityProvider {
+    companion object { fun bridgeClass(): BridgeClass = "SuperwallBridge" }
+
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "setDelegate" -> {
@@ -180,7 +184,9 @@ class SuperwallBridge(
                     val purchaseControllerProxyBridge =
                         call.bridgeInstance<PurchaseControllerProxyBridge?>("purchaseControllerProxyBridgeId")
 
-                    val options: SuperwallOptions? = call.argument("options")
+                    val options: SuperwallOptions? = call.argument<Map<String, Any>>("options")?.let { optionsValue ->
+                        JsonExtensions.Companion.superwallOptionsFromJson(optionsValue)
+                    }
 
                     Superwall.configure(
                         applicationContext = this@SuperwallBridge.context,

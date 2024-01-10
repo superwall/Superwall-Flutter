@@ -11,7 +11,6 @@ abstract class PaywallSkippedReasonBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs), MethodChannel.MethodCallHandler {
-
     abstract val reason: PaywallSkippedReason
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -30,10 +29,7 @@ class PaywallSkippedReasonHoldoutBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PaywallSkippedReasonBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PaywallSkippedReasonHoldoutBridge"
-    }
+    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonHoldoutBridge" }
 
     override val reason: PaywallSkippedReason = initializationArgs?.get("reason") as? PaywallSkippedReason
         ?: throw IllegalArgumentException("Attempting to create a `PaywallSkippedReasonHoldoutBridge` without providing a reason.")
@@ -62,11 +58,7 @@ class PaywallSkippedReasonNoRuleMatchBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PaywallSkippedReasonBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PaywallSkippedReasonNoRuleMatchBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonNoRuleMatchBridge" }
     override val reason: PaywallSkippedReason = PaywallSkippedReason.NoRuleMatch()
 }
 
@@ -75,11 +67,7 @@ class PaywallSkippedReasonEventNotFoundBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PaywallSkippedReasonBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PaywallSkippedReasonEventNotFoundBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonEventNotFoundBridge" }
     override val reason: PaywallSkippedReason = PaywallSkippedReason.EventNotFound()
 }
 
@@ -88,11 +76,7 @@ class PaywallSkippedReasonUserIsSubscribedBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PaywallSkippedReasonBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PaywallSkippedReasonUserIsSubscribedBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonUserIsSubscribedBridge" }
     override val reason: PaywallSkippedReason = PaywallSkippedReason.UserIsSubscribed()
 }
 

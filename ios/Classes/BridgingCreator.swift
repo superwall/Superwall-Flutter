@@ -7,33 +7,6 @@ public class BridgingCreator: NSObject, FlutterPlugin {
   // TODO: CHANGE
   static var shared: BridgingCreator!
 
-  struct Constants {
-    // TODO: Allow bridges to register themselves
-    static let bridgeMap: [String: BridgeInstance.Type] = [
-      "SuperwallBridge": SuperwallBridge.self,
-      "SuperwallDelegateProxyBridge": SuperwallDelegateProxyBridge.self,
-      "PurchaseControllerProxyBridge": PurchaseControllerProxyBridge.self,
-      "CompletionBlockProxyBridge": CompletionBlockProxyBridge.self,
-      "SubscriptionStatusActiveBridge": SubscriptionStatusActiveBridge.self,
-      "SubscriptionStatusInactiveBridge": SubscriptionStatusInactiveBridge.self,
-      "SubscriptionStatusUnknownBridge": SubscriptionStatusUnknownBridge.self,
-      "PaywallPresentationHandlerProxyBridge": PaywallPresentationHandlerProxyBridge.self,
-      "PaywallSkippedReasonHoldoutBridge": PaywallSkippedReasonHoldoutBridge.self,
-      "PaywallSkippedReasonNoRuleMatchBridge": PaywallSkippedReasonNoRuleMatchBridge.self,
-      "PaywallSkippedReasonEventNotFoundBridge": PaywallSkippedReasonEventNotFoundBridge.self,
-      "PaywallSkippedReasonUserIsSubscribedBridge": PaywallSkippedReasonUserIsSubscribedBridge.self,
-      ExperimentBridge.bridgeClass(): ExperimentBridge.self,
-      PaywallInfoBridge.bridgeClass(): PaywallInfoBridge.self,
-      PurchaseResultCancelledBridge.bridgeClass(): PurchaseResultCancelledBridge.self,
-      PurchaseResultPurchasedBridge.bridgeClass(): PurchaseResultPurchasedBridge.self,
-      PurchaseResultRestoredBridge.bridgeClass(): PurchaseResultRestoredBridge.self,
-      PurchaseResultPendingBridge.bridgeClass(): PurchaseResultPendingBridge.self,
-      PurchaseResultFailedBridge.bridgeClass(): PurchaseResultFailedBridge.self,
-      RestorationResultRestoredBridge.bridgeClass(): RestorationResultRestoredBridge.self,
-      RestorationResultFailedBridge.bridgeClass(): RestorationResultFailedBridge.self,
-    ]
-  }
-
   let registrar: FlutterPluginRegistrar
 
   private let communicator: Communicator

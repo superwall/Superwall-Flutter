@@ -5,7 +5,6 @@ import com.superwall.sdk.delegate.RestorationResult
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
-
 abstract class RestorationResultBridge(
     context: Context,
     bridgeId: BridgeId,
@@ -24,11 +23,7 @@ class RestorationResultRestoredBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : RestorationResultBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "RestorationResultRestoredBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "RestorationResultRestoredBridge" }
     override val restorationResult: RestorationResult = RestorationResult.Restored()
 }
 
@@ -37,11 +32,7 @@ class RestorationResultFailedBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : RestorationResultBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "RestorationResultFailedBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "RestorationResultFailedBridge" }
     override val restorationResult: RestorationResult
 
     init {

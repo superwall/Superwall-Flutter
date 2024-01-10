@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 // The name of the bridging class on the native side
@@ -17,18 +14,18 @@ class BridgingCreator {
   // This will later be used when invoking creation to pass in initialization arguments
   static final Map<String, Map<String, dynamic>> _metadataByBridgeId = {};
 
-  static BridgeId _createBridgeId(BridgeClass bridgeClass, [ Map<String, dynamic>? args ]) {
+  static BridgeId _createBridgeId(BridgeClass bridgeClass, [ Map<String, dynamic>? initializationArgs ]) {
     BridgeId bridgeId = bridgeClass.generateBridgeId();
-    _metadataByBridgeId[bridgeId] = { "args": args };
+    _metadataByBridgeId[bridgeId] = { "args": initializationArgs };
 
     return bridgeId;
   }
 
   static _invokeBridgeInstanceCreation(BridgeId bridgeId) async {
     Map<String, dynamic> metadata = BridgingCreator._metadataByBridgeId[bridgeId] ?? {};
-    Map<String, dynamic>? args = metadata["args"];
+    Map<String, dynamic>? initializationArgs = metadata["args"];
 
-    await _channel.invokeMethod("createBridgeInstance", { "bridgeId" : bridgeId, "args" : args });
+    await _channel.invokeMethod("createBridgeInstance", { "bridgeId" : bridgeId, "args" : initializationArgs });
 
     metadata["bridgeInstanceCreated"] = "true";
     _metadataByBridgeId[bridgeId] = metadata;
@@ -47,7 +44,7 @@ class BridgingCreator {
   //region Creators - NOTE: In order to create a bridge, it MUST exist in
   // the `bridgeMap` on the native sides
 
-  // TODO: Move these to their associated classes and abstract into base class
+  // TODO: Move these to their associated classes and abstract into base class (see PaywallSkipReason)
 
   static BridgeId createSuperwallBridge() {
     return _createBridgeId("SuperwallBridge");
@@ -81,22 +78,6 @@ class BridgingCreator {
     return _createBridgeId("PaywallPresentationHandlerProxyBridge");
   }
 
-  static BridgeId createPaywallSkippedReasonHoldoutBridgeId() {
-    return _createBridgeId("PaywallSkippedReasonHoldoutBridge");
-  }
-
-  static BridgeId createPaywallSkippedReasonNoRuleMatchBridgeId() {
-    return _createBridgeId("PaywallSkippedReasonNoRuleMatchBridge");
-  }
-
-  static BridgeId createPaywallSkippedReasonEventNotFoundBridgeId() {
-    return _createBridgeId("PaywallSkippedReasonEventNotFoundBridge");
-  }
-
-  static BridgeId createPaywallSkippedReasonUserIsSubscribedBridgeId() {
-    return _createBridgeId("PaywallSkippedReasonUserIsSubscribedBridge");
-  }
-
   static BridgeId createPurchaseResultCancelledBridgeId() {
     return _createBridgeId("PurchaseResultCancelledBridge");
   }
@@ -126,6 +107,31 @@ class BridgingCreator {
   }
 
   //endregion
+}
+
+// A protocol that Dart classes should conform to if they want to be able to
+// create a BridgeId, or instantiate themselves from a BridgeID
+abstract class BridgeIdInstantiable {
+  BridgeId bridgeId;
+
+  BridgeIdInstantiable([BridgeId? providedBridgeId, Map<String, dynamic>? initializationArgs])
+      : bridgeId = providedBridgeId ?? BridgingCreator._createBridgeId(bridgeClass, initializationArgs) {
+    _ensureBridgeClassDefined();
+    bridgeId.associate(this);
+  }
+
+  // static BridgeId createBridgeId() {
+  //   return BridgingCreator._createBridgeId(bridgeClass);
+  // }
+
+  // Subclasses MUST implement
+  static const String bridgeClass = "BaseBridgeClass";
+
+  void _ensureBridgeClassDefined() {
+    if (bridgeClass == "BaseBridgeClass") {
+      throw "Subclass must define the static const bridgeClass.";
+    }
+  }
 }
 
 extension MethodChannelBridging on MethodChannel {
@@ -180,7 +186,7 @@ extension BridgeAdditions on BridgeId {
     return MethodChannel(this);
   }
 
-  String get bridgeClass {
+  BridgeClass get bridgeClass {
     return split('-').first;
   }
 

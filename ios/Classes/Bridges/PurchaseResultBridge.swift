@@ -13,27 +13,27 @@ public class PurchaseResultBridge: BridgeInstance {
 }
 
 public class PurchaseResultCancelledBridge: PurchaseResultBridge {
-  override class func bridgeClass() -> BridgeClass { return "PurchaseResultCancelledBridge" }
+  class override var bridgeClass: BridgeClass { "PurchaseResultCancelledBridge" }
   override var purchaseResult: PurchaseResult { return .cancelled }
 }
 
 public class PurchaseResultPurchasedBridge: PurchaseResultBridge {
-  override class func bridgeClass() -> BridgeClass { return "PurchaseResultPurchasedBridge" }
+  class override var bridgeClass: BridgeClass { "PurchaseResultPurchasedBridge" }
   override var purchaseResult: PurchaseResult { return .purchased }
 }
 
 public class PurchaseResultRestoredBridge: PurchaseResultBridge {
-  override class func bridgeClass() -> BridgeClass { return "PurchaseResultRestoredBridge" }
+  class override var bridgeClass: BridgeClass { "PurchaseResultRestoredBridge" }
   override var purchaseResult: PurchaseResult { return .restored }
 }
 
 public class PurchaseResultPendingBridge: PurchaseResultBridge {
-  override class func bridgeClass() -> BridgeClass { return "PurchaseResultPendingBridge" }
+  class override var bridgeClass: BridgeClass { "PurchaseResultPendingBridge" }
   override var purchaseResult: PurchaseResult { return .pending }
 }
 
 public class PurchaseResultFailedBridge: PurchaseResultBridge {
-  override class func bridgeClass() -> BridgeClass { return "PurchaseResultFailedBridge" }
+  class override var bridgeClass: BridgeClass { "PurchaseResultFailedBridge" }
   override var purchaseResult: PurchaseResult { .failed(error) }
 
   let error: Error

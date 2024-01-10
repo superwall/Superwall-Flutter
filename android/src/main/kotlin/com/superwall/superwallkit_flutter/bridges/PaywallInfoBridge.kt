@@ -11,11 +11,7 @@ class PaywallInfoBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PaywallInfoBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "PaywallInfoBridge" }
     val paywallInfo: PaywallInfo
 
     init {

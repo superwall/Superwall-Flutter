@@ -2,15 +2,13 @@ package com.superwall.superwallkit_flutter.bridges
 
 import android.content.Context
 import com.superwall.superwallkit_flutter.invokeMethodOnMain
-import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
 
 class CompletionBlockProxyBridge(
     context: Context,
     bridgeId: BridgeId,
-    initializationArgs: Map<String, Any>? = null
+    initializationArgs: Map<String, Any>? = null,
 ) : BridgeInstance(context, bridgeId, initializationArgs) {
+    companion object { fun bridgeClass(): BridgeClass = "CompletionBlockProxyBridge" }
 
     fun callCompletionBlock(value: Any? = null) {
         communicator.invokeMethodOnMain("callCompletionBlock", value)

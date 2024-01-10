@@ -2,6 +2,7 @@ import Flutter
 import SuperwallKit
 
 public class SuperwallDelegateProxyBridge: BridgeInstance, SuperwallDelegate {
+  override class var bridgeClass: BridgeClass { "SuperwallDelegateProxyBridge" }
 
   // MARK: - SuperwallDelegate
 

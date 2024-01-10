@@ -2,9 +2,7 @@ import Flutter
 import SuperwallKit
 
 public class ExperimentBridge: BridgeInstance {
-  override class func bridgeClass() -> BridgeClass {
-    return "ExperimentBridge"
-  }
+  class override var bridgeClass: BridgeClass { "ExperimentBridge" }
 
   let experiment: Experiment
 

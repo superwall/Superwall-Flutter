@@ -2,6 +2,8 @@ import Flutter
 import SuperwallKit
 
 public class PaywallPresentationHandlerProxyBridge: BridgeInstance {
+  override class var bridgeClass: BridgeClass { "PaywallPresentationHandlerProxyBridge" }
+
   lazy var handler: PaywallPresentationHandler = {
     let handler = PaywallPresentationHandler()
 

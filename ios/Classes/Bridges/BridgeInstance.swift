@@ -6,7 +6,7 @@ typealias BridgeId = String
 typealias Communicator = FlutterMethodChannel
 
 public class BridgeInstance: NSObject {
-  class func bridgeClass() -> BridgeClass {
+  class var bridgeClass: BridgeClass {
     assertionFailure("Subclasses must implement")
     return ""
   }

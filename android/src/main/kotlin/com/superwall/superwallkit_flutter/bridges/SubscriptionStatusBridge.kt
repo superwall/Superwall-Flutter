@@ -32,9 +32,7 @@ class SubscriptionStatusActiveBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : SubscriptionStatusBridge(context, bridgeId, initializationArgs) {
-    companion object {
-        fun bridgeClass(): BridgeClass = "SubscriptionStatusActiveBridge"
-    }
+    companion object { fun bridgeClass(): BridgeClass = "SubscriptionStatusActiveBridge" }
 
     override val status: SubscriptionStatus
         get() = SubscriptionStatus.ACTIVE
@@ -45,9 +43,7 @@ class SubscriptionStatusInactiveBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : SubscriptionStatusBridge(context, bridgeId, initializationArgs) {
-    companion object {
-        fun bridgeClass(): BridgeClass = "SubscriptionStatusInactiveBridge"
-    }
+    companion object { fun bridgeClass(): BridgeClass = "SubscriptionStatusInactiveBridge" }
 
     override val status: SubscriptionStatus
         get() = SubscriptionStatus.INACTIVE
@@ -58,9 +54,7 @@ class SubscriptionStatusUnknownBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : SubscriptionStatusBridge(context, bridgeId, initializationArgs) {
-    companion object {
-        fun bridgeClass(): BridgeClass = "SubscriptionStatusUnknownBridge"
-    }
+    companion object { fun bridgeClass(): BridgeClass = "SubscriptionStatusUnknownBridge" }
 
     override val status: SubscriptionStatus
         get() = SubscriptionStatus.UNKNOWN

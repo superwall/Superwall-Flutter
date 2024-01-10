@@ -2,9 +2,7 @@ import Flutter
 import SuperwallKit
 
 public class PaywallInfoBridge: BridgeInstance {
-  override class func bridgeClass() -> BridgeClass {
-    return "PaywallInfoBridge"
-  }
+  class override var bridgeClass: BridgeClass { "PaywallInfoBridge" }
 
   let paywallInfo: PaywallInfo
 
@@ -31,6 +29,6 @@ public class PaywallInfoBridge: BridgeInstance {
 
 extension PaywallInfo {
   func createBridgeId() -> BridgeId {
-    return BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallInfoBridge.bridgeClass(), initializationArgs: ["paywallInfo": self]).bridgeId
+    return BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallInfoBridge.bridgeClass, initializationArgs: ["paywallInfo": self]).bridgeId
   }
 }

@@ -9,6 +9,8 @@ class PaywallPresentationHandlerProxyBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs) {
+    companion object { fun bridgeClass(): BridgeClass = "PaywallPresentationHandlerProxyBridge" }
+
     val handler: PaywallPresentationHandler by lazy {
         PaywallPresentationHandler().apply {
             onPresent {

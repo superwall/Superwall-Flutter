@@ -1,70 +1,89 @@
 import 'package:flutter/services.dart';
+import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/public/LogLevel.dart';
+import 'package:superwallkit_flutter/src/public/PaywallOptions.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// Options for configuring Superwall, including paywall presentation and appearance.
 class SuperwallOptions {
-  // TODO
   /// Configures the appearance and behaviour of paywalls.
-  // PaywallOptions paywalls;
+  PaywallOptions paywalls = PaywallOptions();
 
-  /// The different network environments that the SDK should use.
-  /// Only use this enum to set `networkEnvironment` if told so explicitly by the Superwall team.
-  NetworkEnvironment networkEnvironment;
+  /// Determines which network environment your SDK should use.
+  /// Defaults to NetworkEnvironment.release. You should under no circumstance
+  /// change this unless you received the go-ahead from the Superwall team.
+  NetworkEnvironment networkEnvironment = NetworkEnvironment.release;
 
-  /// Enables the sending of non-Superwall tracked events and properties back to the Superwall servers.
+  /// Enables the sending of non-Superwall tracked events and properties
+  /// back to the Superwall servers.
   /// Defaults to `true`.
-  /// Set this to `false` to stop external data collection. This will not affect
-  /// your ability to create triggers based on properties.
-  bool isExternalDataCollectionEnabled;
+  bool isExternalDataCollectionEnabled = true;
 
   /// Sets the device locale identifier to use when evaluating rules.
-  /// This defaults to the `autoupdatingCurrent` locale identifier. However, you can set
-  /// this to any locale identifier to override it. E.g. `en_GB`. This is typically used for testing
-  /// purposes.
-  /// You can also preview your paywall in different locales using
-  /// [In-App Previews](https://docs.superwall.com/docs/in-app-paywall-previews).
   String? localeIdentifier;
 
-  /// Forwards events from the game controller to the paywall. Defaults to `false`.
-  /// Set this to `true` to forward events from the Game Controller to the Paywall.
-  bool isGameControllerEnabled;
+  /// Forwards events from the game controller to the paywall.
+  /// Defaults to `false`.
+  bool isGameControllerEnabled = false;
 
   /// The log scope and level to print to the console.
-  Logging logging;
-
-  SuperwallOptions({
-    // required this.paywalls,
-    this.networkEnvironment = NetworkEnvironment.release,
-    this.isExternalDataCollectionEnabled = true,
-    this.localeIdentifier,
-    this.isGameControllerEnabled = false,
-    required this.logging,
-  });
+  Logging logging = Logging();
 }
 
+extension SuperwallOptionsJson on SuperwallOptions {
+  Map<dynamic, dynamic> toJson() {
+    return {
+      'paywalls': paywalls.toJson(),
+      'networkEnvironment': networkEnvironment.toJson(),
+      'isExternalDataCollectionEnabled': isExternalDataCollectionEnabled,
+      'localeIdentifier': localeIdentifier,
+      'isGameControllerEnabled': isGameControllerEnabled,
+      'logging': logging.toJson(),
+    };
+  }
+}
+
+/// The different network environments that the SDK should use.
+/// Only use this enum to set `networkEnvironment` if told so explicitly
+/// by the Superwall team.
 enum NetworkEnvironment {
   /// Default: Uses the standard latest environment.
   release,
-
-  /// Uses a release candidate environment. This is not meant for a production environment.
+  /// **WARNING**: Uses a release candidate environment. This is not meant
+  /// for a production environment.
   releaseCandidate,
-
-  /// Uses the nightly build environment. This is not meant for a production environment.
+  /// **WARNING**: Uses the nightly build environment. This is not meant for
+  /// a production environment.
   developer,
 }
 
-class Logging {
-  /// Defines the minimum log level to print to the console. Defaults to `warn`.
-  LogLevel level;
-
-  /// Defines the scope of logs to print to the console. Defaults to .all.
-  Set<LogScope> scopes;
-
-  Logging({this.level = LogLevel.warn, this.scopes = const {LogScope.all}});
+extension NetworkEnvironmentJson on NetworkEnvironment {
+  String toJson() {
+    switch (this) {
+      case NetworkEnvironment.release:
+        return 'release';
+      case NetworkEnvironment.releaseCandidate:
+        return 'releaseCandidate';
+      case NetworkEnvironment.developer:
+        return 'developer';
+    }
+  }
 }
 
-// TODO
-enum LogScope {
-  all,
-  // Define additional log scopes
+/// Configuration for printing to the console.
+class Logging {
+  /// Defines the minimum log level to print to the console. Defaults to `info`.
+  LogLevel level = LogLevel.info;
+
+  /// Defines the scope of logs to print to the console. Defaults to .all.
+  Set<LogScope> scopes = { LogScope.all };
+}
+
+extension LoggingJson on Logging {
+  Map<dynamic, dynamic> toJson() {
+    return {
+      'level': level.toJson(),
+      'scopes': scopes.map((scope) => scope.toJson()).toList(),
+    };
+  }
 }

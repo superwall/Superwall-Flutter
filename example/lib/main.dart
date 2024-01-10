@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -39,11 +40,19 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       // Get Superwall API Key
       String apiKey = Platform.isIOS ? "pk_5f6d9ae96b889bc2c36ca0f2368de2c4c3d5f6119aacd3d2" : "pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85";
 
+      Logging logging = Logging();
+      logging.level = LogLevel.debug;
+      logging.scopes = { LogScope.paywallViewController };
+
+      SuperwallOptions options = SuperwallOptions();
+      options.logging = logging;
+
       // MARK: Step 2 - Configure Superwall
       /// Always configure Superwall first. Pass in the `purchaseController` you just created.
       Superwall.configure(
           apiKey,
-          purchaseController: useRevenueCat ? purchaseController : null
+          purchaseController: useRevenueCat ? purchaseController : null,
+          options: options
       );
 
       Superwall.shared.setDelegate(this);

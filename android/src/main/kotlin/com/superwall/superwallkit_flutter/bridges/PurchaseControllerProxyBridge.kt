@@ -16,6 +16,7 @@ class PurchaseControllerProxyBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs), PurchaseController {
+    companion object { fun bridgeClass(): BridgeClass = "PurchaseControllerProxyBridge" }
 
     // PurchaseController
 

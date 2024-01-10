@@ -3,6 +3,7 @@ import StoreKit
 import SuperwallKit
 
 public class PurchaseControllerProxyBridge: BridgeInstance, PurchaseController {
+  override class var bridgeClass: BridgeClass { "PurchaseControllerProxyBridge" }
 
   // MARK: - PurchaseController
 

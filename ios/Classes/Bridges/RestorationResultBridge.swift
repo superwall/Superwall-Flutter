@@ -13,12 +13,12 @@ public class RestorationResultBridge: BridgeInstance {
 }
 
 public class RestorationResultRestoredBridge: RestorationResultBridge {
-  override class func bridgeClass() -> BridgeClass { return "RestorationResultRestoredBridge" }
+  class override var bridgeClass: BridgeClass { "RestorationResultRestoredBridge" }
   override var restorationResult: RestorationResult { return .restored }
 }
 
 public class RestorationResultFailedBridge: RestorationResultBridge {
-  override class func bridgeClass() -> BridgeClass { return "RestorationResultFailedBridge" }
+  class override var bridgeClass: BridgeClass { "RestorationResultFailedBridge" }
   override var restorationResult: RestorationResult { .failed(error) }
 
   let error: Error

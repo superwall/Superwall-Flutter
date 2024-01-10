@@ -23,11 +23,7 @@ class PurchaseResultCancelledBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PurchaseResultBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PurchaseResultCancelledBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "PurchaseResultCancelledBridge" }
     override val purchaseResult: PurchaseResult = PurchaseResult.Cancelled()
 }
 
@@ -36,11 +32,7 @@ class PurchaseResultPurchasedBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PurchaseResultBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PurchaseResultPurchasedBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "PurchaseResultPurchasedBridge" }
     override val purchaseResult: PurchaseResult = PurchaseResult.Purchased()
 }
 
@@ -49,11 +41,7 @@ class PurchaseResultRestoredBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PurchaseResultBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PurchaseResultRestoredBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "PurchaseResultRestoredBridge" }
     // TODO: CHANGE ONCE AVAILABLE
     override val purchaseResult: PurchaseResult = PurchaseResult.Purchased()
 }
@@ -63,11 +51,7 @@ class PurchaseResultPendingBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PurchaseResultBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PurchaseResultPendingBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "PurchaseResultPendingBridge" }
     override val purchaseResult: PurchaseResult = PurchaseResult.Pending()
 }
 
@@ -76,11 +60,7 @@ class PurchaseResultFailedBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PurchaseResultBridge(context, bridgeId, initializationArgs) {
-
-    companion object {
-        fun bridgeClass(): BridgeClass = "PurchaseResultFailedBridge"
-    }
-
+    companion object { fun bridgeClass(): BridgeClass = "PurchaseResultFailedBridge" }
     override val purchaseResult: PurchaseResult
 
     init {

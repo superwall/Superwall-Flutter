@@ -3,7 +3,7 @@ import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 class CompletionBlockProxy {
   BridgeId bridgeId;
-  Function(dynamic?) block;
+  Function(dynamic) block;
 
   CompletionBlockProxy({required this.bridgeId, required this.block}) {
     bridgeId.associate(this);

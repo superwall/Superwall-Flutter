@@ -2,6 +2,8 @@ import Flutter
 import SuperwallKit
 
 public class SuperwallBridge: BridgeInstance {
+  override class var bridgeClass: BridgeClass { "SuperwallBridge" }
+
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
       case "setDelegate":
@@ -137,8 +139,14 @@ public class SuperwallBridge: BridgeInstance {
 
         let purchaseControllerProxyBridge: PurchaseControllerProxyBridge? = call.bridgeInstance(for: "purchaseControllerProxyBridgeId")
 
-        // TODO
-        let options: SuperwallOptions? = call.argument(for: "options")
+        let options: SuperwallOptions? = {
+          guard let optionsValue: [String: Any] = call.argument(for: "options") else {
+            return nil
+          }
+
+          let options = SuperwallOptions.fromJson(optionsValue)
+          return options
+        }()
 
         Superwall.configure(apiKey: apiKey, purchaseController: purchaseControllerProxyBridge, options: options)
 

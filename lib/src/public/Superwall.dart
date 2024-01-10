@@ -230,7 +230,6 @@ class Superwall {
   }
 
   static Future<void> _configure(String apiKey, {PurchaseController? purchaseController, SuperwallOptions? options, Function? completion}) async {
-    // TODO: Pass options as primitives
     PurchaseControllerProxy? purchaseControllerProxy;
     if (purchaseController != null) {
       // Create a proxy bridge for the non-null purchaseController
@@ -244,7 +243,7 @@ class Superwall {
       await _superwall.bridgeId.communicator.invokeBridgeMethod('configure', {
         'apiKey': apiKey,
         'purchaseControllerProxyBridgeId': purchaseControllerProxy?.bridgeId,
-        'options': options,
+        'options': options?.toJson()
       });
     } catch (e) {
       // Handle any errors that occur during configuration
