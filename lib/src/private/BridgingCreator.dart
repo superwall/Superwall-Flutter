@@ -25,7 +25,8 @@ class BridgingCreator {
     Map<String, dynamic> metadata = BridgingCreator._metadataByBridgeId[bridgeId] ?? {};
     Map<String, dynamic>? initializationArgs = metadata["args"];
 
-    await _channel.invokeMethod("createBridgeInstance", { "bridgeId" : bridgeId, "args" : initializationArgs });
+    final value = await _channel.invokeMethod("createBridgeInstance", { "bridgeId" : bridgeId, "args" : initializationArgs });
+    print(value);
 
     metadata["bridgeInstanceCreated"] = "true";
     _metadataByBridgeId[bridgeId] = metadata;
