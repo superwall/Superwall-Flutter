@@ -65,32 +65,14 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
             return it
         }
 
-        val bridgeClass = bridgeMap[bridgeId.bridgeClass()]
-        bridgeClass?.let { bridgeClass ->
-            try {
-                // Use Java reflection to find the constructor
-                val constructor = bridgeClass.getConstructor(Context::class.java, bridgeId::class.java, Map::class.java)
-
-                try {
-                    // Create an instance of the bridge
-                    val bridgeInstance = constructor.newInstance(
-                        flutterPluginBinding.applicationContext,
-                        bridgeId,
-                        initializationArgs
-                    ) as BridgeInstance
-
-                    instances[bridgeId] = bridgeInstance
-                    bridgeInstance.communicator.setMethodCallHandler(bridgeInstance)
-                    return bridgeInstance
-                } catch (e: Exception) {
-                    throw AssertionError("Error creating a bridge instance of $bridgeClass", e)
-                }
-
-            } catch (e: Exception) {
-                throw AssertionError("No suitable constructor found for $bridgeClass with bridgeId $bridgeId", e)
-            }
+        // Create an instance of the bridge
+        val bridgeInstance = bridgeInitializers[bridgeId.bridgeClass()]?.invoke(flutterPluginBinding.applicationContext, bridgeId, initializationArgs)
+        bridgeInstance?.let { bridgeInstance ->
+            instances[bridgeId] = bridgeInstance
+            bridgeInstance.communicator.setMethodCallHandler(bridgeInstance)
+            return bridgeInstance
         } ?: run {
-            throw AssertionError("Unable to find a bridge class for ${bridgeId.bridgeClass()}. Make sure to add to BridgingCreator. Count: ${bridgeMap.count()}; ${bridgeMap[bridgeId.bridgeClass()]}")
+            throw AssertionError("Unable to find a bridge initializer for ${bridgeId}. Make sure to add to BridgingCreator+Constants.}")
         }
     }
 
