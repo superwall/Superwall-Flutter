@@ -22,32 +22,61 @@ import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusInactiveBrid
 import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusUnknownBridge
 import com.superwall.superwallkit_flutter.bridges.SuperwallBridge
 import com.superwall.superwallkit_flutter.bridges.SuperwallDelegateProxyBridge
+import kotlin.reflect.KClass
 
 // Extension property for Constants in BridgingCreator
-val BridgingCreator.Constants.bridgeTypes: List<Class<out BridgeInstance>>
-    get() = listOf(
-        SuperwallBridge::class.java,
-        SuperwallDelegateProxyBridge::class.java,
-        PurchaseControllerProxyBridge::class.java,
-        CompletionBlockProxyBridge::class.java,
-        SubscriptionStatusActiveBridge::class.java,
-        SubscriptionStatusInactiveBridge::class.java,
-        SubscriptionStatusUnknownBridge::class.java,
-        PaywallPresentationHandlerProxyBridge::class.java,
-        PaywallSkippedReasonHoldoutBridge::class.java,
-        PaywallSkippedReasonNoRuleMatchBridge::class.java,
-        PaywallSkippedReasonEventNotFoundBridge::class.java,
-        PaywallSkippedReasonUserIsSubscribedBridge::class.java,
-        ExperimentBridge::class.java,
-        PaywallInfoBridge::class.java,
-        PurchaseResultCancelledBridge::class.java,
-        PurchaseResultPurchasedBridge::class.java,
-        PurchaseResultRestoredBridge::class.java,
-        PurchaseResultPendingBridge::class.java,
-        PurchaseResultFailedBridge::class.java,
-        RestorationResultRestoredBridge::class.java,
-        RestorationResultFailedBridge::class.java
+// TODO: Use bridgeClass for the key, but make sure to test in release mode
+val BridgingCreator.bridgeMap: Map<String, Class<out BridgeInstance>>
+    get() = mapOf(
+        "SuperwallBridge" to SuperwallBridge::class.java,
+        "SuperwallDelegateProxyBridge" to SuperwallDelegateProxyBridge::class.java,
+        "PurchaseControllerProxyBridge" to PurchaseControllerProxyBridge::class.java,
+        "CompletionBlockProxyBridge" to CompletionBlockProxyBridge::class.java,
+        "SubscriptionStatusActiveBridge" to SubscriptionStatusActiveBridge::class.java,
+        "SubscriptionStatusInactiveBridge" to SubscriptionStatusInactiveBridge::class.java,
+        "SubscriptionStatusUnknownBridge" to SubscriptionStatusUnknownBridge::class.java,
+        "PaywallPresentationHandlerProxyBridge" to PaywallPresentationHandlerProxyBridge::class.java,
+        "PaywallSkippedReasonHoldoutBridge" to PaywallSkippedReasonHoldoutBridge::class.java,
+        "PaywallSkippedReasonNoRuleMatchBridge" to PaywallSkippedReasonNoRuleMatchBridge::class.java,
+        "PaywallSkippedReasonEventNotFoundBridge" to PaywallSkippedReasonEventNotFoundBridge::class.java,
+        "PaywallSkippedReasonUserIsSubscribedBridge" to PaywallSkippedReasonUserIsSubscribedBridge::class.java,
+        "ExperimentBridge" to ExperimentBridge::class.java,
+        "PaywallInfoBridge" to PaywallInfoBridge::class.java,
+        "PurchaseResultCancelledBridge" to PurchaseResultCancelledBridge::class.java,
+        "PurchaseResultPurchasedBridge" to PurchaseResultPurchasedBridge::class.java,
+        "PurchaseResultRestoredBridge" to PurchaseResultRestoredBridge::class.java,
+        "PurchaseResultPendingBridge" to PurchaseResultPendingBridge::class.java,
+        "PurchaseResultFailedBridge" to PurchaseResultFailedBridge::class.java,
+        "RestorationResultRestoredBridge" to RestorationResultRestoredBridge::class.java,
+        "RestorationResultFailedBridge" to RestorationResultFailedBridge::class.java
     )
 
-val BridgingCreator.bridgeMap: Map<String, Class<out BridgeInstance>>
-    get() = BridgingCreator.Constants.bridgeTypes.associate { it.simpleName to it }
+//val BridgingCreator.Constants.bridgeTypes: List<KClass<out BridgeInstance>>
+//    get() = listOf(
+//        SuperwallBridge::class,
+//        SuperwallDelegateProxyBridge::class,
+//        PurchaseControllerProxyBridge::class,
+//        CompletionBlockProxyBridge::class,
+//        SubscriptionStatusActiveBridge::class,
+//        SubscriptionStatusInactiveBridge::class,
+//        SubscriptionStatusUnknownBridge::class,
+//        PaywallPresentationHandlerProxyBridge::class,
+//        PaywallSkippedReasonHoldoutBridge::class,
+//        PaywallSkippedReasonNoRuleMatchBridge::class,
+//        PaywallSkippedReasonEventNotFoundBridge::class,
+//        PaywallSkippedReasonUserIsSubscribedBridge::class,
+//        ExperimentBridge::class,
+//        PaywallInfoBridge::class,
+//        PurchaseResultCancelledBridge::class,
+//        PurchaseResultPurchasedBridge::class,
+//        PurchaseResultRestoredBridge::class,
+//        PurchaseResultPendingBridge::class,
+//        PurchaseResultFailedBridge::class,
+//        RestorationResultRestoredBridge::class,
+//        RestorationResultFailedBridge::class
+//    )
+//
+//val BridgingCreator.bridgeMap: Map<String, KClass<out BridgeInstance>>
+//    get() = BridgingCreator.Constants.bridgeTypes.associate {
+//        it.java.getMethod("bridgeClass").invoke(null) as String to it
+//    }

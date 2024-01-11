@@ -71,20 +71,26 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
                 // Use Java reflection to find the constructor
                 val constructor = bridgeClass.getConstructor(Context::class.java, bridgeId::class.java, Map::class.java)
 
-                // Create an instance of the bridge
-                val bridgeInstance = constructor.newInstance(flutterPluginBinding.applicationContext, bridgeId, initializationArgs) as BridgeInstance
+                try {
+                    // Create an instance of the bridge
+                    val bridgeInstance = constructor.newInstance(
+                        flutterPluginBinding.applicationContext,
+                        bridgeId,
+                        initializationArgs
+                    ) as BridgeInstance
 
-                instances[bridgeId] = bridgeInstance
-                bridgeInstance.communicator.setMethodCallHandler(bridgeInstance)
-                return bridgeInstance
+                    instances[bridgeId] = bridgeInstance
+                    bridgeInstance.communicator.setMethodCallHandler(bridgeInstance)
+                    return bridgeInstance
+                } catch (e: Exception) {
+                    throw AssertionError("Error creating a bridge instance of $bridgeClass", e)
+                }
 
-            } catch (e: NoSuchMethodException) {
-                throw AssertionError("No suitable constructor found for $bridgeClass", e)
             } catch (e: Exception) {
-                throw AssertionError("Error creating a bridge instance of $bridgeClass", e)
+                throw AssertionError("No suitable constructor found for $bridgeClass with bridgeId $bridgeId", e)
             }
         } ?: run {
-            throw AssertionError("Unable to find a bridge class for ${bridgeId.bridgeClass()}. Make sure to add to BridgingCreator.")
+            throw AssertionError("Unable to find a bridge class for ${bridgeId.bridgeClass()}. Make sure to add to BridgingCreator. Count: ${bridgeMap.count()}; ${bridgeMap[bridgeId.bridgeClass()]}")
         }
     }
 
