@@ -36,7 +36,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/superwallkit_flutter/ios"
 
 SPEC CHECKSUMS:
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 13825b8a9334a850581300559b8839134b124670
   purchases_flutter: ee7f7c20c021c4a1a482a70ab78d3d36594295bb
   PurchasesHybridCommon: 6b510d4965166df2137347a414d6a8e2906d5a5e

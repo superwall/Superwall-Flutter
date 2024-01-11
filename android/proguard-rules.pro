@@ -1,0 +1,1 @@
+-keep class com.superwall.superwallkit_flutter.** { *; }
