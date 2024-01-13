@@ -61,13 +61,8 @@ class SuperwallBridge(
                 result.notImplemented()
             }
             "getUserAttributes" -> {
-                // TODO: Replace with sync functionality once fixed in Android SDK
-                CoroutineScope(Dispatchers.IO).launch {
-                    val attributes = Superwall.instance.getUserAttributes()
-                    runOnUiThread {
-                        result.success(attributes)
-                    }
-                }
+                val attributes = Superwall.instance.userAttributes
+                result.success(attributes)
             }
             "setUserAttributes" -> {
                 val userAttributes = call.argument<Map<String, Any?>>("userAttributes")

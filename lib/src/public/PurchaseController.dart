@@ -12,16 +12,29 @@ import 'package:superwallkit_flutter/src/public/RestorationResult.dart';
 /// To learn how to implement the `PurchaseController` in your app
 /// and best practices, see [Purchases and Subscription Status](https://docs.superwall.com/docs/advanced-configuration).
 abstract class PurchaseController {
-  /// Called when the user initiates purchasing of a product.
+  /// Called when the user initiates purchasing of a product from iOS.
   ///
-  /// Add your purchase logic here and return its result. You can use platform-specific purchasing APIs.
-  /// Make sure you handle all cases of `PurchaseResult`.
+  /// Add your purchase logic here and return its result. You can use platform-specific
+  /// purchasing APIs. Make sure you handle all cases of `PurchaseResult`.
   ///
   /// - Parameters:
   ///   - productId: The product id of the product the user would like to purchase.
   ///
   /// - Returns: A `PurchaseResult` object, which is the result of your purchase logic.
-  Future<PurchaseResult> purchase(String productId);
+  Future<PurchaseResult> purchaseFromAppStore(String productId);
+
+  /// Called when the user initiates purchasing of a product from Android.
+  ///
+  /// Add your purchase logic here and return its result. You can use platform-specific
+  /// purchasing APIs. Make sure you handle all cases of `PurchaseResult`.
+  ///
+  /// - Parameters:
+  ///   - productId: The product id of the product the user would like to purchase.
+  ///   - basePlanId: An optional base plan identifier of the product that's being purchased. Default is `null`.
+  ///   - offerId: An optional offer identifier of the product that's being purchased. Default is `null`.
+  ///
+  /// - Returns: A `PurchaseResult` object, which is the result of your purchase logic.
+  Future<PurchaseResult> purchaseFromGooglePlay(String productId, String? basePlanId, String? offerId);
 
   /// Called when the user initiates a restore.
   ///

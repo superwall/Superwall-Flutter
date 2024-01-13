@@ -44,9 +44,10 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
         when (call.method) {
             "createBridgeInstance" -> {
                 val bridgeId = call.argument<String>("bridgeId")
+                val initializationArgs = call.argument<Map<String, Any>>("args")
 
                 if (bridgeId != null) {
-                    createBridgeInstanceFromBridgeId(bridgeId)
+                    createBridgeInstanceFromBridgeId(bridgeId, initializationArgs)
                     result.success(null)
                 } else {
                     println("WARNING: Unable to create bridge")
@@ -58,7 +59,7 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
     }
 
     // Create the bridge instance as instructed from Dart
-    private fun createBridgeInstanceFromBridgeId(bridgeId: BridgeId, initializationArgs: Map<String, Any>? = null): BridgeInstance {
+    private fun createBridgeInstanceFromBridgeId(bridgeId: BridgeId, initializationArgs: Map<String, Any>?): BridgeInstance {
         // An existing bridge instance might exist if it were created natively, instead of from Dart
         val existingBridgeInstance = instances[bridgeId]
         existingBridgeInstance?.let {

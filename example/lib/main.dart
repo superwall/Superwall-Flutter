@@ -41,8 +41,8 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       String apiKey = Platform.isIOS ? "pk_5f6d9ae96b889bc2c36ca0f2368de2c4c3d5f6119aacd3d2" : "pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85";
 
       Logging logging = Logging();
-      logging.level = LogLevel.debug;
-      logging.scopes = { LogScope.paywallViewController };
+      logging.level = LogLevel.warn;
+      logging.scopes = { LogScope.all };
 
       SuperwallOptions options = SuperwallOptions();
       options.logging = logging;

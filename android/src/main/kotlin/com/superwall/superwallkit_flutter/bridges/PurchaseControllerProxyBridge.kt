@@ -2,14 +2,12 @@ package com.superwall.superwallkit_flutter.bridges
 
 import android.app.Activity
 import android.content.Context
+import com.android.billingclient.api.ProductDetails
 import com.superwall.sdk.delegate.subscription_controller.PurchaseController
-import io.flutter.plugin.common.MethodChannel
 import com.superwall.sdk.delegate.PurchaseResult
 import com.superwall.sdk.delegate.RestorationResult
-import com.android.billingclient.api.SkuDetails
 import com.superwall.superwallkit_flutter.asyncInvokeMethodOnMain
 import com.superwall.superwallkit_flutter.bridgeInstance
-import io.flutter.embedding.engine.plugins.FlutterPlugin
 
 class PurchaseControllerProxyBridge(
     context: Context,
@@ -20,13 +18,20 @@ class PurchaseControllerProxyBridge(
 
     // PurchaseController
 
-    override suspend fun purchase(activity: Activity, product: SkuDetails): PurchaseResult {
-        val purchaseResultBridgeId = communicator.asyncInvokeMethodOnMain("purchaseProduct", mapOf("productId" to product.sku)) as? BridgeId
+    override suspend fun purchase(activity: Activity, productDetails: ProductDetails, basePlanId: String?, offerId: String?): PurchaseResult {
+        val attributes = mapOf(
+            "productId" to productDetails.productId,
+            "basePlanId" to basePlanId,
+            "offerId" to offerId
+        )
+        val purchaseResultBridgeId = communicator.asyncInvokeMethodOnMain("purchaseFromGooglePlay", attributes) as? BridgeId
         val purchaseResultBridge = purchaseResultBridgeId?.bridgeInstance() as? PurchaseResultBridge
 
         if (purchaseResultBridge == null) {
             println("WARNING: Unexpected result")
-            return PurchaseResult.Failed(PurchaseControllerProxyPluginError());
+            return PurchaseResult.Failed("ERROR: Could not find a purchase result " +
+                    "bridge. Make sure you enforce that it was created from Dart before " +
+                    "sending back a response.");
         }
 
         return purchaseResultBridge.purchaseResult

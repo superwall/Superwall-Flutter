@@ -42,8 +42,7 @@ class PurchaseResultRestoredBridge(
     initializationArgs: Map<String, Any>? = null
 ) : PurchaseResultBridge(context, bridgeId, initializationArgs) {
     companion object { fun bridgeClass(): BridgeClass = "PurchaseResultRestoredBridge" }
-    // TODO: CHANGE ONCE AVAILABLE
-    override val purchaseResult: PurchaseResult = PurchaseResult.Purchased()
+    override val purchaseResult: PurchaseResult = PurchaseResult.Restored()
 }
 
 class PurchaseResultPendingBridge(
@@ -66,8 +65,6 @@ class PurchaseResultFailedBridge(
     init {
         val errorString = initializationArgs?.get("error") as? String
             ?: throw IllegalArgumentException("Attempting to create `PurchaseResultFailedBridge` without providing `error`.")
-        purchaseResult = PurchaseResult.Failed(PurchaseResultError(errorString))
+        purchaseResult = PurchaseResult.Failed(errorString)
     }
 }
-
-data class PurchaseResultError(override val message: String) : Throwable()

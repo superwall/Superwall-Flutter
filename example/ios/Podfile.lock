@@ -2,12 +2,15 @@ PODS:
   - Flutter (1.0.0)
   - integration_test (0.0.1):
     - Flutter
-  - purchases_flutter (4.13.0):
+  - purchases_flutter (6.15.0):
     - Flutter
-    - PurchasesHybridCommon (= 4.18.0)
-  - PurchasesHybridCommon (4.18.0):
-    - RevenueCat (= 4.21.0)
-  - RevenueCat (4.21.0)
+    - PurchasesHybridCommon (= 8.10.1)
+  - PurchasesHybridCommon (8.10.1):
+    - RevenueCat (= 4.31.9)
+    - RevenueCatUI (= 4.31.9)
+  - RevenueCat (4.31.9)
+  - RevenueCatUI (4.31.9):
+    - RevenueCat (= 4.31.9)
   - SuperwallKit (3.4.5)
   - superwallkit_flutter (0.0.1):
     - Flutter
@@ -23,6 +26,7 @@ SPEC REPOS:
   trunk:
     - PurchasesHybridCommon
     - RevenueCat
+    - RevenueCatUI
     - SuperwallKit
 
 EXTERNAL SOURCES:
@@ -38,9 +42,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 13825b8a9334a850581300559b8839134b124670
-  purchases_flutter: ee7f7c20c021c4a1a482a70ab78d3d36594295bb
-  PurchasesHybridCommon: 6b510d4965166df2137347a414d6a8e2906d5a5e
-  RevenueCat: 465a9dc1fff60b09f29792082e5d5d5aeed01122
+  purchases_flutter: ce847b4848ccec17cadfb1a2e2a3ad1d3f681849
+  PurchasesHybridCommon: 170de77f83fd9cb570457157e92ea04c7aef8196
+  RevenueCat: aa3e439fb6282e7768609774a73c06ab87c3d9c3
+  RevenueCatUI: ef3f12dddf49d333a66a13f1d32c73ef1075ae95
   SuperwallKit: dc2c06d2d496e16a223a8e169fb2b99d2d8b0258
   superwallkit_flutter: c3af773fcf7399e2a82ddffb9c0e1c2e4c842731
 

@@ -114,23 +114,9 @@ class BridgingCreator {
 abstract class BridgeIdInstantiable {
   BridgeId bridgeId;
 
-  BridgeIdInstantiable([BridgeId? providedBridgeId, Map<String, dynamic>? initializationArgs])
+  BridgeIdInstantiable(BridgeClass bridgeClass, [BridgeId? providedBridgeId, Map<String, dynamic>? initializationArgs])
       : bridgeId = providedBridgeId ?? BridgingCreator._createBridgeId(bridgeClass, initializationArgs) {
-    _ensureBridgeClassDefined();
     bridgeId.associate(this);
-  }
-
-  // static BridgeId createBridgeId() {
-  //   return BridgingCreator._createBridgeId(bridgeClass);
-  // }
-
-  // Subclasses MUST implement
-  static const String bridgeClass = "BaseBridgeClass";
-
-  void _ensureBridgeClassDefined() {
-    if (bridgeClass == "BaseBridgeClass") {
-      throw "Subclass must define the static const bridgeClass.";
-    }
   }
 }
 

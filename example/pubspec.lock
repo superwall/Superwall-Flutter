@@ -190,10 +190,10 @@ packages:
     dependency: "direct main"
     description:
       name: purchases_flutter
-      sha256: "1dfca3209f847f8999c54c475e92cf3211381794b2c7f5aa399f90efe2b40997"
+      sha256: "8a0131c917c55e520723ae267ca60bea7e5f980108320d9b6349b7f332941129"
       url: "https://pub.dev"
     source: hosted
-    version: "4.13.0"
+    version: "6.15.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -237,7 +237,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.13"
+    version: "0.0.16"
   sync_http:
     dependency: transitive
     description:

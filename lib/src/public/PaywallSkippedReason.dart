@@ -3,7 +3,7 @@ import 'package:superwallkit_flutter/src/public/Experiment.dart';
 
 /// The reason the paywall presentation was skipped.
 abstract class PaywallSkippedReason extends BridgeIdInstantiable {
-  PaywallSkippedReason([BridgeId? bridgeId]): super(bridgeId);
+  PaywallSkippedReason(BridgeClass bridgeClass, [BridgeId? bridgeId]): super(bridgeClass, bridgeId);
 
   static PaywallSkippedReason? createReasonFromBridgeId(BridgeId bridgeId) {
     switch (bridgeId.bridgeClass) {
@@ -33,8 +33,8 @@ abstract class PaywallSkippedReason extends BridgeIdInstantiable {
 ///
 /// It's useful for testing a paywall's inclusing vs its exclusion.
 class PaywallSkippedReasonHoldout extends PaywallSkippedReason {
-  static BridgeClass bridgeClass() => "PaywallSkippedReasonHoldoutBridge";
-  PaywallSkippedReasonHoldout([BridgeId? bridgeId]): super(bridgeId);
+  static const BridgeClass bridgeClass = "PaywallSkippedReasonHoldoutBridge";
+  PaywallSkippedReasonHoldout([BridgeId? bridgeId]): super(bridgeClass, bridgeId);
 
   Future<Experiment> get experiment async {
     BridgeId experimentBridgeId = await bridgeId.communicator.invokeBridgeMethod('getExperimentBridgeId');
@@ -45,8 +45,8 @@ class PaywallSkippedReasonHoldout extends PaywallSkippedReason {
 
 /// No rule was matched for this event.
 class PaywallSkippedReasonNoRuleMatch extends PaywallSkippedReason {
-  static BridgeClass bridgeClass() => "PaywallSkippedReasonNoRuleMatchBridge";
-  PaywallSkippedReasonNoRuleMatch([BridgeId? bridgeId]): super(bridgeId);
+  static const BridgeClass bridgeClass = "PaywallSkippedReasonNoRuleMatchBridge";
+  PaywallSkippedReasonNoRuleMatch([BridgeId? bridgeId]): super(bridgeClass, bridgeId);
 }
 
 /// This event was not found on the dashboard.
@@ -54,8 +54,8 @@ class PaywallSkippedReasonNoRuleMatch extends PaywallSkippedReason {
 /// Please make sure you have added the event to a campaign on the dashboard and
 /// double check its spelling.
 class PaywallSkippedReasonEventNotFound extends PaywallSkippedReason {
-  static BridgeClass bridgeClass() => "PaywallSkippedReasonEventNotFoundBridge";
-  PaywallSkippedReasonEventNotFound([BridgeId? bridgeId]): super(bridgeId);
+  static const BridgeClass bridgeClass = "PaywallSkippedReasonEventNotFoundBridge";
+  PaywallSkippedReasonEventNotFound([BridgeId? bridgeId]): super(bridgeClass, bridgeId);
 }
 
 /// The user is subscribed.
@@ -67,6 +67,6 @@ class PaywallSkippedReasonEventNotFound extends PaywallSkippedReason {
 /// By default, paywalls do not show to users who are already subscribed. You can override this
 /// behavior in the paywall editor.
 class PaywallSkippedReasonUserIsSubscribed extends PaywallSkippedReason {
-  static BridgeClass bridgeClass() => "PaywallSkippedReasonUserIsSubscribedBridge";
-  PaywallSkippedReasonUserIsSubscribed([BridgeId? bridgeId]) : super(bridgeId);
+  static const BridgeClass bridgeClass = "PaywallSkippedReasonUserIsSubscribedBridge";
+  PaywallSkippedReasonUserIsSubscribed([BridgeId? bridgeId]) : super(bridgeClass, bridgeId);
 }
