@@ -1,6 +1,5 @@
 package com.superwall.superwallkit_flutter
 
-import android.content.Context
 import com.superwall.superwallkit_flutter.bridges.BridgeClass
 import com.superwall.superwallkit_flutter.bridges.BridgeId
 import com.superwall.superwallkit_flutter.bridges.BridgeInstance
@@ -30,11 +29,12 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
 
     // Generic function to retrieve a bridge instance
     fun <T> bridgeInstance(bridgeId: BridgeId): T? {
+        BreadCrumbs.append("BridgingCreator.kt: Searching for $bridgeId among ${instances.count()}: ${instances.toFormattedString()}")
         var instance = instances[bridgeId] as? T
 
-        if (instance == null) {
+        if (instance == null || bridgeId.contains("PaywallPresentationHandler")) {
             // No instance was found. When calling `invokeBridgeMethod` from Dart, make sure to provide any potentially uninitialized instances
-            throw AssertionError("Unable to find a native instance for $bridgeId.")
+            throw AssertionError("Unable to find a native instance for $bridgeId. Logs: ${BreadCrumbs.logs()}")
         }
 
         return instance

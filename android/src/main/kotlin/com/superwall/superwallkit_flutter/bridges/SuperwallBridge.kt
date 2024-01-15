@@ -16,6 +16,7 @@ import com.superwall.sdk.misc.runOnUiThread
 import com.superwall.sdk.paywall.presentation.PaywallPresentationHandler
 import com.superwall.sdk.paywall.presentation.dismiss
 import com.superwall.sdk.paywall.presentation.register
+import com.superwall.superwallkit_flutter.BreadCrumbs
 import com.superwall.superwallkit_flutter.SuperwallkitFlutterPlugin
 import com.superwall.superwallkit_flutter.argumentForKey
 import com.superwall.superwallkit_flutter.badArgs
@@ -209,8 +210,12 @@ class SuperwallBridge(
                 event?.let { event ->
                     val params = call.argument<Map<String, Any>>("params")
 
+                    BreadCrumbs.append("SuperwallBridge.kt: Invoke registerEvent")
                     val handlerProxyBridge = call.bridgeInstance<PaywallPresentationHandlerProxyBridge?>("handlerProxyBridgeId")
+                    BreadCrumbs.append("SuperwallBridge.kt: Found handlerProxyBridge instance: $handlerProxyBridge")
+
                     val handler: PaywallPresentationHandler? = handlerProxyBridge?.handler
+                    BreadCrumbs.append("SuperwallBridge.kt: Found handler: $handler")
 
                     Superwall.instance.register(event, params, handler) {
                         val featureBlockProxyBridge = call.bridgeInstance<CompletionBlockProxyBridge>("featureBlockProxyBridgeId")
