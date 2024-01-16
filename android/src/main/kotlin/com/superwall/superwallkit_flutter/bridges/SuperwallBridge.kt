@@ -223,7 +223,7 @@ class SuperwallBridge(
                             it.callCompletionBlock()
                         }
                     }
-                    result.success(null)
+                    result.success(true)
                 } ?: run {
                     result.badArgs(call)
                 }

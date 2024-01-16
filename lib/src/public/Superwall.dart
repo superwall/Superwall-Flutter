@@ -299,12 +299,14 @@ extension PublicPresentation on Superwall {
       );
     }
 
-    await bridgeId.communicator.invokeBridgeMethod('registerEvent', {
+    var response = await bridgeId.communicator.invokeBridgeMethod('registerEvent', {
       'event': event,
       'params': params,
       'handlerProxyBridgeId': handlerProxy?.bridgeId,
       'featureBlockProxyBridgeId': featureBlockProxy?.bridgeId
     });
+
+    print(response);
   }
 }
 
