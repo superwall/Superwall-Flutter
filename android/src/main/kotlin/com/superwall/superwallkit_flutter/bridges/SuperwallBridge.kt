@@ -8,6 +8,7 @@ import com.superwall.sdk.delegate.SuperwallDelegate
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import android.net.Uri
+import com.superwall.sdk.delegate.SubscriptionStatus
 import com.superwall.sdk.identity.IdentityOptions
 import com.superwall.sdk.identity.identify
 import com.superwall.sdk.identity.setUserAttributes
@@ -106,7 +107,15 @@ class SuperwallBridge(
                 val subscriptionStatusBridge = call.bridgeInstance<SubscriptionStatusBridge>("subscriptionStatusBridgeId")
                 subscriptionStatusBridge?.let {
                     Superwall.instance.setSubscriptionStatus(it.status)
-                    result.success(null)
+
+                    val updatedValue = Superwall.instance.subscriptionStatus.value;
+                    val valid = (updatedValue == SubscriptionStatus.ACTIVE || updatedValue == SubscriptionStatus.INACTIVE) && (updatedValue != SubscriptionStatus.UNKNOWN);
+                    result.success(mapOf(
+                        "providedStatus" to it.status.toString(),
+                        "updatedValue" to updatedValue.toString(),
+                        "valid" to valid
+                    ))
+
                 } ?: run {
                     result.badArgs(call)
                 }

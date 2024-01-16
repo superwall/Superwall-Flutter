@@ -160,7 +160,8 @@ class Superwall {
       }
     }
     final subscriptionStatusBridgeId = getSubscriptionStatusBridgeId(status);
-    await bridgeId.communicator.invokeBridgeMethod('setSubscriptionStatus', {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
+    var result = await bridgeId.communicator.invokeBridgeMethod('setSubscriptionStatus', {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
+    print(result);
   }
 
   // Asynchronous method to check if Superwall has finished configuring
@@ -299,14 +300,14 @@ extension PublicPresentation on Superwall {
       );
     }
 
-    var response = await bridgeId.communicator.invokeBridgeMethod('registerEvent', {
+    var result = await bridgeId.communicator.invokeBridgeMethod('registerEvent', {
       'event': event,
       'params': params,
       'handlerProxyBridgeId': handlerProxy?.bridgeId,
       'featureBlockProxyBridgeId': featureBlockProxy?.bridgeId
     });
 
-    print(response);
+    print(result);
   }
 }
 
