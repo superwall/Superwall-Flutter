@@ -10,20 +10,29 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import java.util.concurrent.ConcurrentHashMap
 
 class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : MethodCallHandler {
-    private val instances: MutableMap<String, BridgeInstance> = mutableMapOf()
+    private val instances: MutableMap<String, BridgeInstance> = ConcurrentHashMap()
 
     object Constants { }
 
     companion object {
-        lateinit var shared: BridgingCreator
+        private var _shared: BridgingCreator? = null
+        val shared: BridgingCreator
+            get() = _shared ?: throw IllegalStateException("BridgingCreator not initialized")
 
         fun register(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-            val communicator = Communicator(flutterPluginBinding.binaryMessenger, "SWK_BridgingCreator")
-            val bridge = BridgingCreator(flutterPluginBinding)
-            shared = bridge
-            communicator.setMethodCallHandler(bridge)
+            BreadCrumbs.append("BridgingCreator.kt: registering. THIS SHOULD ONLY OCCUR ONCE.")
+
+            synchronized(BridgingCreator::class.java) {
+                if (_shared == null) {
+                    val bridge = BridgingCreator(flutterPluginBinding)
+                    _shared = bridge
+                    val communicator = Communicator(flutterPluginBinding.binaryMessenger, "SWK_BridgingCreator")
+                    communicator.setMethodCallHandler(bridge)
+                }
+            }
         }
     }
 
@@ -32,7 +41,7 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
         BreadCrumbs.append("BridgingCreator.kt: Searching for $bridgeId among ${instances.count()}: ${instances.toFormattedString()}")
         var instance = instances[bridgeId] as? T
 
-        if (instance == null || bridgeId.contains("PaywallPresentationHandler")) {
+        if (instance == null) {
             // No instance was found. When calling `invokeBridgeMethod` from Dart, make sure to provide any potentially uninitialized instances
             throw AssertionError("Unable to find a native instance for $bridgeId. Logs: ${BreadCrumbs.logs()}")
         }
