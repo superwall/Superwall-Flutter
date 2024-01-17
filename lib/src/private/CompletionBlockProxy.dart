@@ -3,7 +3,7 @@ import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 class CompletionBlockProxy extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = "CompletionBlockProxyBridge";
-  CompletionBlockProxy(this.block, [BridgeId? bridgeId]): super(bridgeClass, bridgeId);
+  CompletionBlockProxy({required this.block, BridgeId? bridgeId}): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
 
   Function(dynamic) block;
 

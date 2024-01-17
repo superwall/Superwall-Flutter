@@ -6,9 +6,9 @@ import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
 
 class PaywallPresentationHandlerProxy extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = "PaywallPresentationHandlerProxyBridge";
-  PaywallPresentationHandlerProxy(this.paywallPresentationHandler, [BridgeId? bridgeId]): super(bridgeClass, bridgeId);
+  PaywallPresentationHandlerProxy({ required this.handler, BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
 
-  PaywallPresentationHandler paywallPresentationHandler;
+  PaywallPresentationHandler handler;
 
   // Handle method calls from native
   @override
@@ -18,21 +18,21 @@ class PaywallPresentationHandlerProxy extends BridgeIdInstantiable {
         final bridgeId = call.bridgeId("paywallInfoBridgeId");
         final paywallInfo = PaywallInfo(bridgeId: bridgeId);
 
-        paywallPresentationHandler.onPresentHandler?.call(paywallInfo);
+        handler.onPresentHandler?.call(paywallInfo);
       case 'onDismiss':
         final bridgeId = call.bridgeId("paywallInfoBridgeId");
         final paywallInfo = PaywallInfo(bridgeId: bridgeId);
 
-        paywallPresentationHandler.onDismissHandler?.call(paywallInfo);
+        handler.onDismissHandler?.call(paywallInfo);
       case 'onError':
         final errorString = call.argument("errorString");
-        paywallPresentationHandler.onErrorHandler?.call(errorString);
+        handler.onErrorHandler?.call(errorString);
       case 'onSkip':
         final bridgeId = call.bridgeId("paywallSkippedReasonBridgeId");
         final paywallSkipReason = PaywallSkippedReason.createReasonFromBridgeId(bridgeId);
         if (paywallSkipReason == null) { return; }
 
-        paywallPresentationHandler.onSkipHandler?.call(paywallSkipReason);
+        handler.onSkipHandler?.call(paywallSkipReason);
       default:
         throw UnimplementedError('Method ${call.method} not implemented.');
     }

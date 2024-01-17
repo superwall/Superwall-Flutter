@@ -19,10 +19,11 @@ import '../private/LatestValueStreamController.dart';
 /// The primary class for integrating Superwall into your application.
 /// After configuring via `configure(apiKey: purchaseController: options: completion:)`,
 /// it provides access to all its features via instance functions and variables.
-class Superwall {
-  final BridgeId bridgeId;
+class Superwall extends BridgeIdInstantiable {
+  static const BridgeClass bridgeClass = "SuperwallBridge";
+  Superwall({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
 
-  static final Superwall _superwall = Superwall._privateConstructor(BridgingCreator.createSuperwallBridge());
+  static final Superwall _superwall = Superwall();
 
   // Used to prevent functions in this class from being used until after
   // the SDK has been configured on the native side
@@ -33,13 +34,8 @@ class Superwall {
     return _superwall;
   }
 
-  // // Private constructor for assertion error
-  Superwall._privateConstructor(this.bridgeId) {
-    bridgeId.associate(this);
-    bridgeId.communicator.setMethodCallHandler(_handleMethodCall);
-  }
-
-  Future<void> _handleMethodCall(MethodCall call) async {}
+  @override
+  Future<void> handleMethodCall(MethodCall call) async {}
 
   // We'd like the configuration of Dart's Superwall to be synchronous; however,
   // because Superwall needs to be bridged, it's inherently asynchronous. In
@@ -66,7 +62,7 @@ class Superwall {
     await _waitForBridgeInstanceCreation();
 
     // Store the Dart proxy
-    final delegateProxy = SuperwallDelegateProxy(bridgeId: BridgingCreator.createSuperwallDelegateProxyBridgeId(), delegate: newDelegate);
+    final delegateProxy = SuperwallDelegateProxy(delegate: newDelegate);
 
     // Set the native instance as the delegate
     await bridgeId.communicator.invokeBridgeMethod('setDelegate', {'delegateProxyBridgeId': delegateProxy.bridgeId });
@@ -247,7 +243,7 @@ class Superwall {
       }
 
       // Create the Dart proxy and native side bridge
-      completionBlockProxy = CompletionBlockProxy(completionBlock);
+      completionBlockProxy = CompletionBlockProxy(block: completionBlock);
     }
 
     try {
@@ -294,13 +290,13 @@ extension PublicPresentation on Superwall {
       }
 
       // Create the Dart proxy and native side bridge
-      featureBlockProxy = CompletionBlockProxy(featureBlock);
+      featureBlockProxy = CompletionBlockProxy(block: featureBlock);
     }
 
     PaywallPresentationHandlerProxy? handlerProxy;
     if (handler != null) {
       // Create the Dart proxy and native side bridge
-      handlerProxy = PaywallPresentationHandlerProxy(handler);
+      handlerProxy = PaywallPresentationHandlerProxy(handler: handler);
     }
 
     var result = await bridgeId.communicator.invokeBridgeMethod('registerEvent', {

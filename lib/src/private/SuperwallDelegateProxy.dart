@@ -4,17 +4,15 @@ import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
 
-class SuperwallDelegateProxy {
-  BridgeId bridgeId;
+class SuperwallDelegateProxy extends BridgeIdInstantiable {
+  static const BridgeClass bridgeClass = "SuperwallDelegateProxyBridge";
+  SuperwallDelegateProxy({required this.delegate, BridgeId? bridgeId}): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+
   SuperwallDelegate delegate;
 
-  SuperwallDelegateProxy({required this.bridgeId, required this.delegate}) {
-    bridgeId.associate(this);
-    bridgeId.communicator.setMethodCallHandler(_handleMethodCall);
-  }
-
   // Handle method calls from native
-  Future<void> _handleMethodCall(MethodCall call) async {
+  @override
+  Future<void> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'willPresentPaywall':
         final bridgeId = call.bridgeId("paywallInfoBridgeId");

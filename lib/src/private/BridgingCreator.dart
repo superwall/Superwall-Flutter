@@ -46,14 +46,6 @@ class BridgingCreator {
 
   // TODO: Move these to their associated classes and abstract into base class (see PaywallSkipReason)
 
-  static BridgeId createSuperwallBridge() {
-    return _createBridgeId("SuperwallBridge");
-  }
-
-  static BridgeId createSuperwallDelegateProxyBridgeId() {
-    return _createBridgeId("SuperwallDelegateProxyBridge");
-  }
-
   static BridgeId createPurchaseControllerProxyBridgeId() {
     return _createBridgeId("PurchaseControllerProxyBridge");
   }
@@ -106,10 +98,10 @@ class BridgingCreator {
 abstract class BridgeIdInstantiable {
   BridgeId bridgeId;
 
-  BridgeIdInstantiable(BridgeClass bridgeClass, [BridgeId? providedBridgeId, Map<String, dynamic>? initializationArgs])
-      : bridgeId = providedBridgeId ?? BridgingCreator._createBridgeId(bridgeClass, initializationArgs) {
-    bridgeId.associate(this);
-    bridgeId.communicator.setMethodCallHandler(handleMethodCall);
+  BridgeIdInstantiable({ required BridgeClass bridgeClass, BridgeId? bridgeId, Map<String, dynamic>? initializationArgs})
+      : bridgeId = bridgeId ?? BridgingCreator._createBridgeId(bridgeClass, initializationArgs) {
+    this.bridgeId.associate(this);
+    this.bridgeId.communicator.setMethodCallHandler(handleMethodCall);
   }
 
   // Handle method calls from native (subclasses should implement)
