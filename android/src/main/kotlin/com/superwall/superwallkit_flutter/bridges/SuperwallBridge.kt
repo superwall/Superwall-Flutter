@@ -10,7 +10,6 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import android.net.Uri
 import com.superwall.sdk.delegate.SubscriptionStatus
-import com.superwall.sdk.identity.IdentityOptions
 import com.superwall.sdk.identity.identify
 import com.superwall.sdk.identity.setUserAttributes
 import com.superwall.sdk.misc.ActivityProvider
@@ -55,7 +54,7 @@ class SuperwallBridge(
             }
             "setLogLevel" -> {
                 val logLevelJson = call.argumentForKey<String>("logLevel")
-                val logLevel = logLevelJson?.let { JsonExtensions.Companion.logLevelFromJson(it) }
+                val logLevel = logLevelJson?.let { JsonExtensions.logLevelFromJson(it) }
 
                 logLevel?.let {
                     Superwall.instance.logLevel = it
@@ -192,7 +191,7 @@ class SuperwallBridge(
                         call.bridgeInstance<PurchaseControllerProxyBridge?>("purchaseControllerProxyBridgeId")
 
                     val options: SuperwallOptions? = call.argument<Map<String, Any>>("options")?.let { optionsValue ->
-                        JsonExtensions.Companion.superwallOptionsFromJson(optionsValue)
+                        JsonExtensions.superwallOptionsFromJson(optionsValue)
                     }
 
                     Superwall.configure(
@@ -200,7 +199,12 @@ class SuperwallBridge(
                         apiKey = apiKey,
                         purchaseController = purchaseControllerProxyBridge,
                         options = options,
-                        activityProvider = this@SuperwallBridge
+                        activityProvider = this@SuperwallBridge,
+                        completion = {
+                            val completionBlockProxyBridge =
+                                call.bridgeInstance<CompletionBlockProxyBridge?>("completionBlockProxyBridgeId")
+                            completionBlockProxyBridge?.callCompletionBlock()
+                        }
                     )
 
                     // Set the platform wrapper
@@ -247,7 +251,7 @@ class SuperwallBridge(
                 val userId = call.argument<String>("userId")
                 userId?.let {
                     val identityOptionsJson = call.argument<Map<String, Any?>>("identityOptions")
-                    val identityOptions = identityOptionsJson?.let { JsonExtensions.Companion.identityOptionsFromJson(it) }
+                    val identityOptions = identityOptionsJson?.let { JsonExtensions.identityOptionsFromJson(it) }
 
                     Superwall.instance.identify(userId, identityOptions)
                     result.success(null)

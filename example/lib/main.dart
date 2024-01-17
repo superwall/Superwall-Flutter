@@ -52,7 +52,10 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       Superwall.configure(
           apiKey,
           purchaseController: useRevenueCat ? purchaseController : null,
-          options: options
+          options: options,
+          completion: () {
+            print("Executing Superwall configure completion block");
+          }
       );
 
       Superwall.shared.setDelegate(this);

@@ -4,20 +4,15 @@ import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart';
 import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
 
-class PaywallPresentationHandlerProxy {
-  BridgeId bridgeId;
+class PaywallPresentationHandlerProxy extends BridgeIdInstantiable {
+  static const BridgeClass bridgeClass = "PaywallPresentationHandlerProxyBridge";
+  PaywallPresentationHandlerProxy(this.paywallPresentationHandler, [BridgeId? bridgeId]): super(bridgeClass, bridgeId);
+
   PaywallPresentationHandler paywallPresentationHandler;
 
-  PaywallPresentationHandlerProxy({
-    required this.bridgeId,
-    required this.paywallPresentationHandler
-  }) {
-    bridgeId.associate(this);
-    bridgeId.communicator.setMethodCallHandler(_handleMethodCall);
-  }
-
   // Handle method calls from native
-  Future<dynamic> _handleMethodCall(MethodCall call) async {
+  @override
+  Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'onPresent':
         final bridgeId = call.bridgeId("paywallInfoBridgeId");

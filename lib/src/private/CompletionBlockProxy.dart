@@ -1,17 +1,15 @@
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
-class CompletionBlockProxy {
-  BridgeId bridgeId;
+class CompletionBlockProxy extends BridgeIdInstantiable {
+  static const BridgeClass bridgeClass = "CompletionBlockProxyBridge";
+  CompletionBlockProxy(this.block, [BridgeId? bridgeId]): super(bridgeClass, bridgeId);
+
   Function(dynamic) block;
 
-  CompletionBlockProxy({required this.bridgeId, required this.block}) {
-    bridgeId.associate(this);
-    bridgeId.communicator.setMethodCallHandler(_handleMethodCall);
-  }
-
   // Handle method calls from native
-  Future<dynamic> _handleMethodCall(MethodCall call) async {
+  @override
+  Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'callCompletionBlock':
         final arguments = call.arguments;

@@ -239,11 +239,23 @@ class Superwall {
       );
     }
 
+    CompletionBlockProxy? completionBlockProxy;
+    if (completion != null) {
+      // Define the completion block to set for the CompletionBlockProxy
+      void completionBlock(dynamic argument) {
+        completion();
+      }
+
+      // Create the Dart proxy and native side bridge
+      completionBlockProxy = CompletionBlockProxy(completionBlock);
+    }
+
     try {
       await _superwall.bridgeId.communicator.invokeBridgeMethod('configure', {
         'apiKey': apiKey,
         'purchaseControllerProxyBridgeId': purchaseControllerProxy?.bridgeId,
-        'options': options?.toJson()
+        'options': options?.toJson(),
+        'completionBlockProxyBridgeId' : completionBlockProxy?.bridgeId
       });
     } catch (e) {
       // Handle any errors that occur during configuration
@@ -252,11 +264,6 @@ class Superwall {
 
     // Allows the functions in this class to now be invoked
     _isBridgedController.update(true);
-
-    // TODO: Once Android is updated, use the CompletionBlockProxy to properly implement this
-    if (completion != null) {
-      completion();
-    }
   }
 }
 
@@ -281,22 +288,19 @@ extension PublicPresentation on Superwall {
 
     CompletionBlockProxy? featureBlockProxy;
     if (feature != null) {
+      // Define the feature block to set for the CompletionBlockProxy
+      void featureBlock(dynamic argument) {
+        feature();
+      }
+
       // Create the Dart proxy and native side bridge
-      featureBlockProxy = CompletionBlockProxy(
-        bridgeId: BridgingCreator.createCompletionBlockProxyBridgeId(),
-        block: (dynamic arguments) {
-          feature();
-        },
-      );
+      featureBlockProxy = CompletionBlockProxy(featureBlock);
     }
 
     PaywallPresentationHandlerProxy? handlerProxy;
     if (handler != null) {
       // Create the Dart proxy and native side bridge
-      handlerProxy = PaywallPresentationHandlerProxy(
-        bridgeId: BridgingCreator.createPaywallPresentationHandlerProxyBridgeId(),
-        paywallPresentationHandler: handler
-      );
+      handlerProxy = PaywallPresentationHandlerProxy(handler);
     }
 
     var result = await bridgeId.communicator.invokeBridgeMethod('registerEvent', {

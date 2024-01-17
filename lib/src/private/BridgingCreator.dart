@@ -58,10 +58,6 @@ class BridgingCreator {
     return _createBridgeId("PurchaseControllerProxyBridge");
   }
 
-  static BridgeId createCompletionBlockProxyBridgeId() {
-    return _createBridgeId("CompletionBlockProxyBridge");
-  }
-
   static BridgeId createSubscriptionStatusActiveBridgeId() {
     return _createBridgeId("SubscriptionStatusActiveBridge");
   }
@@ -72,10 +68,6 @@ class BridgingCreator {
 
   static BridgeId createSubscriptionStatusUnknownBridgeId() {
     return _createBridgeId("SubscriptionStatusUnknownBridge");
-  }
-
-  static BridgeId createPaywallPresentationHandlerProxyBridgeId() {
-    return _createBridgeId("PaywallPresentationHandlerProxyBridge");
   }
 
   static BridgeId createPurchaseResultCancelledBridgeId() {
@@ -117,7 +109,11 @@ abstract class BridgeIdInstantiable {
   BridgeIdInstantiable(BridgeClass bridgeClass, [BridgeId? providedBridgeId, Map<String, dynamic>? initializationArgs])
       : bridgeId = providedBridgeId ?? BridgingCreator._createBridgeId(bridgeClass, initializationArgs) {
     bridgeId.associate(this);
+    bridgeId.communicator.setMethodCallHandler(handleMethodCall);
   }
+
+  // Handle method calls from native (subclasses should implement)
+  Future<dynamic> handleMethodCall(MethodCall call) async {}
 }
 
 extension MethodChannelBridging on MethodChannel {

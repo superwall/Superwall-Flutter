@@ -155,7 +155,10 @@ public class SuperwallBridge: BridgeInstance {
           return options
         }()
 
-        Superwall.configure(apiKey: apiKey, purchaseController: purchaseControllerProxyBridge, options: options)
+        Superwall.configure(apiKey: apiKey, purchaseController: purchaseControllerProxyBridge, options: options) {
+          let completionBlockProxyBridge: CompletionBlockProxyBridge? = call.bridgeInstance(for: "completionBlockProxyBridgeId")
+          completionBlockProxyBridge?.callCompletionBlock()
+        }
 
         // Set the platform wrapper
         Superwall.shared.setPlatformWrapper("Flutter")
