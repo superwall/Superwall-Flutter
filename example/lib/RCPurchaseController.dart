@@ -60,7 +60,6 @@ class RCPurchaseController extends PurchaseController {
     String storeProductId = "$productId:$basePlanId";
 
     // Try to find the first product where the googleProduct's basePlanId matches the given basePlanId.
-    // StoreProduct? matchingProduct = products.firstWhere(
     StoreProduct? matchingProduct;
 
     // Loop through each product in the products list.

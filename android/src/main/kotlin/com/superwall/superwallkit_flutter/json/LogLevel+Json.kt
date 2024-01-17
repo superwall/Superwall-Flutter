@@ -6,6 +6,18 @@ fun JsonExtensions.Companion.logLevelFromJson(json: String): LogLevel? {
         "info" -> LogLevel.info
         "warn" -> LogLevel.warn
         "error" -> LogLevel.error
+        "none" -> LogLevel.none
         else -> null
+    }
+}
+
+fun LogLevel.toJson(): String {
+    return when (this) {
+        LogLevel.debug -> "debug"
+        LogLevel.info -> "info"
+        LogLevel.warn -> "warn"
+        LogLevel.error -> "error"
+        LogLevel.none -> "none"
+        else -> "unknown"
     }
 }

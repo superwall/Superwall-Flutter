@@ -17,4 +17,19 @@ extension LogLevel {
         return nil
     }
   }
+
+  func toJson() -> String {
+    switch self {
+      case .debug:
+        return "debug"
+      case .info:
+        return "info"
+      case .warn:
+        return "warn"
+      case .error:
+        return "error"
+      case .none:
+        return "none"
+    }
+  }
 }

@@ -129,7 +129,8 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   Future<void> performAction() async {
     try {
       IdentityOptions options = IdentityOptions(restorePaywallAssignments: true);
-      await Superwall.shared.identify("123456", options);
+      await Superwall.shared.identify("123456");
+
       String userId = await Superwall.shared.getUserId();
       print(userId);
 
@@ -149,6 +150,10 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
       Map<String, dynamic> attributes4 = await Superwall.shared.getUserAttributes();
       print(attributes4);
+
+      Superwall.shared.setLogLevel(LogLevel.error);
+      LogLevel logLevel = await Superwall.shared.getLogLevel();
+      print("Log Level: $logLevel");
 
     } catch (e) {
       print('Failed perform action: $e');

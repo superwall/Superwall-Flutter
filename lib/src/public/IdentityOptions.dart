@@ -15,3 +15,11 @@ class IdentityOptions {
   /// before showing any paywalls. Defaults to `false`.
   IdentityOptions({this.restorePaywallAssignments = false});
 }
+
+extension IdentityOptionsJson on IdentityOptions {
+  Map<dynamic, dynamic> toJson() {
+    return {
+      'restorePaywallAssignments': restorePaywallAssignments,
+    };
+  }
+}

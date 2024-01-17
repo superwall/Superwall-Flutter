@@ -18,13 +18,20 @@ public class SuperwallBridge: BridgeInstance {
 
       case "getLogLevel":
         // Implement logic to get log level
-        result(Superwall.shared.logLevel.rawValue)
+        let json = Superwall.shared.logLevel.toJson()
+        result(json)
 
       case "setLogLevel":
-        // Implement logic to set log level
-        if let args = call.arguments as? [String: Any], let level = args["logLevel"] as? Int, let logLevel = LogLevel(rawValue: level) {
-          Superwall.shared.logLevel = logLevel
+        guard
+          let logLevelValue: String = call.argument(for: "logLevel"),
+          let logLevel = LogLevel.fromJson(logLevelValue)
+        else {
+          result(call.badArgs)
+          return
         }
+
+        Superwall.shared.logLevel = logLevel
+
         result(nil)
 
       case "getUserAttributes":
@@ -150,6 +157,9 @@ public class SuperwallBridge: BridgeInstance {
 
         Superwall.configure(apiKey: apiKey, purchaseController: purchaseControllerProxyBridge, options: options)
 
+        // Set the platform wrapper
+        Superwall.shared.setPlatformWrapper("Flutter")
+
         // Returning nil instead of the result from configure because we want to use the Dart
         // instance of Superwall, not a native variant
         result(nil)
@@ -191,11 +201,11 @@ public class SuperwallBridge: BridgeInstance {
         }
 
         let options: IdentityOptions? = {
-          guard let restorePaywallAssignments: Bool = call.argument(for: "restorePaywallAssignments") else {
+          guard let identityOptionsJson: [String: Any] = call.argument(for: "identityOptions") else {
             return nil
           }
 
-          return IdentityOptions(restorePaywallAssignments: restorePaywallAssignments)
+          return IdentityOptions.fromJson(identityOptionsJson)
         }()
 
         Superwall.shared.identify(userId: userId, options: options)

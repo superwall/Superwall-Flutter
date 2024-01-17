@@ -76,16 +76,15 @@ class Superwall {
   Future<LogLevel> getLogLevel() async {
     await _waitForBridgeInstanceCreation();
 
-    final logLevelResult = await bridgeId.communicator.invokeBridgeMethod('getLogLevel');
-    // TODO: Convert logLevelResult to LogLevel enum
-    return LogLevel.values.firstWhere((element) => element.toString() == logLevelResult);
+    String logLevelJson = await bridgeId.communicator.invokeBridgeMethod('getLogLevel');
+    return LogLevelJson.fromJson(logLevelJson);
   }
 
   // Asynchronous method to set logLevel
   Future<void> setLogLevel(LogLevel newLogLevel) async {
     await _waitForBridgeInstanceCreation();
 
-    await bridgeId.communicator.invokeBridgeMethod('setLogLevel', {'logLevel': newLogLevel.toString()});
+    await bridgeId.communicator.invokeBridgeMethod('setLogLevel', {'logLevel': newLogLevel.toJson()});
   }
 
   // Asynchronous method to get userAttributes
@@ -254,7 +253,7 @@ class Superwall {
     // Allows the functions in this class to now be invoked
     _isBridgedController.update(true);
 
-    // TODO: is this the best way to handle completion handlers?
+    // TODO: Once Android is updated, use the CompletionBlockProxy to properly implement this
     if (completion != null) {
       completion();
     }
@@ -322,7 +321,7 @@ extension PublicIdentity on Superwall {
 
     await bridgeId.communicator.invokeBridgeMethod('identify', {
       "userId": userId,
-      "restorePaywallAssignments": options?.restorePaywallAssignments
+      "identityOptions": options?.toJson()
     });
   }
 }

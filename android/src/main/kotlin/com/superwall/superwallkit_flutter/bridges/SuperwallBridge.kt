@@ -1,5 +1,6 @@
 package com.superwall.superwallkit_flutter.bridges
 
+import LogLevel
 import android.app.Activity
 import android.content.Context
 import com.superwall.sdk.Superwall
@@ -13,7 +14,6 @@ import com.superwall.sdk.identity.IdentityOptions
 import com.superwall.sdk.identity.identify
 import com.superwall.sdk.identity.setUserAttributes
 import com.superwall.sdk.misc.ActivityProvider
-import com.superwall.sdk.misc.runOnUiThread
 import com.superwall.sdk.paywall.presentation.PaywallPresentationHandler
 import com.superwall.sdk.paywall.presentation.dismiss
 import com.superwall.sdk.paywall.presentation.register
@@ -23,10 +23,13 @@ import com.superwall.superwallkit_flutter.argumentForKey
 import com.superwall.superwallkit_flutter.badArgs
 import com.superwall.superwallkit_flutter.bridgeInstance
 import com.superwall.superwallkit_flutter.json.JsonExtensions
+import com.superwall.superwallkit_flutter.json.identityOptionsFromJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import logLevelFromJson
 import superwallOptionsFromJson
+import toJson
 
 class SuperwallBridge(
     context: Context,
@@ -47,20 +50,19 @@ class SuperwallBridge(
                 }
             }
             "getLogLevel" -> {
-                // TODO
-//                val logLevel = Superwall.instance.logLevel
-//                result.success(logLevel.ordinal)
-                result.notImplemented()
+                val logLevel = Superwall.instance.logLevel
+                result.success(logLevel.toJson())
             }
             "setLogLevel" -> {
-                // TODO
-//                val levelOrdinal = call.argumentForKey<Int>("logLevel")
-//                levelOrdinal?.let {
-//                    val logLevel = LogLevel.values()[it]
-//                    Superwall.instance.logLevel = logLevel
-//                }
-//                result.success(null)
-                result.notImplemented()
+                val logLevelJson = call.argumentForKey<String>("logLevel")
+                val logLevel = logLevelJson?.let { JsonExtensions.Companion.logLevelFromJson(it) }
+
+                logLevel?.let {
+                    Superwall.instance.logLevel = it
+                    result.success(null)
+                } ?: run {
+                    result.badArgs(call)
+                }
             }
             "getUserAttributes" -> {
                 val attributes = Superwall.instance.userAttributes
@@ -201,6 +203,9 @@ class SuperwallBridge(
                         activityProvider = this@SuperwallBridge
                     )
 
+                    // Set the platform wrapper
+                    Superwall.instance.setPlatformWrapper("Flutter");
+
                     // Returning nil instead of the result from configure because we want to use the Dart
                     // instance of Superwall, not a native variant
                     result.success(null)
@@ -241,16 +246,15 @@ class SuperwallBridge(
             "identify" -> {
                 val userId = call.argument<String>("userId")
                 userId?.let {
-                    val restorePaywallAssignments = call.argument<Boolean?>("restorePaywallAssignments")
-                    val options = restorePaywallAssignments?.let { IdentityOptions(it) }
+                    val identityOptionsJson = call.argument<Map<String, Any?>>("identityOptions")
+                    val identityOptions = identityOptionsJson?.let { JsonExtensions.Companion.identityOptionsFromJson(it) }
 
-                    Superwall.instance.identify(userId, options)
+                    Superwall.instance.identify(userId, identityOptions)
                     result.success(null)
                 } ?: run {
                     result.badArgs(call)
                 }
             }
-
 
             else -> result.notImplemented()
         }
