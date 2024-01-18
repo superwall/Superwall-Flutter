@@ -29,11 +29,14 @@ class SuperwallkitFlutterPlugin: FlutterPlugin, ActivityAware {
       Debug.waitForDebugger()
     }
 
-    instance = this
+    // Only allow instance to get set once.
+    if (instance == null) {
+      instance = this
+    }
   }
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    BridgingCreator.register(flutterPluginBinding)
+    BridgingCreator.flutterPluginBinding = flutterPluginBinding
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}

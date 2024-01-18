@@ -22,18 +22,32 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
         val shared: BridgingCreator
             get() = _shared ?: throw IllegalStateException("BridgingCreator not initialized")
 
-        fun register(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-            BreadCrumbs.append("BridgingCreator.kt: registering. THIS SHOULD ONLY OCCUR ONCE.")
+        private var _flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? = null
+        var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding?
+            get() = _flutterPluginBinding
+            set(value) {
+                // Only allow binding to occur once. It appears that if binding is set multiple
+                // times (due to other SDK interference), we'll lose access to the
+                // SuperwallKitFlutterPlugin current activity
+                if (_flutterPluginBinding != null) {
+                    println("WARNING: Attempting to set a flutter plugin binding again.")
+                    return
+                }
 
-            synchronized(BridgingCreator::class.java) {
-                if (_shared == null) {
-                    val bridge = BridgingCreator(flutterPluginBinding)
-                    _shared = bridge
-                    val communicator = Communicator(flutterPluginBinding.binaryMessenger, "SWK_BridgingCreator")
-                    communicator.setMethodCallHandler(bridge)
+                // Store for getter
+                _flutterPluginBinding = value
+
+                _flutterPluginBinding?.let {
+                    synchronized(BridgingCreator::class.java) {
+                        if (_shared == null) {
+                            val bridge = BridgingCreator(it)
+                            _shared = bridge
+                            val communicator = Communicator(it.binaryMessenger, "SWK_BridgingCreator")
+                            communicator.setMethodCallHandler(bridge)
+                        }
+                    }
                 }
             }
-        }
     }
 
     // Generic function to retrieve a bridge instance
