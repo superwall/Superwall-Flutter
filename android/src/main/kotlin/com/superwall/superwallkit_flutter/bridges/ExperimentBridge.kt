@@ -1,6 +1,8 @@
 package com.superwall.superwallkit_flutter.bridges
 import android.content.Context
 import com.superwall.sdk.models.triggers.Experiment
+import com.superwall.sdk.paywall.presentation.PaywallInfo
+import com.superwall.superwallkit_flutter.BridgingCreator
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -30,4 +32,12 @@ class ExperimentBridge(
             else -> result.notImplemented()
         }
     }
+}
+
+fun Experiment.createBridgeId(): BridgeId {
+    val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
+        bridgeClass = ExperimentBridge.bridgeClass(),
+        initializationArgs = mapOf("experiment" to this)
+    )
+    return bridgeInstance.bridgeId
 }

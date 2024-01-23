@@ -1,3 +1,19 @@
-package com.superwall.superwallkit_flutter.bridges
+import com.superwall.sdk.models.paywall.LocalNotification
+import com.superwall.sdk.models.paywall.LocalNotificationType
 
-// TODO: Add to Android
+fun LocalNotification.toJson(): Map<String, Any?> {
+    val json = mutableMapOf<String, Any?>(
+        "type" to this.type.toJson(),
+        "title" to this.title,
+        "body" to this.body,
+        "delay" to this.delay
+    )
+
+    return json
+}
+
+fun LocalNotificationType.toJson(): String {
+    return when (this) {
+        LocalNotificationType.TrialStarted -> "trialStarted"
+    }
+}

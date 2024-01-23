@@ -1,5 +1,4 @@
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
-import 'package:superwallkit_flutter/src/private/Utilities.dart';
 import 'package:superwallkit_flutter/src/public/ComputedPropertyRequest.dart';
 import 'package:superwallkit_flutter/src/public/Experiment.dart';
 import 'package:superwallkit_flutter/src/public/FeatureGatingBehavior.dart';
@@ -22,7 +21,7 @@ class PaywallInfo {
   /// The trigger experiment that caused the paywall to present.
   Future<Experiment?> get experiment async {
     final experimentBridgeId = await bridgeId.communicator.invokeBridgeMethod('getExperimentBridgeId');
-    return Experiment(bridgeId: bridgeId);
+    return Experiment(bridgeId: experimentBridgeId);
   }
 
   /// The trigger session ID associated with the paywall.
@@ -32,13 +31,14 @@ class PaywallInfo {
 
   /// The products associated with the paywall.
   Future<List<Product>> get products async {
-    final productBridgeIds = await bridgeId.communicator.invokeBridgeMethod('getProductBridgeIds');
-    return productBridgeIds.map((bridgeId) => Product(bridgeId: bridgeId));
+    List<dynamic> products = await bridgeId.communicator.invokeBridgeMethod('getProducts');
+    return products.map((json) => Product.fromJson(json)).toList();
   }
 
   /// An array of product IDs that this paywall is displaying in `[Primary, Secondary, Tertiary]` order.
   Future<List<String>> get productIds async {
-    return await bridgeId.communicator.invokeBridgeMethod('getProductIds');
+    List<dynamic> productIds = await bridgeId.communicator.invokeBridgeMethod('getProductIds');
+    return productIds.map((value) => value.toString()).toList();
   }
 
   /// The name set for this paywall in Superwall's web dashboard.
@@ -61,71 +61,118 @@ class PaywallInfo {
     return await bridgeId.communicator.invokeBridgeMethod('getPresentedByEventWithId');
   }
 
-  // TODO
-  // /// The ISO date string describing when the event triggered this paywall. Defaults to `nil` if `triggeredByEvent` is false.
-  // final String? presentedByEventAt;
-  //
-  // /// How the paywall was presented, either 'programmatically', 'identifier', or 'event'
-  // final String presentedBy;
-  //
-  // /// The source function that retrieved the paywall. Either `implicit`, `getPaywall`, or `register`. `nil` only when preloading.
-  // final String? presentationSourceType;
-  //
-  // /// An iso date string indicating when the paywall response began loading.
-  // final String? responseLoadStartTime;
-  //
-  // /// An iso date string indicating when the paywall response finished loading.
-  // final String? responseLoadCompleteTime;
-  //
-  // /// An iso date string indicating when the paywall response failed to load.
-  // final String? responseLoadFailTime;
-  //
-  // /// The time it took to load the paywall response.
-  // final double? responseLoadDuration;
-  //
-  // /// An iso date string indicating when the paywall webview began loading.
-  // final String? webViewLoadStartTime;
-  //
-  // /// An iso date string indicating when the paywall webview finished loading.
-  // final String? webViewLoadCompleteTime;
-  //
-  // /// An iso date string indicating when the paywall webview failed to load.
-  // final String? webViewLoadFailTime;
-  //
-  // /// The time it took to load the paywall website.
-  // final double? webViewLoadDuration;
-  //
-  // /// An iso date string indicating when the paywall products began loading.
-  // final String? productsLoadStartTime;
-  //
-  // /// An iso date string indicating when the paywall products finished loading.
-  // final String? productsLoadCompleteTime;
-  //
-  // /// An iso date string indicating when the paywall products failed to load.
-  // final String? productsLoadFailTime;
-  //
-  // /// The time it took to load the paywall products.
-  // final double? productsLoadDuration;
-  //
-  // /// The paywall.js version installed on the paywall website.
-  // final String? paywalljsVersion;
-  //
-  // /// Indicates whether the paywall is showing free trial content.
-  // final bool isFreeTrialAvailable;
-  //
-  // /// A `FeatureGatingBehavior` case that indicates whether the `Superwall/register(event:params:handler:feature:)` `feature` block executes or not.
-  // final FeatureGatingBehavior featureGatingBehavior;
-  //
-  // /// An enum describing why this paywall was last closed. `none` if not yet closed.
-  // final PaywallCloseReason closeReason;
-  //
-  // /// The local notifications associated with the paywall.
-  // final List<LocalNotification> localNotifications;
-  //
-  // /// An array of requests to compute a device property associated with an event at runtime.
-  // final List<ComputedPropertyRequest> computedPropertyRequests;
-  //
-  // /// Surveys attached to a paywall.
-  // final List<Survey> surveys;
+  /// The ISO date string describing when the event triggered this paywall. Defaults to `nil` if `triggeredByEvent` is false.
+  Future<String?> get presentedByEventAt async {
+    return await bridgeId.communicator.invokeBridgeMethod('getPresentedByEventAt');
+  }
 
+  /// How the paywall was presented, either 'programmatically', 'identifier', or 'event'
+  Future<String> get presentedBy async {
+    return await bridgeId.communicator.invokeBridgeMethod('getPresentedBy');
+  }
+
+  /// The source function that retrieved the paywall. Either `implicit`, `getPaywall`, or `register`. `nil` only when preloading.
+  Future<String?> get presentationSourceType async {
+    return await bridgeId.communicator.invokeBridgeMethod('getPresentationSourceType');
+  }
+
+  /// An ISO date string indicating when the paywall response began loading.
+  Future<String?> get responseLoadStartTime async {
+    return await bridgeId.communicator.invokeBridgeMethod('getResponseLoadStartTime');
+  }
+
+  /// An ISO date string indicating when the paywall response finished loading.
+  Future<String?> get responseLoadCompleteTime async {
+    return await bridgeId.communicator.invokeBridgeMethod('getResponseLoadCompleteTime');
+  }
+
+  /// An ISO date string indicating when the paywall response failed to load.
+  Future<String?> get responseLoadFailTime async {
+    return await bridgeId.communicator.invokeBridgeMethod('getResponseLoadFailTime');
+  }
+
+  /// The time it took to load the paywall response.
+  Future<double?> get responseLoadDuration async {
+    return await bridgeId.communicator.invokeBridgeMethod('getResponseLoadDuration');
+  }
+
+  /// An ISO date string indicating when the paywall webview began loading.
+  Future<String?> get webViewLoadStartTime async {
+    return await bridgeId.communicator.invokeBridgeMethod('getWebViewLoadStartTime');
+  }
+
+  /// An ISO date string indicating when the paywall webview finished loading.
+  Future<String?> get webViewLoadCompleteTime async {
+    return await bridgeId.communicator.invokeBridgeMethod('getWebViewLoadCompleteTime');
+  }
+
+  /// An ISO date string indicating when the paywall webview failed to load.
+  Future<String?> get webViewLoadFailTime async {
+    return await bridgeId.communicator.invokeBridgeMethod('getWebViewLoadFailTime');
+  }
+
+  /// The time it took to load the paywall website.
+  Future<double?> get webViewLoadDuration async {
+    return await bridgeId.communicator.invokeBridgeMethod('getWebViewLoadDuration');
+  }
+
+  /// An ISO date string indicating when the paywall products began loading.
+  Future<String?> get productsLoadStartTime async {
+    return await bridgeId.communicator.invokeBridgeMethod('getProductsLoadStartTime');
+  }
+
+  /// An ISO date string indicating when the paywall products finished loading.
+  Future<String?> get productsLoadCompleteTime async {
+    return await bridgeId.communicator.invokeBridgeMethod('getProductsLoadCompleteTime');
+  }
+
+  /// An ISO date string indicating when the paywall products failed to load.
+  Future<String?> get productsLoadFailTime async {
+    return await bridgeId.communicator.invokeBridgeMethod('getProductsLoadFailTime');
+  }
+
+  /// The time it took to load the paywall products.
+  Future<double?> get productsLoadDuration async {
+    return await bridgeId.communicator.invokeBridgeMethod('getProductsLoadDuration');
+  }
+
+  /// The paywall.js version installed on the paywall website.
+  Future<String?> get paywalljsVersion async {
+    return await bridgeId.communicator.invokeBridgeMethod('getPaywalljsVersion');
+  }
+
+  /// Indicates whether the paywall is showing free trial content.
+  Future<bool> get isFreeTrialAvailable async {
+    return await bridgeId.communicator.invokeBridgeMethod('getIsFreeTrialAvailable');
+  }
+
+  /// A `FeatureGatingBehavior` case that indicates whether the `Superwall/register(event:params:handler:feature:)` `feature` block executes or not.
+  Future<FeatureGatingBehavior> get featureGatingBehavior async {
+    final featureGatingBehavior = await bridgeId.communicator.invokeBridgeMethod('getFeatureGatingBehavior');
+    return FeatureGatingBehaviorExtension.fromJson(featureGatingBehavior);
+  }
+
+  /// An enum describing why this paywall was last closed. `none` if not yet closed.
+  Future<PaywallCloseReason> get closeReason async {
+    final closeReason = await bridgeId.communicator.invokeBridgeMethod('getCloseReason');
+    return PaywallCloseReasonExtension.fromJson(closeReason);
+  }
+
+  /// The local notifications associated with the paywall.
+  Future<List<LocalNotification>> get localNotifications async {
+    List<dynamic> localNotifications = await bridgeId.communicator.invokeBridgeMethod('getLocalNotifications');
+    return localNotifications.map((json) => LocalNotification.fromJson(json)).toList();
+  }
+
+  /// An array of requests to compute a device property associated with an event at runtime.
+  Future<List<ComputedPropertyRequest>> get computedPropertyRequests async {
+    List<dynamic> computedPropertyRequests = await bridgeId.communicator.invokeBridgeMethod('getComputedPropertyRequests');
+    return computedPropertyRequests.map((json) => ComputedPropertyRequest.fromJson(json)).toList();
+  }
+
+  /// Surveys attached to a paywall.
+  Future<List<Survey>> get surveys async {
+    List<dynamic> surveys = await bridgeId.communicator.invokeBridgeMethod('getSurveys');
+    return surveys.map((json) => Survey.fromJson(json)).toList();
+  }
 }

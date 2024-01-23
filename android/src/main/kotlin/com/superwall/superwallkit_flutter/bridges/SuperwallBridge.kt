@@ -94,11 +94,9 @@ class SuperwallBridge(
 //                result.success(viewController?.description)
                 result.notImplemented()
             }
-            "getLatestPaywallInfo" -> {
-                // TODO: Convert PaywallInfo to a format suitable for passing over method channels
-//                val paywallInfo = Superwall.instance.latestPaywallInfo
-//                result.success(paywallInfo?.toMap())
-                result.notImplemented()
+            "getLatestPaywallInfoBridgeId" -> {
+                val paywallInfo = Superwall.instance.latestPaywallInfo
+                result.success(paywallInfo?.createBridgeId())
             }
             "getSubscriptionStatusBridgeId" -> {
                 val subscriptionStatusBridgeId = Superwall.instance.subscriptionStatus.value.createBridgeId()

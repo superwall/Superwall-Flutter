@@ -124,9 +124,8 @@ class Superwall extends BridgeIdInstantiable {
   Future<PaywallInfo?> getLatestPaywallInfo() async {
     await _waitForBridgeInstanceCreation();
 
-    final paywallInfo = await bridgeId.communicator.invokeBridgeMethod('getLatestPaywallInfo');
-    // TODO: Convert paywallInfo to PaywallInfo
-    return paywallInfo as PaywallInfo?;
+    final paywallInfoBridgeId = await bridgeId.communicator.invokeBridgeMethod('getLatestPaywallInfoBridgeId');
+    return PaywallInfo(bridgeId: paywallInfoBridgeId);
   }
 
   // Asynchronous method to get the subscription status of the user

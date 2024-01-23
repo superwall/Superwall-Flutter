@@ -65,14 +65,10 @@ public class SuperwallBridge: BridgeInstance {
           result(nil)
         }
 
-      case "getLatestPaywallInfo":
+      case "getLatestPaywallInfoBridgeId":
         // Implement logic to get the latest PaywallInfo object
-        if let paywallInfo = Superwall.shared.latestPaywallInfo {
-          // TODO: Convert PaywallInfo to a format suitable for passing over method channels
-          result(nil)
-        } else {
-          result(nil)
-        }
+        let paywallInfo = Superwall.shared.latestPaywallInfo
+        result(paywallInfo?.createBridgeId())
 
       case "getSubscriptionStatusBridgeId":
         // Implement logic to get the subscription status of the user

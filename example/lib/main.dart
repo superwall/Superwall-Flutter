@@ -73,7 +73,6 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
     }
   }
 
-
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     String platformVersion;
@@ -120,12 +119,114 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         handler: handler,
         feature: () {
           print("Executing feature block");
+          performFeatureBlockActions();
         }
       );
       print('Register method called successfully.');
     } catch (e) {
       // Handle any errors that occur during registration
       print('Failed to call register method: $e');
+    }
+  }
+
+  Future<void> performFeatureBlockActions() async {
+    PaywallInfo? paywallInfo = await Superwall.shared.getLatestPaywallInfo();
+
+    if (paywallInfo != null) {
+      String? identifier = await paywallInfo.identifier;
+      print("Identifier: $identifier");
+
+      Experiment? experiment = await paywallInfo.experiment;
+      print("Experiment: $experiment");
+
+      String? triggerSessionId = await paywallInfo.triggerSessionId;
+      print("Trigger Session ID: $triggerSessionId");
+
+      List<Product> products = await paywallInfo.products;
+      print("Products: $products");
+
+      List<String> productIds = await paywallInfo.productIds;
+      print("Product IDs: $productIds");
+
+      String name = await paywallInfo.name;
+      print("Name: $name");
+
+      String url = await paywallInfo.url;
+      print("URL: $url");
+
+      String? presentedByEventWithName = await paywallInfo.presentedByEventWithName;
+      print("Presented By Event With Name: $presentedByEventWithName");
+
+      String? presentedByEventWithId = await paywallInfo.presentedByEventWithId;
+      print("Presented By Event With Id: $presentedByEventWithId");
+
+      String? presentedByEventAt = await paywallInfo.presentedByEventAt;
+      print("Presented By Event At: $presentedByEventAt");
+
+      String presentedBy = await paywallInfo.presentedBy;
+      print("Presented By: $presentedBy");
+
+      String? presentationSourceType = await paywallInfo.presentationSourceType;
+      print("Presentation Source Type: $presentationSourceType");
+
+      String? responseLoadStartTime = await paywallInfo.responseLoadStartTime;
+      print("Response Load Start Time: $responseLoadStartTime");
+
+      String? responseLoadCompleteTime = await paywallInfo.responseLoadCompleteTime;
+      print("Response Load Complete Time: $responseLoadCompleteTime");
+
+      String? responseLoadFailTime = await paywallInfo.responseLoadFailTime;
+      print("Response Load Fail Time: $responseLoadFailTime");
+
+      double? responseLoadDuration = await paywallInfo.responseLoadDuration;
+      print("Response Load Duration: $responseLoadDuration");
+
+      String? webViewLoadStartTime = await paywallInfo.webViewLoadStartTime;
+      print("Web View Load Start Time: $webViewLoadStartTime");
+
+      String? webViewLoadCompleteTime = await paywallInfo.webViewLoadCompleteTime;
+      print("Web View Load Complete Time: $webViewLoadCompleteTime");
+
+      String? webViewLoadFailTime = await paywallInfo.webViewLoadFailTime;
+      print("Web View Load Fail Time: $webViewLoadFailTime");
+
+      double? webViewLoadDuration = await paywallInfo.webViewLoadDuration;
+      print("Web View Load Duration: $webViewLoadDuration");
+
+      String? productsLoadStartTime = await paywallInfo.productsLoadStartTime;
+      print("Products Load Start Time: $productsLoadStartTime");
+
+      String? productsLoadCompleteTime = await paywallInfo.productsLoadCompleteTime;
+      print("Products Load Complete Time: $productsLoadCompleteTime");
+
+      String? productsLoadFailTime = await paywallInfo.productsLoadFailTime;
+      print("Products Load Fail Time: $productsLoadFailTime");
+
+      double? productsLoadDuration = await paywallInfo.productsLoadDuration;
+      print("Products Load Duration: $productsLoadDuration");
+
+      String? paywalljsVersion = await paywallInfo.paywalljsVersion;
+      print("Paywall.js Version: $paywalljsVersion");
+
+      bool isFreeTrialAvailable = await paywallInfo.isFreeTrialAvailable;
+      print("Is Free Trial Available: $isFreeTrialAvailable");
+
+      FeatureGatingBehavior featureGatingBehavior = await paywallInfo.featureGatingBehavior;
+      print("Feature Gating Behavior: $featureGatingBehavior");
+
+      PaywallCloseReason closeReason = await paywallInfo.closeReason;
+      print("Close Reason: $closeReason");
+
+      List<LocalNotification> localNotifications = await paywallInfo.localNotifications;
+      print("Local Notifications: $localNotifications");
+
+      List<ComputedPropertyRequest> computedPropertyRequests = await paywallInfo.computedPropertyRequests;
+      print("Computed Property Requests: $computedPropertyRequests");
+
+      List<Survey> surveys = await paywallInfo.surveys;
+      print("Surveys: $surveys");
+    } else {
+      print("Paywall Info is null");
     }
   }
 

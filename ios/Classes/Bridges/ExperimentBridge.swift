@@ -28,3 +28,9 @@ public class ExperimentBridge: BridgeInstance {
     }
   }
 }
+
+extension Experiment {
+  func createBridgeId() -> BridgeId {
+    return BridgingCreator.shared.createBridgeInstance(bridgeClass: ExperimentBridge.bridgeClass, initializationArgs: ["experiment": self]).bridgeId
+  }
+}
