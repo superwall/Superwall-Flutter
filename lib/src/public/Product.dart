@@ -1,5 +1,3 @@
-import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
-
 /// The product in the paywall.
 class Product {
   /// The type of product.

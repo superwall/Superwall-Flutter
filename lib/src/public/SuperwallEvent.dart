@@ -203,7 +203,6 @@ enum _SuperwallEventType {
   paywallProductsLoadFail,
   paywallProductsLoadComplete,
   surveyResponse,
-  paywallPresentationRequest,
   touchesBegan,
   surveyClose,
 }

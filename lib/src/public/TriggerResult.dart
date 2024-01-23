@@ -18,10 +18,10 @@ class TriggerResult {
   // static TriggerResult error(String error) => TriggerResult._(_TriggerResultType.error, errorDetail: error);
 }
 
-enum _TriggerResultType {
-  eventNotFound,
-  noRuleMatch,
-  paywall,
-  holdout,
-  error,
-}
+// enum _TriggerResultType {
+//   eventNotFound,
+//   noRuleMatch,
+//   paywall,
+//   holdout,
+//   error,
+// }

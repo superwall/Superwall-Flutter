@@ -1,5 +1,3 @@
-import 'package:superwallkit_flutter/src/public/Product.dart';
-
 /// A wrapper around a store product.
 class StoreProduct {
 

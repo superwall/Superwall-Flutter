@@ -78,20 +78,15 @@ class SuperwallBridge(
             }
             "getUserId" -> {
                 // Implement logic to get the current user's id
-                // TODO: Add this once fixed in Android SDK
-//                result.success(Superwall.instance.userId)
-                result.success("")
+                val userId = Superwall.instance.userId
+                result.success(userId)
             }
             "getIsLoggedIn" -> {
-                // TODO: Add to Android
-//                val isLoggedIn = Superwall.instance.isLoggedIn
-//                result.success(isLoggedIn)
-                result.notImplemented()
+                val isLoggedIn = Superwall.instance.isLoggedIn
+                result.success(isLoggedIn)
             }
             "getPresentedViewController" -> {
                 // TODO: Since UIViewController cannot be returned directly to Dart, handle appropriately
-//                val viewController = Superwall.instance.presentedViewController
-//                result.success(viewController?.description)
                 result.notImplemented()
             }
             "getLatestPaywallInfoBridgeId" -> {
@@ -139,22 +134,18 @@ class SuperwallBridge(
                 result.success(isPaywallPresented)
             }
             "preloadAllPaywalls" -> {
-                // TODO: Add to Android
-//                Superwall.instance.preloadAllPaywalls()
-//                result.success(null)
-                result.notImplemented()
+                Superwall.instance.preloadAllPaywalls()
+                result.success(null)
             }
             "preloadPaywallsForEvents" -> {
-                // TODO: Add to Android
-//                val eventNames = call.argumentForKey<List<String>>("eventNames")?.toSet()
-//                eventNames?.let {
-//                    Superwall.instance.preloadPaywalls(forEvents: it)
-//                }
-//                result.success(null)
-                result.notImplemented()
+                val eventNames = call.argumentForKey<List<String>>("eventNames")?.toSet()
+                eventNames?.let {
+                    Superwall.instance.preloadPaywalls(it)
+                }
+                result.success(null)
             }
             "handleDeepLink" -> {
-                val urlString = call.argument<String>("url")
+                val urlString = call.argumentForKey<String>("url")
                 urlString?.let {
                     try {
                         val uri = Uri.parse(it)
@@ -222,7 +213,7 @@ class SuperwallBridge(
                 }
             }
             "registerEvent" -> {
-                val event = call.argument<String>("event")
+                val event = call.argumentForKey<String>("event")
                 event?.let { event ->
                     val params = call.argument<Map<String, Any>>("params")
 
@@ -246,7 +237,7 @@ class SuperwallBridge(
             }
 
             "identify" -> {
-                val userId = call.argument<String>("userId")
+                val userId = call.argumentForKey<String>("userId")
                 userId?.let {
                     val identityOptionsJson = call.argument<Map<String, Any?>>("identityOptions")
                     val identityOptions = identityOptionsJson?.let { JsonExtensions.identityOptionsFromJson(it) }

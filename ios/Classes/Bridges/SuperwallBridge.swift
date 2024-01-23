@@ -57,13 +57,8 @@ public class SuperwallBridge: BridgeInstance {
         result(Superwall.shared.isLoggedIn)
 
       case "getPresentedViewController":
-        // Implement logic to get the presented paywall view controller
-        // TODO: Since UIViewController cannot be returned directly to Dart, handle appropriately
-        if let viewController = Superwall.shared.presentedViewController {
-          result(viewController.description)
-        } else {
-          result(nil)
-        }
+        // TODO: Implement logic to get the presented paywall view controller
+        result(FlutterMethodNotImplemented)
 
       case "getLatestPaywallInfoBridgeId":
         // Implement logic to get the latest PaywallInfo object
@@ -91,7 +86,7 @@ public class SuperwallBridge: BridgeInstance {
 
       case "setIsConfigured":
         // Implement logic to set the configured state of Superwall
-        if let args = call.arguments as? [String: Any], let configured = args["configured"] as? Bool {
+        if let configured: Bool = call.argument(for: "configured") {
           Superwall.shared.isConfigured = configured
         }
         result(nil)
@@ -107,23 +102,23 @@ public class SuperwallBridge: BridgeInstance {
 
       case "preloadPaywallsForEvents":
         // Implement logic to preload paywalls for specific event names
-        if let args = call.arguments as? [String: Any], let eventNames = args["eventNames"] as? [String] {
+        if let eventNames: [String] = call.argument(for: "eventNames") {
           Superwall.shared.preloadPaywalls(forEvents: Set(eventNames))
         }
         result(nil)
 
       case "handleDeepLink":
         // Implement logic to handle deep links for paywall previews
-        if let args = call.arguments as? [String: Any], let urlString = args["url"] as? String, let url = URL(string: urlString) {
+        if let urlString: String = call.argument(for: "url"), let url = URL(string: urlString) {
           let handled = Superwall.shared.handleDeepLink(url)
           result(handled)
         } else {
-          result(FlutterError(code: "INVALID_URL", message: "Invalid URL provided", details: nil))
+          result(call.badArgs)
         }
 
       case "togglePaywallSpinner":
         // Implement logic to toggle the paywall loading spinner
-        if let args = call.arguments as? [String: Any], let isHidden = args["isHidden"] as? Bool {
+        if let isHidden: Bool = call.argument(for: "isHidden") {
           Superwall.shared.togglePaywallSpinner(isHidden: isHidden)
         }
         result(nil)

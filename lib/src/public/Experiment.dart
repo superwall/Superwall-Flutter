@@ -1,5 +1,4 @@
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
-import 'package:superwallkit_flutter/src/public/Variant.dart';
 
 /// A campaign experiment that was assigned to a user.
 ///
