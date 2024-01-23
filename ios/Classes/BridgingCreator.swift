@@ -64,7 +64,7 @@ public class BridgingCreator: NSObject, FlutterPlugin {
     }
 
     guard let bridgeClass = BridgingCreator.Constants.bridgeMap[bridgeId.bridgeClass] else {
-      assertionFailure("Unable to find a bridgeClass for \(bridgeId.bridgeClass). Make sure to add to BridgingCreator.swift")
+      assertionFailure("Unable to find a bridgeClass for \(bridgeId.bridgeClass). Make sure to add to BridgingCreator+Constants.swift")
       return BridgeInstance(bridgeId: bridgeId, initializationArgs: initializationArgs)
     }
 

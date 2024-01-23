@@ -40,57 +40,6 @@ class BridgingCreator {
       await BridgingCreator._invokeBridgeInstanceCreation(bridgeId);
     }
   }
-
-  //region Creators - NOTE: In order to create a bridge, it MUST exist in
-  // the `bridgeMap` on the native sides
-
-  // TODO: Move these to their associated classes and abstract into base class (see PaywallSkipReason)
-
-  static BridgeId createPurchaseControllerProxyBridgeId() {
-    return _createBridgeId("PurchaseControllerProxyBridge");
-  }
-
-  static BridgeId createSubscriptionStatusActiveBridgeId() {
-    return _createBridgeId("SubscriptionStatusActiveBridge");
-  }
-
-  static BridgeId createSubscriptionStatusInactiveBridgeId() {
-    return _createBridgeId("SubscriptionStatusInactiveBridge");
-  }
-
-  static BridgeId createSubscriptionStatusUnknownBridgeId() {
-    return _createBridgeId("SubscriptionStatusUnknownBridge");
-  }
-
-  static BridgeId createPurchaseResultCancelledBridgeId() {
-    return _createBridgeId("PurchaseResultCancelledBridge");
-  }
-
-  static BridgeId createPurchaseResultPurchasedBridgeId() {
-    return _createBridgeId("PurchaseResultPurchasedBridge");
-  }
-
-  static BridgeId createPurchaseResultRestoredBridgeId() {
-    return _createBridgeId("PurchaseResultRestoredBridge");
-  }
-
-  static BridgeId createPurchaseResultPendingBridgeId() {
-    return _createBridgeId("PurchaseResultPendingBridge");
-  }
-
-  static BridgeId createPurchaseResultFailedBridgeId(String error) {
-    return _createBridgeId("PurchaseResultFailedBridge", { "error": error });
-  }
-
-  static BridgeId createRestorationResultRestoredBridge() {
-    return _createBridgeId("RestorationResultRestoredBridge");
-  }
-
-  static BridgeId createRestorationResultFailedBridge(String error) {
-    return _createBridgeId("RestorationResultFailedBridge", { "error": error });
-  }
-
-  //endregion
 }
 
 // A protocol that Dart classes should conform to if they want to be able to

@@ -4,18 +4,15 @@ import 'package:superwallkit_flutter/src/public/PurchaseResult.dart';
 import 'package:superwallkit_flutter/src/public/RestorationResult.dart';
 import '../public/PurchaseController.dart';
 
-class PurchaseControllerProxy {
-  BridgeId bridgeId;
+class PurchaseControllerProxy extends BridgeIdInstantiable {
+  static const BridgeClass bridgeClass = "PurchaseControllerProxyBridge";
+  PurchaseControllerProxy({required this.purchaseController, BridgeId? bridgeId}): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+
   PurchaseController purchaseController;
 
-  PurchaseControllerProxy(
-      {required this.bridgeId, required this.purchaseController}) {
-    bridgeId.associate(this);
-    bridgeId.communicator.setMethodCallHandler(_handleMethodCall);
-  }
-
   // Handle method calls from native
-  Future<dynamic> _handleMethodCall(MethodCall call) async {
+  @override
+  Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'purchaseFromAppStore':
         String productId = call.arguments['productId'];

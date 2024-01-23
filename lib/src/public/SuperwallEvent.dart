@@ -1,5 +1,4 @@
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
-import 'package:superwallkit_flutter/src/public/PaywallPresentationRequestStatus.dart';
 import 'package:superwallkit_flutter/src/public/RestoreType.dart';
 import 'package:superwallkit_flutter/src/public/StoreProduct.dart';
 import 'package:superwallkit_flutter/src/public/StoreTransaction.dart';

@@ -96,7 +96,7 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
             bridgeInstance.communicator.setMethodCallHandler(bridgeInstance)
             return bridgeInstance
         } ?: run {
-            throw AssertionError("Unable to find a bridge initializer for ${bridgeId}. Make sure to add to BridgingCreator+Constants.}")
+            throw AssertionError("Unable to find a bridge initializer for ${bridgeId}. Make sure to add to BridgingCreator+Constants.kt.}")
         }
     }
 

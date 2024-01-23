@@ -2,25 +2,20 @@ import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 /// An enum representing the subscription status of the user.
-class SubscriptionStatus {
-  final BridgeId bridgeId;
+class SubscriptionStatus extends BridgeIdInstantiable {
+  SubscriptionStatus({ required BridgeClass bridgeClass, BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
 
-  SubscriptionStatus._privateConstructor(this.bridgeId) {
-    bridgeId.associate(this);
-  }
+  static final SubscriptionStatus active = SubscriptionStatusActive();
+  static final SubscriptionStatus inactive = SubscriptionStatusInactive();
+  static final SubscriptionStatus unknown = SubscriptionStatusUnknown();
 
-  static final SubscriptionStatus active = SubscriptionStatus._privateConstructor(BridgingCreator.createSubscriptionStatusActiveBridgeId());
-  static final SubscriptionStatus inactive = SubscriptionStatus._privateConstructor(BridgingCreator.createSubscriptionStatusInactiveBridgeId());
-  static final SubscriptionStatus unknown = SubscriptionStatus._privateConstructor(BridgingCreator.createSubscriptionStatusUnknownBridgeId());
-
-  static SubscriptionStatus? subscriptionStatusFrom(BridgeId bridgeId) {
-    // TODO: Improve this. Identifier should be implementation detail of BridgingCreator
+  static SubscriptionStatus? createSubscriptionStatusFromBridgeId(BridgeId bridgeId) {
     switch (bridgeId.bridgeClass) {
-      case "SubscriptionStatusActiveBridge":
+      case SubscriptionStatusActive.bridgeClass:
         return SubscriptionStatus.active;
-      case "SubscriptionStatusInactiveBridge":
+      case SubscriptionStatusInactive.bridgeClass:
         return SubscriptionStatus.inactive;
-      case "SubscriptionStatusUnknownBridge":
+      case SubscriptionStatusUnknown.bridgeClass:
         return SubscriptionStatus.unknown;
       default:
         return null;
@@ -30,4 +25,19 @@ class SubscriptionStatus {
   Future<String> get description async {
     return await bridgeId.communicator.invokeBridgeMethod('getDescription');
   }
+}
+
+class SubscriptionStatusActive extends SubscriptionStatus {
+  static const BridgeClass bridgeClass = "SubscriptionStatusActiveBridge";
+  SubscriptionStatusActive({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+}
+
+class SubscriptionStatusInactive extends SubscriptionStatus {
+  static const BridgeClass bridgeClass = "SubscriptionStatusInactiveBridge";
+  SubscriptionStatusInactive({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+}
+
+class SubscriptionStatusUnknown extends SubscriptionStatus {
+  static const BridgeClass bridgeClass = "SubscriptionStatusUnknownBridge";
+  SubscriptionStatusUnknown({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
 }

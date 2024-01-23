@@ -133,7 +133,7 @@ class Superwall extends BridgeIdInstantiable {
     await _waitForBridgeInstanceCreation();
 
     final subscriptionStatusBridgeId = await bridgeId.communicator.invokeBridgeMethod('getSubscriptionStatusBridgeId');
-    final status = SubscriptionStatus.subscriptionStatusFrom(subscriptionStatusBridgeId) ?? SubscriptionStatus.unknown;
+    final status = SubscriptionStatus.createSubscriptionStatusFromBridgeId(subscriptionStatusBridgeId) ?? SubscriptionStatus.unknown;
 
     return status;
   }
@@ -142,18 +142,7 @@ class Superwall extends BridgeIdInstantiable {
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
     await _waitForBridgeInstanceCreation();
 
-    BridgeId getSubscriptionStatusBridgeId(SubscriptionStatus status) {
-      if (status == SubscriptionStatus.active) {
-        return BridgingCreator.createSubscriptionStatusActiveBridgeId();
-      }
-      else if (status == SubscriptionStatus.inactive) {
-        return BridgingCreator.createSubscriptionStatusInactiveBridgeId();
-      }
-      else {
-        return BridgingCreator.createSubscriptionStatusUnknownBridgeId();
-      }
-    }
-    final subscriptionStatusBridgeId = getSubscriptionStatusBridgeId(status);
+    final subscriptionStatusBridgeId = status.bridgeId;
     var result = await bridgeId.communicator.invokeBridgeMethod('setSubscriptionStatus', {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
     print(result);
   }
@@ -228,10 +217,7 @@ class Superwall extends BridgeIdInstantiable {
     PurchaseControllerProxy? purchaseControllerProxy;
     if (purchaseController != null) {
       // Create a proxy bridge for the non-null purchaseController
-      purchaseControllerProxy = PurchaseControllerProxy(
-          bridgeId: BridgingCreator.createPurchaseControllerProxyBridgeId(),
-          purchaseController: purchaseController
-      );
+      purchaseControllerProxy = PurchaseControllerProxy(purchaseController: purchaseController);
     }
 
     CompletionBlockProxy? completionBlockProxy;
