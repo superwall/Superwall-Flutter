@@ -10,10 +10,9 @@ import 'package:superwallkit_flutter/src/public/Variant.dart';
 /// they are in a holdout group.
 ///
 /// To learn more, read [our docs](https://docs.superwall.com/docs/home#how-it-work
-class Experiment {
-  final BridgeId bridgeId;
-
-  Experiment({required this.bridgeId});
+class Experiment extends BridgeIdInstantiable {
+  static const BridgeClass bridgeClass = "ExperimentBridge";
+  Experiment({BridgeId? bridgeId}): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
 
   Future<String> get id async {
     final id = await bridgeId.communicator.invokeBridgeMethod('getId');

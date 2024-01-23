@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 /// An enum representing the subscription status of the user.
