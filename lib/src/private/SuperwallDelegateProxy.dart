@@ -47,7 +47,6 @@ class SuperwallDelegateProxy extends BridgeIdInstantiable {
         final json = call.argument("eventInfo");
         final event = json['event'];
         final eventName = event['event'];
-        print("[EVENTINFO] A $eventName");
 
         final eventInfo = SuperwallEventInfo.fromJson(json);
         delegate.handleSuperwallEvent(eventInfo);

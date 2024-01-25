@@ -1,3 +1,5 @@
+import 'package:superwallkit_flutter/src/public/StoreProduct.dart';
+import 'package:superwallkit_flutter/src/public/StoreTransaction.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// Contains information about the internally tracked superwall event.
@@ -66,7 +68,8 @@ class SuperwallEvent {
   final String? deepLinkUrl;
   final TriggerResult? result;
   final PaywallInfo? paywallInfo;
-  final Product? product;
+  final StoreTransaction? transaction;
+  final StoreProduct? product;
   final String? error;
   final String? triggeredEventName;
   final Survey? survey;
@@ -84,6 +87,7 @@ class SuperwallEvent {
     this.deepLinkUrl,
     this.result,
     this.paywallInfo,
+    this.transaction,
     this.product,
     this.error,
     this.triggeredEventName,
@@ -141,7 +145,7 @@ class SuperwallEvent {
       case 'transactionStart':
         return SuperwallEvent._(
           type: EventType.transactionStart,
-          product: Product.fromJson(json['product']),
+          product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'transactionFail':
@@ -153,25 +157,28 @@ class SuperwallEvent {
       case 'transactionAbandon':
         return SuperwallEvent._(
           type: EventType.transactionAbandon,
-          product: Product.fromJson(json['product']),
+          product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'transactionComplete':
+        final transactionJson = json['transaction'];
+
         return SuperwallEvent._(
           type: EventType.transactionComplete,
-          product: Product.fromJson(json['product']),
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          transaction: (transactionJson != null) ? StoreTransaction.fromJson(transactionJson) : null,
+          product: StoreProduct.fromJson(json['product']),
+          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId'])
         );
       case 'subscriptionStart':
         return SuperwallEvent._(
           type: EventType.subscriptionStart,
-          product: Product.fromJson(json['product']),
+          product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'freeTrialStart':
         return SuperwallEvent._(
           type: EventType.freeTrialStart,
-          product: Product.fromJson(json['product']),
+          product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'transactionRestore':
@@ -190,7 +197,7 @@ class SuperwallEvent {
       case 'nonRecurringProductPurchase':
         return SuperwallEvent._(
           type: EventType.nonRecurringProductPurchase,
-          product: Product.fromJson(json['product']),
+          product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallResponseLoadStart':
@@ -251,10 +258,12 @@ class SuperwallEvent {
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallPresentationRequest':
+        final statusReasonJson = json['reason'];
+
         return SuperwallEvent._(
           type: EventType.paywallPresentationRequest,
           status: PaywallPresentationRequestStatus.fromJson(json['status']),
-          reason: PaywallPresentationRequestStatusReason.fromJson(json['reason']),
+          reason: (statusReasonJson != null) ? PaywallPresentationRequestStatusReason.fromJson(statusReasonJson) : null
         );
       case 'touchesBegan':
         return SuperwallEvent._(type: EventType.touchesBegan);

@@ -1,4 +1,3 @@
-import Flutter
 import SuperwallKit
 
 extension FeatureGatingBehavior {
@@ -10,7 +9,7 @@ extension FeatureGatingBehavior {
         return "nonGated"
     }
   }
-  
+
   static func fromJson(_ json: String) -> FeatureGatingBehavior? {
     switch json {
       case "gated":

@@ -332,9 +332,29 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   }
 
   @override
-  void handleSuperwallEvent(SuperwallEventInfo eventInfo) {
+  void handleSuperwallEvent(SuperwallEventInfo eventInfo) async {
     print("handleSuperwallEvent: $eventInfo");
-    print("[EVENTINFO] B");
+
+    switch (eventInfo.event.type) {
+      case EventType.appOpen:
+        print("appOpen event");
+      case EventType.deviceAttributes:
+        print("deviceAttributes event: ${eventInfo.event.deviceAttributes} ");
+      case EventType.paywallOpen:
+        final paywallInfo = eventInfo.event.paywallInfo;
+        print("paywallOpen event: ${paywallInfo} ");
+
+        if (paywallInfo != null) {
+          final identifier =  await paywallInfo.identifier;
+          print("paywallInfo.identifier: ${identifier} ");
+
+          final productIds =  await paywallInfo.productIds;
+          print("paywallInfo.productIds: ${productIds} ");
+        }
+      default:
+        break;
+    }
+
   }
 
   @override

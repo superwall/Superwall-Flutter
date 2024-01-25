@@ -10,7 +10,7 @@ class RestoreType {
   static RestoreType viaPurchase(StoreTransaction? storeTransaction) => RestoreType._(type: RestoreTypeCase.viaPurchase, storeTransaction: storeTransaction);
   static RestoreType viaRestore = RestoreType._(type: RestoreTypeCase.viaRestore);
 
-  factory RestoreType.fromJson(Map<String, dynamic> json) {
+  factory RestoreType.fromJson(Map<dynamic, dynamic> json) {
     switch (json['type']) {
       case 'viaPurchase':
         return RestoreType.viaPurchase(

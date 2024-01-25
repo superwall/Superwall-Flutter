@@ -1,4 +1,3 @@
-import Flutter
 import SuperwallKit
 
 extension ComputedPropertyRequest {
@@ -26,4 +25,3 @@ extension ComputedPropertyRequest.ComputedPropertyRequestType {
     }
   }
 }
-

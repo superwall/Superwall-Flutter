@@ -30,7 +30,7 @@ class StoreTransaction {
     this.revocationDate,
   });
 
-  factory StoreTransaction.fromJson(Map<String, dynamic> json) {
+  factory StoreTransaction.fromJson(Map<dynamic, dynamic> json) {
     return StoreTransaction(
       configRequestId: json['configRequestId'],
       appSessionId: json['appSessionId'],

@@ -1,12 +1,12 @@
 package com.superwall.superwallkit_flutter.bridges
 
 import android.content.Context
+import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.sdk.delegate.SubscriptionStatus
 import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.paywall.presentation.PaywallInfo
 import com.superwall.superwallkit_flutter.invokeMethodOnMain
-import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.plugin.common.MethodChannel
+import toJson
 import java.net.URL
 
 class SuperwallDelegateProxyBridge(
@@ -38,6 +38,10 @@ class SuperwallDelegateProxyBridge(
 
     override fun subscriptionStatusDidChange(newValue: SubscriptionStatus) {
         communicator.invokeMethodOnMain("subscriptionStatusDidChange", mapOf("subscriptionStatusBridgeId" to newValue.createBridgeId()))
+    }
+
+    override fun handleSuperwallEvent(eventInfo: SuperwallEventInfo) {
+        communicator.invokeMethodOnMain("handleSuperwallEvent", mapOf("eventInfo" to eventInfo.toJson()))
     }
 
     override fun paywallWillOpenURL(url: URL) {

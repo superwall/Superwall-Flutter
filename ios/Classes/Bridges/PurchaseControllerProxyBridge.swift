@@ -9,7 +9,7 @@ public class PurchaseControllerProxyBridge: BridgeInstance, PurchaseController {
 
   public func purchase(product: SKProduct) async -> PurchaseResult {
     guard 
-      let purchaseResultBridgeId = await communicator.invokeMethod("purchaseFromAppStore", arguments: ["productId": product.productIdentifier]) as? BridgeId,
+      let purchaseResultBridgeId = await communicator.asyncInvokeMethodOnMain("purchaseFromAppStore", arguments: ["productId": product.productIdentifier]) as? BridgeId,
       let purchaseResultBridge: PurchaseResultBridge = purchaseResultBridgeId.bridgeInstance()
     else {
       print("WARNING: Unexpected result")
@@ -21,7 +21,7 @@ public class PurchaseControllerProxyBridge: BridgeInstance, PurchaseController {
 
   public func restorePurchases() async -> RestorationResult {
     guard 
-      let restorationResultBridgeId = await communicator.invokeMethod("restorePurchases") as? BridgeId,
+      let restorationResultBridgeId = await communicator.asyncInvokeMethodOnMain("restorePurchases") as? BridgeId,
       let restorationResultBridge: RestorationResultBridge = restorationResultBridgeId.bridgeInstance()
     else {
       print("WARNING: Unexpected result")

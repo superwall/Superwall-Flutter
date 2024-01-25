@@ -16,8 +16,8 @@ class TriggerResult {
   factory TriggerResult.holdout(Experiment experiment) => TriggerResult._(type: TriggerResultType.holdout, experiment: experiment);
   factory TriggerResult.error(String error) => TriggerResult._(type: TriggerResultType.error, error: error);
 
-  factory TriggerResult.fromJson(Map<String, dynamic> json) {
-    switch (json['type']) {
+  factory TriggerResult.fromJson(Map<dynamic, dynamic> json) {
+    switch (json['result']) {
       case 'eventNotFound':
         return TriggerResult.eventNotFound();
       case 'noRuleMatch':

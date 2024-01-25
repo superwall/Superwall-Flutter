@@ -1,4 +1,3 @@
-import Flutter
 import SuperwallKit
 
 extension Product {

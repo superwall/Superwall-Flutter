@@ -40,7 +40,14 @@ extension FlutterMethodCall {
 }
 
 extension FlutterMethodChannel {
-  @discardableResult func invokeMethod(_ method: String, arguments: Any? = nil) async -> Any? {
+  func invokeMethodOnMain(_ method: String, arguments: Any? = nil) {
+    DispatchQueue.main.async { [weak self] in
+      guard let self else { return }
+      invokeMethod(method, arguments: arguments)
+    }
+  }
+
+  @discardableResult func asyncInvokeMethodOnMain(_ method: String, arguments: Any? = nil) async -> Any? {
     return await withCheckedContinuation { continuation in
       DispatchQueue.main.async { [weak self] in
         guard let self else { return }

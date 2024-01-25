@@ -6,7 +6,7 @@ class PaywallPresentationRequestStatus {
 
   PaywallPresentationRequestStatus._(this.type);
 
-  factory PaywallPresentationRequestStatus.fromJson(Map<String, dynamic> json) {
+  factory PaywallPresentationRequestStatus.fromJson(Map<dynamic, dynamic> json) {
     switch (json['status']) {
       case 'presentation':
         return PaywallPresentationRequestStatus._(PaywallPresentationRequestStatusType.presentation);
@@ -29,7 +29,7 @@ class PaywallPresentationRequestStatusReason {
 
   PaywallPresentationRequestStatusReason._({required this.type, this.experiment});
 
-  factory PaywallPresentationRequestStatusReason.fromJson(Map<String, dynamic> json) {
+  factory PaywallPresentationRequestStatusReason.fromJson(Map<dynamic, dynamic> json) {
     switch (json['reason']) {
       case 'debuggerPresented':
         return PaywallPresentationRequestStatusReason._(type: PaywallPresentationRequestStatusReasonType.debuggerPresented);

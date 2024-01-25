@@ -74,7 +74,7 @@ class SurveyOption {
   });
 
   // Factory constructor to create a SurveyOption instance from a JSON map
-  factory SurveyOption.fromJson(Map<String, dynamic> json) {
+  factory SurveyOption.fromJson(Map<dynamic, dynamic> json) {
     return SurveyOption(
       id: json['id'],
       title: json['title'],
