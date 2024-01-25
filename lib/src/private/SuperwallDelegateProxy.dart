@@ -1,8 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
-import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
-import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
-import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class SuperwallDelegateProxy extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = "SuperwallDelegateProxyBridge";
@@ -45,6 +43,14 @@ class SuperwallDelegateProxy extends BridgeIdInstantiable {
           delegate.subscriptionStatusDidChange(status);
         }
         break;
+      case 'handleSuperwallEvent':
+        final json = call.argument("eventInfo");
+        final event = json['event'];
+        final eventName = event['event'];
+        print("[EVENTINFO] A $eventName");
+
+        final eventInfo = SuperwallEventInfo.fromJson(json);
+        delegate.handleSuperwallEvent(eventInfo);
       case 'paywallWillOpenURL':
         final url = call.argument("url");
         delegate.paywallWillOpenURL(Uri.parse(url));

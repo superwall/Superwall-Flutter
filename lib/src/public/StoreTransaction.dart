@@ -1,41 +1,50 @@
 /// A wrapper around a store transaction.
 class StoreTransaction {
-  // TODO
-  // final String configRequestId;
-  // final String appSessionId;
-  // final DateTime? transactionDate;
-  // final String originalTransactionIdentifier;
-  // final StoreTransactionState state;
-  // final String? storeTransactionId;
-  // final StorePayment payment;
-  // final DateTime? originalTransactionDate;
-  // final String? webOrderLineItemID;
-  // final String? appBundleId;
-  // final String? subscriptionGroupId;
-  // final bool? isUpgraded;
-  // final DateTime? expirationDate;
-  // final String? offerId;
-  // final DateTime? revocationDate;
-  // final String? appAccountToken;
-}
+  final String configRequestId;
+  final String appSessionId;
+  final DateTime? transactionDate;
+  final String originalTransactionIdentifier;
+  final String? storeTransactionId;
+  final DateTime? originalTransactionDate;
+  final String? webOrderLineItemID;
+  final String? appBundleId;
+  final String? subscriptionGroupId;
+  final bool? isUpgraded;
+  final DateTime? expirationDate;
+  final String? offerId;
+  final DateTime? revocationDate;
 
-enum StoreTransactionState {
-  purchasing,
-  purchased,
-  failed,
-  restored,
-  deferred,
-}
+  StoreTransaction({
+    required this.configRequestId,
+    required this.appSessionId,
+    this.transactionDate,
+    required this.originalTransactionIdentifier,
+    this.storeTransactionId,
+    this.originalTransactionDate,
+    this.webOrderLineItemID,
+    this.appBundleId,
+    this.subscriptionGroupId,
+    this.isUpgraded,
+    this.expirationDate,
+    this.offerId,
+    this.revocationDate,
+  });
 
-/// The payment for the transaction.
-class StorePayment {
-  // TODO
-  // /// The ID of a product being bought.
-  // final String productIdentifier;
-  //
-  // /// The number of items the user wants to purchase.
-  // final int quantity;
-  //
-  // /// The ID for the discount offer to apply to the payment.
-  // final String? discountIdentifier;
+  factory StoreTransaction.fromJson(Map<String, dynamic> json) {
+    return StoreTransaction(
+      configRequestId: json['configRequestId'],
+      appSessionId: json['appSessionId'],
+      transactionDate: json['transactionDate'] != null ? DateTime.parse(json['transactionDate']) : null,
+      originalTransactionIdentifier: json['originalTransactionIdentifier'],
+      storeTransactionId: json['storeTransactionId'],
+      originalTransactionDate: json['originalTransactionDate'] != null ? DateTime.parse(json['originalTransactionDate']) : null,
+      webOrderLineItemID: json['webOrderLineItemID'],
+      appBundleId: json['appBundleId'],
+      subscriptionGroupId: json['subscriptionGroupId'],
+      isUpgraded: json['isUpgraded'],
+      expirationDate: json['expirationDate'] != null ? DateTime.parse(json['expirationDate']) : null,
+      offerId: json['offerId'],
+      revocationDate: json['revocationDate'] != null ? DateTime.parse(json['revocationDate']) : null,
+    );
+  }
 }

@@ -4,24 +4,34 @@ import 'package:superwallkit_flutter/src/public/Experiment.dart';
 ///
 /// Triggers can conditionally show paywalls. Contains the possible cases resulting from the trigger.
 class TriggerResult {
-  // TODO
-  // final _TriggerResultType _type;
-  // final Experiment? experiment; // For paywall and holdout cases
-  // final String? errorDetail; // For error case
-  //
-  // const TriggerResult._(this._type, {this.experiment, this.errorDetail});
-  //
-  // static const TriggerResult eventNotFound = TriggerResult._(_TriggerResultType.eventNotFound);
-  // static const TriggerResult noRuleMatch = TriggerResult._(_TriggerResultType.noRuleMatch);
-  // static TriggerResult paywall(Experiment experiment) => TriggerResult._(_TriggerResultType.paywall, experiment: experiment);
-  // static TriggerResult holdout(Experiment experiment) => TriggerResult._(_TriggerResultType.holdout, experiment: experiment);
-  // static TriggerResult error(String error) => TriggerResult._(_TriggerResultType.error, errorDetail: error);
+  final TriggerResultType type;
+  final Experiment? experiment;
+  final String? error;
+
+  TriggerResult._({required this.type, this.experiment, this.error});
+
+  factory TriggerResult.eventNotFound() => TriggerResult._(type: TriggerResultType.eventNotFound);
+  factory TriggerResult.noRuleMatch() => TriggerResult._(type: TriggerResultType.noRuleMatch);
+  factory TriggerResult.paywall(Experiment experiment) => TriggerResult._(type: TriggerResultType.paywall, experiment: experiment);
+  factory TriggerResult.holdout(Experiment experiment) => TriggerResult._(type: TriggerResultType.holdout, experiment: experiment);
+  factory TriggerResult.error(String error) => TriggerResult._(type: TriggerResultType.error, error: error);
+
+  factory TriggerResult.fromJson(Map<String, dynamic> json) {
+    switch (json['type']) {
+      case 'eventNotFound':
+        return TriggerResult.eventNotFound();
+      case 'noRuleMatch':
+        return TriggerResult.noRuleMatch();
+      case 'paywall':
+        return TriggerResult.paywall(Experiment(bridgeId: json['experimentBridgeId']));
+      case 'holdout':
+        return TriggerResult.holdout(Experiment(bridgeId: json['experimentBridgeId']));
+      case 'error':
+        return TriggerResult.error(json['error']);
+      default:
+        throw ArgumentError('Invalid TriggerResult type');
+    }
+  }
 }
 
-// enum _TriggerResultType {
-//   eventNotFound,
-//   noRuleMatch,
-//   paywall,
-//   holdout,
-//   error,
-// }
+enum TriggerResultType { eventNotFound, noRuleMatch, paywall, holdout, error }

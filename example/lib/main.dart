@@ -334,6 +334,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   @override
   void handleSuperwallEvent(SuperwallEventInfo eventInfo) {
     print("handleSuperwallEvent: $eventInfo");
+    print("[EVENTINFO] B");
   }
 
   @override

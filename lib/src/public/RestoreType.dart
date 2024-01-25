@@ -3,13 +3,27 @@ import 'package:superwallkit_flutter/src/public/StoreTransaction.dart';
 /// An enum whose cases describe the type of restore that occurred.
 class RestoreType {
   final RestoreTypeCase type;
-  final StoreTransaction? transaction;
+  final StoreTransaction? storeTransaction;
 
-  const RestoreType._(this.type, {this.transaction});
+  RestoreType._({required this.type, this.storeTransaction});
 
-  // Static constants for each case
-  static RestoreType viaPurchase(StoreTransaction? transaction) => RestoreType._(RestoreTypeCase.viaPurchase, transaction: transaction);
-  static const RestoreType viaRestore = RestoreType._(RestoreTypeCase.viaRestore);
+  static RestoreType viaPurchase(StoreTransaction? storeTransaction) => RestoreType._(type: RestoreTypeCase.viaPurchase, storeTransaction: storeTransaction);
+  static RestoreType viaRestore = RestoreType._(type: RestoreTypeCase.viaRestore);
+
+  factory RestoreType.fromJson(Map<String, dynamic> json) {
+    switch (json['type']) {
+      case 'viaPurchase':
+        return RestoreType.viaPurchase(
+          json['storeTransaction'] != null
+              ? StoreTransaction.fromJson(json['storeTransaction'])
+              : null,
+        );
+      case 'viaRestore':
+        return RestoreType.viaRestore;
+      default:
+        throw ArgumentError('Invalid RestoreType type');
+    }
+  }
 }
 
 enum RestoreTypeCase {
