@@ -113,12 +113,11 @@ class Superwall extends BridgeIdInstantiable {
   }
 
   // Asynchronous method to get the presented paywall view controller
-  // TODO:This is a placeholder implementation as Dart does not have a direct equivalent for UIViewController
-  Future<dynamic> getPresentedViewController() async {
-    await _waitForBridgeInstanceCreation();
-
-    return await bridgeId.communicator.invokeBridgeMethod('getPresentedViewController');
-  }
+  // Future<dynamic> getPresentedViewController() async {
+  //   await _waitForBridgeInstanceCreation();
+  //
+  //   return await bridgeId.communicator.invokeBridgeMethod('getPresentedViewController');
+  // }
 
   // Asynchronous method to get the latest PaywallInfo object
   Future<PaywallInfo?> getLatestPaywallInfo() async {

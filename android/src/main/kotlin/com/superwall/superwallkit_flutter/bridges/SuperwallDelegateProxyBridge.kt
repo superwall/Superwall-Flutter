@@ -51,5 +51,35 @@ class SuperwallDelegateProxyBridge(
     override fun paywallWillOpenDeepLink(url: URL) {
         communicator.invokeMethodOnMain("paywallWillOpenDeepLink", mapOf("url" to url.toString()))
     }
+
+    override fun handleLog(
+        level: String,
+        scope: String,
+        message: String?,
+        info: Map<String, Any>?,
+        error: Throwable?
+    ) {
+        val transformedInfo = info?.mapValues { (_, value) ->
+            when (value) {
+                is String -> value
+                is Int -> value
+                is Map<*, *> -> value
+                is List<*> -> value
+                is Boolean -> value
+                is Set<*> -> value.toList()
+                else -> null
+            }
+        }
+
+        val arguments: Map<String, Any?> = mapOf(
+            "level" to level,
+            "scope" to scope,
+            "message" to message,
+            "info" to transformedInfo,
+            "error" to error?.localizedMessage
+        )
+
+        communicator.invokeMethodOnMain("handleLog", arguments)
+    }
 }
 

@@ -4,8 +4,14 @@ import SuperwallKit
 
 /// Creates a method channel for a particular unique instance of a class
 public class BridgingCreator: NSObject, FlutterPlugin {
-  // TODO: CHANGE
-  static var shared: BridgingCreator!
+  static private var _shared: BridgingCreator? = nil
+  static var shared: BridgingCreator {
+    guard let shared = _shared else {
+      fatalError("Attempting to access the shared BridgingCreator before `register(with registrar: FlutterPluginRegistrar)` has been called.")
+    }
+
+    return shared
+  }
 
   let registrar: FlutterPluginRegistrar
 
@@ -31,7 +37,7 @@ public class BridgingCreator: NSObject, FlutterPlugin {
     let communicator = Communicator(name: "SWK_BridgingCreator", binaryMessenger: registrar.messenger())
 
     let bridge = BridgingCreator(registrar: registrar, communicator: communicator)
-    BridgingCreator.shared = bridge
+    BridgingCreator._shared = bridge
 
     registrar.addMethodCallDelegate(bridge, channel: communicator)
   }

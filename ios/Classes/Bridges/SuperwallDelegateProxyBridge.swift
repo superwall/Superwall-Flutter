@@ -41,5 +41,41 @@ public class SuperwallDelegateProxyBridge: BridgeInstance, SuperwallDelegate {
   public func paywallWillOpenDeepLink(url: URL) {
     communicator.invokeMethodOnMain("paywallWillOpenDeepLink", arguments: ["url" : url.absoluteString])
   }
+
+  public func handleLog(
+    level: String,
+    scope: String,
+    message: String?,
+    info: [String: Any]?,
+    error: Swift.Error?
+  ) {
+    let transformedInfo = info?.compactMapValues { value -> Any? in
+      switch value {
+        case let stringValue as String:
+          return stringValue
+        case let intValue as Int:
+          return intValue
+        case let dictValue as [String: Any]:
+          return dictValue
+        case let arrayValue as [Any]:
+          return arrayValue
+        case let boolValue as Bool:
+          return boolValue
+        case let setValue as Set<AnyHashable>:
+          return Array(setValue)
+        default:
+          return nil
+      }
+    }
+
+    let arguments: [String: Any?] = [
+      "level": level,
+      "scope": scope,
+      "message": message,
+      "info": transformedInfo,
+      "error": error?.localizedDescription
+    ]
+    communicator.invokeMethodOnMain("handleLog", arguments: arguments)
+  }
 }
 

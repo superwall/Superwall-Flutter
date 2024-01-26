@@ -45,11 +45,9 @@ class SuperwallDelegateProxy extends BridgeIdInstantiable {
         break;
       case 'handleSuperwallEvent':
         final json = call.argument("eventInfo");
-        final event = json['event'];
-        final eventName = event['event'];
-
         final eventInfo = SuperwallEventInfo.fromJson(json);
         delegate.handleSuperwallEvent(eventInfo);
+        break;
       case 'paywallWillOpenURL':
         final url = call.argument("url");
         delegate.paywallWillOpenURL(Uri.parse(url));
@@ -57,6 +55,14 @@ class SuperwallDelegateProxy extends BridgeIdInstantiable {
       case 'paywallWillOpenDeepLink':
         final url = call.argument("url");
         delegate.paywallWillOpenDeepLink(Uri.parse(url));
+        break;
+      case 'handleLog':
+        final level = call.argument("level");
+        final scope = call.argument("scope");
+        final message = call.argument("message");
+        final info = call.argument("info");
+        final error = call.argument("error");
+        delegate.handleLog(level, scope, message, info, error);
         break;
       default:
         throw ArgumentError('Method not implemented');

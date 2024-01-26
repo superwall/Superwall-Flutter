@@ -327,12 +327,15 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   }
 
   @override
-  void handleLog(String level, String scope, String? message, Map<String, dynamic>? info, String error) {
-    // TODO: implement handleLog
+  void handleLog(String level, String scope, String? message, Map<dynamic, dynamic>? info, String? error) {
+    // print("handleLog: $level, $scope, $message, $info, $error");
   }
 
   @override
   void handleSuperwallEvent(SuperwallEventInfo eventInfo) async {
+    // This delegate function is noisy. Uncomment to debug.
+    return;
+
     print("handleSuperwallEvent: $eventInfo");
 
     switch (eventInfo.event.type) {
@@ -354,7 +357,6 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       default:
         break;
     }
-
   }
 
   @override

@@ -12,8 +12,9 @@ public class BridgeInstance: NSObject {
   }
 
   lazy var communicator: Communicator = {
-    // TODO: Consider simplifying bridgeId setting / do we still need it
     let communicator = Communicator(name: bridgeId, binaryMessenger: BridgingCreator.shared.registrar.messenger())
+
+    // Setting an associated object here because `FlutterMethodChannel / Communicator` doesn't make the `name` publicly available. Consider subclassing `FlutterMethodChannel` instead to avoid this.
     communicator.bridgeId = bridgeId
 
     return communicator

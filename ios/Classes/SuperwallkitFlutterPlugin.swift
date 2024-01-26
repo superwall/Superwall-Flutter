@@ -35,7 +35,7 @@ extension BridgeId {
 
 extension FlutterMethodCall {
   var badArgs: FlutterError {
-    return FlutterError.badArgs(for: method)
+    return FlutterError(code: "BAD_ARGS", message: "Missing or invalid arguments for '\(method)'", details: nil)
   }
 }
 
@@ -80,13 +80,5 @@ extension FlutterMethodChannel {
     set(newValue) {
       objc_setAssociatedObject(self, &FlutterMethodChannel.bridgeIdKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
-  }
-}
-
-
-// TODO: Remove
-extension FlutterError {
-  static func badArgs(for method: String) -> FlutterError {
-    return FlutterError(code: "BAD_ARGS", message: "Missing or invalid arguments for '\(method)'", details: nil)
   }
 }
