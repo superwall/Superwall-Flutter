@@ -1,6 +1,5 @@
 package com.superwall.superwallkit_flutter.bridges
 
-import LogLevel
 import android.app.Activity
 import android.content.Context
 import com.superwall.sdk.Superwall

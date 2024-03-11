@@ -1,4 +1,5 @@
 import com.superwall.sdk.config.options.SuperwallOptions
+import com.superwall.sdk.logger.LogScope
 import com.superwall.superwallkit_flutter.json.JsonExtensions
 import java.util.EnumSet
 

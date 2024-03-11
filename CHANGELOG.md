@@ -1,3 +1,9 @@
+## 1.0.1
+
+### Fixes
+
+- Fixes issue with invalid imports due to a breaking change on Android.
+
 ## 1.0.0
 
 ### Enhancements

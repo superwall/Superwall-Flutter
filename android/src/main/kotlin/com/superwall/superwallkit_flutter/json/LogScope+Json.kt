@@ -1,3 +1,4 @@
+import com.superwall.sdk.logger.LogScope
 import com.superwall.superwallkit_flutter.json.JsonExtensions
 
 fun JsonExtensions.Companion.logScopeFromJson(json: String): LogScope? {

@@ -1,3 +1,4 @@
+import com.superwall.sdk.logger.LogLevel
 import com.superwall.superwallkit_flutter.json.JsonExtensions
 
 fun JsonExtensions.Companion.logLevelFromJson(json: String): LogLevel? {
