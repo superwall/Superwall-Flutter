@@ -1,3 +1,13 @@
+# CHANGELOG
+
+The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
+
+## 1.1.1
+
+### Fixes
+
+- Fixes `LocalNotification` issue that was trying to initialise an `int` with a `double`.
+
 ## 1.1.0
 
 ### Enhancements

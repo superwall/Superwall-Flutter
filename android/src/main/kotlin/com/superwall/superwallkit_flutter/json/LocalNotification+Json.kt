@@ -15,5 +15,6 @@ fun LocalNotification.toJson(): Map<String, Any?> {
 fun LocalNotificationType.toJson(): String {
     return when (this) {
         LocalNotificationType.TrialStarted -> "trialStarted"
+        else -> ""
     }
 }

@@ -13,7 +13,7 @@ class LocalNotification {
   final String body;
 
   /// The delay to the notification in milliseconds.
-  final int delay;
+  final double delay;
 
   LocalNotification({
     required this.type,
