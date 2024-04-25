@@ -50,6 +50,11 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
             }
     }
 
+    fun tearDown() {
+        _shared = null
+        _flutterPluginBinding = null
+    }
+
     // Generic function to retrieve a bridge instance
     fun <T> bridgeInstance(bridgeId: BridgeId): T? {
         BreadCrumbs.append("BridgingCreator.kt: Searching for $bridgeId among ${instances.count()}: ${instances.toFormattedString()}")

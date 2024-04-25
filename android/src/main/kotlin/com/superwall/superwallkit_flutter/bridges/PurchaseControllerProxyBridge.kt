@@ -24,6 +24,7 @@ class PurchaseControllerProxyBridge(
             "basePlanId" to basePlanId,
             "offerId" to offerId
         )
+
         val purchaseResultBridgeId = communicator.asyncInvokeMethodOnMain("purchaseFromGooglePlay", attributes) as? BridgeId
         val purchaseResultBridge = purchaseResultBridgeId?.bridgeInstance() as? PurchaseResultBridge
 

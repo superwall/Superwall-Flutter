@@ -29,7 +29,7 @@ class LocalNotification {
       title: json['title'],
       subtitle: json['subtitle'],
       body: json['body'],
-      delay: json['delay'],
+      delay: json['delay'].toDouble(),
     );
   }
 

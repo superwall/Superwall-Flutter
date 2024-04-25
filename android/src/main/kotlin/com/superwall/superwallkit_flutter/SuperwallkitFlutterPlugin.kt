@@ -39,7 +39,10 @@ class SuperwallkitFlutterPlugin: FlutterPlugin, ActivityAware {
     BridgingCreator.flutterPluginBinding = flutterPluginBinding
   }
 
-  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    BridgingCreator.shared.tearDown()
+    instance = null
+  }
 
   //region ActivityAware
 

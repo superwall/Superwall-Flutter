@@ -14,25 +14,29 @@ class BridgingCreator {
   // This will later be used when invoking creation to pass in initialization arguments
   static final Map<String, Map<String, dynamic>> _metadataByBridgeId = {};
 
-  static BridgeId _createBridgeId(BridgeClass bridgeClass, [ Map<String, dynamic>? initializationArgs ]) {
+  static BridgeId _createBridgeId(BridgeClass bridgeClass,
+      [Map<String, dynamic>? initializationArgs]) {
     BridgeId bridgeId = bridgeClass.generateBridgeId();
-    _metadataByBridgeId[bridgeId] = { "args": initializationArgs };
+    _metadataByBridgeId[bridgeId] = {"args": initializationArgs};
 
     return bridgeId;
   }
 
   static _invokeBridgeInstanceCreation(BridgeId bridgeId) async {
-    Map<String, dynamic> metadata = BridgingCreator._metadataByBridgeId[bridgeId] ?? {};
+    Map<String, dynamic> metadata =
+        BridgingCreator._metadataByBridgeId[bridgeId] ?? {};
     Map<String, dynamic>? initializationArgs = metadata["args"];
 
-    await _channel.invokeMethod("createBridgeInstance", { "bridgeId" : bridgeId, "args" : initializationArgs });
+    await _channel.invokeMethod("createBridgeInstance",
+        {"bridgeId": bridgeId, "args": initializationArgs});
 
     metadata["bridgeInstanceCreated"] = "true";
     _metadataByBridgeId[bridgeId] = metadata;
   }
 
   static Future<void> _ensureBridgeCreated(BridgeId bridgeId) async {
-    Map<String, dynamic>? metadata = BridgingCreator._metadataByBridgeId[bridgeId];
+    Map<String, dynamic>? metadata =
+        BridgingCreator._metadataByBridgeId[bridgeId];
 
     // If metadata is not null, this bridge was already created on the Dart
     // side here, so you must invoke creation of the instance on the native side.
@@ -47,8 +51,12 @@ class BridgingCreator {
 abstract class BridgeIdInstantiable {
   BridgeId bridgeId;
 
-  BridgeIdInstantiable({ required BridgeClass bridgeClass, BridgeId? bridgeId, Map<String, dynamic>? initializationArgs})
-      : bridgeId = bridgeId ?? BridgingCreator._createBridgeId(bridgeClass, initializationArgs) {
+  BridgeIdInstantiable(
+      {required BridgeClass bridgeClass,
+      BridgeId? bridgeId,
+      Map<String, dynamic>? initializationArgs})
+      : bridgeId = bridgeId ??
+            BridgingCreator._createBridgeId(bridgeClass, initializationArgs) {
     this.bridgeId.associate(this);
     this.bridgeId.communicator.setMethodCallHandler(handleMethodCall);
   }
@@ -60,7 +68,8 @@ abstract class BridgeIdInstantiable {
 extension MethodChannelBridging on MethodChannel {
   // Will invoke the method as usual, but will wait for any native Ids to be
   // created if they don't already exist.
-  Future<T?> invokeBridgeMethod<T>(String method, [Map<String, Object?>? arguments]) async {
+  Future<T?> invokeBridgeMethod<T>(String method,
+      [Map<String, Object?>? arguments]) async {
     // Check if arguments is a Map and contains native IDs
     if (arguments != null) {
       for (var value in arguments.values) {
@@ -88,7 +97,9 @@ extension FlutterMethodCall on MethodCall {
 
   BridgeId bridgeId(String key) {
     final BridgeId? bridgeId = argument<String>(key);
-    assert(bridgeId != null, "Attempting to fetch a bridge Id in Dart that has "
+    assert(
+        bridgeId != null,
+        "Attempting to fetch a bridge Id in Dart that has "
         "not been created by the BridgeCreator natively.");
 
     return bridgeId ?? "";

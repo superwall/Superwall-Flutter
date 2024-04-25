@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.1.3
+
+### Fixes
+
+- Fixes crash that occurred if an Android foreground service was started and the app was relaunched from a cold start.
+
 ## 1.1.2
 
 ### Enhancements

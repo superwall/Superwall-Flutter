@@ -3,7 +3,6 @@ package com.superwall.superwallkit_flutter.bridges
 import android.content.Context
 import com.superwall.superwallkit_flutter.BridgingCreator
 import com.superwall.superwallkit_flutter.setBridgeId
-import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.util.UUID
