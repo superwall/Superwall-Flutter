@@ -16,6 +16,7 @@ fun SuperwallEvent.toJson(): Map<String, Any?> {
         is SuperwallEvent.FirstSeen -> mapOf("event" to "firstSeen")
         is SuperwallEvent.AppOpen -> mapOf("event" to "appOpen")
         is SuperwallEvent.AppLaunch -> mapOf("event" to "appLaunch")
+        is SuperwallEvent.IdentityAlias -> mapOf("event" to "identityAlias")
         is SuperwallEvent.AppInstall -> mapOf("event" to "appInstall")
         is SuperwallEvent.SessionStart -> mapOf("event" to "sessionStart")
         is SuperwallEvent.DeviceAttributes -> mapOf("event" to "deviceAttributes", "attributes" to this.attributes)

@@ -21,6 +21,7 @@ enum EventType {
   firstSeen,
   appOpen,
   appLaunch,
+  identityAlias,
   appInstall,
   sessionStart,
   deviceAttributes,
@@ -108,12 +109,16 @@ class SuperwallEvent {
         return SuperwallEvent._(type: EventType.appOpen);
       case 'appLaunch':
         return SuperwallEvent._(type: EventType.appLaunch);
+      case 'identityAlias':
+        return SuperwallEvent._(type: EventType.identityAlias);
       case 'appInstall':
         return SuperwallEvent._(type: EventType.appInstall);
       case 'sessionStart':
         return SuperwallEvent._(type: EventType.sessionStart);
       case 'deviceAttributes':
-        return SuperwallEvent._(type: EventType.deviceAttributes, deviceAttributes: json['attributes']);
+        return SuperwallEvent._(
+            type: EventType.deviceAttributes,
+            deviceAttributes: json['attributes']);
       case 'subscriptionStatusDidChange':
         return SuperwallEvent._(type: EventType.subscriptionStatusDidChange);
       case 'appClose':
@@ -164,11 +169,12 @@ class SuperwallEvent {
         final transactionJson = json['transaction'];
 
         return SuperwallEvent._(
-          type: EventType.transactionComplete,
-          transaction: (transactionJson != null) ? StoreTransaction.fromJson(transactionJson) : null,
-          product: StoreProduct.fromJson(json['product']),
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId'])
-        );
+            type: EventType.transactionComplete,
+            transaction: (transactionJson != null)
+                ? StoreTransaction.fromJson(transactionJson)
+                : null,
+            product: StoreProduct.fromJson(json['product']),
+            paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']));
       case 'subscriptionStart':
         return SuperwallEvent._(
           type: EventType.subscriptionStart,
@@ -193,7 +199,8 @@ class SuperwallEvent {
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'userAttributes':
-        return SuperwallEvent._(type: EventType.userAttributes, userAttributes: json['attributes']);
+        return SuperwallEvent._(
+            type: EventType.userAttributes, userAttributes: json['attributes']);
       case 'nonRecurringProductPurchase':
         return SuperwallEvent._(
           type: EventType.nonRecurringProductPurchase,
@@ -201,11 +208,17 @@ class SuperwallEvent {
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallResponseLoadStart':
-        return SuperwallEvent._(type: EventType.paywallResponseLoadStart, triggeredEventName: json['triggeredEventName']);
+        return SuperwallEvent._(
+            type: EventType.paywallResponseLoadStart,
+            triggeredEventName: json['triggeredEventName']);
       case 'paywallResponseLoadNotFound':
-        return SuperwallEvent._(type: EventType.paywallResponseLoadNotFound, triggeredEventName: json['triggeredEventName']);
+        return SuperwallEvent._(
+            type: EventType.paywallResponseLoadNotFound,
+            triggeredEventName: json['triggeredEventName']);
       case 'paywallResponseLoadFail':
-        return SuperwallEvent._(type: EventType.paywallResponseLoadFail, triggeredEventName: json['triggeredEventName']);
+        return SuperwallEvent._(
+            type: EventType.paywallResponseLoadFail,
+            triggeredEventName: json['triggeredEventName']);
       case 'paywallResponseLoadComplete':
         return SuperwallEvent._(
           type: EventType.paywallResponseLoadComplete,
@@ -261,10 +274,12 @@ class SuperwallEvent {
         final statusReasonJson = json['reason'];
 
         return SuperwallEvent._(
-          type: EventType.paywallPresentationRequest,
-          status: PaywallPresentationRequestStatus.fromJson(json['status']),
-          reason: (statusReasonJson != null) ? PaywallPresentationRequestStatusReason.fromJson(statusReasonJson) : null
-        );
+            type: EventType.paywallPresentationRequest,
+            status: PaywallPresentationRequestStatus.fromJson(json['status']),
+            reason: (statusReasonJson != null)
+                ? PaywallPresentationRequestStatusReason.fromJson(
+                    statusReasonJson)
+                : null);
       case 'touchesBegan':
         return SuperwallEvent._(type: EventType.touchesBegan);
       case 'surveyClose':

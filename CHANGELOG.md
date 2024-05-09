@@ -2,6 +2,18 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.1.4
+
+### Enhancements
+
+- Upgrades Android SDK to 1.1.4. [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/1.1.4)
+- Upgrades iOS SDK to 3.6.2. [View iOS SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/3.6.2)
+- Adds `identityAlias` `SuperwallEvent`.
+
+### Fixes
+
+- Updates the UUID framework dependency to the latest version to prevent conflicts.
+
 ## 1.1.3
 
 ### Fixes
