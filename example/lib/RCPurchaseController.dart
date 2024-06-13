@@ -11,13 +11,16 @@ class RCPurchaseController extends PurchaseController {
   Future<void> configureAndSyncSubscriptionStatus() async {
     // Configure RevenueCat
     await Purchases.setLogLevel(LogLevel.debug);
-    PurchasesConfiguration configuration = Platform.isIOS ? PurchasesConfiguration("appl_XmYQBWbTAFiwLeWrBJOeeJJtTql") : PurchasesConfiguration("goog_DCSOujJzRNnPmxdgjOwdOOjwilC");
+    PurchasesConfiguration configuration = Platform.isIOS
+        ? PurchasesConfiguration("appl_XmYQBWbTAFiwLeWrBJOeeJJtTql")
+        : PurchasesConfiguration("goog_DCSOujJzRNnPmxdgjOwdOOjwilC");
     await Purchases.configure(configuration);
 
     // Listen for changes
     Purchases.addCustomerInfoUpdateListener((customerInfo) {
       // Gets called whenever new CustomerInfo is available
-      bool hasActiveEntitlementOrSubscription = customerInfo.hasActiveEntitlementOrSubscription(); // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
+      bool hasActiveEntitlementOrSubscription = customerInfo
+          .hasActiveEntitlementOrSubscription(); // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
       if (hasActiveEntitlementOrSubscription) {
         Superwall.shared.setSubscriptionStatus(SubscriptionStatus.active);
       } else {
@@ -34,13 +37,15 @@ class RCPurchaseController extends PurchaseController {
   @override
   Future<PurchaseResult> purchaseFromAppStore(String productId) async {
     // Find products matching productId from RevenueCat
-    List<StoreProduct> products = await PurchasesAdditions.getAllProducts([productId]);
+    List<StoreProduct> products =
+        await PurchasesAdditions.getAllProducts([productId]);
 
     // Get first product for product ID (this will properly throw if empty)
     StoreProduct? storeProduct = products.firstOrNull;
 
     if (storeProduct == null) {
-      return PurchaseResult.failed("Failed to find store product for $productId");
+      return PurchaseResult.failed(
+          "Failed to find store product for $productId");
     }
 
     PurchaseResult purchaseResult = await _purchaseStoreProduct(storeProduct);
@@ -51,9 +56,11 @@ class RCPurchaseController extends PurchaseController {
   /// result. This gets called when someone tries to purchase a product on
   /// one of your paywalls from Android.
   @override
-  Future<PurchaseResult> purchaseFromGooglePlay(String productId, String? basePlanId, String? offerId) async {
+  Future<PurchaseResult> purchaseFromGooglePlay(
+      String productId, String? basePlanId, String? offerId) async {
     // Find products matching productId from RevenueCat
-    List<StoreProduct> products = await PurchasesAdditions.getAllProducts([productId]);
+    List<StoreProduct> products =
+        await PurchasesAdditions.getAllProducts([productId]);
 
     // Choose the product which matches the given base plan.
     // If no base plan set, select first product or fail.
@@ -74,7 +81,8 @@ class RCPurchaseController extends PurchaseController {
     }
 
     // If a matching product is not found, then try to get the first product from the list.
-    StoreProduct? storeProduct = matchingProduct ?? (products.isNotEmpty ? products.first : null);
+    StoreProduct? storeProduct =
+        matchingProduct ?? (products.isNotEmpty ? products.first : null);
 
     // If no product is found (either matching or the first one), return a failed purchase result.
     if (storeProduct == null) {
@@ -83,9 +91,12 @@ class RCPurchaseController extends PurchaseController {
 
     switch (storeProduct.productCategory) {
       case ProductCategory.subscription:
-        SubscriptionOption? subscriptionOption = await _fetchGooglePlaySubscriptionOption(storeProduct, basePlanId, offerId);
+        SubscriptionOption? subscriptionOption =
+            await _fetchGooglePlaySubscriptionOption(
+                storeProduct, basePlanId, offerId);
         if (subscriptionOption == null) {
-          return PurchaseResult.failed("Valid subscription option not found for product.");
+          return PurchaseResult.failed(
+              "Valid subscription option not found for product.");
         }
         return await _purchaseSubscriptionOption(subscriptionOption);
       case ProductCategory.nonSubscription:
@@ -96,15 +107,16 @@ class RCPurchaseController extends PurchaseController {
   }
 
   Future<SubscriptionOption?> _fetchGooglePlaySubscriptionOption(
-      StoreProduct storeProduct,
-      String? basePlanId,
-      String? offerId,
-      ) async {
+    StoreProduct storeProduct,
+    String? basePlanId,
+    String? offerId,
+  ) async {
     final subscriptionOptions = storeProduct.subscriptionOptions;
 
     if (subscriptionOptions != null && subscriptionOptions.isNotEmpty) {
       // Concatenate base + offer ID
-      final subscriptionOptionId = _buildSubscriptionOptionId(basePlanId, offerId);
+      final subscriptionOptionId =
+          _buildSubscriptionOptionId(basePlanId, offerId);
 
       // Find first subscription option that matches the subscription option ID or use the default offer
       SubscriptionOption? subscriptionOption;
@@ -127,32 +139,39 @@ class RCPurchaseController extends PurchaseController {
     return null;
   }
 
-  Future<PurchaseResult> _purchaseSubscriptionOption(SubscriptionOption subscriptionOption) async {
+  Future<PurchaseResult> _purchaseSubscriptionOption(
+      SubscriptionOption subscriptionOption) async {
     // Define the async perform purchase function
     Future<CustomerInfo> performPurchase() async {
       // Attempt to purchase product
-      CustomerInfo customerInfo = await Purchases.purchaseSubscriptionOption(subscriptionOption);
+      CustomerInfo customerInfo =
+          await Purchases.purchaseSubscriptionOption(subscriptionOption);
       return customerInfo;
     }
 
-    PurchaseResult purchaseResult = await _handleSharedPurchase(performPurchase);
+    PurchaseResult purchaseResult =
+        await _handleSharedPurchase(performPurchase);
     return purchaseResult;
   }
 
-  Future<PurchaseResult> _purchaseStoreProduct(StoreProduct storeProduct) async {
+  Future<PurchaseResult> _purchaseStoreProduct(
+      StoreProduct storeProduct) async {
     // Define the async perform purchase function
     Future<CustomerInfo> performPurchase() async {
       // Attempt to purchase product
-      CustomerInfo customerInfo = await Purchases.purchaseStoreProduct(storeProduct);
+      CustomerInfo customerInfo =
+          await Purchases.purchaseStoreProduct(storeProduct);
       return customerInfo;
     }
 
-    PurchaseResult purchaseResult = await _handleSharedPurchase(performPurchase);
+    PurchaseResult purchaseResult =
+        await _handleSharedPurchase(performPurchase);
     return purchaseResult;
   }
 
   // MARK: Shared purchase
-  Future<PurchaseResult> _handleSharedPurchase(Future<CustomerInfo> Function() performPurchase) async {
+  Future<PurchaseResult> _handleSharedPurchase(
+      Future<CustomerInfo> Function() performPurchase) async {
     try {
       // Store the current purchase date to later determine if this is a new purchase or restore
       DateTime purchaseDate = DateTime.now();
@@ -162,13 +181,15 @@ class RCPurchaseController extends PurchaseController {
 
       // Handle the results
       if (customerInfo.hasActiveEntitlementOrSubscription()) {
-        DateTime? latestTransactionPurchaseDate = customerInfo.getLatestTransactionPurchaseDate();
+        DateTime? latestTransactionPurchaseDate =
+            customerInfo.getLatestTransactionPurchaseDate();
 
         // If no latest transaction date is found, consider it as a new purchase.
         bool isNewPurchase = (latestTransactionPurchaseDate == null);
 
         // If the current date (`purchaseDate`) is after the latestTransactionPurchaseDate,
-        bool purchaseHappenedInThePast = latestTransactionPurchaseDate?.isBefore(purchaseDate) ?? false;
+        bool purchaseHappenedInThePast =
+            latestTransactionPurchaseDate?.isBefore(purchaseDate) ?? false;
 
         if (!isNewPurchase && purchaseHappenedInThePast) {
           return PurchaseResult.restored;
@@ -185,11 +206,11 @@ class RCPurchaseController extends PurchaseController {
       } else if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
         return PurchaseResult.cancelled;
       } else {
-        return PurchaseResult.failed(e.message ?? "Purchase failed in RCPurchaseController");
+        return PurchaseResult.failed(
+            e.message ?? "Purchase failed in RCPurchaseController");
       }
     }
   }
-
 
   // MARK: Handle Restores
 
@@ -202,7 +223,8 @@ class RCPurchaseController extends PurchaseController {
       return RestorationResult.restored;
     } on PlatformException catch (e) {
       // Error restoring purchases
-      return RestorationResult.failed(e.message ?? "Restore failed in RCPurchaseController");
+      return RestorationResult.failed(
+          e.message ?? "Restore failed in RCPurchaseController");
     }
   }
 }
@@ -250,10 +272,17 @@ extension CustomerInfoAdditions on CustomerInfo {
 }
 
 extension PurchasesAdditions on Purchases {
-  static Future<List<StoreProduct>> getAllProducts(List<String> productIdentifiers) async {
-    final subscriptionProducts = await Purchases.getProducts(productIdentifiers, productCategory: ProductCategory.subscription);
-    final nonSubscriptionProducts = await Purchases.getProducts(productIdentifiers, productCategory: ProductCategory.nonSubscription);
-    final combinedProducts = [...subscriptionProducts, ...nonSubscriptionProducts];
+  static Future<List<StoreProduct>> getAllProducts(
+      List<String> productIdentifiers) async {
+    final subscriptionProducts = await Purchases.getProducts(productIdentifiers,
+        productCategory: ProductCategory.subscription);
+    final nonSubscriptionProducts = await Purchases.getProducts(
+        productIdentifiers,
+        productCategory: ProductCategory.nonSubscription);
+    final combinedProducts = [
+      ...subscriptionProducts,
+      ...nonSubscriptionProducts
+    ];
     return combinedProducts;
   }
 }

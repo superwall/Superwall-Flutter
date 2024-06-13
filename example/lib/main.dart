@@ -38,25 +38,24 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       RCPurchaseController purchaseController = RCPurchaseController();
 
       // Get Superwall API Key
-      String apiKey = Platform.isIOS ? "pk_5f6d9ae96b889bc2c36ca0f2368de2c4c3d5f6119aacd3d2" : "pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85";
+      String apiKey = Platform.isIOS
+          ? "pk_5f6d9ae96b889bc2c36ca0f2368de2c4c3d5f6119aacd3d2"
+          : "pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85";
 
       Logging logging = Logging();
       logging.level = LogLevel.warn;
-      logging.scopes = { LogScope.all };
+      logging.scopes = {LogScope.all};
 
       SuperwallOptions options = SuperwallOptions();
-      options.logging = logging;
+      // options.logging = logging;
 
       // MARK: Step 2 - Configure Superwall
       /// Always configure Superwall first. Pass in the `purchaseController` you just created.
-      Superwall.configure(
-          apiKey,
+      Superwall.configure(apiKey,
           purchaseController: useRevenueCat ? purchaseController : null,
-          options: options,
-          completion: () {
-            print("Executing Superwall configure completion block");
-          }
-      );
+          options: options, completion: () {
+        print("Executing Superwall configure completion block");
+      });
 
       Superwall.shared.setDelegate(this);
 
@@ -66,7 +65,6 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       if (useRevenueCat) {
         await purchaseController.configureAndSyncSubscriptionStatus();
       }
-
     } catch (e) {
       // Handle any errors that occur during configuration
       print('Failed to configure Superwall: $e');
@@ -113,15 +111,11 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         handleSkipReason(skipReason);
       });
 
-      Superwall.shared.registerEvent(
-        'flutter',
-        params: null,
-        handler: handler,
-        feature: () {
-          print("Executing feature block");
-          performFeatureBlockActions();
-        }
-      );
+      Superwall.shared.registerEvent('flutter', params: null, handler: handler,
+          feature: () {
+        print("Executing feature block");
+        performFeatureBlockActions();
+      });
       print('Register method called successfully.');
     } catch (e) {
       // Handle any errors that occur during registration
@@ -154,7 +148,8 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       String url = await paywallInfo.url;
       print("URL: $url");
 
-      String? presentedByEventWithName = await paywallInfo.presentedByEventWithName;
+      String? presentedByEventWithName =
+          await paywallInfo.presentedByEventWithName;
       print("Presented By Event With Name: $presentedByEventWithName");
 
       String? presentedByEventWithId = await paywallInfo.presentedByEventWithId;
@@ -172,7 +167,8 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       String? responseLoadStartTime = await paywallInfo.responseLoadStartTime;
       print("Response Load Start Time: $responseLoadStartTime");
 
-      String? responseLoadCompleteTime = await paywallInfo.responseLoadCompleteTime;
+      String? responseLoadCompleteTime =
+          await paywallInfo.responseLoadCompleteTime;
       print("Response Load Complete Time: $responseLoadCompleteTime");
 
       String? responseLoadFailTime = await paywallInfo.responseLoadFailTime;
@@ -184,7 +180,8 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       String? webViewLoadStartTime = await paywallInfo.webViewLoadStartTime;
       print("Web View Load Start Time: $webViewLoadStartTime");
 
-      String? webViewLoadCompleteTime = await paywallInfo.webViewLoadCompleteTime;
+      String? webViewLoadCompleteTime =
+          await paywallInfo.webViewLoadCompleteTime;
       print("Web View Load Complete Time: $webViewLoadCompleteTime");
 
       String? webViewLoadFailTime = await paywallInfo.webViewLoadFailTime;
@@ -196,7 +193,8 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       String? productsLoadStartTime = await paywallInfo.productsLoadStartTime;
       print("Products Load Start Time: $productsLoadStartTime");
 
-      String? productsLoadCompleteTime = await paywallInfo.productsLoadCompleteTime;
+      String? productsLoadCompleteTime =
+          await paywallInfo.productsLoadCompleteTime;
       print("Products Load Complete Time: $productsLoadCompleteTime");
 
       String? productsLoadFailTime = await paywallInfo.productsLoadFailTime;
@@ -211,16 +209,19 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       bool isFreeTrialAvailable = await paywallInfo.isFreeTrialAvailable;
       print("Is Free Trial Available: $isFreeTrialAvailable");
 
-      FeatureGatingBehavior featureGatingBehavior = await paywallInfo.featureGatingBehavior;
+      FeatureGatingBehavior featureGatingBehavior =
+          await paywallInfo.featureGatingBehavior;
       print("Feature Gating Behavior: $featureGatingBehavior");
 
       PaywallCloseReason closeReason = await paywallInfo.closeReason;
       print("Close Reason: $closeReason");
 
-      List<LocalNotification> localNotifications = await paywallInfo.localNotifications;
+      List<LocalNotification> localNotifications =
+          await paywallInfo.localNotifications;
       print("Local Notifications: $localNotifications");
 
-      List<ComputedPropertyRequest> computedPropertyRequests = await paywallInfo.computedPropertyRequests;
+      List<ComputedPropertyRequest> computedPropertyRequests =
+          await paywallInfo.computedPropertyRequests;
       print("Computed Property Requests: $computedPropertyRequests");
 
       List<Survey> surveys = await paywallInfo.surveys;
@@ -232,33 +233,41 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
   Future<void> performAction() async {
     try {
-      IdentityOptions options = IdentityOptions(restorePaywallAssignments: true);
+      IdentityOptions options =
+          IdentityOptions(restorePaywallAssignments: true);
       await Superwall.shared.identify("123456");
 
       String userId = await Superwall.shared.getUserId();
       print(userId);
 
       await Superwall.shared.setUserAttributes({"someAttribute": "someValue"});
-      Map<String, dynamic> attributes1 = await Superwall.shared.getUserAttributes();
+      Map<String, dynamic> attributes1 =
+          await Superwall.shared.getUserAttributes();
       print(attributes1);
 
-      await Superwall.shared.setUserAttributes({"jack": "lost", "kate": "antman"});
-      Map<String, dynamic> attributes2 = await Superwall.shared.getUserAttributes();
+      await Superwall.shared
+          .setUserAttributes({"jack": "lost", "kate": "antman"});
+      Map<String, dynamic> attributes2 =
+          await Superwall.shared.getUserAttributes();
       print(attributes2);
 
-      await Superwall.shared.setUserAttributes({"jack": "123", "kate": {"tv": "series"}});
-      Map<String, dynamic> attributes3 = await Superwall.shared.getUserAttributes();
+      await Superwall.shared.setUserAttributes({
+        "jack": "123",
+        "kate": {"tv": "series"}
+      });
+      Map<String, dynamic> attributes3 =
+          await Superwall.shared.getUserAttributes();
       print(attributes3);
 
       await Superwall.shared.reset();
 
-      Map<String, dynamic> attributes4 = await Superwall.shared.getUserAttributes();
+      Map<String, dynamic> attributes4 =
+          await Superwall.shared.getUserAttributes();
       print(attributes4);
 
       Superwall.shared.setLogLevel(LogLevel.error);
       LogLevel logLevel = await Superwall.shared.getLogLevel();
       print("Log Level: $logLevel");
-
     } catch (e) {
       print('Failed perform action: $e');
     }
@@ -327,7 +336,8 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   }
 
   @override
-  void handleLog(String level, String scope, String? message, Map<dynamic, dynamic>? info, String? error) {
+  void handleLog(String level, String scope, String? message,
+      Map<dynamic, dynamic>? info, String? error) {
     // print("handleLog: $level, $scope, $message, $info, $error");
   }
 
@@ -348,10 +358,10 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         print("paywallOpen event: ${paywallInfo} ");
 
         if (paywallInfo != null) {
-          final identifier =  await paywallInfo.identifier;
+          final identifier = await paywallInfo.identifier;
           print("paywallInfo.identifier: ${identifier} ");
 
-          final productIds =  await paywallInfo.productIds;
+          final productIds = await paywallInfo.productIds;
           print("paywallInfo.productIds: ${productIds} ");
         }
       default:

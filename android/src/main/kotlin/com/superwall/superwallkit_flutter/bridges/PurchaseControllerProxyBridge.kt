@@ -19,12 +19,14 @@ class PurchaseControllerProxyBridge(
     // PurchaseController
 
     override suspend fun purchase(activity: Activity, productDetails: ProductDetails, basePlanId: String?, offerId: String?): PurchaseResult {
+        print("Attempting to invoke purchaseFromGooglePlay method internally")
+
         val attributes = mapOf(
             "productId" to productDetails.productId,
             "basePlanId" to basePlanId,
             "offerId" to offerId
         )
-
+        
         val purchaseResultBridgeId = communicator.asyncInvokeMethodOnMain("purchaseFromGooglePlay", attributes) as? BridgeId
         val purchaseResultBridge = purchaseResultBridgeId?.bridgeInstance() as? PurchaseResultBridge
 
@@ -39,6 +41,7 @@ class PurchaseControllerProxyBridge(
     }
 
     override suspend fun restorePurchases(): RestorationResult {
+        print("Attempting to invoke restorePurchases method internally")
         val restorationResultBridgeId = communicator.asyncInvokeMethodOnMain("restorePurchases") as? BridgeId
         val restorationResultBridge = restorationResultBridgeId?.bridgeInstance() as? RestorationResultBridge
 

@@ -21,13 +21,15 @@ import '../private/LatestValueStreamController.dart';
 /// it provides access to all its features via instance functions and variables.
 class Superwall extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = "SuperwallBridge";
-  Superwall({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  Superwall({BridgeId? bridgeId})
+      : super(bridgeClass: bridgeClass, bridgeId: bridgeId);
 
   static final Superwall _superwall = Superwall();
 
   // Used to prevent functions in this class from being used until after
   // the SDK has been configured on the native side
-  static final LatestValueStreamController<bool> _isBridgedController = LatestValueStreamController<bool>(false);
+  static final LatestValueStreamController<bool> _isBridgedController =
+      LatestValueStreamController<bool>(false);
 
   // Getter for the shared instance
   static Superwall get shared {
@@ -65,14 +67,16 @@ class Superwall extends BridgeIdInstantiable {
     final delegateProxy = SuperwallDelegateProxy(delegate: newDelegate);
 
     // Set the native instance as the delegate
-    await bridgeId.communicator.invokeBridgeMethod('setDelegate', {'delegateProxyBridgeId': delegateProxy.bridgeId });
+    await bridgeId.communicator.invokeBridgeMethod(
+        'setDelegate', {'delegateProxyBridgeId': delegateProxy.bridgeId});
   }
 
   // Asynchronous method to get logLevel
   Future<LogLevel> getLogLevel() async {
     await _waitForBridgeInstanceCreation();
 
-    String logLevelJson = await bridgeId.communicator.invokeBridgeMethod('getLogLevel');
+    String logLevelJson =
+        await bridgeId.communicator.invokeBridgeMethod('getLogLevel');
     return LogLevelJson.fromJson(logLevelJson);
   }
 
@@ -80,14 +84,16 @@ class Superwall extends BridgeIdInstantiable {
   Future<void> setLogLevel(LogLevel newLogLevel) async {
     await _waitForBridgeInstanceCreation();
 
-    await bridgeId.communicator.invokeBridgeMethod('setLogLevel', {'logLevel': newLogLevel.toJson()});
+    await bridgeId.communicator
+        .invokeBridgeMethod('setLogLevel', {'logLevel': newLogLevel.toJson()});
   }
 
   // Asynchronous method to get userAttributes
   Future<Map<String, dynamic>> getUserAttributes() async {
     await _waitForBridgeInstanceCreation();
 
-    final attributes = await bridgeId.communicator.invokeBridgeMethod('getUserAttributes');
+    final attributes =
+        await bridgeId.communicator.invokeBridgeMethod('getUserAttributes');
     return Map<String, dynamic>.from(attributes);
   }
 
@@ -95,7 +101,8 @@ class Superwall extends BridgeIdInstantiable {
   Future<void> setUserAttributes(Map<String, dynamic> userAttributes) async {
     await _waitForBridgeInstanceCreation();
 
-    await bridgeId.communicator.invokeBridgeMethod('setUserAttributes', {'userAttributes': userAttributes});
+    await bridgeId.communicator.invokeBridgeMethod(
+        'setUserAttributes', {'userAttributes': userAttributes});
   }
 
   // Asynchronous method to get the current user's id
@@ -123,7 +130,8 @@ class Superwall extends BridgeIdInstantiable {
   Future<PaywallInfo?> getLatestPaywallInfo() async {
     await _waitForBridgeInstanceCreation();
 
-    final paywallInfoBridgeId = await bridgeId.communicator.invokeBridgeMethod('getLatestPaywallInfoBridgeId');
+    final paywallInfoBridgeId = await bridgeId.communicator
+        .invokeBridgeMethod('getLatestPaywallInfoBridgeId');
     if (paywallInfoBridgeId != null) {
       return PaywallInfo(bridgeId: paywallInfoBridgeId);
     } else {
@@ -135,19 +143,28 @@ class Superwall extends BridgeIdInstantiable {
   Future<SubscriptionStatus> getSubscriptionStatus() async {
     await _waitForBridgeInstanceCreation();
 
-    final subscriptionStatusBridgeId = await bridgeId.communicator.invokeBridgeMethod('getSubscriptionStatusBridgeId');
-    final status = SubscriptionStatus.createSubscriptionStatusFromBridgeId(subscriptionStatusBridgeId) ?? SubscriptionStatus.unknown;
+    final subscriptionStatusBridgeId = await bridgeId.communicator
+        .invokeBridgeMethod('getSubscriptionStatusBridgeId');
+    final status = SubscriptionStatus.createSubscriptionStatusFromBridgeId(
+            subscriptionStatusBridgeId) ??
+        SubscriptionStatus.unknown;
 
     return status;
   }
 
   // Asynchronous method to set the subscription status of the user
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
+    print("Calling subs status!!");
     await _waitForBridgeInstanceCreation();
 
+    print("Got bridheee");
     final subscriptionStatusBridgeId = status.bridgeId;
-    var result = await bridgeId.communicator.invokeBridgeMethod('setSubscriptionStatus', {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
-    print(result);
+
+    print("Gona call");
+    var result = await bridgeId.communicator.invokeBridgeMethod(
+        'setSubscriptionStatus',
+        {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
+    print("set it");
   }
 
   // Asynchronous method to check if Superwall has finished configuring
@@ -161,14 +178,16 @@ class Superwall extends BridgeIdInstantiable {
   Future<void> setIsConfigured(bool configured) async {
     await _waitForBridgeInstanceCreation();
 
-    await bridgeId.communicator.invokeBridgeMethod('setIsConfigured', {'configured': configured});
+    await bridgeId.communicator
+        .invokeBridgeMethod('setIsConfigured', {'configured': configured});
   }
 
   // Asynchronous method to check if a paywall is currently being presented
   Future<bool> getIsPaywallPresented() async {
     await _waitForBridgeInstanceCreation();
 
-    return await bridgeId.communicator.invokeBridgeMethod('getIsPaywallPresented');
+    return await bridgeId.communicator
+        .invokeBridgeMethod('getIsPaywallPresented');
   }
 
   // Asynchronous method to preload all paywalls
@@ -182,21 +201,24 @@ class Superwall extends BridgeIdInstantiable {
   Future<void> preloadPaywallsForEvents(Set<String> eventNames) async {
     await _waitForBridgeInstanceCreation();
 
-    await bridgeId.communicator.invokeBridgeMethod('preloadPaywallsForEvents', {'eventNames': eventNames.toList()});
+    await bridgeId.communicator.invokeBridgeMethod(
+        'preloadPaywallsForEvents', {'eventNames': eventNames.toList()});
   }
 
   // Asynchronous method to handle deep links for paywall previews
   Future<bool> handleDeepLink(Uri url) async {
     await _waitForBridgeInstanceCreation();
 
-    return await bridgeId.communicator.invokeBridgeMethod('handleDeepLink', {'url': url.toString()});
+    return await bridgeId.communicator
+        .invokeBridgeMethod('handleDeepLink', {'url': url.toString()});
   }
 
   // Asynchronous method to toggle the paywall loading spinner
   Future<void> togglePaywallSpinner(bool isHidden) async {
     await _waitForBridgeInstanceCreation();
 
-    await bridgeId.communicator.invokeBridgeMethod('togglePaywallSpinner', {'isHidden': isHidden});
+    await bridgeId.communicator
+        .invokeBridgeMethod('togglePaywallSpinner', {'isHidden': isHidden});
   }
 
   // Asynchronous method to reset the user ID, on-device paywall assignments, and stored data
@@ -207,20 +229,30 @@ class Superwall extends BridgeIdInstantiable {
   }
 
   // Asynchronous method to configure the Superwall instance. Proxies must always be stored.
-  static Superwall configure(String apiKey, {PurchaseController? purchaseController, SuperwallOptions? options, Function? completion}) {
+  static Superwall configure(String apiKey,
+      {PurchaseController? purchaseController,
+      SuperwallOptions? options,
+      Function? completion}) {
     // Configure async
-    _configure(apiKey, purchaseController: purchaseController, options: options, completion: completion);
+    _configure(apiKey,
+        purchaseController: purchaseController,
+        options: options,
+        completion: completion);
 
     // Provide this instance as opposed to what we'd get from the native side
     // so that consumers can call functions on this Dart instance
     return _superwall;
   }
 
-  static Future<void> _configure(String apiKey, {PurchaseController? purchaseController, SuperwallOptions? options, Function? completion}) async {
+  static Future<void> _configure(String apiKey,
+      {PurchaseController? purchaseController,
+      SuperwallOptions? options,
+      Function? completion}) async {
     PurchaseControllerProxy? purchaseControllerProxy;
     if (purchaseController != null) {
       // Create a proxy bridge for the non-null purchaseController
-      purchaseControllerProxy = PurchaseControllerProxy(purchaseController: purchaseController);
+      purchaseControllerProxy =
+          PurchaseControllerProxy(purchaseController: purchaseController);
     }
 
     CompletionBlockProxy? completionBlockProxy;
@@ -239,7 +271,7 @@ class Superwall extends BridgeIdInstantiable {
         'apiKey': apiKey,
         'purchaseControllerProxyBridgeId': purchaseControllerProxy?.bridgeId,
         'options': options?.toJson(),
-        'completionBlockProxyBridgeId' : completionBlockProxy?.bridgeId
+        'completionBlockProxyBridgeId': completionBlockProxy?.bridgeId
       });
     } catch (e) {
       // Handle any errors that occur during configuration
@@ -267,7 +299,10 @@ extension PublicPresentation on Superwall {
   /// Shows a paywall based on the event, user matching campaign rules, and subscription status.
   /// Requires creating a campaign and adding the event on the Superwall Dashboard.
   /// The shown paywall is determined by campaign rules and user assignments.
-  Future<void> registerEvent(String event, {Map<String, dynamic>? params, PaywallPresentationHandler? handler, Function? feature}) async {
+  Future<void> registerEvent(String event,
+      {Map<String, dynamic>? params,
+      PaywallPresentationHandler? handler,
+      Function? feature}) async {
     await _waitForBridgeInstanceCreation();
 
     CompletionBlockProxy? featureBlockProxy;
@@ -287,7 +322,8 @@ extension PublicPresentation on Superwall {
       handlerProxy = PaywallPresentationHandlerProxy(handler: handler);
     }
 
-    var result = await bridgeId.communicator.invokeBridgeMethod('registerEvent', {
+    var result =
+        await bridgeId.communicator.invokeBridgeMethod('registerEvent', {
       'event': event,
       'params': params,
       'handlerProxyBridgeId': handlerProxy?.bridgeId,
@@ -307,10 +343,8 @@ extension PublicIdentity on Superwall {
   Future<void> identify(String userId, [IdentityOptions? options]) async {
     await _waitForBridgeInstanceCreation();
 
-    await bridgeId.communicator.invokeBridgeMethod('identify', {
-      "userId": userId,
-      "identityOptions": options?.toJson()
-    });
+    await bridgeId.communicator.invokeBridgeMethod(
+        'identify', {"userId": userId, "identityOptions": options?.toJson()});
   }
 }
 

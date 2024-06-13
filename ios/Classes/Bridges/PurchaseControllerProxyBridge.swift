@@ -8,11 +8,14 @@ public class PurchaseControllerProxyBridge: BridgeInstance, PurchaseController {
   // MARK: - PurchaseController
 
   public func purchase(product: SKProduct) async -> PurchaseResult {
-    guard 
-      let purchaseResultBridgeId = await communicator.asyncInvokeMethodOnMain("purchaseFromAppStore", arguments: ["productId": product.productIdentifier]) as? BridgeId,
-      let purchaseResultBridge: PurchaseResultBridge = purchaseResultBridgeId.bridgeInstance()
-    else {
-      print("WARNING: Unexpected result")
+    print("Attempting to invoke purchaseFromAppStore method internally")
+
+    guard let purchaseResultBridgeId = await communicator.asyncInvokeMethodOnMain("purchaseFromAppStore", arguments: ["productId": product.productIdentifier]) as? BridgeId else {
+      print("WARNING: Failed to invoke purchaseFromAppStore")
+      return .failed(PurchaseControllerProxyPluginError())
+    }
+    guard let purchaseResultBridge: PurchaseResultBridge = purchaseResultBridgeId.bridgeInstance() else {
+      print("WARNING: Failed to get bridge instance")
       return .failed(PurchaseControllerProxyPluginError())
     }
 
@@ -20,11 +23,13 @@ public class PurchaseControllerProxyBridge: BridgeInstance, PurchaseController {
   }
 
   public func restorePurchases() async -> RestorationResult {
-    guard 
-      let restorationResultBridgeId = await communicator.asyncInvokeMethodOnMain("restorePurchases") as? BridgeId,
-      let restorationResultBridge: RestorationResultBridge = restorationResultBridgeId.bridgeInstance()
-    else {
-      print("WARNING: Unexpected result")
+    print("Attempting to invoke restorePurchases method internally")
+    guard let restorationResultBridgeId = await communicator.asyncInvokeMethodOnMain("restorePurchases") as? BridgeId else {
+      print("WARNING: Failed to invoke restorePurchases")
+      return .failed(PurchaseControllerProxyPluginError())
+    }
+    guard let restorationResultBridge: RestorationResultBridge = restorationResultBridgeId.bridgeInstance() else {
+      print("WARNING: Failed to get bridge instance")
       return .failed(PurchaseControllerProxyPluginError())
     }
 

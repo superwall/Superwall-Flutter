@@ -51,6 +51,7 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
     }
 
     fun tearDown() {
+        print("Did tearDown BridgingCreator")
         _shared = null
         _flutterPluginBinding = null
     }

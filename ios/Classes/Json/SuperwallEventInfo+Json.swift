@@ -30,6 +30,12 @@ extension SuperwallEvent {
         return ["event": "subscriptionStatusDidChange"]
       case .appClose:
         return ["event": "appClose"]
+      case .restoreStart:
+        return ["event": "restoreStart"]
+      case .restoreComplete:
+        return ["event": "restoreComplete"]
+      case .restoreFail(message: let message):
+        return ["event": "restoreFail", "message": message]
       case .deepLink(let url):
         return ["event": "deepLink", "url": url.absoluteString]
       case .triggerFire(let eventName, let result):

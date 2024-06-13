@@ -5,8 +5,14 @@ import 'package:superwallkit_flutter/src/public/RestorationResult.dart';
 import '../public/PurchaseController.dart';
 
 class PurchaseControllerProxy extends BridgeIdInstantiable {
+  void dispose() {
+    print("PurchaseControllerProxy didDispose. bridgeId: $bridgeId");
+  }
+
   static const BridgeClass bridgeClass = "PurchaseControllerProxyBridge";
-  PurchaseControllerProxy({required this.purchaseController, BridgeId? bridgeId}): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  PurchaseControllerProxy(
+      {required this.purchaseController, BridgeId? bridgeId})
+      : super(bridgeClass: bridgeClass, bridgeId: bridgeId);
 
   PurchaseController purchaseController;
 
@@ -15,20 +21,35 @@ class PurchaseControllerProxy extends BridgeIdInstantiable {
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'purchaseFromAppStore':
+        print(
+            "Calling purchaseFromAppStore in the PurchaseController. Bridge Id: $bridgeId");
         String productId = call.arguments['productId'];
-        PurchaseResult purchaseResult = await purchaseController.purchaseFromAppStore(productId);
+        PurchaseResult purchaseResult =
+            await purchaseController.purchaseFromAppStore(productId);
+        print("Ensuring bridge created");
         await purchaseResult.bridgeId.ensureBridgeCreated();
+        print("returning PurchaseResult");
         return purchaseResult.bridgeId;
       case 'purchaseFromGooglePlay':
         String productId = call.arguments['productId'];
         String? basePlanId = call.arguments['basePlanId'];
         String? offerId = call.arguments['offerId'];
-        PurchaseResult purchaseResult = await purchaseController.purchaseFromGooglePlay(productId, basePlanId, offerId);
+        print(
+            "Calling purchaseFromGooglePlay in the PurchaseController. Bridge Id: $bridgeId");
+        PurchaseResult purchaseResult = await purchaseController
+            .purchaseFromGooglePlay(productId, basePlanId, offerId);
+        print("Ensuring bridge created");
         await purchaseResult.bridgeId.ensureBridgeCreated();
+        print("returning PurchaseResult");
         return purchaseResult.bridgeId;
       case 'restorePurchases':
-        RestorationResult restorationResult = await purchaseController.restorePurchases();
+        print(
+            "Calling restorePurchases from the PurchaseController. Bridge Id: $bridgeId");
+        RestorationResult restorationResult =
+            await purchaseController.restorePurchases();
+        print("Ensuring bridge created");
         await restorationResult.bridgeId.ensureBridgeCreated();
+        print("returning RestorationResult");
         return restorationResult.bridgeId;
     }
   }
