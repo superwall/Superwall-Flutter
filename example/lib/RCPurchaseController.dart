@@ -254,19 +254,30 @@ extension CustomerInfoAdditions on CustomerInfo {
   }
 
   DateTime? getLatestTransactionPurchaseDate() {
-    Map<String, String> allPurchaseDates = this.allPurchaseDates;
+    Map<String, String?> allPurchaseDates = this.allPurchaseDates;
+
+    // Return null if there are no purchase dates
     if (allPurchaseDates.entries.isEmpty) {
       return null;
     }
 
+    // Initialise the latestDate with the earliest possible date
     DateTime latestDate = DateTime.fromMillisecondsSinceEpoch(0);
+
+    // Iterate over each entry in the map
     allPurchaseDates.forEach((key, value) {
-      DateTime date = DateTime.parse(value);
-      if (date.isAfter(latestDate)) {
-        latestDate = date;
+      // Check if the value is not null
+      if (value != null) {
+        // Parse the date from the string value
+        DateTime date = DateTime.parse(value);
+        // Update the latestDate if the current date is after the latestDate
+        if (date.isAfter(latestDate)) {
+          latestDate = date;
+        }
       }
     });
 
+    // Return the latest date found
     return latestDate;
   }
 }

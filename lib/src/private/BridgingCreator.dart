@@ -14,9 +14,11 @@ class BridgingCreator {
   // This will later be used when invoking creation to pass in initialization arguments
   static final Map<String, Map<String, dynamic>> _metadataByBridgeId = {};
 
-  static BridgeId _createBridgeId(BridgeClass bridgeClass,
-      [Map<String, dynamic>? initializationArgs]) {
-    BridgeId bridgeId = bridgeClass.generateBridgeId();
+  static BridgeId _createBridgeId(
+      {String? givenId,
+      required BridgeClass bridgeClass,
+      Map<String, dynamic>? initializationArgs}) {
+    BridgeId bridgeId = givenId ?? bridgeClass.generateBridgeId();
     _metadataByBridgeId[bridgeId] = {"args": initializationArgs};
 
     return bridgeId;
@@ -54,9 +56,15 @@ abstract class BridgeIdInstantiable {
   BridgeIdInstantiable(
       {required BridgeClass bridgeClass,
       BridgeId? bridgeId,
+      BridgeId? givenId,
       Map<String, dynamic>? initializationArgs})
       : bridgeId = bridgeId ??
-            BridgingCreator._createBridgeId(bridgeClass, initializationArgs) {
+            BridgingCreator._createBridgeId(
+                givenId: givenId,
+                bridgeClass: bridgeClass,
+                initializationArgs: initializationArgs) {
+    assert(this.bridgeId.endsWith("-bridgeId"),
+        "Make sure bridgeIds end with \"-bridgeId\"");
     this.bridgeId.associate(this);
     this.bridgeId.communicator.setMethodCallHandler(handleMethodCall);
   }

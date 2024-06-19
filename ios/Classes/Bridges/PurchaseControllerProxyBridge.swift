@@ -26,7 +26,7 @@ public class PurchaseControllerProxyBridge: BridgeInstance, PurchaseController {
     print("Attempting to invoke restorePurchases method internally")
     guard let restorationResultBridgeId = await communicator.asyncInvokeMethodOnMain("restorePurchases") as? BridgeId else {
       print("WARNING: Failed to invoke restorePurchases")
-      return .failed(PurchaseControllerProxyPluginError())
+      return .failed(PurchaseControllerProxyPluginError());
     }
     guard let restorationResultBridge: RestorationResultBridge = restorationResultBridgeId.bridgeInstance() else {
       print("WARNING: Failed to get bridge instance")
