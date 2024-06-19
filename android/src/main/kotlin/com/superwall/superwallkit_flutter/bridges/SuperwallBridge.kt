@@ -84,6 +84,10 @@ class SuperwallBridge(
                 val isLoggedIn = Superwall.instance.isLoggedIn
                 result.success(isLoggedIn)
             }
+            "getIsInitialized" -> {
+                val isInitialized = Superwall.initialized
+                result.success(isInitialized)
+            }
             "getPresentedViewController" -> {
                 // TODO: Since UIViewController cannot be returned directly to Dart, handle appropriately
                 result.notImplemented()

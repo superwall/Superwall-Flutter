@@ -5,14 +5,10 @@ import 'package:superwallkit_flutter/src/public/RestorationResult.dart';
 import '../public/PurchaseController.dart';
 
 class PurchaseControllerProxy extends BridgeIdInstantiable {
-  void dispose() {
-    print("PurchaseControllerProxy didDispose. bridgeId: $bridgeId");
-  }
-
   static const BridgeClass bridgeClass = "PurchaseControllerProxyBridge";
   PurchaseControllerProxy(
-      {required this.purchaseController, BridgeId? bridgeId})
-      : super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+      {required this.purchaseController, super.givenId, super.bridgeId})
+      : super(bridgeClass: bridgeClass);
 
   PurchaseController purchaseController;
 

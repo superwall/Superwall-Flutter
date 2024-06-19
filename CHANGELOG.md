@@ -4,10 +4,14 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 
 ## 1.1.8
 
+### Enhancements
+
 - Upgrades iOS SDK to 3.6.6. [View iOS SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/3.6.6)
 - Upgrades Android SDK to 1.1.7. [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/1.1.7)
 
 ## 1.1.7
+
+### Enhancements
 
 - Upgrades iOS SDK to 3.6.5. [View iOS SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/3.6.5)
 

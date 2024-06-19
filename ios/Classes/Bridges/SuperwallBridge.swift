@@ -56,6 +56,10 @@ public class SuperwallBridge: BridgeInstance {
         // Implement logic to check if the user is logged in to Superwall
         result(Superwall.shared.isLoggedIn)
 
+      case "getIsInitialized":
+        // Implement logic to check if Superwall is initialized
+        result(Superwall.isInitialized)
+
       case "getPresentedViewController":
         // TODO: Implement logic to get the presented paywall view controller
         result(FlutterMethodNotImplemented)
@@ -134,7 +138,6 @@ public class SuperwallBridge: BridgeInstance {
           result(call.badArgs)
           return
         }
-
         let purchaseControllerProxyBridge: PurchaseControllerProxyBridge? = call.bridgeInstance(for: "purchaseControllerProxyBridgeId")
 
         let options: SuperwallOptions? = {

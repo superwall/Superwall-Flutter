@@ -19,6 +19,7 @@ fun SuperwallEvent.toJson(): Map<String, Any?> {
         is SuperwallEvent.IdentityAlias -> mapOf("event" to "identityAlias")
         is SuperwallEvent.AppInstall -> mapOf("event" to "appInstall")
         is SuperwallEvent.SessionStart -> mapOf("event" to "sessionStart")
+        is SuperwallEvent.Reset -> mapOf("event" to "reset")
         is SuperwallEvent.Restore.Start -> mapOf("event" to "restoreStart")
         is SuperwallEvent.Restore.Complete -> mapOf("event" to "restoreComplete")
         is SuperwallEvent.Restore.Fail -> {

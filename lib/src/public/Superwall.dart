@@ -119,6 +119,11 @@ class Superwall extends BridgeIdInstantiable {
     return await bridgeId.communicator.invokeBridgeMethod('getIsLoggedIn');
   }
 
+  // Asynchronous method to check if Superwall is initialized
+  Future<bool> getIsInitialized() async {
+    return await bridgeId.communicator.invokeBridgeMethod('getIsInitialized');
+  }
+
   // Asynchronous method to get the presented paywall view controller
   // Future<dynamic> getPresentedViewController() async {
   //   await _waitForBridgeInstanceCreation();
@@ -154,13 +159,10 @@ class Superwall extends BridgeIdInstantiable {
 
   // Asynchronous method to set the subscription status of the user
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
-    print("Calling subs status!!");
     await _waitForBridgeInstanceCreation();
 
-    print("Got bridheee");
     final subscriptionStatusBridgeId = status.bridgeId;
 
-    print("Gona call");
     var result = await bridgeId.communicator.invokeBridgeMethod(
         'setSubscriptionStatus',
         {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
@@ -249,10 +251,12 @@ class Superwall extends BridgeIdInstantiable {
       SuperwallOptions? options,
       Function? completion}) async {
     PurchaseControllerProxy? purchaseControllerProxy;
+
     if (purchaseController != null) {
       // Create a proxy bridge for the non-null purchaseController
-      purchaseControllerProxy =
-          PurchaseControllerProxy(purchaseController: purchaseController);
+      purchaseControllerProxy = PurchaseControllerProxy(
+          purchaseController: purchaseController,
+          givenId: "PurchaseControllerProxyBridge-bridgeId");
     }
 
     CompletionBlockProxy? completionBlockProxy;

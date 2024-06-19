@@ -19,15 +19,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> implements SuperwallDelegate {
-  String _platformVersion = 'Unknown';
-
   @override
   void initState() {
-    bool useRevenueCat = true;
+    const useRevenueCat = true;
 
     super.initState();
     configureSuperwall(useRevenueCat);
-    initPlatformState();
   }
 
   // Configure Superwall
@@ -35,18 +32,19 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
     try {
       // MARK: Step 1 - Create your Purchase Controller
       /// Create an `RCPurchaseController()` wherever Superwall and RevenueCat are being initialized.
-      RCPurchaseController purchaseController = RCPurchaseController();
+      final purchaseController = RCPurchaseController();
 
       // Get Superwall API Key
       String apiKey = Platform.isIOS
           ? "pk_5f6d9ae96b889bc2c36ca0f2368de2c4c3d5f6119aacd3d2"
           : "pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85";
 
-      Logging logging = Logging();
+      final logging = Logging();
       logging.level = LogLevel.warn;
       logging.scopes = {LogScope.all};
 
-      SuperwallOptions options = SuperwallOptions();
+      final options = SuperwallOptions();
+      options.paywalls.shouldPreload = false;
       // options.logging = logging;
 
       // MARK: Step 2 - Configure Superwall
@@ -54,7 +52,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       Superwall.configure(apiKey,
           purchaseController: useRevenueCat ? purchaseController : null,
           options: options, completion: () {
-        print("Executing Superwall configure completion block");
+        print('Executing Superwall configure completion block');
       });
 
       Superwall.shared.setDelegate(this);
@@ -71,49 +69,26 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
     }
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion = 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
-
   // Method to call when the button is tapped
   Future<void> onRegisterTapped() async {
     try {
-      PaywallPresentationHandler handler = PaywallPresentationHandler();
-      handler.onPresent((paywallInfo) async {
-        String name = await paywallInfo.name;
-        print("Handler (onPresent): $name");
-      });
-      handler.onDismiss((paywallInfo) async {
-        String name = await paywallInfo.name;
-        print("Handler (onDismiss): $name");
-      });
-      handler.onError((error) {
-        print("Handler (onError): ${error}");
-      });
-      handler.onSkip((skipReason) {
-        handleSkipReason(skipReason);
-      });
+      final handler = PaywallPresentationHandler();
+      handler
+        ..onPresent((paywallInfo) async {
+          final name = await paywallInfo.name;
+          print('Handler (onPresent): $name');
+        })
+        ..onDismiss((paywallInfo) async {
+          final name = await paywallInfo.name;
+          print('Handler (onDismiss): $name');
+        })
+        ..onError((error) {
+          print('Handler (onError): $error');
+        })
+        ..onSkip(handleSkipReason);
 
-      Superwall.shared.registerEvent('flutter', params: null, handler: handler,
-          feature: () {
-        print("Executing feature block");
+      Superwall.shared.registerEvent('flutter', handler: handler, feature: () {
+        print('Executing feature block');
         performFeatureBlockActions();
       });
       print('Register method called successfully.');
@@ -124,215 +99,204 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   }
 
   Future<void> performFeatureBlockActions() async {
-    PaywallInfo? paywallInfo = await Superwall.shared.getLatestPaywallInfo();
+    final paywallInfo = await Superwall.shared.getLatestPaywallInfo();
 
     if (paywallInfo != null) {
-      String? identifier = await paywallInfo.identifier;
-      print("Identifier: $identifier");
+      final identifier = await paywallInfo.identifier;
+      print('Identifier: $identifier');
 
-      Experiment? experiment = await paywallInfo.experiment;
-      print("Experiment: $experiment");
+      final experiment = await paywallInfo.experiment;
+      print('Experiment: $experiment');
 
-      String? triggerSessionId = await paywallInfo.triggerSessionId;
-      print("Trigger Session ID: $triggerSessionId");
+      final triggerSessionId = await paywallInfo.triggerSessionId;
+      print('Trigger Session ID: $triggerSessionId');
 
-      List<Product> products = await paywallInfo.products;
-      print("Products: $products");
+      final products = await paywallInfo.products;
+      print('Products: $products');
 
-      List<String> productIds = await paywallInfo.productIds;
-      print("Product IDs: $productIds");
+      final productIds = await paywallInfo.productIds;
+      print('Product IDs: $productIds');
 
-      String name = await paywallInfo.name;
-      print("Name: $name");
+      final name = await paywallInfo.name;
+      print('Name: $name');
 
-      String url = await paywallInfo.url;
-      print("URL: $url");
+      final url = await paywallInfo.url;
+      print('URL: $url');
 
-      String? presentedByEventWithName =
+      final presentedByEventWithName =
           await paywallInfo.presentedByEventWithName;
-      print("Presented By Event With Name: $presentedByEventWithName");
+      print('Presented By Event With Name: $presentedByEventWithName');
 
-      String? presentedByEventWithId = await paywallInfo.presentedByEventWithId;
-      print("Presented By Event With Id: $presentedByEventWithId");
+      final presentedByEventWithId = await paywallInfo.presentedByEventWithId;
+      print('Presented By Event With Id: $presentedByEventWithId');
 
-      String? presentedByEventAt = await paywallInfo.presentedByEventAt;
-      print("Presented By Event At: $presentedByEventAt");
+      final presentedByEventAt = await paywallInfo.presentedByEventAt;
+      print('Presented By Event At: $presentedByEventAt');
 
-      String presentedBy = await paywallInfo.presentedBy;
-      print("Presented By: $presentedBy");
+      final presentedBy = await paywallInfo.presentedBy;
+      print('Presented By: $presentedBy');
 
-      String? presentationSourceType = await paywallInfo.presentationSourceType;
-      print("Presentation Source Type: $presentationSourceType");
+      final presentationSourceType = await paywallInfo.presentationSourceType;
+      print('Presentation Source Type: $presentationSourceType');
 
-      String? responseLoadStartTime = await paywallInfo.responseLoadStartTime;
-      print("Response Load Start Time: $responseLoadStartTime");
+      final responseLoadStartTime = await paywallInfo.responseLoadStartTime;
+      print('Response Load Start Time: $responseLoadStartTime');
 
-      String? responseLoadCompleteTime =
+      final responseLoadCompleteTime =
           await paywallInfo.responseLoadCompleteTime;
-      print("Response Load Complete Time: $responseLoadCompleteTime");
+      print('Response Load Complete Time: $responseLoadCompleteTime');
 
-      String? responseLoadFailTime = await paywallInfo.responseLoadFailTime;
-      print("Response Load Fail Time: $responseLoadFailTime");
+      final responseLoadFailTime = await paywallInfo.responseLoadFailTime;
+      print('Response Load Fail Time: $responseLoadFailTime');
 
-      double? responseLoadDuration = await paywallInfo.responseLoadDuration;
-      print("Response Load Duration: $responseLoadDuration");
+      final responseLoadDuration = await paywallInfo.responseLoadDuration;
+      print('Response Load Duration: $responseLoadDuration');
 
-      String? webViewLoadStartTime = await paywallInfo.webViewLoadStartTime;
-      print("Web View Load Start Time: $webViewLoadStartTime");
+      final webViewLoadStartTime = await paywallInfo.webViewLoadStartTime;
+      print('Web View Load Start Time: $webViewLoadStartTime');
 
-      String? webViewLoadCompleteTime =
-          await paywallInfo.webViewLoadCompleteTime;
-      print("Web View Load Complete Time: $webViewLoadCompleteTime");
+      final webViewLoadCompleteTime = await paywallInfo.webViewLoadCompleteTime;
+      print('Web View Load Complete Time: $webViewLoadCompleteTime');
 
-      String? webViewLoadFailTime = await paywallInfo.webViewLoadFailTime;
-      print("Web View Load Fail Time: $webViewLoadFailTime");
+      final webViewLoadFailTime = await paywallInfo.webViewLoadFailTime;
+      print('Web View Load Fail Time: $webViewLoadFailTime');
 
-      double? webViewLoadDuration = await paywallInfo.webViewLoadDuration;
-      print("Web View Load Duration: $webViewLoadDuration");
+      final webViewLoadDuration = await paywallInfo.webViewLoadDuration;
+      print('Web View Load Duration: $webViewLoadDuration');
 
-      String? productsLoadStartTime = await paywallInfo.productsLoadStartTime;
-      print("Products Load Start Time: $productsLoadStartTime");
+      final productsLoadStartTime = await paywallInfo.productsLoadStartTime;
+      print('Products Load Start Time: $productsLoadStartTime');
 
-      String? productsLoadCompleteTime =
+      final productsLoadCompleteTime =
           await paywallInfo.productsLoadCompleteTime;
-      print("Products Load Complete Time: $productsLoadCompleteTime");
+      print('Products Load Complete Time: $productsLoadCompleteTime');
 
-      String? productsLoadFailTime = await paywallInfo.productsLoadFailTime;
-      print("Products Load Fail Time: $productsLoadFailTime");
+      final productsLoadFailTime = await paywallInfo.productsLoadFailTime;
+      print('Products Load Fail Time: $productsLoadFailTime');
 
-      double? productsLoadDuration = await paywallInfo.productsLoadDuration;
-      print("Products Load Duration: $productsLoadDuration");
+      final productsLoadDuration = await paywallInfo.productsLoadDuration;
+      print('Products Load Duration: $productsLoadDuration');
 
-      String? paywalljsVersion = await paywallInfo.paywalljsVersion;
-      print("Paywall.js Version: $paywalljsVersion");
+      final paywalljsVersion = await paywallInfo.paywalljsVersion;
+      print('Paywall.js Version: $paywalljsVersion');
 
-      bool isFreeTrialAvailable = await paywallInfo.isFreeTrialAvailable;
-      print("Is Free Trial Available: $isFreeTrialAvailable");
+      final isFreeTrialAvailable = await paywallInfo.isFreeTrialAvailable;
+      print('Is Free Trial Available: $isFreeTrialAvailable');
 
-      FeatureGatingBehavior featureGatingBehavior =
-          await paywallInfo.featureGatingBehavior;
-      print("Feature Gating Behavior: $featureGatingBehavior");
+      final featureGatingBehavior = await paywallInfo.featureGatingBehavior;
+      print('Feature Gating Behavior: $featureGatingBehavior');
 
-      PaywallCloseReason closeReason = await paywallInfo.closeReason;
-      print("Close Reason: $closeReason");
+      final closeReason = await paywallInfo.closeReason;
+      print('Close Reason: $closeReason');
 
-      List<LocalNotification> localNotifications =
-          await paywallInfo.localNotifications;
-      print("Local Notifications: $localNotifications");
+      final localNotifications = await paywallInfo.localNotifications;
+      print('Local Notifications: $localNotifications');
 
-      List<ComputedPropertyRequest> computedPropertyRequests =
+      final computedPropertyRequests =
           await paywallInfo.computedPropertyRequests;
-      print("Computed Property Requests: $computedPropertyRequests");
+      print('Computed Property Requests: $computedPropertyRequests');
 
-      List<Survey> surveys = await paywallInfo.surveys;
-      print("Surveys: $surveys");
+      final surveys = await paywallInfo.surveys;
+      print('Surveys: $surveys');
     } else {
-      print("Paywall Info is null");
+      print('Paywall Info is null');
     }
   }
 
   Future<void> performAction() async {
     try {
-      IdentityOptions options =
-          IdentityOptions(restorePaywallAssignments: true);
-      await Superwall.shared.identify("123456");
+      await Superwall.shared.identify('123456');
 
-      String userId = await Superwall.shared.getUserId();
+      final userId = await Superwall.shared.getUserId();
       print(userId);
 
-      await Superwall.shared.setUserAttributes({"someAttribute": "someValue"});
-      Map<String, dynamic> attributes1 =
-          await Superwall.shared.getUserAttributes();
+      await Superwall.shared.setUserAttributes({'someAttribute': 'someValue'});
+      final attributes1 = await Superwall.shared.getUserAttributes();
       print(attributes1);
 
       await Superwall.shared
-          .setUserAttributes({"jack": "lost", "kate": "antman"});
-      Map<String, dynamic> attributes2 =
-          await Superwall.shared.getUserAttributes();
+          .setUserAttributes({'jack': 'lost', 'kate': 'antman'});
+      final attributes2 = await Superwall.shared.getUserAttributes();
       print(attributes2);
 
       await Superwall.shared.setUserAttributes({
-        "jack": "123",
-        "kate": {"tv": "series"}
+        'jack': '123',
+        'kate': {'tv': 'series'}
       });
-      Map<String, dynamic> attributes3 =
-          await Superwall.shared.getUserAttributes();
+      final attributes3 = await Superwall.shared.getUserAttributes();
       print(attributes3);
 
       await Superwall.shared.reset();
 
-      Map<String, dynamic> attributes4 =
-          await Superwall.shared.getUserAttributes();
+      final attributes4 = await Superwall.shared.getUserAttributes();
       print(attributes4);
 
       Superwall.shared.setLogLevel(LogLevel.error);
-      LogLevel logLevel = await Superwall.shared.getLogLevel();
-      print("Log Level: $logLevel");
+      final logLevel = await Superwall.shared.getLogLevel();
+      print('Log Level: $logLevel');
     } catch (e) {
       print('Failed perform action: $e');
     }
   }
 
-  void handleSkipReason(PaywallSkippedReason skipReason) async {
+  Future<void> handleSkipReason(PaywallSkippedReason skipReason) async {
     final description = await skipReason.description;
 
     if (skipReason is PaywallSkippedReasonHoldout) {
       final experiment = await skipReason.experiment;
       final experimentId = await experiment.id;
-      print("Holdout with experiment: ${experimentId}");
-      print("Handler (onSkip): $description");
+      print('Holdout with experiment: $experimentId');
+      print('Handler (onSkip): $description');
     } else if (skipReason is PaywallSkippedReasonNoRuleMatch) {
-      print("Handler (onSkip): $description");
+      print('Handler (onSkip): $description');
     } else if (skipReason is PaywallSkippedReasonEventNotFound) {
-      print("Handler (onSkip): $description");
+      print('Handler (onSkip): $description');
     } else if (skipReason is PaywallSkippedReasonUserIsSubscribed) {
-      print("Handler (onSkip): $description");
+      print('Handler (onSkip): $description');
     } else {
-      print("Handler (onSkip): Unknown skip reason");
+      print('Handler (onSkip): Unknown skip reason');
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter superapp'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Running'),
-              ElevatedButton(
-                onPressed: onRegisterTapped,
-                child: const Text('Register event'),
-              ),
-              ElevatedButton(
-                onPressed: performAction,
-                child: const Text('Perform action'),
-              ),
-            ],
+  Widget build(BuildContext context) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Flutter superapp'),
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('Running'),
+                ElevatedButton(
+                  onPressed: onRegisterTapped,
+                  child: const Text('Register event'),
+                ),
+                ElevatedButton(
+                  onPressed: performAction,
+                  child: const Text('Perform action'),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 
   @override
   void didDismissPaywall(PaywallInfo paywallInfo) {
-    print("didDismissPaywall: $paywallInfo");
+    print('didDismissPaywall: $paywallInfo');
   }
 
   @override
   void didPresentPaywall(PaywallInfo paywallInfo) {
-    print("didPresentPaywall: $paywallInfo");
+    print('didPresentPaywall: $paywallInfo');
   }
 
   @override
   void handleCustomPaywallAction(String name) {
-    print("handleCustomPaywallAction: $name");
+    print('handleCustomPaywallAction: $name');
   }
 
   @override
@@ -346,23 +310,23 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
     // This delegate function is noisy. Uncomment to debug.
     return;
 
-    print("handleSuperwallEvent: $eventInfo");
+    print('handleSuperwallEvent: $eventInfo');
 
     switch (eventInfo.event.type) {
       case EventType.appOpen:
-        print("appOpen event");
+        print('appOpen event');
       case EventType.deviceAttributes:
-        print("deviceAttributes event: ${eventInfo.event.deviceAttributes} ");
+        print('deviceAttributes event: ${eventInfo.event.deviceAttributes} ');
       case EventType.paywallOpen:
         final paywallInfo = eventInfo.event.paywallInfo;
-        print("paywallOpen event: ${paywallInfo} ");
+        print('paywallOpen event: $paywallInfo ');
 
         if (paywallInfo != null) {
           final identifier = await paywallInfo.identifier;
-          print("paywallInfo.identifier: ${identifier} ");
+          print('paywallInfo.identifier: $identifier ');
 
           final productIds = await paywallInfo.productIds;
-          print("paywallInfo.productIds: ${productIds} ");
+          print('paywallInfo.productIds: $productIds ');
         }
       default:
         break;
@@ -371,34 +335,34 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
   @override
   void paywallWillOpenDeepLink(Uri url) {
-    print("paywallWillOpenDeepLink: $url");
+    print('paywallWillOpenDeepLink: $url');
   }
 
   @override
   void paywallWillOpenURL(Uri url) {
-    print("paywallWillOpenURL: $url");
+    print('paywallWillOpenURL: $url');
   }
 
   @override
   void subscriptionStatusDidChange(SubscriptionStatus newValue) {
-    print("subscriptionStatusDidChange: $newValue");
+    print('subscriptionStatusDidChange: $newValue');
   }
 
   @override
   void willDismissPaywall(PaywallInfo paywallInfo) {
-    print("willDismissPaywall: $paywallInfo");
+    print('willDismissPaywall: $paywallInfo');
   }
 
   @override
   void willPresentPaywall(PaywallInfo paywallInfo) {
     printSubscriptionStatus();
-    print("willPresentPaywall: $paywallInfo");
+    print('willPresentPaywall: $paywallInfo');
   }
 
-  void printSubscriptionStatus() async {
+  Future<void> printSubscriptionStatus() async {
     final status = await Superwall.shared.getSubscriptionStatus();
     final description = await status.description;
 
-    print("Status: $description");
+    print('Status: $description');
   }
 }
