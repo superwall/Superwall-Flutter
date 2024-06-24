@@ -166,7 +166,6 @@ class Superwall extends BridgeIdInstantiable {
     var result = await bridgeId.communicator.invokeBridgeMethod(
         'setSubscriptionStatus',
         {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
-    print("set it");
   }
 
   // Asynchronous method to check if Superwall has finished configuring
