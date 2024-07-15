@@ -2,6 +2,16 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.2.0
+
+### Enhancements
+
+- Upgrades Android SDK to 1.2.0 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/1.2.0)
+
+### Fixes
+
+- Updates `compileSDKVersion` to 34 fixing build issues on Android.
+
 ## 1.1.9
 
 ### Enhancements
