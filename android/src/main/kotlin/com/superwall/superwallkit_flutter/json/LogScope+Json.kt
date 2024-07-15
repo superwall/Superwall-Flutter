@@ -9,8 +9,8 @@ fun JsonExtensions.Companion.logScopeFromJson(json: String): LogScope? {
         "configmanager" -> LogScope.configManager
         "identitymanager" -> LogScope.identityManager
         "debugmanager" -> LogScope.debugManager
-        "debugviewcontroller" -> LogScope.debugViewController
-        "localizationviewcontroller" -> LogScope.localizationViewController
+        "debugviewcontroller" -> LogScope.debugView
+        "localizationviewcontroller" -> LogScope.localizationView
         "gamecontrollermanager" -> LogScope.gameControllerManager
         "device" -> LogScope.device
         "network" -> LogScope.network
@@ -22,7 +22,7 @@ fun JsonExtensions.Companion.logScopeFromJson(json: String): LogScope? {
         "superwallcore" -> LogScope.superwallCore
         "paywallpresentation" -> LogScope.paywallPresentation
         "paywalltransactions" -> LogScope.paywallTransactions
-        "paywallviewcontroller" -> LogScope.paywallViewController
+        "paywallviewcontroller" -> LogScope.paywallView
         "nativepurchasecontroller" -> LogScope.nativePurchaseController
         "cache" -> LogScope.cache
         "all" -> LogScope.all

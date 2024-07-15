@@ -17,7 +17,7 @@ fun PaywallPresentationRequestStatusReason.toJson(): Map<String, Any?> = when (t
     is PaywallPresentationRequestStatusReason.Holdout -> mapOf("reason" to "holdout", "experimentBridgeId" to experiment.createBridgeId())
     is PaywallPresentationRequestStatusReason.NoRuleMatch -> mapOf("reason" to "noRuleMatch")
     is PaywallPresentationRequestStatusReason.EventNotFound -> mapOf("reason" to "eventNotFound")
-    is PaywallPresentationRequestStatusReason.NoPaywallViewController -> mapOf("reason" to "noPaywallViewController")
+    is PaywallPresentationRequestStatusReason.NoPaywallView -> mapOf("reason" to "noPaywallViewController")
     is PaywallPresentationRequestStatusReason.NoPresenter -> mapOf("reason" to "noPresenter")
     is PaywallPresentationRequestStatusReason.NoConfig -> mapOf("reason" to "noConfig")
     is PaywallPresentationRequestStatusReason.SubscriptionStatusTimeout -> mapOf("reason" to "subscriptionStatusTimeout")
