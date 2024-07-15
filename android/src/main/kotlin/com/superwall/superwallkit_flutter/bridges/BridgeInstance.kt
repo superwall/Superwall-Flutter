@@ -38,5 +38,5 @@ fun BridgeId.bridgeClass(): BridgeClass {
 }
 
 fun BridgeClass.generateBridgeId(): BridgeId {
-    return "$this-${UUID.randomUUID()}-bridgeId"
+    return "$this-bridgeId"
 }
