@@ -42,7 +42,7 @@ extension BridgeId {
 extension BridgeClass {
   // Make sure this is the same on the Dart side.
   func generateBridgeId() -> BridgeId {
-    return "\(self)-\(UUID().uuidString)-bridgeId"
+    return "\(self)-bridgeId"
   }
 }
 

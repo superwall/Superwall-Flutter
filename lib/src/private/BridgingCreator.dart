@@ -147,8 +147,7 @@ extension StringExtension on String {
 extension Additions on BridgeClass {
   // Make sure this is the same on the Native side.
   BridgeId generateBridgeId() {
-    final instanceIdentifier = const Uuid().v4();
-    final bridgeId = "$this-$instanceIdentifier-bridgeId";
+    final bridgeId = "$this-bridgeId";
     return bridgeId;
   }
 }
