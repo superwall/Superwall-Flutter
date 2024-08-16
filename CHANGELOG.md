@@ -2,6 +2,13 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.2.1
+
+### Enhancements
+
+- Upgrades Android SDK to 1.2.3 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/1.2.3)
+- Upgrades iOS SDK to 3.7.2. [View iOS SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/3.7.2)
+
 ## 1.2.0
 
 ### Enhancements
@@ -21,7 +28,7 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 ### Fixes
 
 - Bumps minimum Kotlin version to 1.8.0 and Android Gradle Plugin to 8.1.0 to be able to be
-compatible with the latest Android SDK. This was necessary for important bug fixes.
+  compatible with the latest Android SDK. This was necessary for important bug fixes.
 - SW-2868: Fixes transaction issues caused by hot restart.
 
 ## 1.1.8

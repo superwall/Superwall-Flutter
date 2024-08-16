@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:yaml/yaml.dart';
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
@@ -13,7 +15,6 @@ import 'package:superwallkit_flutter/src/private/CompletionBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
 import 'package:superwallkit_flutter/src/private/SuperwallDelegateProxy.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallOptions.dart';
-
 import '../private/LatestValueStreamController.dart';
 
 /// The primary class for integrating Superwall into your application.
@@ -269,12 +270,15 @@ class Superwall extends BridgeIdInstantiable {
       completionBlockProxy = CompletionBlockProxy(block: completionBlock);
     }
 
+    final sdkVersion = await getPackageVersion('flutter');
+
     try {
       await _superwall.bridgeId.communicator.invokeBridgeMethod('configure', {
         'apiKey': apiKey,
         'purchaseControllerProxyBridgeId': purchaseControllerProxy?.bridgeId,
         'options': options?.toJson(),
-        'completionBlockProxyBridgeId': completionBlockProxy?.bridgeId
+        'completionBlockProxyBridgeId': completionBlockProxy?.bridgeId,
+        'sdkVersion': sdkVersion
       });
     } catch (e) {
       // Handle any errors that occur during configuration
@@ -283,6 +287,27 @@ class Superwall extends BridgeIdInstantiable {
 
     // Allows the functions in this class to now be invoked
     _isBridgedController.update(true);
+  }
+
+  static Future<String> getPackageVersion(String packageName) async {
+    final pubspec = await rootBundle
+        .loadString('packages/superwallkit_flutter/pubspec.yaml');
+
+    // Read the pubspec.yaml file
+    //final pubspec =
+    // await File('package:superwallkit_flutter/pubspec.yaml').readAsString();
+
+    // Parse the YAML content
+    final yaml = loadYaml(pubspec);
+
+    // Retrieve the version of the specified package
+    final version = yaml['version'];
+
+    if (version == null) {
+      return "";
+    }
+
+    return version.toString();
   }
 }
 

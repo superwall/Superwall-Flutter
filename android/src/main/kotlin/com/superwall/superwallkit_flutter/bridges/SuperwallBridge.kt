@@ -200,7 +200,8 @@ class SuperwallBridge(
                     )
 
                     // Set the platform wrapper
-                    Superwall.instance.setPlatformWrapper("Flutter");
+                    Superwall.instance.setPlatformWrapper("Flutter",
+                        call.argumentForKey<String>("sdkVersion")?:"");
 
                     // Returning nil instead of the result from configure because we want to use the Dart
                     // instance of Superwall, not a native variant
