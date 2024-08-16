@@ -108,6 +108,16 @@ extension SuperwallEvent {
         return ["event": "surveyClose"]
       case .reset:
         return ["event": "reset"]
+    case .paywallWebviewLoadFallback(let paywallInfo):
+      return ["event": "paywallWebviewLoadFallback", "paywallInfoBridgeId": paywallInfo.createBridgeId()]
+    case .paywallProductsLoadRetry(let triggeredEventName, let paywallInfo, let attempt):
+      return ["event": "paywallProductsLoadRetry", "triggeredEventName": triggeredEventName ?? "", "attempt": attempt, "paywallInfoBridgeId": paywallInfo.createBridgeId()]
+    case .configRefresh:
+      return ["event": "configRefresh"]
+    case .customPlacement(let name, let params, let paywallInfo):
+      return ["event": "customPlacement", "name": name, "params": params, "paywallInfoBridgeId": paywallInfo.createBridgeId()]
+    case .configAttributes:
+      return ["event": "configAttributes"]
     }
   }
 }

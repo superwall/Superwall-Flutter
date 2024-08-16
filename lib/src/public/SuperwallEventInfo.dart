@@ -53,6 +53,8 @@ enum EventType {
   paywallWebviewLoadFail,
   paywallWebviewLoadComplete,
   paywallWebviewLoadTimeout,
+  paywallWebviewLoadFallback,
+  paywallProductsLoadRetry,
   paywallProductsLoadStart,
   paywallProductsLoadFail,
   paywallProductsLoadComplete,
@@ -61,7 +63,9 @@ enum EventType {
   touchesBegan,
   surveyClose,
   reset,
-  configRefresh
+  configRefresh,
+  customPlacement,
+  configAttributes
 }
 
 class SuperwallEvent {
@@ -77,6 +81,9 @@ class SuperwallEvent {
   final StoreProduct? product;
   final String? error;
   final String? triggeredEventName;
+  final Map<dynamic, dynamic>? params;
+  final String? attempt;
+  final String? name;
   final Survey? survey;
   final SurveyOption? selectedOption;
   final String? customResponse;
@@ -89,6 +96,7 @@ class SuperwallEvent {
     required this.type,
     this.eventName,
     this.deviceAttributes,
+    this.params,
     this.deepLinkUrl,
     this.result,
     this.paywallInfo,
@@ -96,6 +104,8 @@ class SuperwallEvent {
     this.product,
     this.error,
     this.triggeredEventName,
+    this.attempt,
+    this.name,
     this.survey,
     this.selectedOption,
     this.customResponse,
@@ -249,6 +259,11 @@ class SuperwallEvent {
           type: EventType.paywallWebviewLoadTimeout,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
+      case 'paywallWebviewLoadFallback':
+        return SuperwallEvent._(
+          type: EventType.paywallWebviewLoadFallback,
+          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+        );
       case 'paywallProductsLoadStart':
         return SuperwallEvent._(
           type: EventType.paywallProductsLoadStart,
@@ -265,6 +280,13 @@ class SuperwallEvent {
         return SuperwallEvent._(
           type: EventType.paywallProductsLoadComplete,
           triggeredEventName: json['triggeredEventName'],
+        );
+      case 'paywallProductsLoadRetry':
+        return SuperwallEvent._(
+          type: EventType.paywallProductsLoadRetry,
+          triggeredEventName: json['triggeredEventName'],
+          attempt: json['attempt'],
+          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'surveyResponse':
         return SuperwallEvent._(
@@ -292,6 +314,15 @@ class SuperwallEvent {
         return SuperwallEvent._(type: EventType.configRefresh);
       case 'reset':
         return SuperwallEvent._(type: EventType.reset);
+      case 'customPlacement':
+        return SuperwallEvent._(
+          type: EventType.customPlacement,
+          name: json['name'],
+          params: json['params'],
+          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+        );
+      case 'configAttributes':
+        return SuperwallEvent._(type: EventType.configAttributes);
       default:
         throw ArgumentError('Invalid event type');
     }

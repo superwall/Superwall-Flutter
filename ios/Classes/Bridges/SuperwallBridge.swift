@@ -155,7 +155,8 @@ public class SuperwallBridge: BridgeInstance {
         }
 
         // Set the platform wrapper
-        Superwall.shared.setPlatformWrapper("Flutter")
+        let sdkVersion = call.argument(for: "sdkVersion") ?? ""
+        Superwall.shared.setPlatformWrapper("Flutter", version: sdkVersion)
 
         // Returning nil instead of the result from configure because we want to use the Dart
         // instance of Superwall, not a native variant
