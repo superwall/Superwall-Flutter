@@ -11,6 +11,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.util.concurrent.ConcurrentHashMap
+import io.flutter.embedding.android.FlutterActivity
 
 class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : MethodCallHandler {
     private val instances: MutableMap<String, BridgeInstance> = ConcurrentHashMap()
@@ -26,25 +27,15 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
         var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding?
             get() = _flutterPluginBinding
             set(value) {
-                // Only allow binding to occur once. It appears that if binding is set multiple
-                // times (due to other SDK interference), we'll lose access to the
-                // SuperwallKitFlutterPlugin current activity
-                if (_flutterPluginBinding != null) {
-                    println("WARNING: Attempting to set a flutter plugin binding again.")
-                    return
-                }
-
                 // Store for getter
                 _flutterPluginBinding = value
 
                 _flutterPluginBinding?.let {
                     synchronized(BridgingCreator::class.java) {
-                        if (_shared == null) {
                             val bridge = BridgingCreator(it)
                             _shared = bridge
                             val communicator = Communicator(it.binaryMessenger, "SWK_BridgingCreator")
                             communicator.setMethodCallHandler(bridge)
-                        }
                     }
                 }
             }
