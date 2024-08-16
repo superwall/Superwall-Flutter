@@ -61,6 +61,7 @@ enum EventType {
   touchesBegan,
   surveyClose,
   reset,
+  configRefresh
 }
 
 class SuperwallEvent {
@@ -287,6 +288,8 @@ class SuperwallEvent {
         return SuperwallEvent._(type: EventType.touchesBegan);
       case 'surveyClose':
         return SuperwallEvent._(type: EventType.surveyClose);
+      case 'configRefresh':
+        return SuperwallEvent._(type: EventType.configRefresh);
       case 'reset':
         return SuperwallEvent._(type: EventType.reset);
       default:

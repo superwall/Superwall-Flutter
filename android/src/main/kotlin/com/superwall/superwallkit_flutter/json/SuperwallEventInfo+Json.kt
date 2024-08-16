@@ -75,5 +75,6 @@ fun SuperwallEvent.toJson(): Map<String, Any?> {
             return json
         }
         is SuperwallEvent.SurveyClose -> mapOf("event" to "surveyClose")
+        is SuperwallEvent.ConfigRefresh -> mapOf("event" to "configRefresh")
     }
 }
