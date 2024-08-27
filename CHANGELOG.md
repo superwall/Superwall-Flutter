@@ -2,6 +2,18 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.2.2
+
+### Fixes
+
+- Reapply the single bridge instance limit to fix issues with `setDelegate` where plugins with multiple isolates are used
+- Fixes stateful bridges by applying new state when invoking create, resolving issues seen in #23
+
+### Enhancements
+
+- Updates Android SDK to 1.2.4
+
+
 ## 1.2.1
 
 ### Enhancements
