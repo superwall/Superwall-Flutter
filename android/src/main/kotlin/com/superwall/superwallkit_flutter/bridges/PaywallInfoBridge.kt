@@ -13,7 +13,7 @@ class PaywallInfoBridge(
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs) {
     companion object { fun bridgeClass(): BridgeClass = "PaywallInfoBridge" }
-    val paywallInfo: PaywallInfo
+    lateinit var paywallInfo: PaywallInfo
 
     init {
         val paywallInfoArg = initializationArgs?.get("paywallInfo") as? PaywallInfo
@@ -59,9 +59,11 @@ class PaywallInfoBridge(
 }
 
 fun PaywallInfo.createBridgeId(): BridgeId {
-    val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
+    val bridgeInstance = (BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
         bridgeClass = PaywallInfoBridge.bridgeClass(),
         initializationArgs = mapOf("paywallInfo" to this)
-    )
+    ) as PaywallInfoBridge).apply {
+        paywallInfo = this@createBridgeId
+    }
     return bridgeInstance.bridgeId
 }

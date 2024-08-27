@@ -5,6 +5,7 @@ import com.superwall.sdk.paywall.presentation.PaywallInfo
 import com.superwall.superwallkit_flutter.BridgingCreator
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlin.math.exp
 
 class ExperimentBridge(
     context: Context,
@@ -12,7 +13,7 @@ class ExperimentBridge(
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs) {
     companion object { fun bridgeClass(): BridgeClass = "ExperimentBridge" }
-    val experiment: Experiment
+    lateinit var experiment: Experiment
 
     init {
         val experiment = initializationArgs?.get("experiment") as? Experiment
@@ -35,9 +36,11 @@ class ExperimentBridge(
 }
 
 fun Experiment.createBridgeId(): BridgeId {
-    val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
+    val bridgeInstance = (BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
         bridgeClass = ExperimentBridge.bridgeClass(),
         initializationArgs = mapOf("experiment" to this)
-    )
+    ) as ExperimentBridge).apply {
+        experiment = this@createBridgeId
+    }
     return bridgeInstance.bridgeId
 }
