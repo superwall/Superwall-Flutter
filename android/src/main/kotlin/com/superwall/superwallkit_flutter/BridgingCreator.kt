@@ -27,7 +27,16 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
         var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding?
             get() = _flutterPluginBinding
             set(value) {
+                // Only allow binding to occur once. It appears that if binding is set multiple
+                // times (due to other SDK interference), we'll lose access to the
+                // SuperwallKitFlutterPlugin current activity
+                if (_flutterPluginBinding != null) {
+                    println("WARNING: Attempting to set a flutter plugin binding again.")
+                    return
+                }
+
                 // Store for getter
+
                 _flutterPluginBinding = value
 
                 _flutterPluginBinding?.let {

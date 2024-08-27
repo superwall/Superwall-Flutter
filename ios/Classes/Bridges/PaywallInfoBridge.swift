@@ -4,7 +4,7 @@ import SuperwallKit
 public class PaywallInfoBridge: BridgeInstance {
   class override var bridgeClass: BridgeClass { "PaywallInfoBridge" }
 
-  let paywallInfo: PaywallInfo
+  var paywallInfo: PaywallInfo
 
   required init(bridgeId: BridgeId, initializationArgs: [String : Any]? = nil) {
     guard let paywallInfo = initializationArgs?["paywallInfo"] as? PaywallInfo else {
@@ -118,6 +118,9 @@ public class PaywallInfoBridge: BridgeInstance {
 
 extension PaywallInfo {
   func createBridgeId() -> BridgeId {
-    return BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallInfoBridge.bridgeClass, initializationArgs: ["paywallInfo": self]).bridgeId
+    let instance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallInfoBridge.bridgeClass, initializationArgs: ["paywallInfo": self])
+    let bridge = instance as! PaywallInfoBridge
+    bridge.paywallInfo = self
+    return bridge.bridgeId
   }
 }

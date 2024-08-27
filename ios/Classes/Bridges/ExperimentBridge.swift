@@ -4,7 +4,7 @@ import SuperwallKit
 public class ExperimentBridge: BridgeInstance {
   class override var bridgeClass: BridgeClass { "ExperimentBridge" }
 
-  let experiment: Experiment
+  var experiment: Experiment
 
   required init(bridgeId: BridgeId, initializationArgs: [String : Any]? = nil) {
     guard let experiment = initializationArgs?["experiment"] as? Experiment else {
@@ -31,6 +31,9 @@ public class ExperimentBridge: BridgeInstance {
 
 extension Experiment {
   func createBridgeId() -> BridgeId {
-    return BridgingCreator.shared.createBridgeInstance(bridgeClass: ExperimentBridge.bridgeClass, initializationArgs: ["experiment": self]).bridgeId
+    let instance = BridgingCreator.shared.createBridgeInstance(bridgeClass: ExperimentBridge.bridgeClass, initializationArgs: ["experiment": self])
+    let bridge = instance as! ExperimentBridge
+    bridge.experiment = self
+    return bridge.bridgeId
   }
 }
