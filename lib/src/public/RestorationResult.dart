@@ -8,11 +8,11 @@ class RestorationResult extends BridgeIdInstantiable {
 }
 
 class RestorationResultRestored extends RestorationResult {
-  static const BridgeClass bridgeClass = "RestorationResultRestoredBridge";
+  static const BridgeClass bridgeClass = 'RestorationResultRestoredBridge';
   RestorationResultRestored({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class RestorationResultFailed extends RestorationResult {
-  static const BridgeClass bridgeClass = "RestorationResultFailedBridge";
-  RestorationResultFailed({required String error, super.bridgeId}): super(bridgeClass: bridgeClass, initializationArgs: {"error": error});
+  static const BridgeClass bridgeClass = 'RestorationResultFailedBridge';
+  RestorationResultFailed({required String error, super.bridgeId}): super(bridgeClass: bridgeClass, initializationArgs: {'error': error});
 }

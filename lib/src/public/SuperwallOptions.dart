@@ -73,6 +73,32 @@ class Logging {
 
   /// Defines the scope of logs to print to the console. Defaults to .all.
   Set<LogScope> scopes = { LogScope.all };
+
+  void handleLogRecord(LogLevel level, String message, [Object? error, StackTrace? trace]) {
+    if (level.index < this.level.index) {
+      return;
+    }
+
+    // ignore: avoid_print
+    print('[$level] $message');
+    if (error != null) {
+      // ignore: avoid_print
+      print(error);
+    }
+    if (trace != null) {
+      // ignore: avoid_print
+      print(trace);
+    }
+  }
+
+  void debug(String message, [Object? error, StackTrace? trace])
+    => handleLogRecord(LogLevel.debug, message, error, trace);
+  void info(String message, [Object? error, StackTrace? trace])
+    => handleLogRecord(LogLevel.info, message, error, trace);
+  void warn(String message, [Object? error, StackTrace? trace])
+    => handleLogRecord(LogLevel.warn, message, error, trace);
+  void error(String message, [Object? error, StackTrace? trace])
+    => handleLogRecord(LogLevel.error, message, error, trace);
 }
 
 extension LoggingJson on Logging {

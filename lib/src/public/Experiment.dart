@@ -10,7 +10,7 @@ import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 ///
 /// To learn more, read [our docs](https://docs.superwall.com/docs/home#how-it-work
 class Experiment extends BridgeIdInstantiable {
-  static const BridgeClass bridgeClass = "ExperimentBridge";
+  static const BridgeClass bridgeClass = 'ExperimentBridge';
   Experiment({super.bridgeId}): super(bridgeClass: bridgeClass);
 
   Future<String> get id async {

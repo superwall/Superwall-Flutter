@@ -9,7 +9,7 @@ import 'package:superwallkit_flutter/src/public/Survey.dart';
 
 /// Contains information about a paywall.
 class PaywallInfo extends BridgeIdInstantiable {
-  static const BridgeClass bridgeClass = "PaywallInfoBridge";
+  static const BridgeClass bridgeClass = 'PaywallInfoBridge';
   PaywallInfo({super.bridgeId}): super(bridgeClass: bridgeClass);
 
   /// The identifier set for this paywall in the Superwall dashboard.
