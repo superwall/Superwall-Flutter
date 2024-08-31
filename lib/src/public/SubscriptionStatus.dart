@@ -27,16 +27,16 @@ class SubscriptionStatus extends BridgeIdInstantiable {
 }
 
 class SubscriptionStatusActive extends SubscriptionStatus {
-  static const BridgeClass bridgeClass = "SubscriptionStatusActiveBridge";
+  static const BridgeClass bridgeClass = 'SubscriptionStatusActiveBridge';
   SubscriptionStatusActive({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class SubscriptionStatusInactive extends SubscriptionStatus {
-  static const BridgeClass bridgeClass = "SubscriptionStatusInactiveBridge";
+  static const BridgeClass bridgeClass = 'SubscriptionStatusInactiveBridge';
   SubscriptionStatusInactive({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class SubscriptionStatusUnknown extends SubscriptionStatus {
-  static const BridgeClass bridgeClass = "SubscriptionStatusUnknownBridge";
+  static const BridgeClass bridgeClass = 'SubscriptionStatusUnknownBridge';
   SubscriptionStatusUnknown({super.bridgeId}): super(bridgeClass: bridgeClass);
 }

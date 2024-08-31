@@ -34,3 +34,4 @@ linter:
     unnecessary_string_escapes: true
     unnecessary_string_interpolations: true
     unnecessary_this: true
+    file_names: false
