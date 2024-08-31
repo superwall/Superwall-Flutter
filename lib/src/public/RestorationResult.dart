@@ -1,7 +1,7 @@
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 class RestorationResult extends BridgeIdInstantiable {
-  RestorationResult({ required BridgeClass bridgeClass, BridgeId? bridgeId, Map<String, dynamic>? initializationArgs }): super(bridgeClass: bridgeClass, bridgeId: bridgeId, initializationArgs: initializationArgs);
+  RestorationResult({required super.bridgeClass, super.bridgeId, super.initializationArgs});
 
   static RestorationResult restored = RestorationResultRestored();
   static RestorationResult failed(String error) => RestorationResultFailed(error: error);
@@ -9,10 +9,10 @@ class RestorationResult extends BridgeIdInstantiable {
 
 class RestorationResultRestored extends RestorationResult {
   static const BridgeClass bridgeClass = "RestorationResultRestoredBridge";
-  RestorationResultRestored({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  RestorationResultRestored({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class RestorationResultFailed extends RestorationResult {
   static const BridgeClass bridgeClass = "RestorationResultFailedBridge";
-  RestorationResultFailed({ required String error, BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId, initializationArgs: {"error": error});
+  RestorationResultFailed({required String error, super.bridgeId}): super(bridgeClass: bridgeClass, initializationArgs: {"error": error});
 }

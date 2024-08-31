@@ -4,7 +4,7 @@ import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class SuperwallDelegateProxy extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = "SuperwallDelegateProxyBridge";
-  SuperwallDelegateProxy({required this.delegate, BridgeId? bridgeId}): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  SuperwallDelegateProxy({required this.delegate, super.bridgeId}): super(bridgeClass: bridgeClass);
 
   SuperwallDelegate delegate;
 

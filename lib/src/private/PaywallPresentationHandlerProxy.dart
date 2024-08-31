@@ -6,7 +6,7 @@ import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
 
 class PaywallPresentationHandlerProxy extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = "PaywallPresentationHandlerProxyBridge";
-  PaywallPresentationHandlerProxy({ required this.handler, BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  PaywallPresentationHandlerProxy({required this.handler, super.bridgeId }): super(bridgeClass: bridgeClass);
 
   PaywallPresentationHandler handler;
 
