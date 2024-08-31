@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:uuid/uuid.dart';
 
 // The name of the bridging class on the native side
 typedef BridgeClass = String;
