@@ -21,8 +21,7 @@ import '../private/LatestValueStreamController.dart';
 /// it provides access to all its features via instance functions and variables.
 class Superwall extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = "SuperwallBridge";
-  Superwall({BridgeId? bridgeId})
-      : super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  Superwall({super.bridgeId}) : super(bridgeClass: bridgeClass);
 
   static final Superwall _superwall = Superwall();
 

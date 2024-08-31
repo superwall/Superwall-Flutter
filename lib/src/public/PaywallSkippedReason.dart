@@ -3,7 +3,7 @@ import 'package:superwallkit_flutter/src/public/Experiment.dart';
 
 /// The reason the paywall presentation was skipped.
 abstract class PaywallSkippedReason extends BridgeIdInstantiable {
-  PaywallSkippedReason({ required BridgeClass bridgeClass, BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  PaywallSkippedReason({required super.bridgeClass, super.bridgeId });
 
   static PaywallSkippedReason? createReasonFromBridgeId(BridgeId bridgeId) {
     switch (bridgeId.bridgeClass) {
