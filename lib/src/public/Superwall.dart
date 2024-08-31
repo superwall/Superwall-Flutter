@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:yaml/yaml.dart';
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
