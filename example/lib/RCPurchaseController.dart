@@ -11,15 +11,15 @@ class RCPurchaseController extends PurchaseController {
   Future<void> configureAndSyncSubscriptionStatus() async {
     // Configure RevenueCat
     await Purchases.setLogLevel(LogLevel.debug);
-    PurchasesConfiguration configuration = Platform.isIOS
-        ? PurchasesConfiguration("appl_XmYQBWbTAFiwLeWrBJOeeJJtTql")
-        : PurchasesConfiguration("goog_DCSOujJzRNnPmxdgjOwdOOjwilC");
+    final configuration = Platform.isIOS
+        ? PurchasesConfiguration('appl_XmYQBWbTAFiwLeWrBJOeeJJtTql')
+        : PurchasesConfiguration('goog_DCSOujJzRNnPmxdgjOwdOOjwilC');
     await Purchases.configure(configuration);
 
     // Listen for changes
     Purchases.addCustomerInfoUpdateListener((customerInfo) {
       // Gets called whenever new CustomerInfo is available
-      bool hasActiveEntitlementOrSubscription = customerInfo
+      final hasActiveEntitlementOrSubscription = customerInfo
           .hasActiveEntitlementOrSubscription(); // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
       if (hasActiveEntitlementOrSubscription) {
         Superwall.shared.setSubscriptionStatus(SubscriptionStatus.active);
@@ -37,18 +37,17 @@ class RCPurchaseController extends PurchaseController {
   @override
   Future<PurchaseResult> purchaseFromAppStore(String productId) async {
     // Find products matching productId from RevenueCat
-    List<StoreProduct> products =
-        await PurchasesAdditions.getAllProducts([productId]);
+    final products = await PurchasesAdditions.getAllProducts([productId]);
 
     // Get first product for product ID (this will properly throw if empty)
-    StoreProduct? storeProduct = products.firstOrNull;
+    final storeProduct = products.firstOrNull;
 
     if (storeProduct == null) {
       return PurchaseResult.failed(
-          "Failed to find store product for $productId");
+          'Failed to find store product for $productId');
     }
 
-    PurchaseResult purchaseResult = await _purchaseStoreProduct(storeProduct);
+    final purchaseResult = await _purchaseStoreProduct(storeProduct);
     return purchaseResult;
   }
 

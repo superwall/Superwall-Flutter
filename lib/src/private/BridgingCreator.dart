@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:uuid/uuid.dart';
 
 // The name of the bridging class on the native side
 typedef BridgeClass = String;
@@ -19,7 +18,7 @@ class BridgingCreator {
       required BridgeClass bridgeClass,
       Map<String, dynamic>? initializationArgs}) {
     BridgeId bridgeId = givenId ?? bridgeClass.generateBridgeId();
-    _metadataByBridgeId[bridgeId] = {"args": initializationArgs};
+    _metadataByBridgeId[bridgeId] = {'args': initializationArgs};
 
     return bridgeId;
   }
@@ -27,12 +26,12 @@ class BridgingCreator {
   static _invokeBridgeInstanceCreation(BridgeId bridgeId) async {
     Map<String, dynamic> metadata =
         BridgingCreator._metadataByBridgeId[bridgeId] ?? {};
-    Map<String, dynamic>? initializationArgs = metadata["args"];
+    Map<String, dynamic>? initializationArgs = metadata['args'];
 
-    await _channel.invokeMethod("createBridgeInstance",
-        {"bridgeId": bridgeId, "args": initializationArgs});
+    await _channel.invokeMethod('createBridgeInstance',
+        {'bridgeId': bridgeId, 'args': initializationArgs});
 
-    metadata["bridgeInstanceCreated"] = "true";
+    metadata['bridgeInstanceCreated'] = 'true';
     _metadataByBridgeId[bridgeId] = metadata;
   }
 
@@ -42,7 +41,7 @@ class BridgingCreator {
 
     // If metadata is not null, this bridge was already created on the Dart
     // side here, so you must invoke creation of the instance on the native side.
-    if (metadata != null && metadata["bridgeInstanceCreated"] == null) {
+    if (metadata != null && metadata['bridgeInstanceCreated'] == null) {
       await BridgingCreator._invokeBridgeInstanceCreation(bridgeId);
     }
   }
@@ -63,8 +62,8 @@ abstract class BridgeIdInstantiable {
                 givenId: givenId,
                 bridgeClass: bridgeClass,
                 initializationArgs: initializationArgs) {
-    assert(this.bridgeId.endsWith("-bridgeId"),
-        "Make sure bridgeIds end with \"-bridgeId\"");
+    assert(this.bridgeId.endsWith('-bridgeId'),
+        'Make sure bridgeIds end with "-bridgeId"');
     this.bridgeId.associate(this);
     this.bridgeId.communicator.setMethodCallHandler(handleMethodCall);
   }
@@ -107,10 +106,10 @@ extension FlutterMethodCall on MethodCall {
     final BridgeId? bridgeId = argument<String>(key);
     assert(
         bridgeId != null,
-        "Attempting to fetch a bridge Id in Dart that has "
-        "not been created by the BridgeCreator natively.");
+        'Attempting to fetch a bridge Id in Dart that has '
+        'not been created by the BridgeCreator natively.');
 
-    return bridgeId ?? "";
+    return bridgeId ?? '';
   }
 }
 
@@ -147,7 +146,7 @@ extension StringExtension on String {
 extension Additions on BridgeClass {
   // Make sure this is the same on the Native side.
   BridgeId generateBridgeId() {
-    final bridgeId = "$this-bridgeId";
+    final bridgeId = '$this-bridgeId';
     return bridgeId;
   }
 }

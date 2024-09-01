@@ -44,14 +44,14 @@ extension PaywallOptionsJson on PaywallOptions {
 class RestoreFailed {
   /// The title of the alert presented to the user when restoring a transaction
   /// fails.
-  String title = "No Subscription Found";
+  String title = 'No Subscription Found';
 
   /// Defines the message of the alert presented to the user when restoring a
   /// transaction fails.
-  String message = "We couldn't find an active subscription for your account.";
+  String message = 'We couldn\'t find an active subscription for your account.';
 
   /// Defines the title of the close button in the alert presented to the user.
-  String closeButtonTitle = "Okay";
+  String closeButtonTitle = 'Okay';
 }
 
 extension RestoreFailedJson on RestoreFailed {

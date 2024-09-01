@@ -5,7 +5,7 @@ import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 /// When implementing the ``PurchaseController/restorePurchases()`` delegate
 /// method, all cases should be considered.
 class PurchaseResult extends BridgeIdInstantiable {
-  PurchaseResult({ required BridgeClass bridgeClass, BridgeId? bridgeId, Map<String, dynamic>? initializationArgs }): super(bridgeClass: bridgeClass, bridgeId: bridgeId, initializationArgs: initializationArgs);
+  PurchaseResult({required super.bridgeClass, super.bridgeId, super.initializationArgs });
 
   /// The purchase was cancelled.
   ///
@@ -31,26 +31,26 @@ class PurchaseResult extends BridgeIdInstantiable {
 }
 
 class PurchaseResultCancelled extends PurchaseResult {
-  static const BridgeClass bridgeClass = "PurchaseResultCancelledBridge";
-  PurchaseResultCancelled({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  static const BridgeClass bridgeClass = 'PurchaseResultCancelledBridge';
+  PurchaseResultCancelled({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class PurchaseResultPurchased extends PurchaseResult {
-  static const BridgeClass bridgeClass = "PurchaseResultPurchasedBridge";
-  PurchaseResultPurchased({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  static const BridgeClass bridgeClass = 'PurchaseResultPurchasedBridge';
+  PurchaseResultPurchased({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class PurchaseResultRestored extends PurchaseResult {
-  static const BridgeClass bridgeClass = "PurchaseResultRestoredBridge";
-  PurchaseResultRestored({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  static const BridgeClass bridgeClass = 'PurchaseResultRestoredBridge';
+  PurchaseResultRestored({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class PurchaseResultPending extends PurchaseResult {
-  static const BridgeClass bridgeClass = "PurchaseResultPendingBridge";
-  PurchaseResultPending({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  static const BridgeClass bridgeClass = 'PurchaseResultPendingBridge';
+  PurchaseResultPending({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class PurchaseResultFailed extends PurchaseResult {
-  static const BridgeClass bridgeClass = "PurchaseResultFailedBridge";
-  PurchaseResultFailed({ required String error, BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId, initializationArgs: {"error": error});
+  static const BridgeClass bridgeClass = 'PurchaseResultFailedBridge';
+  PurchaseResultFailed({required String error, super.bridgeId}): super(bridgeClass: bridgeClass, initializationArgs: {'error': error});
 }

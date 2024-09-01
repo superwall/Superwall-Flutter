@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:yaml/yaml.dart';
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
@@ -21,10 +20,10 @@ import '../private/LatestValueStreamController.dart';
 /// After configuring via `configure(apiKey: purchaseController: options: completion:)`,
 /// it provides access to all its features via instance functions and variables.
 class Superwall extends BridgeIdInstantiable {
-  static const BridgeClass bridgeClass = "SuperwallBridge";
-  Superwall({BridgeId? bridgeId})
-      : super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  static const BridgeClass bridgeClass = 'SuperwallBridge';
+  Superwall({super.bridgeId}) : super(bridgeClass: bridgeClass);
 
+  static Logging _logging = Logging();
   static final Superwall _superwall = Superwall();
 
   // Used to prevent functions in this class from being used until after
@@ -35,6 +34,9 @@ class Superwall extends BridgeIdInstantiable {
   // Getter for the shared instance
   static Superwall get shared {
     return _superwall;
+  }
+  static Logging get logging {
+    return _logging;
   }
 
   @override
@@ -167,6 +169,7 @@ class Superwall extends BridgeIdInstantiable {
     var result = await bridgeId.communicator.invokeBridgeMethod(
         'setSubscriptionStatus',
         {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
+    logging.debug('invokeBridgeResult setSubscriptionStatus: $result');
   }
 
   // Asynchronous method to check if Superwall has finished configuring
@@ -256,7 +259,7 @@ class Superwall extends BridgeIdInstantiable {
       // Create a proxy bridge for the non-null purchaseController
       purchaseControllerProxy = PurchaseControllerProxy(
           purchaseController: purchaseController,
-          givenId: "PurchaseControllerProxyBridge-bridgeId");
+          givenId: 'PurchaseControllerProxyBridge-bridgeId');
     }
 
     CompletionBlockProxy? completionBlockProxy;
@@ -271,7 +274,7 @@ class Superwall extends BridgeIdInstantiable {
     }
 
     final sdkVersion = await getPackageVersion('flutter');
-
+    final defaultLogger = options?.logging ?? Logging();
     try {
       await _superwall.bridgeId.communicator.invokeBridgeMethod('configure', {
         'apiKey': apiKey,
@@ -282,10 +285,11 @@ class Superwall extends BridgeIdInstantiable {
       });
     } catch (e) {
       // Handle any errors that occur during configuration
-      print('Failed to configure Superwall: $e');
+      defaultLogger.error('Failed to configure Superwall', e);
     }
 
     // Allows the functions in this class to now be invoked
+    _logging = defaultLogger;
     _isBridgedController.update(true);
   }
 
@@ -304,7 +308,7 @@ class Superwall extends BridgeIdInstantiable {
     final version = yaml['version'];
 
     if (version == null) {
-      return "";
+      return '';
     }
 
     return version.toString();
@@ -358,7 +362,7 @@ extension PublicPresentation on Superwall {
       'featureBlockProxyBridgeId': featureBlockProxy?.bridgeId
     });
 
-    print(result);
+    Superwall.logging.debug('invokeBridgeResult registerEvent: $result');
   }
 }
 
@@ -372,7 +376,7 @@ extension PublicIdentity on Superwall {
     await _waitForBridgeInstanceCreation();
 
     await bridgeId.communicator.invokeBridgeMethod(
-        'identify', {"userId": userId, "identityOptions": options?.toJson()});
+        'identify', {'userId': userId, 'identityOptions': options?.toJson()});
   }
 }
 
