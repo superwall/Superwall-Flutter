@@ -28,6 +28,11 @@ class SuperwallOptions {
 
   /// The log scope and level to print to the console.
   Logging logging = Logging();
+
+  /// Collects the `AdServices` attributes on iOS and attaches them to the user attributes.
+  ///
+  /// Defaults to `false`.
+  bool collectAdServicesAttribution = false;
 }
 
 extension SuperwallOptionsJson on SuperwallOptions {
@@ -39,6 +44,7 @@ extension SuperwallOptionsJson on SuperwallOptions {
       'localeIdentifier': localeIdentifier,
       'isGameControllerEnabled': isGameControllerEnabled,
       'logging': logging.toJson(),
+      'collectAdServicesAttribution': collectAdServicesAttribution
     };
   }
 }
@@ -49,9 +55,11 @@ extension SuperwallOptionsJson on SuperwallOptions {
 enum NetworkEnvironment {
   /// Default: Uses the standard latest environment.
   release,
+
   /// **WARNING**: Uses a release candidate environment. This is not meant
   /// for a production environment.
   releaseCandidate,
+
   /// **WARNING**: Uses the nightly build environment. This is not meant for
   /// a production environment.
   developer,
@@ -76,7 +84,7 @@ class Logging {
   LogLevel level = LogLevel.info;
 
   /// Defines the scope of logs to print to the console. Defaults to .all.
-  Set<LogScope> scopes = { LogScope.all };
+  Set<LogScope> scopes = {LogScope.all};
 }
 
 extension LoggingJson on Logging {

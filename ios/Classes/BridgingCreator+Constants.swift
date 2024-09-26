@@ -1,6 +1,9 @@
 extension BridgingCreator {
   struct Constants {
     static let bridgeTypes: [BridgeInstance.Type] = [
+      ConfigurationStatusPendingBridge.self,
+      ConfigurationStatusConfiguredBridge.self,
+      ConfigurationStatusFailedBridge.self,
       SuperwallBridge.self,
       SuperwallDelegateProxyBridge.self,
       PurchaseControllerProxyBridge.self,

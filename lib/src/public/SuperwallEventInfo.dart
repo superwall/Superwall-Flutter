@@ -65,7 +65,12 @@ enum EventType {
   reset,
   configRefresh,
   customPlacement,
-  configAttributes
+  configAttributes,
+  confirmAllAssignments,
+  configFail,
+  adServicesTokenRequestStart,
+  adServicesTokenRequestFail,
+  adServicesTokenRequestComplete
 }
 
 class SuperwallEvent {
@@ -91,29 +96,30 @@ class SuperwallEvent {
   final PaywallPresentationRequestStatusReason? reason;
   final RestoreType? restoreType;
   final Map<dynamic, dynamic>? userAttributes;
+  final String? token;
 
-  SuperwallEvent._({
-    required this.type,
-    this.eventName,
-    this.deviceAttributes,
-    this.params,
-    this.deepLinkUrl,
-    this.result,
-    this.paywallInfo,
-    this.transaction,
-    this.product,
-    this.error,
-    this.triggeredEventName,
-    this.attempt,
-    this.name,
-    this.survey,
-    this.selectedOption,
-    this.customResponse,
-    this.status,
-    this.reason,
-    this.restoreType,
-    this.userAttributes,
-  });
+  SuperwallEvent._(
+      {required this.type,
+      this.eventName,
+      this.deviceAttributes,
+      this.params,
+      this.deepLinkUrl,
+      this.result,
+      this.paywallInfo,
+      this.transaction,
+      this.product,
+      this.error,
+      this.triggeredEventName,
+      this.attempt,
+      this.name,
+      this.survey,
+      this.selectedOption,
+      this.customResponse,
+      this.status,
+      this.reason,
+      this.restoreType,
+      this.userAttributes,
+      this.token});
 
   factory SuperwallEvent.fromJson(Map<dynamic, dynamic> json) {
     switch (json['event']) {
@@ -323,6 +329,19 @@ class SuperwallEvent {
         );
       case 'configAttributes':
         return SuperwallEvent._(type: EventType.configAttributes);
+      case 'confirmAllAssignments':
+        return SuperwallEvent._(type: EventType.confirmAllAssignments);
+      case 'configFail':
+        return SuperwallEvent._(type: EventType.configFail);
+      case 'adServicesTokenRequestStart':
+        return SuperwallEvent._(type: EventType.adServicesTokenRequestStart);
+      case 'adServicesTokenRequestFail':
+        return SuperwallEvent._(
+            type: EventType.adServicesTokenRequestFail, error: json['error']);
+      case 'adServicesTokenRequestComplete':
+        return SuperwallEvent._(
+            type: EventType.adServicesTokenRequestComplete,
+            token: json['token']);
       default:
         throw ArgumentError('Invalid event type');
     }

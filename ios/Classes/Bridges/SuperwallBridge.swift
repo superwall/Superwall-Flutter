@@ -84,6 +84,11 @@ public class SuperwallBridge: BridgeInstance {
         Superwall.shared.subscriptionStatus = subscriptionStatusBridge.status
         result(nil)
 
+      case "getConfigurationStatusBridgeId":
+        // Implement logic to check the configuration status of Superwall
+        let configurationStatusBridgeId = Superwall.shared.configurationStatus.createBridgeId()
+        result(configurationStatusBridgeId)
+
       case "getIsConfigured":
         // Implement logic to check if Superwall has finished configuring
         result(Superwall.shared.isConfigured)

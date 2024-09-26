@@ -2,6 +2,25 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.3.0
+
+### Enhancements
+
+- Upgrades iOS SDK to 3.9.1. [View iOS SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/3.9.1)
+- Exposes the `SuperwallOption` `collectAdServicesAttribution` for iOS. When `true`, this collects the AdServices attribute token, which will be process by our backend. Adds `adServicesTokenRequest_start`, `adServicesTokenRequest_complete`, and `adServicesTokenRequest_fail`.
+- Exposes `getConfigurationStatus()`, which replaces `getIsConfigured()`. This returns either `ConfigurationStatusPending`, `ConfigurationStatusConfigured`, or `ConfigurationStatusFailed`.
+
+## 1.2.2
+
+### Enhancements
+
+- Upgrades Android SDK to 1.2.4 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/1.2.4)
+
+### Fixes
+
+- Reapply the single bridge instance limit to fix issues with `setDelegate` where plugins with multiple isolates are used
+- Fixes stateful bridges by applying new state when invoking create, resolving issues seen in #23
+
 ## 1.2.1
 
 ### Enhancements
