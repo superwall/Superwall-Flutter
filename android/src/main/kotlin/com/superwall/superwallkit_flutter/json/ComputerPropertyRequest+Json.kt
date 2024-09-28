@@ -1,5 +1,5 @@
 package com.superwall.superwallkit_flutter.bridges
-import ComputedPropertyRequest
+import com.superwall.sdk.models.config.ComputedPropertyRequest
 
 fun ComputedPropertyRequest.toJson(): Map<String, Any> {
     return mapOf(

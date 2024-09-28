@@ -215,5 +215,7 @@ fun SuperwallEvent.toJson(): Map<String, Any?> {
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
         is SuperwallEvent.ErrorThrown -> mapOf("event" to "errorThrown")
+        is SuperwallEvent.ConfigFail -> mapOf("event" to "configFail")
+
     }
 }

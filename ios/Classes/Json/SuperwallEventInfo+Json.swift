@@ -118,6 +118,16 @@ extension SuperwallEvent {
       return ["event": "customPlacement", "name": name, "params": params, "paywallInfoBridgeId": paywallInfo.createBridgeId()]
     case .configAttributes:
       return ["event": "configAttributes"]
+    case .confirmAllAssignments:
+      return ["event": "confirmAllAssignments"]
+    case .configFail:
+      return ["event": "configFail"]
+    case .adServicesTokenRequestStart:
+      return ["event": "adServicesTokenRequestStart"]
+    case .adServicesTokenRequestFail(error: let error):
+      return ["event": "adServicesTokenRequestFail", "error": error.localizedDescription]
+    case .adServicesTokenRequestComplete(token: let token):
+      return ["event": "adServicesTokenRequestComplete", "token": token]
     }
   }
 }

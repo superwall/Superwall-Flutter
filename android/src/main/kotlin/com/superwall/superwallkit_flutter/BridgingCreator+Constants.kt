@@ -4,6 +4,9 @@ import android.content.Context
 import com.superwall.superwallkit_flutter.bridges.BridgeId
 import com.superwall.superwallkit_flutter.bridges.BridgeInstance
 import com.superwall.superwallkit_flutter.bridges.CompletionBlockProxyBridge
+import com.superwall.superwallkit_flutter.bridges.ConfigurationStatusConfiguredBridge
+import com.superwall.superwallkit_flutter.bridges.ConfigurationStatusFailedBridge
+import com.superwall.superwallkit_flutter.bridges.ConfigurationStatusPendingBridge
 import com.superwall.superwallkit_flutter.bridges.ExperimentBridge
 import com.superwall.superwallkit_flutter.bridges.PaywallInfoBridge
 import com.superwall.superwallkit_flutter.bridges.PaywallPresentationHandlerProxyBridge
@@ -49,5 +52,8 @@ val BridgingCreator.bridgeInitializers: Map<String, (Context, BridgeId, Map<Stri
         PurchaseResultPendingBridge.bridgeClass() to { context, bridgeId, args -> PurchaseResultPendingBridge(context, bridgeId, args) },
         PurchaseResultFailedBridge.bridgeClass() to { context, bridgeId, args -> PurchaseResultFailedBridge(context, bridgeId, args) },
         RestorationResultRestoredBridge.bridgeClass() to { context, bridgeId, args -> RestorationResultRestoredBridge(context, bridgeId, args) },
-        RestorationResultFailedBridge.bridgeClass() to { context, bridgeId, args -> RestorationResultFailedBridge(context, bridgeId, args) }
+        RestorationResultFailedBridge.bridgeClass() to { context, bridgeId, args -> RestorationResultFailedBridge(context, bridgeId, args) },
+        ConfigurationStatusFailedBridge.bridgeClass() to { context, bridgeId, _ -> ConfigurationStatusFailedBridge(context, bridgeId) },
+        ConfigurationStatusPendingBridge.bridgeClass() to { context, bridgeId, _ -> ConfigurationStatusPendingBridge(context, bridgeId) },
+        ConfigurationStatusConfiguredBridge.bridgeClass() to { context, bridgeId, _ -> ConfigurationStatusConfiguredBridge(context, bridgeId) }
     )

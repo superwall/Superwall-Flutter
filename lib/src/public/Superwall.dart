@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
 import 'package:yaml/yaml.dart';
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
@@ -167,6 +168,19 @@ class Superwall extends BridgeIdInstantiable {
     var result = await bridgeId.communicator.invokeBridgeMethod(
         'setSubscriptionStatus',
         {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
+  }
+
+  // Asynchronous method to check the configuration status of Superwall
+  Future<ConfigurationStatus> getConfigurationStatus() async {
+    await _waitForBridgeInstanceCreation();
+
+    final configurationStatusBridgeId = await bridgeId.communicator
+        .invokeBridgeMethod('getConfigurationStatusBridgeId');
+    final status = ConfigurationStatus.createConfigurationStatusFromBridgeId(
+            configurationStatusBridgeId) ??
+        ConfigurationStatus.pending;
+
+    return status;
   }
 
   // Asynchronous method to check if Superwall has finished configuring

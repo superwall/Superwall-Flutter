@@ -117,7 +117,13 @@ class SuperwallBridge(
                     result.badArgs(call)
                 }
             }
+
+            "getConfigurationStatusBridgeId" -> {
+                val configurationStatusBridgeId = Superwall.instance.configurationState.createBridgeId()
+                result.success(configurationStatusBridgeId)
+            }
             "getIsConfigured" -> {
+
                 // TODO: Add to Android
 //                val isConfigured = Superwall.instance.isConfigured
 //                result.success(isConfigured)

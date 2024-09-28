@@ -1,6 +1,7 @@
 package com.superwall.superwallkit_flutter.bridges
 
 import android.content.Context
+import android.net.Uri
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.sdk.delegate.SubscriptionStatus
 import com.superwall.sdk.delegate.SuperwallDelegate
@@ -48,7 +49,7 @@ class SuperwallDelegateProxyBridge(
         communicator.invokeMethodOnMain("paywallWillOpenURL", mapOf("url" to url.toString()))
     }
 
-    override fun paywallWillOpenDeepLink(url: URL) {
+    override fun paywallWillOpenDeepLink(url: Uri) {
         communicator.invokeMethodOnMain("paywallWillOpenDeepLink", mapOf("url" to url.toString()))
     }
 
