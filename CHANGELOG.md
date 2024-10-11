@@ -2,6 +2,13 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.3.1
+
+### Enhancements
+- Upgrades Android SDK to 1.3.0 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/1.3.1)
+- Upgrades Android SDK to 3.10.1 [View Android SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/3.10.1)
+- Adds `confirmAllAssignments` method to `Superwall` which confirms assignments for all placements and returns an array of all confirmed experiment assignments. Note that the assignments may be different when a placement is registered due to changes in user, placement, or device parameters used in audience filters.
+
 ## 1.3.0
 
 ### Enhancements
