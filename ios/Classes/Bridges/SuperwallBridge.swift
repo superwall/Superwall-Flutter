@@ -214,7 +214,9 @@ public class SuperwallBridge: BridgeInstance {
         Superwall.shared.identify(userId: userId, options: options)
 
         result(nil)
-
+       case "confirmAllAssignments":
+        let assignments = Superwall.shared.confirmAllAssignments()
+        result(assignments.map { $0.toJson() })
       default:
         result(FlutterMethodNotImplemented)
     }

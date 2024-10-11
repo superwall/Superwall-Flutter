@@ -2,13 +2,11 @@ package com.superwall.superwallkit_flutter.bridges
 
 import android.app.Activity
 import android.content.Context
+import android.net.Uri
 import com.superwall.sdk.Superwall
 import com.superwall.sdk.config.options.SuperwallOptions
-import com.superwall.sdk.delegate.SuperwallDelegate
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import android.net.Uri
 import com.superwall.sdk.delegate.SubscriptionStatus
+import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.identity.identify
 import com.superwall.sdk.identity.setUserAttributes
 import com.superwall.sdk.misc.ActivityProvider
@@ -20,8 +18,9 @@ import com.superwall.superwallkit_flutter.SuperwallkitFlutterPlugin
 import com.superwall.superwallkit_flutter.argumentForKey
 import com.superwall.superwallkit_flutter.badArgs
 import com.superwall.superwallkit_flutter.bridgeInstance
-import com.superwall.superwallkit_flutter.json.JsonExtensions
-import com.superwall.superwallkit_flutter.json.identityOptionsFromJson
+import com.superwall.superwallkit_flutter.json.*
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,12 +33,15 @@ class SuperwallBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : BridgeInstance(context, bridgeId, initializationArgs), ActivityProvider {
-    companion object { fun bridgeClass(): BridgeClass = "SuperwallBridge" }
+    companion object {
+        fun bridgeClass(): BridgeClass = "SuperwallBridge"
+    }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "setDelegate" -> {
-                val delegateProxyBridge = call.bridgeInstance<SuperwallDelegate?>("delegateProxyBridgeId")
+                val delegateProxyBridge =
+                    call.bridgeInstance<SuperwallDelegate?>("delegateProxyBridgeId")
                 delegateProxyBridge?.let {
                     Superwall.instance.delegate = it
                     result.success(null)
@@ -47,10 +49,12 @@ class SuperwallBridge(
                     result.badArgs(call)
                 }
             }
+
             "getLogLevel" -> {
                 val logLevel = Superwall.instance.logLevel
                 result.success(logLevel.toJson())
             }
+
             "setLogLevel" -> {
                 val logLevelJson = call.argumentForKey<String>("logLevel")
                 val logLevel = logLevelJson?.let { JsonExtensions.logLevelFromJson(it) }
@@ -62,10 +66,12 @@ class SuperwallBridge(
                     result.badArgs(call)
                 }
             }
+
             "getUserAttributes" -> {
                 val attributes = Superwall.instance.userAttributes
                 result.success(attributes)
             }
+
             "setUserAttributes" -> {
                 val userAttributes = call.argument<Map<String, Any?>>("userAttributes")
                 userAttributes?.let {
@@ -75,43 +81,55 @@ class SuperwallBridge(
                     result.badArgs(call)
                 }
             }
+
             "getUserId" -> {
                 // Implement logic to get the current user's id
                 val userId = Superwall.instance.userId
                 result.success(userId)
             }
+
             "getIsLoggedIn" -> {
                 val isLoggedIn = Superwall.instance.isLoggedIn
                 result.success(isLoggedIn)
             }
+
             "getIsInitialized" -> {
                 val isInitialized = Superwall.initialized
                 result.success(isInitialized)
             }
+
             "getPresentedViewController" -> {
                 // TODO: Since UIViewController cannot be returned directly to Dart, handle appropriately
                 result.notImplemented()
             }
+
             "getLatestPaywallInfoBridgeId" -> {
                 val paywallInfo = Superwall.instance.latestPaywallInfo
                 result.success(paywallInfo?.createBridgeId())
             }
+
             "getSubscriptionStatusBridgeId" -> {
-                val subscriptionStatusBridgeId = Superwall.instance.subscriptionStatus.value.createBridgeId()
+                val subscriptionStatusBridgeId =
+                    Superwall.instance.subscriptionStatus.value.createBridgeId()
                 result.success(subscriptionStatusBridgeId)
             }
+
             "setSubscriptionStatus" -> {
-                val subscriptionStatusBridge = call.bridgeInstance<SubscriptionStatusBridge>("subscriptionStatusBridgeId")
+                val subscriptionStatusBridge =
+                    call.bridgeInstance<SubscriptionStatusBridge>("subscriptionStatusBridgeId")
                 subscriptionStatusBridge?.let {
                     Superwall.instance.setSubscriptionStatus(it.status)
 
                     val updatedValue = Superwall.instance.subscriptionStatus.value;
-                    val valid = (updatedValue == SubscriptionStatus.ACTIVE || updatedValue == SubscriptionStatus.INACTIVE) && (updatedValue != SubscriptionStatus.UNKNOWN);
-                    result.success(mapOf(
-                        "providedStatus" to it.status.toString(),
-                        "updatedValue" to updatedValue.toString(),
-                        "valid" to valid
-                    ))
+                    val valid =
+                        (updatedValue == SubscriptionStatus.ACTIVE || updatedValue == SubscriptionStatus.INACTIVE) && (updatedValue != SubscriptionStatus.UNKNOWN);
+                    result.success(
+                        mapOf(
+                            "providedStatus" to it.status.toString(),
+                            "updatedValue" to updatedValue.toString(),
+                            "valid" to valid
+                        )
+                    )
 
                 } ?: run {
                     result.badArgs(call)
@@ -119,9 +137,11 @@ class SuperwallBridge(
             }
 
             "getConfigurationStatusBridgeId" -> {
-                val configurationStatusBridgeId = Superwall.instance.configurationState.createBridgeId()
+                val configurationStatusBridgeId =
+                    Superwall.instance.configurationState.createBridgeId()
                 result.success(configurationStatusBridgeId)
             }
+
             "getIsConfigured" -> {
 
                 // TODO: Add to Android
@@ -129,6 +149,7 @@ class SuperwallBridge(
 //                result.success(isConfigured)
                 result.notImplemented()
             }
+
             "setIsConfigured" -> {
                 // TODO: Add to Android
 //                val configured = call.argumentForKey<Boolean>("configured")
@@ -138,14 +159,17 @@ class SuperwallBridge(
 //                result.success(null)
                 result.notImplemented()
             }
+
             "getIsPaywallPresented" -> {
                 val isPaywallPresented = Superwall.instance.isPaywallPresented
                 result.success(isPaywallPresented)
             }
+
             "preloadAllPaywalls" -> {
                 Superwall.instance.preloadAllPaywalls()
                 result.success(null)
             }
+
             "preloadPaywallsForEvents" -> {
                 val eventNames = call.argumentForKey<List<String>>("eventNames")?.toSet()
                 eventNames?.let {
@@ -153,6 +177,7 @@ class SuperwallBridge(
                 }
                 result.success(null)
             }
+
             "handleDeepLink" -> {
                 val urlString = call.argumentForKey<String>("url")
                 urlString?.let {
@@ -169,6 +194,7 @@ class SuperwallBridge(
                     result.badArgs(call)
                 }
             }
+
             "togglePaywallSpinner" -> {
                 val isHidden = call.argumentForKey<Boolean>("isHidden")
                 isHidden?.let {
@@ -178,19 +204,22 @@ class SuperwallBridge(
                     result.badArgs(call)
                 }
             }
+
             "reset" -> {
                 Superwall.instance.reset()
                 result.success(null)
             }
+
             "configure" -> {
                 val apiKey = call.argumentForKey<String>("apiKey")
                 apiKey?.let { apiKey ->
                     val purchaseControllerProxyBridge =
                         call.bridgeInstance<PurchaseControllerProxyBridge?>("purchaseControllerProxyBridgeId")
 
-                    val options: SuperwallOptions? = call.argument<Map<String, Any>>("options")?.let { optionsValue ->
-                        JsonExtensions.superwallOptionsFromJson(optionsValue)
-                    }
+                    val options: SuperwallOptions? =
+                        call.argument<Map<String, Any>>("options")?.let { optionsValue ->
+                            JsonExtensions.superwallOptionsFromJson(optionsValue)
+                        }
 
                     Superwall.configure(
                         applicationContext = this@SuperwallBridge.context,
@@ -206,8 +235,10 @@ class SuperwallBridge(
                     )
 
                     // Set the platform wrapper
-                    Superwall.instance.setPlatformWrapper("Flutter",
-                        call.argumentForKey<String>("sdkVersion")?:"");
+                    Superwall.instance.setPlatformWrapper(
+                        "Flutter",
+                        call.argumentForKey<String>("sdkVersion") ?: ""
+                    );
 
                     // Returning nil instead of the result from configure because we want to use the Dart
                     // instance of Superwall, not a native variant
@@ -216,26 +247,30 @@ class SuperwallBridge(
                     result.badArgs(call.method)
                 }
             }
+
             "dismiss" -> {
                 CoroutineScope(Dispatchers.Main).launch {
                     Superwall.instance.dismiss()
                     result.success(null)
                 }
             }
+
             "registerEvent" -> {
                 val event = call.argumentForKey<String>("event")
                 event?.let { event ->
                     val params = call.argument<Map<String, Any>>("params")
 
                     BreadCrumbs.append("SuperwallBridge.kt: Invoke registerEvent")
-                    val handlerProxyBridge = call.bridgeInstance<PaywallPresentationHandlerProxyBridge?>("handlerProxyBridgeId")
+                    val handlerProxyBridge =
+                        call.bridgeInstance<PaywallPresentationHandlerProxyBridge?>("handlerProxyBridgeId")
                     BreadCrumbs.append("SuperwallBridge.kt: Found handlerProxyBridge instance: $handlerProxyBridge")
 
                     val handler: PaywallPresentationHandler? = handlerProxyBridge?.handler
                     BreadCrumbs.append("SuperwallBridge.kt: Found handler: $handler")
 
                     Superwall.instance.register(event, params, handler) {
-                        val featureBlockProxyBridge = call.bridgeInstance<CompletionBlockProxyBridge>("featureBlockProxyBridgeId")
+                        val featureBlockProxyBridge =
+                            call.bridgeInstance<CompletionBlockProxyBridge>("featureBlockProxyBridgeId")
                         featureBlockProxyBridge?.let {
                             it.callCompletionBlock()
                         }
@@ -250,7 +285,8 @@ class SuperwallBridge(
                 val userId = call.argumentForKey<String>("userId")
                 userId?.let {
                     val identityOptionsJson = call.argument<Map<String, Any?>>("identityOptions")
-                    val identityOptions = identityOptionsJson?.let { JsonExtensions.identityOptionsFromJson(it) }
+                    val identityOptions =
+                        identityOptionsJson?.let { JsonExtensions.identityOptionsFromJson(it) }
 
                     Superwall.instance.identify(userId, identityOptions)
                     result.success(null)
@@ -258,6 +294,15 @@ class SuperwallBridge(
                     result.badArgs(call)
                 }
             }
+
+            "confirmAllAssignments" -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val assignments = Superwall.instance.confirmAllAssignments()
+                        .map { it.toJson() }
+                    result.success(assignments)
+                }
+            }
+
 
             else -> result.notImplemented()
         }
