@@ -244,6 +244,14 @@ class Superwall extends BridgeIdInstantiable {
     await bridgeId.communicator.invokeBridgeMethod('reset');
   }
 
+  // Confirms all user assignments
+  Future<List<dynamic>> confirmAllAssignments() async {
+    await _waitForBridgeInstanceCreation();
+
+    final result = await bridgeId.communicator.invokeBridgeMethod('confirmAllAssignments');
+    return List<dynamic>.from(result);
+  }
+
   // Asynchronous method to configure the Superwall instance. Proxies must always be stored.
   static Superwall configure(String apiKey,
       {PurchaseController? purchaseController,

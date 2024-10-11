@@ -216,6 +216,7 @@ fun SuperwallEvent.toJson(): Map<String, Any?> {
         )
         is SuperwallEvent.ErrorThrown -> mapOf("event" to "errorThrown")
         is SuperwallEvent.ConfigFail -> mapOf("event" to "configFail")
+        is SuperwallEvent.ConfirmAllAssignments -> mapOf("event" to "confirmAllAssignments")
 
     }
 }
