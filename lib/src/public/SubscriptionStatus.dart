@@ -2,7 +2,7 @@ import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 /// An enum representing the subscription status of the user.
 class SubscriptionStatus extends BridgeIdInstantiable {
-  SubscriptionStatus({ required BridgeClass bridgeClass, BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  SubscriptionStatus({required super.bridgeClass, super.bridgeId});
 
   static final SubscriptionStatus active = SubscriptionStatusActive();
   static final SubscriptionStatus inactive = SubscriptionStatusInactive();
@@ -27,16 +27,16 @@ class SubscriptionStatus extends BridgeIdInstantiable {
 }
 
 class SubscriptionStatusActive extends SubscriptionStatus {
-  static const BridgeClass bridgeClass = "SubscriptionStatusActiveBridge";
-  SubscriptionStatusActive({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  static const BridgeClass bridgeClass = 'SubscriptionStatusActiveBridge';
+  SubscriptionStatusActive({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class SubscriptionStatusInactive extends SubscriptionStatus {
-  static const BridgeClass bridgeClass = "SubscriptionStatusInactiveBridge";
-  SubscriptionStatusInactive({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  static const BridgeClass bridgeClass = 'SubscriptionStatusInactiveBridge';
+  SubscriptionStatusInactive({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
 
 class SubscriptionStatusUnknown extends SubscriptionStatus {
-  static const BridgeClass bridgeClass = "SubscriptionStatusUnknownBridge";
-  SubscriptionStatusUnknown({ BridgeId? bridgeId }): super(bridgeClass: bridgeClass, bridgeId: bridgeId);
+  static const BridgeClass bridgeClass = 'SubscriptionStatusUnknownBridge';
+  SubscriptionStatusUnknown({super.bridgeId}): super(bridgeClass: bridgeClass);
 }
