@@ -2,6 +2,13 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+
+## 1.3.2
+
+- Updates project linting and formatting to be consistent with the Flutter style
+- Removes rogue logging statements by matching them with the provided Log level
+- Adds `passIdentifiersToPlayStore` to `SuperwallOptions` which allows you to pass user identifiers to the Play Store purchases as account identifiers. This is useful for tracking user purchases in the Play Store console.
+
 ## 1.3.1
 
 ### Enhancements
