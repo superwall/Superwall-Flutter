@@ -14,6 +14,7 @@ fun JsonExtensions.Companion.superwallOptionsFromJson(dictionary: Map<String, An
 
     val localeIdentifier = dictionary["localeIdentifier"] as? String
     val isGameControllerEnabled = dictionary["isGameControllerEnabled"] as? Boolean ?: false
+    val passIdentifiersToPlayStore = dictionary["passIdentifiersToPlayStore"] as? Boolean ?: false
 
     return SuperwallOptions().apply {
         this.paywalls = paywalls
@@ -22,6 +23,7 @@ fun JsonExtensions.Companion.superwallOptionsFromJson(dictionary: Map<String, An
         this.localeIdentifier = localeIdentifier
         this.isGameControllerEnabled = isGameControllerEnabled
         this.logging = logging
+        this.passIdentifiersToPlayStore = passIdentifiersToPlayStore
     }
 }
 

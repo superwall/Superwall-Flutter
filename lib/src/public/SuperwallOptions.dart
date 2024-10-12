@@ -29,6 +29,9 @@ class SuperwallOptions {
   ///
   /// Defaults to `false`.
   bool collectAdServicesAttribution = false;
+
+  /// Enables passing identifier to the Play Store as AccountId's. Defaults to `false`.
+  bool passIdentifiersToPlayStore = false;
 }
 
 extension SuperwallOptionsJson on SuperwallOptions {
@@ -40,7 +43,8 @@ extension SuperwallOptionsJson on SuperwallOptions {
       'localeIdentifier': localeIdentifier,
       'isGameControllerEnabled': isGameControllerEnabled,
       'logging': logging.toJson(),
-      'collectAdServicesAttribution': collectAdServicesAttribution
+      'collectAdServicesAttribution': collectAdServicesAttribution,
+      'passIdentifiersToPlayStore' : passIdentifiersToPlayStore
     };
   }
 }
