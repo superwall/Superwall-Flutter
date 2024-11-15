@@ -1,4 +1,14 @@
 {
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
   "identifier" : "AD417988",
   "nonRenewingSubscriptions" : [
 
@@ -89,7 +99,10 @@
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "com.ui_tests.monthly",
           "subscriptionGroupID" : "4F31BE19",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         },
         {
           "adHocOffers" : [
@@ -114,7 +127,10 @@
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "com.ui_tests.annual",
           "subscriptionGroupID" : "4F31BE19",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         },
         {
           "adHocOffers" : [
@@ -139,7 +155,10 @@
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "com.ui_tests.custom_annual",
           "subscriptionGroupID" : "4F31BE19",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         },
         {
           "adHocOffers" : [
@@ -164,7 +183,10 @@
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "com.ui_tests.custom_monthly",
           "subscriptionGroupID" : "4F31BE19",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         },
         {
           "adHocOffers" : [
@@ -193,13 +215,48 @@
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "com.ui_tests.free_trial_annual",
           "subscriptionGroupID" : "4F31BE19",
-          "type" : "RecurringSubscription"
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "89.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "F92019EE",
+          "introductoryOffer" : {
+            "internalID" : "C3BBE17D",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "with a free 7 day trial",
+              "displayName" : "Yearly Subscription",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "sk.superwall.annual.89.99_7",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "sw_8999_yr",
+          "subscriptionGroupID" : "4F31BE19",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         }
       ]
     }
   ],
   "version" : {
-    "major" : 3,
+    "major" : 4,
     "minor" : 0
   }
 }

@@ -110,6 +110,23 @@ class Superwall extends BridgeIdInstantiable {
         'setUserAttributes', {'userAttributes': userAttributes});
   }
 
+  // Asynchronous method to get userAttributes
+  Future<String?> getLocaleIdentifier() async {
+    await _waitForBridgeInstanceCreation();
+
+    final identifier =
+        await bridgeId.communicator.invokeBridgeMethod('getLocaleIdentifier');
+    return identifier;
+  }
+
+  // Asynchronous method to set userAttributes
+  Future<void> setLocaleIdentifier(String? localeIdentifier) async {
+    await _waitForBridgeInstanceCreation();
+
+    await bridgeId.communicator.invokeBridgeMethod(
+        'setLocaleIdentifier', {'localeIdentifier': localeIdentifier});
+  }
+
   // Asynchronous method to get the current user's id
   Future<String> getUserId() async {
     await _waitForBridgeInstanceCreation();
@@ -252,7 +269,8 @@ class Superwall extends BridgeIdInstantiable {
   Future<List<dynamic>> confirmAllAssignments() async {
     await _waitForBridgeInstanceCreation();
 
-    final result = await bridgeId.communicator.invokeBridgeMethod('confirmAllAssignments');
+    final result =
+        await bridgeId.communicator.invokeBridgeMethod('confirmAllAssignments');
     return List<dynamic>.from(result);
   }
 

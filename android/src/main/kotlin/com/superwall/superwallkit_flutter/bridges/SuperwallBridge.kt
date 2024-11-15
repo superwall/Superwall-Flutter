@@ -82,6 +82,17 @@ class SuperwallBridge(
                 }
             }
 
+            "getLocaleIdentifier" -> {
+                val identifier = Superwall.instance.localeIdentifier
+                result.success(identifier)
+            }
+
+            "setLocaleIdentifier" -> {
+                val localeIdentifier = call.argument<String?>("localeIdentifier")
+                Superwall.instance.localeIdentifier = localeIdentifier
+                result.success(null)
+            }
+
             "getUserId" -> {
                 // Implement logic to get the current user's id
                 val userId = Superwall.instance.userId
