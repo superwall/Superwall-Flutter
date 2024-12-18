@@ -10,7 +10,7 @@ fun PaywallPresentationRequestStatus.toJson(): Map<String, String> = when (this)
     PaywallPresentationRequestStatus.Timeout -> mapOf("status" to "timeout")
 }
 
-fun PaywallPresentationRequestStatusReason.toJson(): Map<String, Any?> = when (this) {
+suspend fun PaywallPresentationRequestStatusReason.toJson(): Map<String, Any?> = when (this) {
     is PaywallPresentationRequestStatusReason.DebuggerPresented -> mapOf("reason" to "debuggerPresented")
     is PaywallPresentationRequestStatusReason.PaywallAlreadyPresented -> mapOf("reason" to "paywallAlreadyPresented")
     is PaywallPresentationRequestStatusReason.UserIsSubscribed -> mapOf("reason" to "userIsSubscribed")

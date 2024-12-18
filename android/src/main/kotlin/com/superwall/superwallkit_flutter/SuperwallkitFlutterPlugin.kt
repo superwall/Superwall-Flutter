@@ -36,7 +36,7 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
     }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        BridgingCreator.flutterPluginBinding = flutterPluginBinding
+        BridgingCreator.setFlutterPlugin(flutterPluginBinding)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -70,14 +70,14 @@ fun <T> MethodCall.argumentForKey(key: String): T? {
 }
 
 // Make sure to provide the key for the bridge (which provides the bridgeId)
-fun <T> MethodCall.bridgeInstance(key: String): T? {
+suspend fun <T> MethodCall.bridgeInstance(key: String): T? {
     BreadCrumbs.append("SuperwallKitFlutterPlugin.kt: Invoke bridgeInstance(key:) on $this. Key is $key")
     val bridgeId = this.argument<String>(key) ?: return null
     BreadCrumbs.append("SuperwallKitFlutterPlugin.kt: Invoke bridgeInstance(key:) in on $this. Found bridgeId $bridgeId")
     return BridgingCreator.shared.bridgeInstance(bridgeId)
 }
 
-fun <T> BridgeId.bridgeInstance(): T? {
+suspend fun <T> BridgeId.bridgeInstance(): T? {
     BreadCrumbs.append("SuperwallKitFlutterPlugin.kt: Invoke bridgeInstance() in on $this")
     return BridgingCreator.shared.bridgeInstance(this)
 }
