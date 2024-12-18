@@ -7,6 +7,10 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 ### Enhancements
 
 - Upgrades iOS SDK to 3.12.0 [View iOS SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/3.12.0)
+- Updates Android SDK to 1.5.0 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/1.5.0)
+
+### Fixes
+- Fixes issue with `PaywallInfoBridge` and other bridges throwing NPE when reattaching to activities from deep sleep.
 
 ## 1.3.4
 
