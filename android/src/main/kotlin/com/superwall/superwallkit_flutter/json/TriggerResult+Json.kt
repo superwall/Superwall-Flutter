@@ -1,7 +1,7 @@
 import com.superwall.sdk.models.triggers.TriggerResult
 import com.superwall.superwallkit_flutter.bridges.createBridgeId
 
-fun TriggerResult.toJson(): Map<String, Any?> {
+suspend fun TriggerResult.toJson(): Map<String, Any?> {
     return when (this) {
         is TriggerResult.EventNotFound -> mapOf("result" to "eventNotFound")
         is TriggerResult.NoRuleMatch -> mapOf("result" to "noRuleMatch")

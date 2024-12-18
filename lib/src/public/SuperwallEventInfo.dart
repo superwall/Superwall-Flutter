@@ -70,7 +70,9 @@ enum EventType {
   configFail,
   adServicesTokenRequestStart,
   adServicesTokenRequestFail,
-  adServicesTokenRequestComplete
+  adServicesTokenRequestComplete,
+  shimmerViewStart,
+  shimmerViewComplete
 }
 
 class SuperwallEvent {
@@ -342,6 +344,10 @@ class SuperwallEvent {
         return SuperwallEvent._(
             type: EventType.adServicesTokenRequestComplete,
             token: json['token']);
+      case 'shimmerViewStart':
+        return SuperwallEvent._(type: EventType.shimmerViewStart);
+      case 'shimmerViewComplete':
+        return SuperwallEvent._(type: EventType.shimmerViewComplete);
       default:
         throw ArgumentError('Invalid event type');
     }

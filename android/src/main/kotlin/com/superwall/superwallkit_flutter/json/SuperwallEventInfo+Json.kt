@@ -4,14 +4,14 @@ import com.superwall.sdk.store.abstractions.transactions.StoreTransaction
 import com.superwall.superwallkit_flutter.bridges.createBridgeId
 import com.superwall.superwallkit_flutter.json.toJson
 
-fun SuperwallEventInfo.toJson(): Map<String, Any> {
+suspend fun SuperwallEventInfo.toJson(): Map<String, Any> {
     return mapOf(
         "event" to event.toJson(),
         "params" to params
     )
 }
 
-fun SuperwallEvent.toJson(): Map<String, Any?> {
+suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
     return when (this) {
         is SuperwallEvent.FirstSeen -> mapOf("event" to "firstSeen")
         is SuperwallEvent.AppOpen -> mapOf("event" to "appOpen")
@@ -214,9 +214,11 @@ fun SuperwallEvent.toJson(): Map<String, Any?> {
             "params" to this.params,
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
-        is SuperwallEvent.ErrorThrown -> mapOf("event" to "errorThrown")
         is SuperwallEvent.ConfigFail -> mapOf("event" to "configFail")
         is SuperwallEvent.ConfirmAllAssignments -> mapOf("event" to "confirmAllAssignments")
+        is SuperwallEvent.PaywallResourceLoadFail ->  mapOf("event" to "paywallResourceLoadFail")
+        is SuperwallEvent.ShimmerViewComplete ->  mapOf("event" to "shimmerViewComplete")
+        else -> {mapOf()}
 
     }
 }

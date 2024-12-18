@@ -5,6 +5,10 @@ import com.superwall.sdk.paywall.presentation.internal.state.PaywallSkippedReaso
 import com.superwall.superwallkit_flutter.BridgingCreator
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 abstract class PaywallSkippedReasonBridge(
     context: Context,
@@ -19,6 +23,7 @@ abstract class PaywallSkippedReasonBridge(
                 val description = reason.toString()
                 result.success(description)
             }
+
             else -> result.notImplemented()
         }
     }
@@ -29,25 +34,35 @@ class PaywallSkippedReasonHoldoutBridge(
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PaywallSkippedReasonBridge(context, bridgeId, initializationArgs) {
-    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonHoldoutBridge" }
+    private val scope = CoroutineScope(Dispatchers.IO)
 
-    override val reason: PaywallSkippedReason = initializationArgs?.get("reason") as? PaywallSkippedReason
-        ?: throw IllegalArgumentException("Attempting to create a `PaywallSkippedReasonHoldoutBridge` without providing a reason.")
+    companion object {
+        fun bridgeClass(): BridgeClass = "PaywallSkippedReasonHoldoutBridge"
+    }
+
+    override val reason: PaywallSkippedReason =
+        initializationArgs?.get("reason") as? PaywallSkippedReason
+            ?: throw IllegalArgumentException("Attempting to create a `PaywallSkippedReasonHoldoutBridge` without providing a reason.")
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+
         when (call.method) {
             "getExperimentBridgeId" -> {
-                if (reason is PaywallSkippedReason.Holdout) {
-                    val experiment = reason.experiment
-                    val experimentBridgeId = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
-                        ExperimentBridge.bridgeClass(),
-                        mapOf("experiment" to experiment)
-                    )
-                    result.success(experimentBridgeId)
-                } else {
-                    result.notImplemented()
+                scope.launch {
+                    if (reason is PaywallSkippedReason.Holdout) {
+                        val experiment = reason.experiment
+                        val experimentBridgeId =
+                            BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
+                                ExperimentBridge.bridgeClass(),
+                                mapOf("experiment" to experiment)
+                            )
+                        result.success(experimentBridgeId)
+                    } else {
+                        result.notImplemented()
+                    }
                 }
             }
+
             else -> super.onMethodCall(call, result)
         }
     }
@@ -80,7 +95,7 @@ class PaywallSkippedReasonUserIsSubscribedBridge(
     override val reason: PaywallSkippedReason = PaywallSkippedReason.UserIsSubscribed()
 }
 
-fun PaywallSkippedReason.createBridgeId(): BridgeId {
+suspend fun PaywallSkippedReason.createBridgeId(): BridgeId {
     return when (this) {
         is PaywallSkippedReason.Holdout -> {
             val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
@@ -89,6 +104,7 @@ fun PaywallSkippedReason.createBridgeId(): BridgeId {
             )
             return bridgeInstance.bridgeId
         }
+
         is PaywallSkippedReason.NoRuleMatch -> {
             val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
                 PaywallSkippedReasonNoRuleMatchBridge.bridgeClass(),
@@ -96,6 +112,7 @@ fun PaywallSkippedReason.createBridgeId(): BridgeId {
             )
             return bridgeInstance.bridgeId
         }
+
         is PaywallSkippedReason.EventNotFound -> {
             val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
                 PaywallSkippedReasonEventNotFoundBridge.bridgeClass(),
@@ -103,6 +120,7 @@ fun PaywallSkippedReason.createBridgeId(): BridgeId {
             )
             return bridgeInstance.bridgeId
         }
+
         is PaywallSkippedReason.UserIsSubscribed -> {
             val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
                 PaywallSkippedReasonUserIsSubscribedBridge.bridgeClass(),

@@ -51,7 +51,7 @@ class ConfigurationStatusConfiguredBridge(context: Context, bridgeId: BridgeId) 
 }
 
 
-fun ConfigurationStatus.createBridgeId(): BridgeId {
+suspend fun ConfigurationStatus.createBridgeId(): BridgeId {
 
     val bridgeClass = when (this) {
         is ConfigurationStatus.Pending -> ConfigurationStatusPendingBridge.bridgeClass()

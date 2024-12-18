@@ -10,7 +10,7 @@ class CompletionBlockProxyBridge(
 ) : BridgeInstance(context, bridgeId, initializationArgs) {
     companion object { fun bridgeClass(): BridgeClass = "CompletionBlockProxyBridge" }
 
-    fun callCompletionBlock(value: Any? = null) {
-        communicator.invokeMethodOnMain("callCompletionBlock", value)
+    suspend fun callCompletionBlock(value: Any? = null) {
+        communicator().invokeMethodOnMain("callCompletionBlock", value)
     }
 }
