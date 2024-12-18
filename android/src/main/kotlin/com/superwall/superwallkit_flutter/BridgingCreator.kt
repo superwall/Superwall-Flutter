@@ -7,57 +7,70 @@ import com.superwall.superwallkit_flutter.bridges.Communicator
 import com.superwall.superwallkit_flutter.bridges.bridgeClass
 import com.superwall.superwallkit_flutter.bridges.generateBridgeId
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.filterNotNull
 import java.util.concurrent.ConcurrentHashMap
 import io.flutter.embedding.android.FlutterActivity
+import kotlinx.coroutines.flow.first
 
-class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) : MethodCallHandler {
+class BridgingCreator(
+    val flutterPluginBinding: suspend () -> FlutterPlugin.FlutterPluginBinding,
+    val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : MethodCallHandler {
     private val instances: MutableMap<String, BridgeInstance> = ConcurrentHashMap()
 
-    object Constants { }
+    object Constants {}
 
     companion object {
         private var _shared: BridgingCreator? = null
         val shared: BridgingCreator
             get() = _shared ?: throw IllegalStateException("BridgingCreator not initialized")
 
-        private var _flutterPluginBinding: FlutterPlugin.FlutterPluginBinding? = null
-        var flutterPluginBinding: FlutterPlugin.FlutterPluginBinding?
-            get() = _flutterPluginBinding
-            set(value) {
-                // Only allow binding to occur once. It appears that if binding is set multiple
-                // times (due to other SDK interference), we'll lose access to the
-                // SuperwallKitFlutterPlugin current activity
-                if (_flutterPluginBinding != null) {
-                    println("WARNING: Attempting to set a flutter plugin binding again.")
-                    return
-                }
+        private var _flutterPluginBinding: MutableStateFlow<FlutterPlugin.FlutterPluginBinding?> =
+            MutableStateFlow(null)
 
-                // Store for getter
+        suspend fun waitForPlugin() : FlutterPlugin.FlutterPluginBinding {
+            return _flutterPluginBinding.filterNotNull().first()
+        }
+        fun setFlutterPlugin(binding: FlutterPlugin.FlutterPluginBinding) {
+            // Only allow binding to occur once. It appears that if binding is set multiple
+            // times (due to other SDK interference), we'll lose access to the
+            // SuperwallKitFlutterPlugin current activity
+            if (_flutterPluginBinding.value != null) {
+                println("WARNING: Attempting to set a flutter plugin binding again.")
+                return
+            }
 
-                _flutterPluginBinding = value
+            // Store for getter
 
-                _flutterPluginBinding?.let {
-                    synchronized(BridgingCreator::class.java) {
-                            val bridge = BridgingCreator(it)
-                            _shared = bridge
-                            val communicator = Communicator(it.binaryMessenger, "SWK_BridgingCreator")
-                            communicator.setMethodCallHandler(bridge)
-                    }
+
+            binding?.let {
+                synchronized(BridgingCreator::class.java) {
+                    val bridge = BridgingCreator({ waitForPlugin() })
+                    _shared = bridge
+                    _flutterPluginBinding.value = binding
+                    val communicator = Communicator(binding.binaryMessenger, "SWK_BridgingCreator")
+                    communicator.setMethodCallHandler(bridge)
                 }
             }
+
+        }
     }
 
     fun tearDown() {
         print("Did tearDown BridgingCreator")
         _shared = null
-        _flutterPluginBinding = null
+        _flutterPluginBinding.value = null
     }
 
     // Generic function to retrieve a bridge instance
-    fun <T> bridgeInstance(bridgeId: BridgeId): T? {
+    suspend fun <T> bridgeInstance(bridgeId: BridgeId): T? {
         BreadCrumbs.append("BridgingCreator.kt: Searching for $bridgeId among ${instances.count()}: ${instances.toFormattedString()}")
         var instance = instances[bridgeId] as? T
 
@@ -70,25 +83,32 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        when (call.method) {
-            "createBridgeInstance" -> {
-                val bridgeId = call.argument<String>("bridgeId")
-                val initializationArgs = call.argument<Map<String, Any>>("args")
+        scope.launch {
 
-                if (bridgeId != null) {
-                    createBridgeInstanceFromBridgeId(bridgeId, initializationArgs)
-                    result.success(null)
-                } else {
-                    println("WARNING: Unable to create bridge")
-                    result.badArgs(call)
+            when (call.method) {
+                "createBridgeInstance" -> {
+                    val bridgeId = call.argument<String>("bridgeId")
+                    val initializationArgs = call.argument<Map<String, Any>>("args")
+
+                    if (bridgeId != null) {
+                        createBridgeInstanceFromBridgeId(bridgeId, initializationArgs)
+                        result.success(null)
+                    } else {
+                        println("WARNING: Unable to create bridge")
+                        result.badArgs(call)
+                    }
                 }
+
+                else -> result.notImplemented()
             }
-            else -> result.notImplemented()
         }
     }
 
     // Create the bridge instance as instructed from Dart
-    private fun createBridgeInstanceFromBridgeId(bridgeId: BridgeId, initializationArgs: Map<String, Any>?): BridgeInstance {
+    private suspend fun createBridgeInstanceFromBridgeId(
+        bridgeId: BridgeId,
+        initializationArgs: Map<String, Any>?
+    ): BridgeInstance {
         // An existing bridge instance might exist if it were created natively, instead of from Dart
         val existingBridgeInstance = instances[bridgeId]
         existingBridgeInstance?.let {
@@ -96,10 +116,14 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
         }
 
         // Create an instance of the bridge
-        val bridgeInstance = bridgeInitializers[bridgeId.bridgeClass()]?.invoke(flutterPluginBinding.applicationContext, bridgeId, initializationArgs)
+        val bridgeInstance = bridgeInitializers[bridgeId.bridgeClass()]?.invoke(
+            flutterPluginBinding().applicationContext,
+            bridgeId,
+            initializationArgs
+        )
         bridgeInstance?.let { bridgeInstance ->
             instances[bridgeId] = bridgeInstance
-            bridgeInstance.communicator.setMethodCallHandler(bridgeInstance)
+            bridgeInstance.communicator().setMethodCallHandler(bridgeInstance)
             return bridgeInstance
         } ?: run {
             throw AssertionError("Unable to find a bridge initializer for ${bridgeId}. Make sure to add to BridgingCreator+Constants.kt.}")
@@ -107,7 +131,10 @@ class BridgingCreator(val flutterPluginBinding: FlutterPlugin.FlutterPluginBindi
     }
 
     // Create the bridge instance as instructed from native
-    fun createBridgeInstanceFromBridgeClass(bridgeClass: BridgeClass, initializationArgs: Map<String, Any>? = null): BridgeInstance {
+    suspend fun createBridgeInstanceFromBridgeClass(
+        bridgeClass: BridgeClass,
+        initializationArgs: Map<String, Any>? = null
+    ): BridgeInstance {
         return createBridgeInstanceFromBridgeId(bridgeClass.generateBridgeId(), initializationArgs)
     }
 }

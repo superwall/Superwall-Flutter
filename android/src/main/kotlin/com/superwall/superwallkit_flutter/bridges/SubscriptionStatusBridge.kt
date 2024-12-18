@@ -60,7 +60,7 @@ class SubscriptionStatusUnknownBridge(
         get() = SubscriptionStatus.UNKNOWN
 }
 
-fun SubscriptionStatus.createBridgeId(): BridgeId {
+suspend fun SubscriptionStatus.createBridgeId(): BridgeId {
     val bridgeClass = when (this) {
         SubscriptionStatus.ACTIVE -> SubscriptionStatusActiveBridge.bridgeClass()
         SubscriptionStatus.INACTIVE -> SubscriptionStatusInactiveBridge.bridgeClass()
