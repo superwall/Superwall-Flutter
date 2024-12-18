@@ -25,11 +25,6 @@ class SuperwallOptions {
   /// The log scope and level to print to the console.
   Logging logging = Logging();
 
-  /// Collects the `AdServices` attributes on iOS and attaches them to the user attributes.
-  ///
-  /// Defaults to `false`.
-  bool collectAdServicesAttribution = false;
-
   /// Enables passing identifier to the Play Store as AccountId's. Defaults to `false`.
   bool passIdentifiersToPlayStore = false;
 }
@@ -43,8 +38,7 @@ extension SuperwallOptionsJson on SuperwallOptions {
       'localeIdentifier': localeIdentifier,
       'isGameControllerEnabled': isGameControllerEnabled,
       'logging': logging.toJson(),
-      'collectAdServicesAttribution': collectAdServicesAttribution,
-      'passIdentifiersToPlayStore' : passIdentifiersToPlayStore
+      'passIdentifiersToPlayStore': passIdentifiersToPlayStore
     };
   }
 }
@@ -84,9 +78,10 @@ class Logging {
   LogLevel level = LogLevel.info;
 
   /// Defines the scope of logs to print to the console. Defaults to .all.
-  Set<LogScope> scopes = { LogScope.all };
+  Set<LogScope> scopes = {LogScope.all};
 
-  void handleLogRecord(LogLevel level, String message, [Object? error, StackTrace? trace]) {
+  void handleLogRecord(LogLevel level, String message,
+      [Object? error, StackTrace? trace]) {
     if (level.index < this.level.index) {
       return;
     }
@@ -103,14 +98,14 @@ class Logging {
     }
   }
 
-  void debug(String message, [Object? error, StackTrace? trace])
-    => handleLogRecord(LogLevel.debug, message, error, trace);
-  void info(String message, [Object? error, StackTrace? trace])
-    => handleLogRecord(LogLevel.info, message, error, trace);
-  void warn(String message, [Object? error, StackTrace? trace])
-    => handleLogRecord(LogLevel.warn, message, error, trace);
-  void error(String message, [Object? error, StackTrace? trace])
-    => handleLogRecord(LogLevel.error, message, error, trace);
+  void debug(String message, [Object? error, StackTrace? trace]) =>
+      handleLogRecord(LogLevel.debug, message, error, trace);
+  void info(String message, [Object? error, StackTrace? trace]) =>
+      handleLogRecord(LogLevel.info, message, error, trace);
+  void warn(String message, [Object? error, StackTrace? trace]) =>
+      handleLogRecord(LogLevel.warn, message, error, trace);
+  void error(String message, [Object? error, StackTrace? trace]) =>
+      handleLogRecord(LogLevel.error, message, error, trace);
 }
 
 extension LoggingJson on Logging {
