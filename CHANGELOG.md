@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.3.8
+
+### Fixes
+
+- Removes unnecessary date comparison from PurchaseController example code.
+
 ## 1.3.7
 
 ### Enhancements

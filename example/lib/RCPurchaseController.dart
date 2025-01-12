@@ -172,29 +172,12 @@ class RCPurchaseController extends PurchaseController {
   Future<PurchaseResult> _handleSharedPurchase(
       Future<CustomerInfo> Function() performPurchase) async {
     try {
-      // Store the current purchase date to later determine if this is a new purchase or restore
-      DateTime purchaseDate = DateTime.now();
-
       // Perform the purchase using the function provided
       CustomerInfo customerInfo = await performPurchase();
 
       // Handle the results
       if (customerInfo.hasActiveEntitlementOrSubscription()) {
-        DateTime? latestTransactionPurchaseDate =
-            customerInfo.getLatestTransactionPurchaseDate();
-
-        // If no latest transaction date is found, consider it as a new purchase.
-        bool isNewPurchase = (latestTransactionPurchaseDate == null);
-
-        // If the current date (`purchaseDate`) is after the latestTransactionPurchaseDate,
-        bool purchaseHappenedInThePast =
-            latestTransactionPurchaseDate?.isBefore(purchaseDate) ?? false;
-
-        if (!isNewPurchase && purchaseHappenedInThePast) {
-          return PurchaseResult.restored;
-        } else {
-          return PurchaseResult.purchased;
-        }
+        return PurchaseResult.purchased;
       } else {
         return PurchaseResult.failed("No active subscriptions found.");
       }
