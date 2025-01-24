@@ -43,6 +43,7 @@ class BridgingCreator(
             // times (due to other SDK interference), we'll lose access to the
             // SuperwallKitFlutterPlugin current activity
             if (_flutterPluginBinding.value != null) {
+                SuperwallkitFlutterPlugin.reattachementCount.incrementAndGet()
                 println("WARNING: Attempting to set a flutter plugin binding again.")
                 return
             }
