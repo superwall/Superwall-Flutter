@@ -1,6 +1,6 @@
 name: superwallkit_flutter
 description: "Remotely configure every aspect of your paywall and double your revenue."
-version: 1.3.7
+version: 1.3.9
 homepage: "https://superwall.com"
 
 environment:

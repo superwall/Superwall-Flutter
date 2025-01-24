@@ -11,6 +11,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.WeakHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -19,6 +20,8 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
 
     companion object {
         private var instance: SuperwallkitFlutterPlugin? = null
+        val reattachementCount = AtomicInteger(0)
+        val activityReattachementCount = AtomicInteger(0)
 
         val currentActivity: Activity?
             get() = instance?.currentActivity
@@ -36,18 +39,26 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
     }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        BridgingCreator.setFlutterPlugin(flutterPluginBinding)
+        if(reattachementCount.get() == 0) {
+            BridgingCreator.setFlutterPlugin(flutterPluginBinding)
+        } else reattachementCount.incrementAndGet()
+
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        BridgingCreator.shared.tearDown()
-        instance = null
+        if(reattachementCount.get() == 0) {
+            BridgingCreator.shared.tearDown()
+            instance = null
+        } else reattachementCount.decrementAndGet()
     }
 
     //region ActivityAware
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        currentActivity = binding.activity
+        if(currentActivity!=null || activityReattachementCount.get() != 0)
+            activityReattachementCount.incrementAndGet()
+        else
+            currentActivity = binding.activity
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -59,7 +70,9 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
     }
 
     override fun onDetachedFromActivity() {
-        currentActivity = null
+        if(activityReattachementCount.get() == 0) {
+            currentActivity = null
+        }else activityReattachementCount.decrementAndGet()
     }
 
     //endregion
