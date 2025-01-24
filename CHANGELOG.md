@@ -2,6 +2,15 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.3.9
+
+### Fixes
+- Fixes a compatibility issue with `WorkManager` and other isolate-running libraries where the plugin would detach and cause a `Missing Activity` or `BridgeCreator` exception
+
+### Enhancements
+
+- Updates Android SDK to 1.5.4 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/1.5.4)
+
 ## 1.3.8
 
 ### Fixes

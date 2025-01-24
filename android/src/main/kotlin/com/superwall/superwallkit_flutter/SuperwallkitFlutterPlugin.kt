@@ -2,7 +2,6 @@ package com.superwall.superwallkit_flutter
 
 import android.app.Activity
 import android.os.Debug
-import android.util.Log
 import com.superwall.sdk.misc.runOnUiThread
 import com.superwall.superwallkit_flutter.bridges.BridgeId
 import io.flutter.embedding.engine.plugins.FlutterPlugin
