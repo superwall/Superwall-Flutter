@@ -86,7 +86,8 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         })
         ..onSkip(handleSkipReason);
 
-      Superwall.shared.registerEvent('flutter', handler: handler, feature: () {
+      Superwall.shared.registerPlacement('flutter', handler: handler,
+          feature: () {
         logging.info('Executing feature block');
         performFeatureBlockActions();
       });
@@ -122,15 +123,18 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       final url = await paywallInfo.url;
       logging.info('URL: $url');
 
-      final presentedByEventWithName =
-          await paywallInfo.presentedByEventWithName;
-      logging.info('Presented By Event With Name: $presentedByEventWithName');
+      final presentedByPlacementWithName =
+          await paywallInfo.presentedByPlacementWithName;
+      logging.info(
+          'Presented By Placement With Name: $presentedByPlacementWithName');
 
-      final presentedByEventWithId = await paywallInfo.presentedByEventWithId;
-      logging.info('Presented By Event With Id: $presentedByEventWithId');
+      final presentedByPlacementWithId =
+          await paywallInfo.presentedByPlacementWithId;
+      logging
+          .info('Presented By Placement With Id: $presentedByPlacementWithId');
 
-      final presentedByEventAt = await paywallInfo.presentedByEventAt;
-      logging.info('Presented By Event At: $presentedByEventAt');
+      final presentedByPlacementAt = await paywallInfo.presentedByPlacementAt;
+      logging.info('Presented By Placement At: $presentedByPlacementAt');
 
       final presentedBy = await paywallInfo.presentedBy;
       logging.info('Presented By: $presentedBy');
@@ -246,11 +250,9 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       final experimentId = await experiment.id;
       logging.info('Holdout with experiment: $experimentId');
       logging.info('Handler (onSkip): $description');
-    } else if (skipReason is PaywallSkippedReasonNoRuleMatch) {
+    } else if (skipReason is PaywallSkippedReasonNoAudienceMatch) {
       logging.info('Handler (onSkip): $description');
-    } else if (skipReason is PaywallSkippedReasonEventNotFound) {
-      logging.info('Handler (onSkip): $description');
-    } else if (skipReason is PaywallSkippedReasonUserIsSubscribed) {
+    } else if (skipReason is PaywallSkippedReasonPlacementNotFound) {
       logging.info('Handler (onSkip): $description');
     } else {
       logging.info('Handler (onSkip): Unknown skip reason');
@@ -271,7 +273,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
                 const Text('Running'),
                 ElevatedButton(
                   onPressed: onRegisterTapped,
-                  child: const Text('Register event'),
+                  child: const Text('Register placement'),
                 ),
                 ElevatedButton(
                   onPressed: performAction,
@@ -305,7 +307,9 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   }
 
   @override
-  Future<void> handleSuperwallEvent(SuperwallEventInfo eventInfo) async {
+  Future<void> handleSuperwallPlacement(
+      SuperwallPlacementInfo placementInfo) async {
+    //TODO: Change this
     // This delegate function is noisy. Uncomment to debug.
     //logging.info('handleSuperwallEvent: $eventInfo');
     //switch (eventInfo.event.type) {

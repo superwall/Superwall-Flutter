@@ -10,10 +10,9 @@ import com.superwall.superwallkit_flutter.bridges.ConfigurationStatusPendingBrid
 import com.superwall.superwallkit_flutter.bridges.ExperimentBridge
 import com.superwall.superwallkit_flutter.bridges.PaywallInfoBridge
 import com.superwall.superwallkit_flutter.bridges.PaywallPresentationHandlerProxyBridge
-import com.superwall.superwallkit_flutter.bridges.PaywallSkippedReasonEventNotFoundBridge
+import com.superwall.superwallkit_flutter.bridges.PaywallSkippedReasonPlacementNotFoundBridge
 import com.superwall.superwallkit_flutter.bridges.PaywallSkippedReasonHoldoutBridge
-import com.superwall.superwallkit_flutter.bridges.PaywallSkippedReasonNoRuleMatchBridge
-import com.superwall.superwallkit_flutter.bridges.PaywallSkippedReasonUserIsSubscribedBridge
+import com.superwall.superwallkit_flutter.bridges.PaywallSkippedReasonNoAudienceMatchBridge
 import com.superwall.superwallkit_flutter.bridges.PurchaseControllerProxyBridge
 import com.superwall.superwallkit_flutter.bridges.PurchaseResultCancelledBridge
 import com.superwall.superwallkit_flutter.bridges.PurchaseResultFailedBridge
@@ -22,9 +21,9 @@ import com.superwall.superwallkit_flutter.bridges.PurchaseResultPurchasedBridge
 import com.superwall.superwallkit_flutter.bridges.PurchaseResultRestoredBridge
 import com.superwall.superwallkit_flutter.bridges.RestorationResultFailedBridge
 import com.superwall.superwallkit_flutter.bridges.RestorationResultRestoredBridge
-import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusActiveBridge
-import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusInactiveBridge
-import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusUnknownBridge
+import com.superwall.superwallkit_flutter.bridges.EntitlementStatusActiveBridge
+import com.superwall.superwallkit_flutter.bridges.EntitlementStatusInactiveBridge
+import com.superwall.superwallkit_flutter.bridges.EntitlementStatusUnknownBridge
 import com.superwall.superwallkit_flutter.bridges.SuperwallBridge
 import com.superwall.superwallkit_flutter.bridges.SuperwallDelegateProxyBridge
 import kotlin.reflect.KClass
@@ -36,14 +35,13 @@ val BridgingCreator.bridgeInitializers: Map<String, (Context, BridgeId, Map<Stri
         SuperwallDelegateProxyBridge.bridgeClass() to { context, bridgeId, args -> SuperwallDelegateProxyBridge(context, bridgeId, args) },
         PurchaseControllerProxyBridge.bridgeClass() to { context, bridgeId, args -> PurchaseControllerProxyBridge(context, bridgeId, args) },
         CompletionBlockProxyBridge.bridgeClass() to { context, bridgeId, args -> CompletionBlockProxyBridge(context, bridgeId, args) },
-        SubscriptionStatusActiveBridge.bridgeClass() to { context, bridgeId, args -> SubscriptionStatusActiveBridge(context, bridgeId, args) },
-        SubscriptionStatusInactiveBridge.bridgeClass() to { context, bridgeId, args -> SubscriptionStatusInactiveBridge(context, bridgeId, args) },
-        SubscriptionStatusUnknownBridge.bridgeClass() to { context, bridgeId, args -> SubscriptionStatusUnknownBridge(context, bridgeId, args) },
+        EntitlementStatusActiveBridge.bridgeClass() to { context, bridgeId, args -> EntitlementStatusActiveBridge(context, bridgeId, args) },
+        EntitlementStatusInactiveBridge.bridgeClass() to { context, bridgeId, args -> EntitlementStatusInactiveBridge(context, bridgeId, args) },
+        EntitlementStatusUnknownBridge.bridgeClass() to { context, bridgeId, args -> EntitlementStatusUnknownBridge(context, bridgeId, args) },
         PaywallPresentationHandlerProxyBridge.bridgeClass() to { context, bridgeId, args -> PaywallPresentationHandlerProxyBridge(context, bridgeId, args) },
         PaywallSkippedReasonHoldoutBridge.bridgeClass() to { context, bridgeId, args -> PaywallSkippedReasonHoldoutBridge(context, bridgeId, args) },
-        PaywallSkippedReasonNoRuleMatchBridge.bridgeClass() to { context, bridgeId, args -> PaywallSkippedReasonNoRuleMatchBridge(context, bridgeId, args) },
-        PaywallSkippedReasonEventNotFoundBridge.bridgeClass() to { context, bridgeId, args -> PaywallSkippedReasonEventNotFoundBridge(context, bridgeId, args) },
-        PaywallSkippedReasonUserIsSubscribedBridge.bridgeClass() to { context, bridgeId, args -> PaywallSkippedReasonUserIsSubscribedBridge(context, bridgeId, args) },
+        PaywallSkippedReasonNoAudienceMatchBridge.bridgeClass() to { context, bridgeId, args -> PaywallSkippedReasonNoAudienceMatchBridge(context, bridgeId, args) },
+        PaywallSkippedReasonPlacementNotFoundBridge.bridgeClass() to { context, bridgeId, args -> PaywallSkippedReasonPlacementNotFoundBridge(context, bridgeId, args) },
         ExperimentBridge.bridgeClass() to { context, bridgeId, args -> ExperimentBridge(context, bridgeId, args) },
         PaywallInfoBridge.bridgeClass() to { context, bridgeId, args -> PaywallInfoBridge(context, bridgeId, args) },
         PurchaseResultCancelledBridge.bridgeClass() to { context, bridgeId, args -> PurchaseResultCancelledBridge(context, bridgeId, args) },

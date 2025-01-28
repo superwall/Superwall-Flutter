@@ -4,7 +4,8 @@ import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class SuperwallDelegateProxy extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = 'SuperwallDelegateProxyBridge';
-  SuperwallDelegateProxy({required this.delegate, super.bridgeId}): super(bridgeClass: bridgeClass);
+  SuperwallDelegateProxy({required this.delegate, super.bridgeId})
+      : super(bridgeClass: bridgeClass);
 
   SuperwallDelegate delegate;
 
@@ -36,17 +37,18 @@ class SuperwallDelegateProxy extends BridgeIdInstantiable {
         final name = call.argument('name');
         delegate.handleCustomPaywallAction(name);
         break;
-      case 'subscriptionStatusDidChange':
-        final bridgeId = call.argument('subscriptionStatusBridgeId');
-        final status = SubscriptionStatus.createSubscriptionStatusFromBridgeId(bridgeId);
+      case 'entitlementStatusDidChange':
+        final bridgeId = call.argument('entitlementStatusBridgeId');
+        final status =
+            EntitlementStatus.createSubscriptionStatusFromBridgeId(bridgeId);
         if (status != null) {
-          delegate.subscriptionStatusDidChange(status);
+          delegate.entitlementStatusDidChange(status);
         }
         break;
-      case 'handleSuperwallEvent':
-        final json = call.argument('eventInfo');
-        final eventInfo = SuperwallEventInfo.fromJson(json);
-        delegate.handleSuperwallEvent(eventInfo);
+      case 'handleSuperwallPlacement':
+        final json = call.argument('placementInfo');
+        final placementInfo = SuperwallPlacementInfo.fromJson(json);
+        delegate.handleSuperwallPlacement(placementInfo);
         break;
       case 'paywallWillOpenURL':
         final url = call.argument('url');
@@ -68,5 +70,4 @@ class SuperwallDelegateProxy extends BridgeIdInstantiable {
         throw ArgumentError('Method not implemented');
     }
   }
-
 }

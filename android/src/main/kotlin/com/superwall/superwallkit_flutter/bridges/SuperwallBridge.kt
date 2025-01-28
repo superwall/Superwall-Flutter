@@ -183,9 +183,9 @@ class SuperwallBridge(
                     result.success(null)
                 }
 
-                "preloadPaywallsForEvents" -> {
-                    val eventNames = call.argumentForKey<List<String>>("eventNames")?.toSet()
-                    eventNames?.let {
+                "preloadPaywallsForPlacements" -> {
+                    val placementNames = call.argumentForKey<List<String>>("placementNames")?.toSet()
+                    placementNames?.let {
                         Superwall.instance.preloadPaywalls(it)
                     }
                     result.success(null)
@@ -271,11 +271,11 @@ class SuperwallBridge(
                     }
                 }
 
-                "registerEvent" -> {
-                    val event = call.argumentForKey<String>("event")
-                    event?.let { event ->
+                "registerPlacement" -> {
+                    val placement = call.argumentForKey<String>("placement")
+                    placement?.let { placement ->
                         val params = call.argument<Map<String, Any>>("params")
-                        BreadCrumbs.append("SuperwallBridge.kt: Invoke registerEvent")
+                        BreadCrumbs.append("SuperwallBridge.kt: Invoke registerPlacement")
                         val handlerProxyBridge =
                             call.bridgeInstance<PaywallPresentationHandlerProxyBridge?>("handlerProxyBridgeId")
                         BreadCrumbs.append("SuperwallBridge.kt: Found handlerProxyBridge instance: $handlerProxyBridge")
@@ -283,7 +283,7 @@ class SuperwallBridge(
                         val handler: PaywallPresentationHandler? = handlerProxyBridge?.handler
                         BreadCrumbs.append("SuperwallBridge.kt: Found handler: $handler")
 
-                        Superwall.instance.register(event, params, handler) {
+                        Superwall.instance.register(placement, params, handler) {
                             scope.launch {
                                 val featureBlockProxyBridge =
                                     call.bridgeInstance<CompletionBlockProxyBridge>("featureBlockProxyBridgeId")

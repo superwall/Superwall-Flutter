@@ -23,11 +23,16 @@ public class PaywallInfoBridge: BridgeInstance {
       case "getExperimentBridgeId":
         let experimentBridgeId = paywallInfo.experiment?.createBridgeId()
         result(experimentBridgeId)
-      case "getTriggerSessionId":
-        let triggerSessionId = paywallInfo.triggerSessionId
-        result(triggerSessionId)
       case "getProducts":
-        let products = paywallInfo.products.map({ $0.toJson() })
+        let products = paywallInfo.products.map({ product in
+          var dictionary: [String: Any] = [
+            "id": product.id
+          ]
+          if let name = product.name {
+            dictionary["name"] = name
+          }
+          return dictionary
+        })
         result(products)
       case "getProductIds":
         let productIds = paywallInfo.productIds
@@ -38,15 +43,15 @@ public class PaywallInfoBridge: BridgeInstance {
       case "getUrl":
         let url = paywallInfo.url.absoluteString
         result(url)
-      case "getPresentedByEventWithName":
-        let presentedByEventWithName = paywallInfo.presentedByEventWithName
-        result(presentedByEventWithName)
-      case "getPresentedByEventWithId":
-        let presentedByEventWithId = paywallInfo.presentedByEventWithId
-        result(presentedByEventWithId)
-      case "getPresentedByEventAt":
-        let presentedByEventAt = paywallInfo.presentedByEventAt
-        result(presentedByEventAt)
+      case "getPresentedByPlacementWithName":
+        let presentedByPlacementWithName = paywallInfo.presentedByPlacementWithName
+        result(presentedByPlacementWithName)
+      case "getPresentedByPlacementWithId":
+        let presentedByPlacementWithId = paywallInfo.presentedByPlacementWithId
+        result(presentedByPlacementWithId)
+      case "getPresentedByPlacementAt":
+        let presentedByPlacementAt = paywallInfo.presentedByPlacementAt
+        result(presentedByPlacementAt)
       case "getPresentedBy":
         let presentedBy = paywallInfo.presentedBy
         result(presentedBy)

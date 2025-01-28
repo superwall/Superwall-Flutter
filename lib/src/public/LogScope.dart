@@ -14,11 +14,11 @@ enum LogScope {
   paywallEvents,
   productsManager,
   storeKitManager,
-  events,
+  placements,
   receipts,
   superwallCore,
   paywallPresentation,
-  paywallTransactions,
+  transactions,
   paywallViewController,
   cache,
   all
@@ -55,16 +55,16 @@ extension LogScopeJson on LogScope {
         return 'productsManager';
       case LogScope.storeKitManager:
         return 'storeKitManager';
-      case LogScope.events:
-        return 'events';
+      case LogScope.placements:
+        return 'placements';
       case LogScope.receipts:
         return 'receipts';
       case LogScope.superwallCore:
         return 'superwallCore';
       case LogScope.paywallPresentation:
         return 'paywallPresentation';
-      case LogScope.paywallTransactions:
-        return 'paywallTransactions';
+      case LogScope.transactions:
+        return 'transactions';
       case LogScope.paywallViewController:
         return 'paywallViewController';
       case LogScope.cache:
@@ -74,4 +74,3 @@ extension LogScopeJson on LogScope {
     }
   }
 }
-

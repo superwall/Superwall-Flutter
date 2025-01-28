@@ -72,39 +72,28 @@ public class SuperwallBridge: BridgeInstance {
       let paywallInfo = Superwall.shared.latestPaywallInfo
       result(paywallInfo?.createBridgeId())
 
-    case "getSubscriptionStatusBridgeId":
-      // Implement logic to get the subscription status of the user
-      let subscriptionStatusBridgeId = Superwall.shared.subscriptionStatus.createBridgeId()
-      result(subscriptionStatusBridgeId)
+    case "getEntitlementStatusBridgeId":
+      // Implement logic to get the entitlement status of the user
+      let entitlementStatusBridgeId = Superwall.shared.entitlements.status.createBridgeId()
+      result(entitlementStatusBridgeId)
 
-    case "setSubscriptionStatus":
-      // Implement logic to set the subscription status of the user
+    case "setEntitlementStatus":
+      // Implement logic to set the entitlement status of the user
       guard
-        let subscriptionStatusBridge: SubscriptionStatusBridge = call.bridgeInstance(
-          for: "subscriptionStatusBridgeId")
+        let entitlementStatusBridge: EntitlementStatusBridge = call.bridgeInstance(
+          for: "entitlementStatusBridgeId")
       else {
         result(call.badArgs)
         return
       }
 
-      Superwall.shared.subscriptionStatus = subscriptionStatusBridge.status
+      Superwall.shared.entitlements.status = entitlementStatusBridge.status
       result(nil)
 
     case "getConfigurationStatusBridgeId":
       // Implement logic to check the configuration status of Superwall
       let configurationStatusBridgeId = Superwall.shared.configurationStatus.createBridgeId()
       result(configurationStatusBridgeId)
-
-    case "getIsConfigured":
-      // Implement logic to check if Superwall has finished configuring
-      result(Superwall.shared.isConfigured)
-
-    case "setIsConfigured":
-      // Implement logic to set the configured state of Superwall
-      if let configured: Bool = call.argument(for: "configured") {
-        Superwall.shared.isConfigured = configured
-      }
-      result(nil)
 
     case "getLocaleIdentifier":
       // Implement logic to check if Superwall has finished configuring
@@ -129,10 +118,10 @@ public class SuperwallBridge: BridgeInstance {
       Superwall.shared.preloadAllPaywalls()
       result(nil)
 
-    case "preloadPaywallsForEvents":
-      // Implement logic to preload paywalls for specific event names
-      if let eventNames: [String] = call.argument(for: "eventNames") {
-        Superwall.shared.preloadPaywalls(forEvents: Set(eventNames))
+    case "preloadPaywallsForPlacements":
+      // Implement logic to preload paywalls for specific placement names
+      if let placementNames: [String] = call.argument(for: "placementNames") {
+        Superwall.shared.preloadPaywalls(forPlacements: Set(placementNames))
       }
       result(nil)
 
@@ -197,8 +186,8 @@ public class SuperwallBridge: BridgeInstance {
         result(nil)
       }
 
-    case "registerEvent":
-      guard let event: String = call.argument(for: "event") else {
+    case "registerPlacement":
+      guard let placement: String = call.argument(for: "placement") else {
         result(call.badArgs)
         return
       }
@@ -216,7 +205,7 @@ public class SuperwallBridge: BridgeInstance {
         return handlerProxyBridge.handler
       }()
 
-      Superwall.shared.register(event: event, params: params, handler: handler) {
+      Superwall.shared.register(placement: placement, params: params, handler: handler) {
         if let featureBlockProxyBridge: CompletionBlockProxyBridge = call.bridgeInstance(
           for: "featureBlockProxyBridgeId")
         {

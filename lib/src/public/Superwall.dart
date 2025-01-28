@@ -10,7 +10,7 @@ import 'package:superwallkit_flutter/src/public/LogLevel.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart';
 import 'package:superwallkit_flutter/src/public/PurchaseController.dart';
-import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
+import 'package:superwallkit_flutter/src/public/EntitlementStatus.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
 import 'package:superwallkit_flutter/src/private/CompletionBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
@@ -37,6 +37,7 @@ class Superwall extends BridgeIdInstantiable {
   static Superwall get shared {
     return _superwall;
   }
+
   static Logging get logging {
     return _logging;
   }
@@ -166,29 +167,29 @@ class Superwall extends BridgeIdInstantiable {
     }
   }
 
-  // Asynchronous method to get the subscription status of the user
-  Future<SubscriptionStatus> getSubscriptionStatus() async {
+  // Asynchronous method to get the entitlement status of the user
+  Future<EntitlementStatus> getEntitlementStatus() async {
     await _waitForBridgeInstanceCreation();
 
-    final subscriptionStatusBridgeId = await bridgeId.communicator
-        .invokeBridgeMethod('getSubscriptionStatusBridgeId');
-    final status = SubscriptionStatus.createSubscriptionStatusFromBridgeId(
-            subscriptionStatusBridgeId) ??
-        SubscriptionStatus.unknown;
+    final entitlementStatusBridgeId = await bridgeId.communicator
+        .invokeBridgeMethod('getEntitlementStatusBridgeId');
+    final status = EntitlementStatus.createEntitlementStatusFromBridgeId(
+            entitlementStatusBridgeId) ??
+        EntitlementStatus.unknown;
 
     return status;
   }
 
-  // Asynchronous method to set the subscription status of the user
-  Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
+  // Asynchronous method to set the entitlement status of the user
+  Future<void> setEntitlementStatus(EntitlementStatus status) async {
     await _waitForBridgeInstanceCreation();
 
-    final subscriptionStatusBridgeId = status.bridgeId;
+    final entitlementStatusBridgeId = status.bridgeId;
 
     var result = await bridgeId.communicator.invokeBridgeMethod(
-        'setSubscriptionStatus',
-        {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
-    logging.debug('invokeBridgeResult setSubscriptionStatus: $result');
+        'setEntitlementStatus',
+        {'entitlementStatusBridgeId': entitlementStatusBridgeId});
+    logging.debug('invokeBridgeResult setEntitlementStatus: $result');
   }
 
   // Asynchronous method to check the configuration status of Superwall
@@ -234,12 +235,13 @@ class Superwall extends BridgeIdInstantiable {
     await bridgeId.communicator.invokeBridgeMethod('preloadAllPaywalls');
   }
 
-  // Asynchronous method to preload paywalls for specific event names
-  Future<void> preloadPaywallsForEvents(Set<String> eventNames) async {
+  // Asynchronous method to preload paywalls for specific placement names
+  Future<void> preloadPaywallsForPlacements(Set<String> placementNames) async {
     await _waitForBridgeInstanceCreation();
 
     await bridgeId.communicator.invokeBridgeMethod(
-        'preloadPaywallsForEvents', {'eventNames': eventNames.toList()});
+        'preloadPaywallsForPlacements',
+        {'placementNames': placementNames.toList()});
   }
 
   // Asynchronous method to handle deep links for paywall previews
@@ -367,12 +369,12 @@ extension PublicPresentation on Superwall {
     await bridgeId.communicator.invokeBridgeMethod('dismiss');
   }
 
-  /// Registers an event to access a feature, potentially showing a paywall.
+  /// Registers an placement to access a feature, potentially showing a paywall.
   ///
-  /// Shows a paywall based on the event, user matching campaign rules, and subscription status.
+  /// Shows a paywall based on the placement, user matching campaign rules, and entitlement status.
   /// Requires creating a campaign and adding the event on the Superwall Dashboard.
   /// The shown paywall is determined by campaign rules and user assignments.
-  Future<void> registerEvent(String event,
+  Future<void> registerPlacement(String placement,
       {Map<String, dynamic>? params,
       PaywallPresentationHandler? handler,
       Function? feature}) async {
@@ -396,14 +398,14 @@ extension PublicPresentation on Superwall {
     }
 
     var result =
-        await bridgeId.communicator.invokeBridgeMethod('registerEvent', {
-      'event': event,
+        await bridgeId.communicator.invokeBridgeMethod('registerPlacement', {
+      'placement': placement,
       'params': params,
       'handlerProxyBridgeId': handlerProxy?.bridgeId,
       'featureBlockProxyBridgeId': featureBlockProxy?.bridgeId
     });
 
-    Superwall.logging.debug('invokeBridgeResult registerEvent: $result');
+    Superwall.logging.debug('invokeBridgeResult registerPlacement: $result');
   }
 }
 

@@ -9,22 +9,32 @@ public class PaywallPresentationHandlerProxyBridge: BridgeInstance {
 
     handler.onPresent { [weak self] paywallInfo in
       guard let self else { return }
-      communicator.invokeMethodOnMain("onPresent", arguments: ["paywallInfoBridgeId": paywallInfo.createBridgeId()])
+      communicator.invokeMethodOnMain(
+        "onPresent", arguments: ["paywallInfoBridgeId": paywallInfo.createBridgeId()])
     }
 
-    handler.onDismiss { [weak self] paywallInfo in
+    handler.onDismiss { [weak self] paywallInfo, paywallResult in
       guard let self else { return }
-      communicator.invokeMethodOnMain("onDismiss", arguments: ["paywallInfoBridgeId": paywallInfo.createBridgeId()])
+      communicator.invokeMethodOnMain(
+        "onDismiss",
+        arguments: [
+          "paywallInfoBridgeId": paywallInfo.createBridgeId(),
+          "paywallResult": paywallResult.toJson(),
+        ]
+      )
     }
 
     handler.onError { [weak self] error in
       guard let self else { return }
-      communicator.invokeMethodOnMain("onError", arguments: ["errorString": error.localizedDescription])
+      communicator.invokeMethodOnMain(
+        "onError", arguments: ["errorString": error.localizedDescription])
     }
 
     handler.onSkip { [weak self] paywallSkippedReason in
       guard let self else { return }
-      communicator.invokeMethodOnMain("onSkip", arguments: ["paywallSkippedReasonBridgeId": paywallSkippedReason.createBridgeId()])
+      communicator.invokeMethodOnMain(
+        "onSkip", arguments: ["paywallSkippedReasonBridgeId": paywallSkippedReason.createBridgeId()]
+      )
     }
 
     return handler

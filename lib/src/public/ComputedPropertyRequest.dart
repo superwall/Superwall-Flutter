@@ -1,21 +1,21 @@
-/// A request to compute a device property associated with an event at runtime.
+/// A request to compute a device property associated with an placement at runtime.
 class ComputedPropertyRequest {
   /// The type of device property to compute.
   final ComputedPropertyRequestType type;
 
   /// The name of the event used to compute the device property.
-  final String eventName;
+  final String placememtName;
 
   ComputedPropertyRequest({
     required this.type,
-    required this.eventName,
+    required this.placememtName,
   });
 
   // Factory constructor to create a ComputedPropertyRequest instance from a JSON map
   factory ComputedPropertyRequest.fromJson(Map<dynamic, dynamic> json) {
     return ComputedPropertyRequest(
       type: ComputedPropertyRequestTypeExtension.fromJson(json['type']),
-      eventName: json['eventName'],
+      placememtName: json['placememtName'],
     );
   }
 }

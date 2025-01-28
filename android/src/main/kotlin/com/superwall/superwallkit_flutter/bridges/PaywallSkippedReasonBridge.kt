@@ -68,31 +68,22 @@ class PaywallSkippedReasonHoldoutBridge(
     }
 }
 
-class PaywallSkippedReasonNoRuleMatchBridge(
+class PaywallSkippedReasonNoAudienceMatchBridge(
     context: Context,
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PaywallSkippedReasonBridge(context, bridgeId, initializationArgs) {
-    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonNoRuleMatchBridge" }
-    override val reason: PaywallSkippedReason = PaywallSkippedReason.NoRuleMatch()
+    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonNoAudienceMatchBridge" }
+    override val reason: PaywallSkippedReason = PaywallSkippedReason.NoAudienceMatch()
 }
 
-class PaywallSkippedReasonEventNotFoundBridge(
+class PaywallSkippedReasonPlacementNotFoundBridge(
     context: Context,
     bridgeId: BridgeId,
     initializationArgs: Map<String, Any>? = null
 ) : PaywallSkippedReasonBridge(context, bridgeId, initializationArgs) {
-    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonEventNotFoundBridge" }
-    override val reason: PaywallSkippedReason = PaywallSkippedReason.EventNotFound()
-}
-
-class PaywallSkippedReasonUserIsSubscribedBridge(
-    context: Context,
-    bridgeId: BridgeId,
-    initializationArgs: Map<String, Any>? = null
-) : PaywallSkippedReasonBridge(context, bridgeId, initializationArgs) {
-    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonUserIsSubscribedBridge" }
-    override val reason: PaywallSkippedReason = PaywallSkippedReason.UserIsSubscribed()
+    companion object { fun bridgeClass(): BridgeClass = "PaywallSkippedReasonPlacementNotFoundBridge" }
+    override val reason: PaywallSkippedReason = PaywallSkippedReason.PlacementNotFound()
 }
 
 suspend fun PaywallSkippedReason.createBridgeId(): BridgeId {
@@ -105,25 +96,17 @@ suspend fun PaywallSkippedReason.createBridgeId(): BridgeId {
             return bridgeInstance.bridgeId
         }
 
-        is PaywallSkippedReason.NoRuleMatch -> {
+        is PaywallSkippedReason.NoAudienceMatch -> {
             val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
-                PaywallSkippedReasonNoRuleMatchBridge.bridgeClass(),
+                PaywallSkippedReasonNoAudienceMatchBridge.bridgeClass(),
                 mapOf("reason" to this)
             )
             return bridgeInstance.bridgeId
         }
 
-        is PaywallSkippedReason.EventNotFound -> {
+        is PaywallSkippedReason.PlacementNotFound -> {
             val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
-                PaywallSkippedReasonEventNotFoundBridge.bridgeClass(),
-                mapOf("reason" to this)
-            )
-            return bridgeInstance.bridgeId
-        }
-
-        is PaywallSkippedReason.UserIsSubscribed -> {
-            val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
-                PaywallSkippedReasonUserIsSubscribedBridge.bridgeClass(),
+                PaywallSkippedReasonPlacementNotFoundBridge.bridgeClass(),
                 mapOf("reason" to this)
             )
             return bridgeInstance.bridgeId

@@ -2,8 +2,8 @@ import Flutter
 import SuperwallKit
 
 // Abstract base class for subscription status enum
-public class SubscriptionStatusBridge: BridgeInstance {
-  var status: SubscriptionStatus {
+public class EntitlementStatusBridge: BridgeInstance {
+  var status: EntitlementStatus {
     assertionFailure("Subclasses must implement")
     return .unknown
   }
@@ -19,32 +19,43 @@ public class SubscriptionStatusBridge: BridgeInstance {
   }
 }
 
-public class SubscriptionStatusActiveBridge: SubscriptionStatusBridge {
-  class override var bridgeClass: BridgeClass { "SubscriptionStatusActiveBridge" }
-  override var status: SubscriptionStatus { .active }
+public class EntitlementStatusActiveBridge: EntitlementStatusBridge {
+  class override var bridgeClass: BridgeClass { "EntitlementStatusActiveBridge" }
+  override var status: EntitlementStatus { .active(entitlements) }
+
+  let entitlements: Set<Entitlement>
+
+  required init(bridgeId: BridgeId, initializationArgs: [String : Any]? = nil) {
+    guard let entitlements = initializationArgs?["entitlements"] as? Set<Entitlement> else {
+      fatalError("Attempting to create `RestorationResultFailedBridge` without providing `error`.")
+    }
+
+    self.entitlements = entitlements
+    super.init(bridgeId: bridgeId, initializationArgs: initializationArgs)
+  }
 }
 
-public class SubscriptionStatusInactiveBridge: SubscriptionStatusBridge {
-  class override var bridgeClass: BridgeClass { "SubscriptionStatusInactiveBridge" }
-  override var status: SubscriptionStatus { .inactive }
+public class EntitlementStatusInactiveBridge: EntitlementStatusBridge {
+  class override var bridgeClass: BridgeClass { "EntitlementStatusInactiveBridge" }
+  override var status: EntitlementStatus { .inactive }
 }
 
-public class SubscriptionStatusUnknownBridge: SubscriptionStatusBridge {
-  class override var bridgeClass: BridgeClass { "SubscriptionStatusUnknownBridge" }
-  override var status: SubscriptionStatus { .unknown }
+public class EntitlementStatusUnknownBridge: EntitlementStatusBridge {
+  class override var bridgeClass: BridgeClass { "EntitlementStatusUnknownBridge" }
+  override var status: EntitlementStatus { .unknown }
 }
 
-extension SubscriptionStatus {
+extension EntitlementStatus {
   func createBridgeId() -> BridgeId {
     switch self {
       case .active:
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: SubscriptionStatusActiveBridge.bridgeClass)
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: EntitlementStatusActiveBridge.bridgeClass)
         return bridgeInstance.bridgeId
       case .inactive:
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: SubscriptionStatusInactiveBridge.bridgeClass)
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: EntitlementStatusInactiveBridge.bridgeClass)
         return bridgeInstance.bridgeId
       case .unknown:
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: SubscriptionStatusUnknownBridge.bridgeClass)
+        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: EntitlementStatusUnknownBridge.bridgeClass)
         return bridgeInstance.bridgeId
     }
   }

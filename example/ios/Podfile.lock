@@ -8,12 +8,12 @@ PODS:
   - PurchasesHybridCommon (10.9.0):
     - RevenueCat (= 4.43.0)
   - RevenueCat (4.43.0)
-  - Superscript (0.1.16)
-  - SuperwallKit (3.12.1):
-    - Superscript (= 0.1.16)
+  - Superscript (0.1.17)
+  - SuperwallKit (4.0.0-beta.4):
+    - Superscript (= 0.1.17)
   - superwallkit_flutter (0.0.1):
     - Flutter
-    - SuperwallKit (= 3.12.1)
+    - SuperwallKit (= 4.0.0-beta.4)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -44,9 +44,9 @@ SPEC CHECKSUMS:
   purchases_flutter: a10ab0c4bb4effbc9b78be6513658ae659e67a20
   PurchasesHybridCommon: 0e157d11d04fdfdd434b5c6d05acb58fd1cc9db8
   RevenueCat: f7b90c52f4b7e322bc9e7adaf734030523534b06
-  Superscript: 17e2597de5e1ddfa132e217b33d1eb8eddf13e0f
-  SuperwallKit: cbe59c2c745dfe966f810ab3fcadb92a20fde419
-  superwallkit_flutter: 43527c6adb5dcbc5a8722d200edde2d41f34137a
+  Superscript: 9854c733dd673a2cbc5dd9f919bf31e2b50345b1
+  SuperwallKit: 2a289f7fca3fc853c12657fe6e1e0c8abe271f0f
+  superwallkit_flutter: 0e1f9afebced4b8d7e0020a7ab38be97378cb89c
 
 PODFILE CHECKSUM: 1959d098c91d8a792531a723c4a9d7e9f6a01e38
 

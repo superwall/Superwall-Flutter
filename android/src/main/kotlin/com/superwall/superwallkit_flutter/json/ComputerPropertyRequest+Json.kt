@@ -4,7 +4,7 @@ import com.superwall.sdk.models.config.ComputedPropertyRequest
 fun ComputedPropertyRequest.toJson(): Map<String, Any> {
     return mapOf(
         "type" to this.type.toJson(),
-        "eventName" to this.eventName
+        "placementName" to this.placementName
     )
 }
 

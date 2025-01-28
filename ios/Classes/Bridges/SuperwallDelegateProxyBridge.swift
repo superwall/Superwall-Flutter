@@ -26,12 +26,12 @@ public class SuperwallDelegateProxyBridge: BridgeInstance, SuperwallDelegate {
     communicator.invokeMethodOnMain("handleCustomPaywallAction", arguments: ["name": name])
   }
 
-  public func subscriptionStatusDidChange(to newValue: SubscriptionStatus) {
-    communicator.invokeMethodOnMain("subscriptionStatusDidChange", arguments: ["subscriptionStatusBridgeId": newValue.createBridgeId()])
+  public func entitlementStatusDidChange(from oldValue: EntitlementStatus, to newValue: EntitlementStatus) {
+    communicator.invokeMethodOnMain("entitlementStatusDidChange", arguments: ["entitlementStatusBridgeId": newValue.createBridgeId()])
   }
 
-  public func handleSuperwallEvent(withInfo eventInfo: SuperwallEventInfo) {
-    communicator.invokeMethodOnMain("handleSuperwallEvent", arguments: ["eventInfo": eventInfo.toJson()])
+  public func handleSuperwallPlacement(withInfo placementInfo: SuperwallPlacementInfo) {
+    communicator.invokeMethodOnMain("handleSuperwallPlacement", arguments: ["placementInfo": placementInfo.toJson()])
   }
 
   public func paywallWillOpenURL(url: URL) {

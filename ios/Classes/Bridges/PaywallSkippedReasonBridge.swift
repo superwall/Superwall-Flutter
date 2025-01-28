@@ -4,7 +4,7 @@ import SuperwallKit
 public class PaywallSkippedReasonBridge: BridgeInstance {
   var reason: PaywallSkippedReason {
     assertionFailure("Subclasses must implement")
-    return .eventNotFound
+    return .placementNotFound
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -50,40 +50,30 @@ public class PaywallSkippedReasonHoldoutBridge: PaywallSkippedReasonBridge {
   }
 }
 
-public class PaywallSkippedReasonNoRuleMatchBridge: PaywallSkippedReasonBridge {
-  class override var bridgeClass: BridgeClass { "PaywallSkippedReasonNoRuleMatchBridge" }
-  override var reason: PaywallSkippedReason { .noRuleMatch }
+public class PaywallSkippedReasonNoAudienceMatchBridge: PaywallSkippedReasonBridge {
+  class override var bridgeClass: BridgeClass { "PaywallSkippedReasonNoAudienceMatchBridge" }
+  override var reason: PaywallSkippedReason { .noAudienceMatch }
 }
 
-public class PaywallSkippedReasonEventNotFoundBridge: PaywallSkippedReasonBridge {
-  class override var bridgeClass: BridgeClass { "PaywallSkippedReasonEventNotFoundBridge" }
-  override var reason: PaywallSkippedReason { .eventNotFound }
-}
-
-public class PaywallSkippedReasonUserIsSubscribedBridge: PaywallSkippedReasonBridge {
-  class override var bridgeClass: BridgeClass { "PaywallSkippedReasonUserIsSubscribedBridge" }
-  override var reason: PaywallSkippedReason { .userIsSubscribed }
+public class PaywallSkippedReasonPlacementNotFoundBridge: PaywallSkippedReasonBridge {
+  class override var bridgeClass: BridgeClass { "PaywallSkippedReasonPlacementNotFoundBridge" }
+  override var reason: PaywallSkippedReason { .placementNotFound }
 }
 
 extension PaywallSkippedReason {
   func createBridgeId() -> BridgeId {
     switch self {
-      case .holdout(_):
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonHoldoutBridge.bridgeClass, initializationArgs: ["reason": self])
-        return bridgeInstance.bridgeId
+    case .holdout(_):
+      let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonHoldoutBridge.bridgeClass, initializationArgs: ["reason": self])
+      return bridgeInstance.bridgeId
 
-      case .noRuleMatch:
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonNoRuleMatchBridge.bridgeClass, initializationArgs: ["reason": self])
-        return bridgeInstance.bridgeId
+    case .noAudienceMatch:
+      let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonNoAudienceMatchBridge.bridgeClass, initializationArgs: ["reason": self])
+      return bridgeInstance.bridgeId
 
-      case .eventNotFound:
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonEventNotFoundBridge.bridgeClass, initializationArgs: ["reason": self])
-        return bridgeInstance.bridgeId
-
-      case .userIsSubscribed:
-        let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonUserIsSubscribedBridge.bridgeClass, initializationArgs: ["reason": self])
-        return bridgeInstance.bridgeId
-
+    case .placementNotFound:
+      let bridgeInstance = BridgingCreator.shared.createBridgeInstance(bridgeClass: PaywallSkippedReasonPlacementNotFoundBridge.bridgeClass, initializationArgs: ["reason": self])
+      return bridgeInstance.bridgeId
     }
   }
 }

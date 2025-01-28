@@ -1,82 +1,82 @@
-import com.superwall.sdk.analytics.superwall.SuperwallEvent
-import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
+import com.superwall.sdk.analytics.superwall.SuperwallPlacement
+import com.superwall.sdk.analytics.superwall.SuperwallPlacementInfo
 import com.superwall.sdk.store.abstractions.transactions.StoreTransaction
 import com.superwall.superwallkit_flutter.bridges.createBridgeId
 import com.superwall.superwallkit_flutter.json.toJson
 
-suspend fun SuperwallEventInfo.toJson(): Map<String, Any> {
+suspend fun SuperwallPlacementInfo.toJson(): Map<String, Any> {
     return mapOf(
-        "event" to event.toJson(),
+        "placement" to placement.toJson(),
         "params" to params
     )
 }
 
-suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
+suspend fun SuperwallPlacement.toJson(): Map<String, Any?> {
     return when (this) {
-        is SuperwallEvent.FirstSeen -> mapOf("event" to "firstSeen")
-        is SuperwallEvent.AppOpen -> mapOf("event" to "appOpen")
-        is SuperwallEvent.AppLaunch -> mapOf("event" to "appLaunch")
-        is SuperwallEvent.IdentityAlias -> mapOf("event" to "identityAlias")
-        is SuperwallEvent.AppInstall -> mapOf("event" to "appInstall")
-        is SuperwallEvent.SessionStart -> mapOf("event" to "sessionStart")
-        is SuperwallEvent.Reset -> mapOf("event" to "reset")
-        is SuperwallEvent.Restore.Start -> mapOf("event" to "restoreStart")
-        is SuperwallEvent.Restore.Complete -> mapOf("event" to "restoreComplete")
-        is SuperwallEvent.Restore.Fail -> {
-            mapOf("event" to "restoreFail")
+        is SuperwallPlacement.FirstSeen -> mapOf("placement" to "firstSeen")
+        is SuperwallPlacement.AppOpen -> mapOf("placement" to "appOpen")
+        is SuperwallPlacement.AppLaunch -> mapOf("placement" to "appLaunch")
+        is SuperwallPlacement.IdentityAlias -> mapOf("placement" to "identityAlias")
+        is SuperwallPlacement.AppInstall -> mapOf("placement" to "appInstall")
+        is SuperwallPlacement.SessionStart -> mapOf("placement" to "sessionStart")
+        is SuperwallPlacement.Reset -> mapOf("placement" to "reset")
+        is SuperwallPlacement.Restore.Start -> mapOf("placement" to "restoreStart")
+        is SuperwallPlacement.Restore.Complete -> mapOf("placement" to "restoreComplete")
+        is SuperwallPlacement.Restore.Fail -> {
+            mapOf("placement" to "restoreFail")
             mapOf("message" to this.reason)
         }
 
-        is SuperwallEvent.DeviceAttributes -> mapOf(
-            "event" to "deviceAttributes",
+        is SuperwallPlacement.DeviceAttributes -> mapOf(
+            "placement" to "deviceAttributes",
             "attributes" to this.attributes
         )
 
-        is SuperwallEvent.SubscriptionStatusDidChange -> mapOf("event" to "subscriptionStatusDidChange")
-        is SuperwallEvent.AppClose -> mapOf("event" to "appClose")
-        is SuperwallEvent.DeepLink -> mapOf("event" to "deepLink", "url" to this.uri.toString())
-        is SuperwallEvent.TriggerFire -> mapOf(
-            "event" to "triggerFire",
-            "eventName" to this.eventName,
+        is SuperwallPlacement.EntitlementStatusDidChange -> mapOf("placement" to "entitlementStatusDidChange")
+        is SuperwallPlacement.AppClose -> mapOf("placement" to "appClose")
+        is SuperwallPlacement.DeepLink -> mapOf("placement" to "deepLink", "url" to this.uri.toString())
+        is SuperwallPlacement.TriggerFire -> mapOf(
+            "placement" to "triggerFire",
+            "placementName" to this.placementName,
             "result" to this.result.toJson()
         )
 
-        is SuperwallEvent.PaywallOpen -> mapOf(
-            "event" to "paywallOpen",
+        is SuperwallPlacement.PaywallOpen -> mapOf(
+            "placement" to "paywallOpen",
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallClose -> mapOf(
-            "event" to "paywallClose",
+        is SuperwallPlacement.PaywallClose -> mapOf(
+            "placement" to "paywallClose",
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallDecline -> mapOf(
-            "event" to "paywallDecline",
+        is SuperwallPlacement.PaywallDecline -> mapOf(
+            "placement" to "paywallDecline",
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.TransactionStart -> mapOf(
-            "event" to "transactionStart",
+        is SuperwallPlacement.TransactionStart -> mapOf(
+            "placement" to "transactionStart",
             "product" to this.product.toJson(),
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.TransactionFail -> mapOf(
-            "event" to "transactionFail",
+        is SuperwallPlacement.TransactionFail -> mapOf(
+            "placement" to "transactionFail",
             "error" to this.error.localizedMessage,
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.TransactionAbandon -> mapOf(
-            "event" to "transactionAbandon",
+        is SuperwallPlacement.TransactionAbandon -> mapOf(
+            "placement" to "transactionAbandon",
             "product" to this.product.toJson(),
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.TransactionComplete -> {
+        is SuperwallPlacement.TransactionComplete -> {
             val json = mutableMapOf<String, Any?>(
-                "event" to "transactionComplete",
+                "placement" to "transactionComplete",
                 "product" to this.product.toJson(),
                 "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
             )
@@ -90,113 +90,113 @@ suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
             return json
         }
 
-        is SuperwallEvent.SubscriptionStart -> mapOf(
-            "event" to "subscriptionStart",
+        is SuperwallPlacement.SubscriptionStart -> mapOf(
+            "placement" to "subscriptionStart",
             "product" to this.product.toJson(),
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.FreeTrialStart -> mapOf(
-            "event" to "freeTrialStart",
+        is SuperwallPlacement.FreeTrialStart -> mapOf(
+            "placement" to "freeTrialStart",
             "product" to this.product.toJson(),
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.TransactionRestore -> mapOf(
-            "event" to "transactionRestore",
+        is SuperwallPlacement.TransactionRestore -> mapOf(
+            "placement" to "transactionRestore",
             "restoreType" to this.restoreType.toJson(),
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.TransactionTimeout -> mapOf(
-            "event" to "transactionTimeout",
+        is SuperwallPlacement.TransactionTimeout -> mapOf(
+            "placement" to "transactionTimeout",
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.UserAttributes -> mapOf(
-            "event" to "userAttributes",
+        is SuperwallPlacement.UserAttributes -> mapOf(
+            "placement" to "userAttributes",
             "attributes" to this.attributes
         )
 
-        is SuperwallEvent.NonRecurringProductPurchase -> mapOf(
-            "event" to "nonRecurringProductPurchase",
+        is SuperwallPlacement.NonRecurringProductPurchase -> mapOf(
+            "placement" to "nonRecurringProductPurchase",
             "product" to this.product.toJson(),
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallResponseLoadStart -> mapOf(
-            "event" to "paywallResponseLoadStart",
-            "triggeredEventName" to (this.triggeredEventName ?: "")
+        is SuperwallPlacement.PaywallResponseLoadStart -> mapOf(
+            "placement" to "paywallResponseLoadStart",
+            "triggeredPlacementName" to (this.triggeredPlacementName ?: "")
         )
 
-        is SuperwallEvent.PaywallResponseLoadNotFound -> mapOf(
-            "event" to "paywallResponseLoadNotFound",
-            "triggeredEventName" to (this.triggeredEventName ?: "")
+        is SuperwallPlacement.PaywallResponseLoadNotFound -> mapOf(
+            "placement" to "paywallResponseLoadNotFound",
+            "triggeredPlacementName" to (this.triggeredPlacementName ?: "")
         )
 
-        is SuperwallEvent.PaywallResponseLoadFail -> mapOf(
-            "event" to "paywallResponseLoadFail",
-            "triggeredEventName" to (this.triggeredEventName ?: "")
+        is SuperwallPlacement.PaywallResponseLoadFail -> mapOf(
+            "placement" to "paywallResponseLoadFail",
+            "triggeredPlacementName" to (this.triggeredPlacementName ?: "")
         )
 
-        is SuperwallEvent.PaywallResponseLoadComplete -> mapOf(
-            "event" to "paywallResponseLoadComplete",
-            "triggeredEventName" to (this.triggeredEventName ?: ""),
+        is SuperwallPlacement.PaywallResponseLoadComplete -> mapOf(
+            "placement" to "paywallResponseLoadComplete",
+            "triggeredPlacementName" to (this.triggeredPlacementName ?: ""),
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallWebviewLoadStart -> mapOf(
-            "event" to "paywallWebviewLoadStart",
+        is SuperwallPlacement.PaywallWebviewLoadStart -> mapOf(
+            "placement" to "paywallWebviewLoadStart",
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallWebviewLoadFail -> mapOf(
-            "event" to "paywallWebviewLoadFail",
+        is SuperwallPlacement.PaywallWebviewLoadFail -> mapOf(
+            "placement" to "paywallWebviewLoadFail",
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallWebviewLoadComplete -> mapOf(
-            "event" to "paywallWebviewLoadComplete",
+        is SuperwallPlacement.PaywallWebviewLoadComplete -> mapOf(
+            "placement" to "paywallWebviewLoadComplete",
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
-        is SuperwallEvent.PaywallWebviewLoadFallback -> mapOf(
-            "event" to "paywallWebviewLoadFallback",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
-        )
-
-        is SuperwallEvent.PaywallWebviewLoadTimeout -> mapOf(
-            "event" to "paywallWebviewLoadTimeout",
+        is SuperwallPlacement.PaywallWebviewLoadFallback -> mapOf(
+            "placement" to "paywallWebviewLoadFallback",
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallProductsLoadStart -> mapOf(
-            "event" to "paywallProductsLoadStart",
-            "triggeredEventName" to (this.triggeredEventName ?: ""),
+        is SuperwallPlacement.PaywallWebviewLoadTimeout -> mapOf(
+            "placement" to "paywallWebviewLoadTimeout",
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallProductsLoadFail -> mapOf(
-            "event" to "paywallProductsLoadFail",
-            "triggeredEventName" to (this.triggeredEventName ?: ""),
+        is SuperwallPlacement.PaywallProductsLoadStart -> mapOf(
+            "placement" to "paywallProductsLoadStart",
+            "triggeredPlacementName" to (this.triggeredPlacementName ?: ""),
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallProductsLoadComplete -> mapOf(
-            "event" to "paywallProductsLoadComplete",
-            "triggeredEventName" to (this.triggeredEventName ?: "")
+        is SuperwallPlacement.PaywallProductsLoadFail -> mapOf(
+            "placement" to "paywallProductsLoadFail",
+            "triggeredPlacementName" to (this.triggeredPlacementName ?: ""),
+            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.SurveyResponse -> mapOf(
-            "event" to "surveyResponse",
+        is SuperwallPlacement.PaywallProductsLoadComplete -> mapOf(
+            "placement" to "paywallProductsLoadComplete",
+            "triggeredPlacementName" to (this.triggeredPlacementName ?: "")
+        )
+
+        is SuperwallPlacement.SurveyResponse -> mapOf(
+            "placement" to "surveyResponse",
             "survey" to this.survey.toJson(),
             "selectedOption" to this.selectedOption.toJson(),
             "customResponse" to (this.customResponse ?: ""),
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
 
-        is SuperwallEvent.PaywallPresentationRequest -> {
+        is SuperwallPlacement.PaywallPresentationRequest -> {
             val json = mutableMapOf(
-                "event" to "paywallPresentationRequest",
+                "placement" to "paywallPresentationRequest",
                 "status" to this.status.toJson()
             )
             val reasonJson = this.reason?.toJson()
@@ -205,19 +205,19 @@ suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
             }
             return json
         }
-        is SuperwallEvent.SurveyClose -> mapOf("event" to "surveyClose")
-        is SuperwallEvent.ConfigRefresh -> mapOf("event" to "configRefresh")
-        is SuperwallEvent.ConfigAttributes -> mapOf("event" to "configAttributes")
-        is SuperwallEvent.CustomPlacement -> mapOf(
-            "event" to "customPlacement",
+        is SuperwallPlacement.SurveyClose -> mapOf("placement" to "surveyClose")
+        is SuperwallPlacement.ConfigRefresh -> mapOf("placement" to "configRefresh")
+        is SuperwallPlacement.ConfigAttributes -> mapOf("placement" to "configAttributes")
+        is SuperwallPlacement.CustomPlacement -> mapOf(
+            "placement" to "customPlacement",
             "name" to this.placementName,
             "params" to this.params,
             "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
         )
-        is SuperwallEvent.ConfigFail -> mapOf("event" to "configFail")
-        is SuperwallEvent.ConfirmAllAssignments -> mapOf("event" to "confirmAllAssignments")
-        is SuperwallEvent.PaywallResourceLoadFail ->  mapOf("event" to "paywallResourceLoadFail")
-        is SuperwallEvent.ShimmerViewComplete ->  mapOf("event" to "shimmerViewComplete")
+        is SuperwallPlacement.ConfigFail -> mapOf("placement" to "configFail")
+        is SuperwallPlacement.ConfirmAllAssignments -> mapOf("placement" to "confirmAllAssignments")
+        is SuperwallPlacement.PaywallResourceLoadFail ->  mapOf("placement" to "paywallResourceLoadFail")
+        is SuperwallPlacement.ShimmerViewComplete ->  mapOf("placement" to "shimmerViewComplete")
         else -> {mapOf()}
 
     }
