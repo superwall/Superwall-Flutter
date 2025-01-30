@@ -3,6 +3,7 @@ package com.superwall.superwallkit_flutter.bridges
 import android.content.Context
 import com.superwall.sdk.paywall.presentation.PaywallInfo
 import com.superwall.superwallkit_flutter.BridgingCreator
+import com.superwall.superwallkit_flutter.json.toJson
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +36,6 @@ class PaywallInfoBridge(
                 "getName" -> result.success(paywallInfo.name)
                 "getIdentifier" -> result.success(paywallInfo.identifier)
                 "getExperimentBridgeId" -> result.success(paywallInfo.experiment?.createBridgeId())
-                "getTriggerSessionId" -> result.success(paywallInfo.triggerSessionId)
                 "getProducts" -> result.success(paywallInfo.products.map { it.toJson() })
                 "getProductIds" -> result.success(paywallInfo.productIds)
                 "getUrl" -> result.success(paywallInfo.url.toString())

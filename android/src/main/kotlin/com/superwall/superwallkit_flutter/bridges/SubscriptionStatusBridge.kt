@@ -1,11 +1,12 @@
 package com.superwall.superwallkit_flutter.bridges
 
 import android.content.Context
-import com.superwall.sdk.delegate.SubscriptionStatus
+import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.superwallkit_flutter.BridgingCreator
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import com.superwall.superwallkit_flutter.json.toEntitlement
 
 open class SubscriptionStatusBridge(
     context: Context,
@@ -35,7 +36,10 @@ class SubscriptionStatusActiveBridge(
     companion object { fun bridgeClass(): BridgeClass = "SubscriptionStatusActiveBridge" }
 
     override val status: SubscriptionStatus
-        get() = SubscriptionStatus.ACTIVE
+        get() {
+            val entitlements = (initializationArgs?.get("entitlements") as? Set<Map<String,Any>>)?.map { it.toEntitlement() }?.toSet() ?: emptySet()
+            return SubscriptionStatus.Active(entitlements = entitlements)
+        }
 }
 
 class SubscriptionStatusInactiveBridge(
@@ -46,7 +50,7 @@ class SubscriptionStatusInactiveBridge(
     companion object { fun bridgeClass(): BridgeClass = "SubscriptionStatusInactiveBridge" }
 
     override val status: SubscriptionStatus
-        get() = SubscriptionStatus.INACTIVE
+        get() = SubscriptionStatus.Inactive
 }
 
 class SubscriptionStatusUnknownBridge(
@@ -57,14 +61,14 @@ class SubscriptionStatusUnknownBridge(
     companion object { fun bridgeClass(): BridgeClass = "SubscriptionStatusUnknownBridge" }
 
     override val status: SubscriptionStatus
-        get() = SubscriptionStatus.UNKNOWN
+        get() = SubscriptionStatus.Unknown
 }
 
 suspend fun SubscriptionStatus.createBridgeId(): BridgeId {
     val bridgeClass = when (this) {
-        SubscriptionStatus.ACTIVE -> SubscriptionStatusActiveBridge.bridgeClass()
-        SubscriptionStatus.INACTIVE -> SubscriptionStatusInactiveBridge.bridgeClass()
-        SubscriptionStatus.UNKNOWN -> SubscriptionStatusUnknownBridge.bridgeClass()
+        is SubscriptionStatus.Active -> SubscriptionStatusActiveBridge.bridgeClass()
+        is SubscriptionStatus.Inactive -> SubscriptionStatusInactiveBridge.bridgeClass()
+        is SubscriptionStatus.Unknown -> SubscriptionStatusUnknownBridge.bridgeClass()
     }
 
     val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(bridgeClass)

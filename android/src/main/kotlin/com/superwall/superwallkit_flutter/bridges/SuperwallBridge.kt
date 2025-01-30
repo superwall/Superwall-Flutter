@@ -1,11 +1,12 @@
 package com.superwall.superwallkit_flutter.bridges
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.net.Uri
 import com.superwall.sdk.Superwall
 import com.superwall.sdk.config.options.SuperwallOptions
-import com.superwall.sdk.delegate.SubscriptionStatus
+import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.identity.identify
 import com.superwall.sdk.identity.setUserAttributes
@@ -135,7 +136,7 @@ class SuperwallBridge(
 
                         val updatedValue = Superwall.instance.subscriptionStatus.value;
                         val valid =
-                            (updatedValue == SubscriptionStatus.ACTIVE || updatedValue == SubscriptionStatus.INACTIVE) && (updatedValue != SubscriptionStatus.UNKNOWN);
+                            (updatedValue is SubscriptionStatus.Active || updatedValue is SubscriptionStatus.Inactive) && (updatedValue !is SubscriptionStatus.Unknown);
                         result.success(
                             mapOf(
                                 "providedStatus" to it.status.toString(),
@@ -235,7 +236,7 @@ class SuperwallBridge(
                             }
 
                         Superwall.configure(
-                            applicationContext = this@SuperwallBridge.context,
+                            applicationContext = this@SuperwallBridge.context.applicationContext as Application,
                             apiKey = apiKey,
                             purchaseController = purchaseControllerProxyBridge,
                             options = options,
@@ -322,6 +323,10 @@ class SuperwallBridge(
                                 result.badArgs(call)
                             })
                     }
+                }
+                "getEntitlements" -> {
+                    val entitlements = Superwall.instance.entitlements
+                    result.success(entitlements.toJson())
                 }
 
 

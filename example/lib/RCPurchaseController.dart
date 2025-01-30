@@ -8,7 +8,7 @@ class RCPurchaseController extends PurchaseController {
   // MARK: Configure and sync subscription Status
   /// Makes sure that Superwall knows the customers subscription status by
   /// changing `Superwall.shared.subscriptionStatus`
-  Future<void> configureAndSyncEntitlementStatus() async {
+  Future<void> configureAndSyncSubscriptionStatus() async {
     // Configure RevenueCat
     await Purchases.setLogLevel(LogLevel.debug);
     final configuration = Platform.isIOS
@@ -20,17 +20,17 @@ class RCPurchaseController extends PurchaseController {
     Purchases.addCustomerInfoUpdateListener((customerInfo) {
       // Gets called whenever new CustomerInfo is available
       final entitlements = customerInfo.entitlements.active.keys
-          .map((id) => {'id': id})
-          .toList();
+          .map((id) => Entitlement(id: id, type: 'SERVICE_LEVEL'))
+          .toSet();
 
       // Set the entitlements status based on whether there are active entitlements
-      Superwall.shared.setActiveEntitlements(entitlements);
+      Superwall.shared.setSubscriptionStatus(SubscriptionStatusActive(entitlements: entitlements));
       final hasActiveEntitlementOrSubscription = customerInfo
           .hasActiveEntitlementOrSubscription(); // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
       if (hasActiveEntitlementOrSubscription) {
-        Superwall.shared.setSubscriptionStatus(SubscriptionStatus.active);
+        Superwall.shared.setSubscriptionStatus(SubscriptionStatusActive(entitlements: entitlements));
       } else {
-        Superwall.shared.setSubscriptionStatus(SubscriptionStatus.inactive);
+        Superwall.shared.setSubscriptionStatus(SubscriptionStatusInactive());
       }
     });
   }

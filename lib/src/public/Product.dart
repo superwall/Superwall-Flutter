@@ -1,59 +1,31 @@
+import '../../superwallkit_flutter.dart';
+
 /// The product in the paywall.
 class Product {
   /// The type of product.
-  final ProductType type;
+  final String type;
 
-  /// The product identifier.
-  final String id;
+  /// The entitlements associated with this product.
+  final Entitlements entitlements;
 
   Product({
     required this.type,
-    required this.id,
+    required this.entitlements,
   });
 
   // Factory constructor to create a Product instance from a JSON map
-  factory Product.fromJson(Map<dynamic, dynamic> json) {
+  factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      type: ProductTypeExtension.fromJson(json['type']),
-      id: json['id'],
+      type: json['type'],
+      entitlements: Entitlements.fromJson(json['entitlements']),
     );
   }
-}
 
-/// The type of product.
-enum ProductType {
-  primary,
-  secondary,
-  tertiary,
-}
-
-// Extension on ProductType for explicit serialization and deserialization
-extension ProductTypeExtension on ProductType {
-  // Converts the enum to a JSON-valid string
-  String toJson() {
-    switch (this) {
-      case ProductType.primary:
-        return 'primary';
-      case ProductType.secondary:
-        return 'secondary';
-      case ProductType.tertiary:
-        return 'tertiary';
-      default:
-        throw ArgumentError('Invalid ProductType value');
-    }
-  }
-
-  // Parses a JSON string to get the corresponding ProductType enum value
-  static ProductType fromJson(String json) {
-    switch (json) {
-      case 'primary':
-        return ProductType.primary;
-      case 'secondary':
-        return ProductType.secondary;
-      case 'tertiary':
-        return ProductType.tertiary;
-      default:
-        throw ArgumentError('Invalid ProductType value: $json');
-    }
+  // Convert Product instance to JSON map
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'entitlements': entitlements.toJson(),
+    };
   }
 }

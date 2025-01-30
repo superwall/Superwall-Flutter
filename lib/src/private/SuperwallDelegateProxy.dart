@@ -37,12 +37,12 @@ class SuperwallDelegateProxy extends BridgeIdInstantiable {
         final name = call.argument('name');
         delegate.handleCustomPaywallAction(name);
         break;
-      case 'entitlementStatusDidChange':
+      case 'subscriptionStatusDidChange':
         final bridgeId = call.argument('entitlementStatusBridgeId');
         final status =
-            EntitlementStatus.createSubscriptionStatusFromBridgeId(bridgeId);
+            SubscriptionStatus.createSubscriptionStatusFromBridgeId(bridgeId);
         if (status != null) {
-          delegate.entitlementStatusDidChange(status);
+          delegate.subscriptionStatusDidChange(status);
         }
         break;
       case 'handleSuperwallPlacement':

@@ -12,7 +12,7 @@ import 'package:superwallkit_flutter/src/public/SuperwallPlacementInfo.dart';
 /// [our docs](https://docs.superwall.com/docs/3rd-party-analytics).
 abstract class SuperwallDelegate {
   /// Called when the property `entitlement.status` of `Superwall` changes.
-  void entitlementStatusDidChange(EntitlementStatus newValue);
+  void subscriptionStatusDidChange(SubscriptionStatus newValue);
 
   /// Called whenever an internal analytics placement is tracked.
   void handleSuperwallPlacement(SuperwallPlacementInfo placementInfo);
