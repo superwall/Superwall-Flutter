@@ -3,7 +3,7 @@ package com.superwall.superwallkit_flutter.bridges
 import android.content.Context
 import android.net.Uri
 import com.superwall.sdk.analytics.superwall.SuperwallPlacementInfo
-import com.superwall.sdk.delegate.EntitlementStatus
+import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.paywall.presentation.PaywallInfo
 import com.superwall.superwallkit_flutter.invokeMethodOnMain

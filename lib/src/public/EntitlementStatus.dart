@@ -1,23 +1,25 @@
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/public/Entitlement.dart';
 
-/// An enum representing the entitlement status of the user.
-class EntitlementStatus extends BridgeIdInstantiable {
-  EntitlementStatus({required super.bridgeClass, super.bridgeId});
+/// An enum representing the subscription status of the user.
+class SubscriptionStatus extends BridgeIdInstantiable {
+  SubscriptionStatus({required super.bridgeClass, super.bridgeId});
 
-  static final EntitlementStatus active = EntitlementStatusActive();
-  static final EntitlementStatus inactive = EntitlementStatusInactive();
-  static final EntitlementStatus unknown = EntitlementStatusUnknown();
+  static final SubscriptionStatus active = SubscriptionStatusActive(
+    entitlements: {},
+  );
+  static final SubscriptionStatus inactive = SubscriptionStatusInactive();
+  static final SubscriptionStatus unknown = SubscriptionStatusUnknown();
 
-  static EntitlementStatus? createEntitlementStatusFromBridgeId(
+  static SubscriptionStatus? createSubscriptionStatusFromBridgeId(
       BridgeId bridgeId) {
     switch (bridgeId.bridgeClass) {
-      case EntitlementStatusActive.bridgeClass:
-        return EntitlementStatus.active;
-      case EntitlementStatusInactive.bridgeClass:
-        return EntitlementStatus.inactive;
-      case EntitlementStatusUnknown.bridgeClass:
-        return EntitlementStatus.unknown;
+      case SubscriptionStatusActive.bridgeClass:
+        return SubscriptionStatus.active;
+      case SubscriptionStatusInactive.bridgeClass:
+        return SubscriptionStatus.inactive;
+      case SubscriptionStatusUnknown.bridgeClass:
+        return SubscriptionStatus.unknown;
       default:
         return null;
     }
@@ -28,22 +30,24 @@ class EntitlementStatus extends BridgeIdInstantiable {
   }
 }
 
-class EntitlementStatusActive extends EntitlementStatus {
-  static const BridgeClass bridgeClass = 'EntitlementStatusActiveBridge';
+class SubscriptionStatusActive extends SubscriptionStatus {
+  static const BridgeClass bridgeClass = 'SubscriptionStatusActiveBridge';
   final Set<Entitlement> entitlements;
 
-  EntitlementStatusActive({
+  SubscriptionStatusActive({
     super.bridgeId,
     required this.entitlements,
   }) : super(bridgeClass: bridgeClass);
 }
 
-class EntitlementStatusInactive extends EntitlementStatus {
-  static const BridgeClass bridgeClass = 'EntitlementStatusInactiveBridge';
-  EntitlementStatusInactive({super.bridgeId}) : super(bridgeClass: bridgeClass);
+class SubscriptionStatusInactive extends SubscriptionStatus {
+  static const BridgeClass bridgeClass = 'SubscriptionStatusInactiveBridge';
+  SubscriptionStatusInactive({super.bridgeId})
+      : super(bridgeClass: bridgeClass);
 }
 
-class EntitlementStatusUnknown extends EntitlementStatus {
-  static const BridgeClass bridgeClass = 'EntitlementStatusUnknownBridge';
-  EntitlementStatusUnknown({super.bridgeId}) : super(bridgeClass: bridgeClass);
+class SubscriptionStatusUnknown extends SubscriptionStatus {
+  static const BridgeClass bridgeClass = 'SubscriptionStatusUnknownBridge';
+  SubscriptionStatusUnknown({super.bridgeId})
+      : super(bridgeClass: bridgeClass);
 }

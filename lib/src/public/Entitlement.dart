@@ -20,3 +20,32 @@ class Entitlement {
     };
   }
 }
+
+
+class Entitlements {
+  final Set<Entitlement> active;
+  final Set<Entitlement> inactive;
+  final Set<Entitlement> all;
+
+  Entitlements({
+    required this.active,
+    required this.inactive,
+    required this.all,
+  });
+
+  factory Entitlements.fromJson(Map<String, dynamic> json) {
+    return Entitlements(
+      active: json['active'],
+      inactive: json['inactive'],
+      all: json['all'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'active': active.map((e) => e.toJson()).toList(),
+      'inactive': inactive.map((e) => e.toJson()).toList(),
+      'all': all.map((e) => e.toJson()).toList(),
+    };
+  }
+}

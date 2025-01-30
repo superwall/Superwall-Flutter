@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
+import 'package:superwallkit_flutter/src/public/Entitlement.dart';
 import 'package:yaml/yaml.dart';
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
@@ -147,6 +148,13 @@ class Superwall extends BridgeIdInstantiable {
     return await bridgeId.communicator.invokeBridgeMethod('getIsInitialized');
   }
 
+  Future<Entitlements> getEntitlements() async {
+    await _waitForBridgeInstanceCreation();
+
+    final entitlements = await bridgeId.communicator.invokeBridgeMethod('getEntitlements');
+    return Entitlements.fromJson(entitlements);
+  }
+
   // Asynchronous method to get the presented paywall view controller
   // Future<dynamic> getPresentedViewController() async {
   //   await _waitForBridgeInstanceCreation();
@@ -168,28 +176,28 @@ class Superwall extends BridgeIdInstantiable {
   }
 
   // Asynchronous method to get the entitlement status of the user
-  Future<EntitlementStatus> getEntitlementStatus() async {
+  Future<SubscriptionStatus> getSubscriptionStatus() async {
     await _waitForBridgeInstanceCreation();
 
-    final entitlementStatusBridgeId = await bridgeId.communicator
-        .invokeBridgeMethod('getEntitlementStatusBridgeId');
-    final status = EntitlementStatus.createEntitlementStatusFromBridgeId(
-            entitlementStatusBridgeId) ??
-        EntitlementStatus.unknown;
+    final subscriptionStatusBridgeId = await bridgeId.communicator
+        .invokeBridgeMethod('getSubscriptionStatusBridgeId');
+    final status = SubscriptionStatus.createSubscriptionStatusFromBridgeId(
+            subscriptionStatusBridgeId) ??
+        SubscriptionStatus.unknown;
 
     return status;
   }
 
   // Asynchronous method to set the entitlement status of the user
-  Future<void> setEntitlementStatus(EntitlementStatus status) async {
+  Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
     await _waitForBridgeInstanceCreation();
 
-    final entitlementStatusBridgeId = status.bridgeId;
+    final subscriptionStatusBridgeId = status.bridgeId;
 
     var result = await bridgeId.communicator.invokeBridgeMethod(
-        'setEntitlementStatus',
-        {'entitlementStatusBridgeId': entitlementStatusBridgeId});
-    logging.debug('invokeBridgeResult setEntitlementStatus: $result');
+        'setSubscriptionStatus',
+        {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
+    logging.debug('invokeBridgeResult setSubscriptionStatus: $result');
   }
 
   // Asynchronous method to check the configuration status of Superwall

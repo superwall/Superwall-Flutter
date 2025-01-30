@@ -12,13 +12,12 @@ fun PaywallPresentationRequestStatus.toJson(): Map<String, String> = when (this)
 
 suspend fun PaywallPresentationRequestStatusReason.toJson(): Map<String, Any?> = when (this) {
     is PaywallPresentationRequestStatusReason.DebuggerPresented -> mapOf("reason" to "debuggerPresented")
-    is PaywallPresentationRequestStatusReason.PaywallAlreadyPresented -> mapOf("reason" to "paywallAlreadyPresented")
-    is PaywallPresentationRequestStatusReason.UserIsSubscribed -> mapOf("reason" to "userIsSubscribed")
     is PaywallPresentationRequestStatusReason.Holdout -> mapOf("reason" to "holdout", "experimentBridgeId" to experiment.createBridgeId())
     is PaywallPresentationRequestStatusReason.NoAudienceMatch -> mapOf("reason" to "noAudienceMatch")
     is PaywallPresentationRequestStatusReason.PlacementNotFound -> mapOf("reason" to "placementNotFound")
     is PaywallPresentationRequestStatusReason.NoPaywallView -> mapOf("reason" to "noPaywallViewController")
     is PaywallPresentationRequestStatusReason.NoPresenter -> mapOf("reason" to "noPresenter")
     is PaywallPresentationRequestStatusReason.NoConfig -> mapOf("reason" to "noConfig")
-    is PaywallPresentationRequestStatusReason.EntitlementsTimeout -> mapOf("reason" to "entitlementsTimeout")
+    is PaywallPresentationRequestStatusReason.EntitlementStatusTimeout -> mapOf("reason" to "entitlementStatusTimeout")
+    is PaywallPresentationRequestStatusReason.PaywallAlreadyPresented -> mapOf("reason" to "paywallAlreadyPresented")
 }
