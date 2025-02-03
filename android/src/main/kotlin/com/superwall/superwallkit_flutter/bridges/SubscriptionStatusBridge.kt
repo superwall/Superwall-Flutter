@@ -47,9 +47,7 @@ class SubscriptionStatusActiveBridge(
 
     override val status: SubscriptionStatus
         get() {
-            Log.e("REceived entitlements", "$initializationArgs")
             val entitlements = (initializationArgs?.get("entitlements") as? List<Map<String,Any>>)?.map {
-                Log.e("Deserializing", "To ent: $it")
                 it.toEntitlement() }?.toSet() ?: emptySet()
             return SubscriptionStatus.Active(entitlements = entitlements)
         }
