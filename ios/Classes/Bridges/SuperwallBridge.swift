@@ -236,6 +236,9 @@ public class SuperwallBridge: BridgeInstance {
       Superwall.shared.confirmAllAssignments { assignments in
         result(assignments.map { $0.toJson() })
       }
+    case "getEntitlements":
+      let entitlements = Superwall.shared.entitlements
+      result(entitlements.toJson())
     default:
       result(FlutterMethodNotImplemented)
     }

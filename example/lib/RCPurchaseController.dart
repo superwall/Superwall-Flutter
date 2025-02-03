@@ -20,12 +20,9 @@ class RCPurchaseController extends PurchaseController {
     Purchases.addCustomerInfoUpdateListener((customerInfo) {
       // Gets called whenever new CustomerInfo is available
       final entitlements = customerInfo.entitlements.active.keys
-          .map((id) => Entitlement(id: id, type: 'SERVICE_LEVEL'))
+          .map((id) => Entitlement(id: id))
           .toSet();
 
-      // Set the subscription status based on whether there are active entitlements
-      Superwall.shared.setSubscriptionStatus(
-          SubscriptionStatusActive(entitlements: entitlements));
       final hasActiveEntitlementOrSubscription = customerInfo
           .hasActiveEntitlementOrSubscription(); // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
       if (hasActiveEntitlementOrSubscription) {

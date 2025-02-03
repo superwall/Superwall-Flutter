@@ -13,6 +13,9 @@ public class SubscriptionStatusBridge: BridgeInstance {
     case "getDescription":
       let description = status.description
       result(description)
+    case "getEntitlements":
+      let entitlements = Superwall.shared.entitlements.active.map { $0.toJson() }
+      result(entitlements)
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -25,7 +28,10 @@ public class SubscriptionStatusActiveBridge: SubscriptionStatusBridge {
 
   let entitlements: Set<Entitlement>
 
-  required init(bridgeId: BridgeId, initializationArgs: [String: Any]? = nil) {
+  required init(
+    bridgeId: BridgeId,
+    initializationArgs: [String: Any]? = nil
+  ) {
     if let entitlementsJson = initializationArgs?["entitlements"] as? [[String: Any]] {
       self.entitlements = Set(entitlementsJson.compactMap { Entitlement.fromJson($0) })
     } else {
