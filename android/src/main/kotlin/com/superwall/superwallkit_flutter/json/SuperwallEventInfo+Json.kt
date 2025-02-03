@@ -32,7 +32,7 @@ suspend fun SuperwallPlacement.toJson(): Map<String, Any?> {
             "attributes" to this.attributes
         )
 
-        is SuperwallPlacement.SubscriptionStatusDidChange -> mapOf("placement" to "subscriptionStatusDidChange")
+        //is SuperwallPlacement.SubscriptionStatusDidChange -> mapOf("placement" to "subscriptionStatusDidChange")
         is SuperwallPlacement.AppClose -> mapOf("placement" to "appClose")
         is SuperwallPlacement.DeepLink -> mapOf("placement" to "deepLink", "url" to this.uri.toString())
         is SuperwallPlacement.TriggerFire -> mapOf(

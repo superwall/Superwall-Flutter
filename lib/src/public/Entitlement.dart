@@ -2,7 +2,7 @@ class Entitlement {
   final String id;
   final String type;
 
-  Entitlement({required this.id, required this.type});
+  Entitlement({required this.id, this.type = "SERVICE_LEVEL"});
 
   // Factory constructor for creating an instance from a JSON map
   factory Entitlement.fromJson(Map<String, dynamic> json) {

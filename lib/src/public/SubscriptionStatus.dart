@@ -1,21 +1,25 @@
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/public/Entitlement.dart';
 
+import '../../superwallkit_flutter.dart';
+
 /// An enum representing the subscription status of the user.
 class SubscriptionStatus extends BridgeIdInstantiable {
-  SubscriptionStatus({required super.bridgeClass, super.bridgeId});
+  SubscriptionStatus({required super.bridgeClass, super.bridgeId, super.initializationArgs = const {}});
 
-  static final SubscriptionStatus active = SubscriptionStatusActive(
-    entitlements: {},
-  );
   static final SubscriptionStatus inactive = SubscriptionStatusInactive();
   static final SubscriptionStatus unknown = SubscriptionStatusUnknown();
 
-  static SubscriptionStatus? createSubscriptionStatusFromBridgeId(
-      BridgeId bridgeId) {
+  static Future<SubscriptionStatus?> createSubscriptionStatusFromBridgeId(
+      BridgeId bridgeId) async {
     switch (bridgeId.bridgeClass) {
       case SubscriptionStatusActive.bridgeClass:
-        return SubscriptionStatus.active;
+        var entitlements = await bridgeId.communicator.invokeBridgeMethod('getEntitlements');
+        return SubscriptionStatusActive(
+            entitlements: (entitlements as List)
+                .map((item) => Map<String, dynamic>.from(item as Map))
+                .map((it) => Entitlement.fromJson(it))
+                .toSet());
       case SubscriptionStatusInactive.bridgeClass:
         return SubscriptionStatus.inactive;
       case SubscriptionStatusUnknown.bridgeClass:
@@ -37,7 +41,9 @@ class SubscriptionStatusActive extends SubscriptionStatus {
   SubscriptionStatusActive({
     super.bridgeId,
     required this.entitlements,
-  }) : super(bridgeClass: bridgeClass);
+  }) : super(bridgeClass: bridgeClass, initializationArgs: {
+    'entitlements': entitlements.map((e) => e?.toJson()).toList()
+  });
 }
 
 class SubscriptionStatusInactive extends SubscriptionStatus {

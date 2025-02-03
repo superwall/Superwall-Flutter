@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.superwall.sdk.Superwall
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.models.entitlements.SubscriptionStatus

@@ -18,6 +18,7 @@ suspend fun PaywallPresentationRequestStatusReason.toJson(): Map<String, Any?> =
     is PaywallPresentationRequestStatusReason.NoPaywallView -> mapOf("reason" to "noPaywallViewController")
     is PaywallPresentationRequestStatusReason.NoPresenter -> mapOf("reason" to "noPresenter")
     is PaywallPresentationRequestStatusReason.NoConfig -> mapOf("reason" to "noConfig")
-    is PaywallPresentationRequestStatusReason.SubscriptionStatusTimeout -> mapOf("reason" to "subscriptionStatusTimeout")
     is PaywallPresentationRequestStatusReason.PaywallAlreadyPresented -> mapOf("reason" to "paywallAlreadyPresented")
+    else -> {
+        mapOf()}
 }

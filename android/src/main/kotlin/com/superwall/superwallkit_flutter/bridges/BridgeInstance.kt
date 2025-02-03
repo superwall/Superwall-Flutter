@@ -22,6 +22,10 @@ abstract class BridgeInstance(
     val initializationArgs: Map<String, Any>? = null,
 ) : MethodChannel.MethodCallHandler {
 
+    // If the instance of the bridge should be reused when found in existing bridges
+    // Set to false for the bridges where recreating with proper state is important
+
+    open val cachable = true
     private val mainScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     companion object {

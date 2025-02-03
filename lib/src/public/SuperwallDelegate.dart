@@ -1,5 +1,5 @@
-import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
+import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallPlacementInfo.dart';
 
 /// The delegate protocol that handles Superwall lifecycle events.

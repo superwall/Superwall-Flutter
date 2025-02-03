@@ -6,7 +6,7 @@ import com.superwall.sdk.store.Entitlements
 fun Entitlement.toJson(): Map<String, Any> {
     return mapOf(
         "id" to id,
-        "type" to type
+        "type" to type.raw
     )
 }
 
@@ -21,6 +21,6 @@ fun Entitlements.toJson(): Map<String, Any> {
 fun Map<String, Any>.toEntitlement(): Entitlement {
     return Entitlement(
         id = this["id"] as String,
-        type =  Entitlement.Type.valueOf(this["type"] as String)
+        type = Entitlement.Type.SERVICE_LEVEL
     )
 }

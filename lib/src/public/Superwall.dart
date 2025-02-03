@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
-import 'package:superwallkit_flutter/src/public/Entitlement.dart';
-import 'package:yaml/yaml.dart';
+
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/private/CompletionBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
+import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
+import 'package:superwallkit_flutter/src/private/SuperwallDelegateProxy.dart';
+import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
+import 'package:superwallkit_flutter/src/public/Entitlement.dart';
 import 'package:superwallkit_flutter/src/public/IdentityOptions.dart';
 import 'package:superwallkit_flutter/src/public/LogLevel.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
@@ -13,10 +16,9 @@ import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart'
 import 'package:superwallkit_flutter/src/public/PurchaseController.dart';
 import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
-import 'package:superwallkit_flutter/src/private/CompletionBlockProxy.dart';
-import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
-import 'package:superwallkit_flutter/src/private/SuperwallDelegateProxy.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallOptions.dart';
+import 'package:yaml/yaml.dart';
+
 import '../private/LatestValueStreamController.dart';
 
 /// The primary class for integrating Superwall into your application.
@@ -24,6 +26,7 @@ import '../private/LatestValueStreamController.dart';
 /// it provides access to all its features via instance functions and variables.
 class Superwall extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = 'SuperwallBridge';
+
   Superwall({super.bridgeId}) : super(bridgeClass: bridgeClass);
 
   static Logging _logging = Logging();
@@ -182,9 +185,10 @@ class Superwall extends BridgeIdInstantiable {
 
     final subscriptionStatusBridgeId = await bridgeId.communicator
         .invokeBridgeMethod('getSubscriptionStatusBridgeId');
-    final status = SubscriptionStatus.createSubscriptionStatusFromBridgeId(
-            subscriptionStatusBridgeId) ??
-        SubscriptionStatus.unknown;
+    final status =
+        await SubscriptionStatus.createSubscriptionStatusFromBridgeId(
+                subscriptionStatusBridgeId) ??
+            SubscriptionStatus.unknown;
 
     return status;
   }
@@ -194,7 +198,12 @@ class Superwall extends BridgeIdInstantiable {
     await _waitForBridgeInstanceCreation();
 
     final subscriptionStatusBridgeId = status.bridgeId;
-
+    var entitlements;
+    if (status is SubscriptionStatusActive) {
+      entitlements = status.entitlements.map((e) => e?.toJson()).toList();
+    } else {
+      entitlements = [];
+    }
     var result = await bridgeId.communicator.invokeBridgeMethod(
         'setSubscriptionStatus',
         {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});

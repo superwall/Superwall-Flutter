@@ -1,5 +1,6 @@
 package com.superwall.superwallkit_flutter
 
+import android.util.Log
 import com.superwall.superwallkit_flutter.bridges.BridgeClass
 import com.superwall.superwallkit_flutter.bridges.BridgeId
 import com.superwall.superwallkit_flutter.bridges.BridgeInstance
@@ -89,7 +90,6 @@ class BridgingCreator(
                 "createBridgeInstance" -> {
                     val bridgeId = call.argument<String>("bridgeId")
                     val initializationArgs = call.argument<Map<String, Any>>("args")
-
                     if (bridgeId != null) {
                         createBridgeInstanceFromBridgeId(bridgeId, initializationArgs)
                         result.success(null)
@@ -111,8 +111,10 @@ class BridgingCreator(
     ): BridgeInstance {
         // An existing bridge instance might exist if it were created natively, instead of from Dart
         val existingBridgeInstance = instances[bridgeId]
+
         existingBridgeInstance?.let {
-            return it
+            if(existingBridgeInstance.cachable)
+                return it
         }
 
         // Create an instance of the bridge
