@@ -11,7 +11,7 @@ import 'package:superwallkit_flutter/src/public/LogLevel.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart';
 import 'package:superwallkit_flutter/src/public/PurchaseController.dart';
-import 'package:superwallkit_flutter/src/public/EntitlementStatus.dart';
+import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
 import 'package:superwallkit_flutter/src/private/CompletionBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
@@ -151,7 +151,8 @@ class Superwall extends BridgeIdInstantiable {
   Future<Entitlements> getEntitlements() async {
     await _waitForBridgeInstanceCreation();
 
-    final entitlements = await bridgeId.communicator.invokeBridgeMethod('getEntitlements');
+    final entitlements =
+        await bridgeId.communicator.invokeBridgeMethod('getEntitlements');
     return Entitlements.fromJson(entitlements);
   }
 
@@ -175,7 +176,7 @@ class Superwall extends BridgeIdInstantiable {
     }
   }
 
-  // Asynchronous method to get the entitlement status of the user
+  // Asynchronous method to get the subscription status of the user
   Future<SubscriptionStatus> getSubscriptionStatus() async {
     await _waitForBridgeInstanceCreation();
 
@@ -188,7 +189,7 @@ class Superwall extends BridgeIdInstantiable {
     return status;
   }
 
-  // Asynchronous method to set the entitlement status of the user
+  // Asynchronous method to set the subscription status of the user
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
     await _waitForBridgeInstanceCreation();
 
@@ -379,7 +380,7 @@ extension PublicPresentation on Superwall {
 
   /// Registers an placement to access a feature, potentially showing a paywall.
   ///
-  /// Shows a paywall based on the placement, user matching campaign rules, and entitlement status.
+  /// Shows a paywall based on the placement, user matching campaign rules, and subscription status.
   /// Requires creating a campaign and adding the event on the Superwall Dashboard.
   /// The shown paywall is determined by campaign rules and user assignments.
   Future<void> registerPlacement(String placement,

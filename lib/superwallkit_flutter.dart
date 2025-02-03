@@ -14,7 +14,7 @@ export 'src/public/PurchaseController.dart';
 export 'src/public/PurchaseResult.dart';
 export 'src/public/RestorationResult.dart';
 export 'src/public/Entitlement.dart';
-export 'src/public/EntitlementStatus.dart';
+export 'src/public/SubscriptionStatus.dart';
 export 'src/public/Superwall.dart';
 export 'src/public/SuperwallDelegate.dart';
 export 'src/public/SuperwallPlacementInfo.dart';

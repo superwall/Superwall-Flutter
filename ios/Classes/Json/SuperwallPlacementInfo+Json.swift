@@ -26,8 +26,8 @@ extension SuperwallPlacement {
       return ["placement": "sessionStart"]
     case .deviceAttributes(let attributes):
       return ["placement": "deviceAttributes", "attributes": attributes]
-    case .entitlementStatusDidChange:
-      return ["placement": "entitlementStatusDidChange"]
+    case .subscriptionStatusDidChange:
+      return ["placement": "subscriptionStatusDidChange"]
     case .appClose:
       return ["placement": "appClose"]
     case .restoreStart:

@@ -2,30 +2,30 @@ import '../../superwallkit_flutter.dart';
 
 /// The product in the paywall.
 class Product {
-  /// The type of product.
-  final String type;
+  /// The product's identifier.
+  final String? id;
+
+  /// The name of the product in the editor.
+  final String? name;
 
   /// The entitlements associated with this product.
-  final Entitlements entitlements;
+  final Set<Entitlement> entitlements;
 
   Product({
-    required this.type,
+    required this.id,
+    required this.name,
     required this.entitlements,
   });
 
   // Factory constructor to create a Product instance from a JSON map
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      type: json['type'],
-      entitlements: Entitlements.fromJson(json['entitlements']),
+      id: json['id'],
+      name: json['name'],
+      entitlements: (json['entitlements'] as List<dynamic>?)
+              ?.map((e) => Entitlement.fromJson(Map<String, dynamic>.from(e)))
+              .toSet() ??
+          {},
     );
-  }
-
-  // Convert Product instance to JSON map
-  Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'entitlements': entitlements.toJson(),
-    };
   }
 }

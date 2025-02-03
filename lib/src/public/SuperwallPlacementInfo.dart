@@ -28,7 +28,7 @@ enum PlacementType {
   restoreFail,
   sessionStart,
   deviceAttributes,
-  entitlementStatusDidChange,
+  subscriptionStatusDidChange,
   appClose,
   deepLink,
   triggerFire,
@@ -141,9 +141,9 @@ class SuperwallPlacement {
         return SuperwallPlacement._(
             type: PlacementType.deviceAttributes,
             deviceAttributes: json['attributes']);
-      case 'entitlementStatusDidChange':
+      case 'subscriptionStatusDidChange':
         return SuperwallPlacement._(
-            type: PlacementType.entitlementStatusDidChange);
+            type: PlacementType.subscriptionStatusDidChange);
       case 'appClose':
         return SuperwallPlacement._(type: PlacementType.appClose);
       case 'deepLink':

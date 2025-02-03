@@ -108,9 +108,6 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       final experiment = await paywallInfo.experiment;
       logging.info('Experiment: $experiment');
 
-      final triggerSessionId = await paywallInfo.triggerSessionId;
-      logging.info('Trigger Session ID: $triggerSessionId');
-
       final products = await paywallInfo.products;
       logging.info('Products: $products');
 

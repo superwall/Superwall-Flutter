@@ -69,10 +69,10 @@ class PaywallPresentationRequestStatusReason {
       case 'noConfig':
         return PaywallPresentationRequestStatusReason._(
             type: PaywallPresentationRequestStatusReasonType.noConfig);
-      case 'entitlementsTimeout':
+      case 'subscriptionStatusTimeout':
         return PaywallPresentationRequestStatusReason._(
-            type:
-                PaywallPresentationRequestStatusReasonType.entitlementsTimeout);
+            type: PaywallPresentationRequestStatusReasonType
+                .subscriptionStatusTimeout);
       default:
         throw ArgumentError(
             'Invalid PaywallPresentationRequestStatusReason type');
@@ -89,5 +89,5 @@ enum PaywallPresentationRequestStatusReasonType {
   noPaywallViewController,
   noPresenter,
   noConfig,
-  entitlementsTimeout
+  subscriptionStatusTimeout
 }

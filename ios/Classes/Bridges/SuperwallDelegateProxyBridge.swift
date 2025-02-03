@@ -26,8 +26,8 @@ public class SuperwallDelegateProxyBridge: BridgeInstance, SuperwallDelegate {
     communicator.invokeMethodOnMain("handleCustomPaywallAction", arguments: ["name": name])
   }
 
-  public func entitlementStatusDidChange(from oldValue: EntitlementStatus, to newValue: EntitlementStatus) {
-    communicator.invokeMethodOnMain("entitlementStatusDidChange", arguments: ["entitlementStatusBridgeId": newValue.createBridgeId()])
+  public func subscriptionStatusDidChange(from oldValue: SubscriptionStatus, to newValue: SubscriptionStatus) {
+    communicator.invokeMethodOnMain("subscriptionStatusDidChange", arguments: ["subscriptionStatusBridgeId": newValue.createBridgeId()])
   }
 
   public func handleSuperwallPlacement(withInfo placementInfo: SuperwallPlacementInfo) {

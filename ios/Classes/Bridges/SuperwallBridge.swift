@@ -72,22 +72,22 @@ public class SuperwallBridge: BridgeInstance {
       let paywallInfo = Superwall.shared.latestPaywallInfo
       result(paywallInfo?.createBridgeId())
 
-    case "getEntitlementStatusBridgeId":
-      // Implement logic to get the entitlement status of the user
-      let entitlementStatusBridgeId = Superwall.shared.entitlements.status.createBridgeId()
-      result(entitlementStatusBridgeId)
+    case "getSubscriptionStatusBridgeId":
+      // Implement logic to get the subscription status of the user
+      let subscriptionStatusBridgeId = Superwall.shared.subscriptionStatus.createBridgeId()
+      result(subscriptionStatusBridgeId)
 
-    case "setEntitlementStatus":
-      // Implement logic to set the entitlement status of the user
+    case "setSubscriptionStatus":
+      // Implement logic to set the subscription status of the user
       guard
-        let entitlementStatusBridge: EntitlementStatusBridge = call.bridgeInstance(
-          for: "entitlementStatusBridgeId")
+        let subscriptionStatusBridge: SubscriptionStatusBridge = call.bridgeInstance(
+          for: "subscriptionStatusBridgeId")
       else {
         result(call.badArgs)
         return
       }
 
-      Superwall.shared.entitlements.status = entitlementStatusBridge.status
+      Superwall.shared.subscriptionStatus = subscriptionStatusBridge.status
       result(nil)
 
     case "getConfigurationStatusBridgeId":

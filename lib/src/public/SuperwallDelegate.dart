@@ -1,5 +1,5 @@
+import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
-import 'package:superwallkit_flutter/src/public/EntitlementStatus.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallPlacementInfo.dart';
 
 /// The delegate protocol that handles Superwall lifecycle events.
@@ -11,7 +11,7 @@ import 'package:superwallkit_flutter/src/public/SuperwallPlacementInfo.dart';
 /// To learn how to conform to the delegate in your app and best practices, see
 /// [our docs](https://docs.superwall.com/docs/3rd-party-analytics).
 abstract class SuperwallDelegate {
-  /// Called when the property `entitlement.status` of `Superwall` changes.
+  /// Called when the property `subscriptionStatus` of `Superwall` changes.
   void subscriptionStatusDidChange(SubscriptionStatus newValue);
 
   /// Called whenever an internal analytics placement is tracked.

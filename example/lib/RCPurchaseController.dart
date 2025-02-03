@@ -23,12 +23,14 @@ class RCPurchaseController extends PurchaseController {
           .map((id) => Entitlement(id: id, type: 'SERVICE_LEVEL'))
           .toSet();
 
-      // Set the entitlements status based on whether there are active entitlements
-      Superwall.shared.setSubscriptionStatus(SubscriptionStatusActive(entitlements: entitlements));
+      // Set the subscription status based on whether there are active entitlements
+      Superwall.shared.setSubscriptionStatus(
+          SubscriptionStatusActive(entitlements: entitlements));
       final hasActiveEntitlementOrSubscription = customerInfo
           .hasActiveEntitlementOrSubscription(); // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
       if (hasActiveEntitlementOrSubscription) {
-        Superwall.shared.setSubscriptionStatus(SubscriptionStatusActive(entitlements: entitlements));
+        Superwall.shared.setSubscriptionStatus(
+            SubscriptionStatusActive(entitlements: entitlements));
       } else {
         Superwall.shared.setSubscriptionStatus(SubscriptionStatusInactive());
       }

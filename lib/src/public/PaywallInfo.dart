@@ -24,17 +24,13 @@ class PaywallInfo extends BridgeIdInstantiable {
     return Experiment(bridgeId: experimentBridgeId);
   }
 
-  /// The trigger session ID associated with the paywall.
-  Future<String?> get triggerSessionId async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getTriggerSessionId');
-  }
-
   /// The products associated with the paywall.
   Future<List<Product>> get products async {
     List<dynamic> products =
         await bridgeId.communicator.invokeBridgeMethod('getProducts');
-    return products.map((json) => Product.fromJson(json)).toList();
+    return products
+        .map((json) => Product.fromJson(Map<String, dynamic>.from(json)))
+        .toList();
   }
 
   /// An array of product IDs that this paywall is displaying in `[Primary, Secondary, Tertiary]` order.
