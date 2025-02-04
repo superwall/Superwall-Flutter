@@ -17,7 +17,7 @@ class RCPurchaseController extends PurchaseController {
     await Purchases.configure(configuration);
 
     // Listen for changes
-    Purchases.addCustomerInfoUpdateListener((customerInfo) {
+    Purchases.addCustomerInfoUpdateListener((customerInfo) async {
       // Gets called whenever new CustomerInfo is available
       final entitlements = customerInfo.entitlements.active.keys
           .map((id) => Entitlement(id: id))
@@ -25,11 +25,13 @@ class RCPurchaseController extends PurchaseController {
 
       final hasActiveEntitlementOrSubscription = customerInfo
           .hasActiveEntitlementOrSubscription(); // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
+
       if (hasActiveEntitlementOrSubscription) {
-        Superwall.shared.setSubscriptionStatus(
+        await Superwall.shared.setSubscriptionStatus(
             SubscriptionStatusActive(entitlements: entitlements));
       } else {
-        Superwall.shared.setSubscriptionStatus(SubscriptionStatusInactive());
+        await Superwall.shared
+            .setSubscriptionStatus(SubscriptionStatusInactive());
       }
     });
   }
