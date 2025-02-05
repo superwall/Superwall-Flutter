@@ -18,7 +18,6 @@ import com.superwall.superwallkit_flutter.bridges.PurchaseResultCancelledBridge
 import com.superwall.superwallkit_flutter.bridges.PurchaseResultFailedBridge
 import com.superwall.superwallkit_flutter.bridges.PurchaseResultPendingBridge
 import com.superwall.superwallkit_flutter.bridges.PurchaseResultPurchasedBridge
-import com.superwall.superwallkit_flutter.bridges.PurchaseResultRestoredBridge
 import com.superwall.superwallkit_flutter.bridges.RestorationResultFailedBridge
 import com.superwall.superwallkit_flutter.bridges.RestorationResultRestoredBridge
 import com.superwall.superwallkit_flutter.bridges.SubscriptionStatusActiveBridge
@@ -46,7 +45,6 @@ val BridgingCreator.bridgeInitializers: Map<String, (Context, BridgeId, Map<Stri
         PaywallInfoBridge.bridgeClass() to { context, bridgeId, args -> PaywallInfoBridge(context, bridgeId, args) },
         PurchaseResultCancelledBridge.bridgeClass() to { context, bridgeId, args -> PurchaseResultCancelledBridge(context, bridgeId, args) },
         PurchaseResultPurchasedBridge.bridgeClass() to { context, bridgeId, args -> PurchaseResultPurchasedBridge(context, bridgeId, args) },
-        PurchaseResultRestoredBridge.bridgeClass() to { context, bridgeId, args -> PurchaseResultRestoredBridge(context, bridgeId, args) },
         PurchaseResultPendingBridge.bridgeClass() to { context, bridgeId, args -> PurchaseResultPendingBridge(context, bridgeId, args) },
         PurchaseResultFailedBridge.bridgeClass() to { context, bridgeId, args -> PurchaseResultFailedBridge(context, bridgeId, args) },
         RestorationResultRestoredBridge.bridgeClass() to { context, bridgeId, args -> RestorationResultRestoredBridge(context, bridgeId, args) },

@@ -36,15 +36,6 @@ class PurchaseResultPurchasedBridge(
     override val purchaseResult: PurchaseResult = PurchaseResult.Purchased()
 }
 
-class PurchaseResultRestoredBridge(
-    context: Context,
-    bridgeId: BridgeId,
-    initializationArgs: Map<String, Any>? = null
-) : PurchaseResultBridge(context, bridgeId, initializationArgs) {
-    companion object { fun bridgeClass(): BridgeClass = "PurchaseResultRestoredBridge" }
-    override val purchaseResult: PurchaseResult = PurchaseResult.Restored()
-}
-
 class PurchaseResultPendingBridge(
     context: Context,
     bridgeId: BridgeId,

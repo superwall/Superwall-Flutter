@@ -19,7 +19,6 @@ extension BridgingCreator {
       PaywallInfoBridge.self,
       PurchaseResultCancelledBridge.self,
       PurchaseResultPurchasedBridge.self,
-      PurchaseResultRestoredBridge.self,
       PurchaseResultPendingBridge.self,
       PurchaseResultFailedBridge.self,
       RestorationResultRestoredBridge.self,
