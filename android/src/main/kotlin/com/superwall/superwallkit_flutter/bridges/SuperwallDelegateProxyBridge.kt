@@ -67,11 +67,11 @@ class SuperwallDelegateProxyBridge(
         }
     }
 
-    override fun subscriptionStatusDidChange(newValue: SubscriptionStatus) {
+    override fun subscriptionStatusDidChange(from: SubscriptionStatus, to: SubscriptionStatus) {
         coroutineScope.launch {
             communicator().invokeMethodOnMain(
                 "subscriptionStatusDidChange",
-                mapOf("subscriptionStatusBridgeId" to newValue.createBridgeId())
+                mapOf("subscriptionStatusBridgeId" to to.createBridgeId())
             )
         }
     }
