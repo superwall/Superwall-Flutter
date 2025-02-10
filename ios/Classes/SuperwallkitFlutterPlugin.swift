@@ -3,7 +3,15 @@ import UIKit
 import SuperwallKit
 
 public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
+  private static var alreadyRegistered = false
+
   public static func register(with registrar: FlutterPluginRegistrar) {
+    // This should get called on the main thread by default
+    if alreadyRegistered {
+      return
+    }
+    alreadyRegistered = true
+
     BridgingCreator.register(with: registrar)
   }
 
