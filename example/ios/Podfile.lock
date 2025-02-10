@@ -40,7 +40,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: 13825b8a9334a850581300559b8839134b124670
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
   purchases_flutter: a10ab0c4bb4effbc9b78be6513658ae659e67a20
   PurchasesHybridCommon: 0e157d11d04fdfdd434b5c6d05acb58fd1cc9db8
   RevenueCat: f7b90c52f4b7e322bc9e7adaf734030523534b06
