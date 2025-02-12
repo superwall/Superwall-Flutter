@@ -1,8 +1,41 @@
+import Combine
 import Flutter
 import SuperwallKit
 
-public class SuperwallBridge: BridgeInstance {
+public class SuperwallBridge: BridgeInstance, FlutterStreamHandler {
   override class var bridgeClass: BridgeClass { "SuperwallBridge" }
+  private var eventSink: FlutterEventSink?
+  private var cancellable: AnyCancellable?
+
+  required init(bridgeId: BridgeId, initializationArgs: [String : Any]? = nil) {
+    super.init(bridgeId: bridgeId, initializationArgs: initializationArgs)
+    // Use the base class's events() function to get the channel,
+    // then register self as the stream handler.
+    events().setStreamHandler(self)
+  }
+
+  func startListening() {
+    // Listen to Superwall's subscriptionStatus and send updates
+    cancellable = Superwall.shared.$subscriptionStatus
+      .sink { [weak self] status in
+        self?.eventSink?(status.toJson())
+      }
+  }
+
+  public func onListen(
+    withArguments arguments: Any?,
+    eventSink: @escaping FlutterEventSink
+  ) -> FlutterError? {
+    self.eventSink = eventSink
+    startListening()
+    return nil
+  }
+
+  public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    cancellable?.cancel()
+    self.eventSink = nil
+    return nil
+  }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
