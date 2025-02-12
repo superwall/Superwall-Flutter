@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'
+    show EventChannel, MethodChannel, MethodCall, rootBundle;
+import 'package:flutter/widgets.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/private/CompletionBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
@@ -19,6 +20,7 @@ import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallOptions.dart';
 import 'package:yaml/yaml.dart';
 
+import '../../superwallkit_flutter.dart';
 import '../private/LatestValueStreamController.dart';
 
 /// The primary class for integrating Superwall into your application.
@@ -31,6 +33,12 @@ class Superwall extends BridgeIdInstantiable {
 
   static Logging _logging = Logging();
   static final Superwall _superwall = Superwall();
+
+  Stream<SubscriptionStatus> get subscriptionStatus {
+    return bridgeId.eventStream.receiveBroadcastStream().map((json) {
+      return SubscriptionStatus.fromJson(json);
+    });
+  }
 
   // Used to prevent functions in this class from being used until after
   // the SDK has been configured on the native side

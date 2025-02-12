@@ -1,16 +1,21 @@
 package com.superwall.superwallkit_flutter.bridges
 
 import android.content.Context
+import android.util.Log
 import com.superwall.superwallkit_flutter.BridgingCreator
 import com.superwall.superwallkit_flutter.setBridgeId
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.EventChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import com.superwall.sdk.Superwall
+import toJson
+import kotlinx.coroutines.withContext
 
 typealias BridgeClass = String
 typealias BridgeId = String
@@ -35,6 +40,9 @@ abstract class BridgeInstance(
     }
 
     private var communicatorFlow: MutableStateFlow<Communicator?> = MutableStateFlow(null)
+    private var eventsFlow: MutableStateFlow<EventChannel?> = MutableStateFlow(null)
+    private var eventSink: EventChannel.EventSink? = null
+
 
     suspend fun communicator(): Communicator {
         synchronized(this@BridgeInstance) {
@@ -51,6 +59,15 @@ abstract class BridgeInstance(
             }
         }
         return communicatorFlow.filterNotNull().first()
+    }
+
+    suspend fun events(): EventChannel = withContext(Dispatchers.Main) {
+        if (eventsFlow.value == null) {
+            val messenger = BridgingCreator.shared.flutterPluginBinding().binaryMessenger
+            val events = EventChannel(messenger, "$bridgeId/events")
+            eventsFlow.value = events
+        }
+        eventsFlow.filterNotNull().first()
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {}

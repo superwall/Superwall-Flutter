@@ -217,6 +217,7 @@ suspend fun SuperwallPlacement.toJson(): Map<String, Any?> {
         is SuperwallPlacement.ConfigFail -> mapOf("placement" to "configFail")
         is SuperwallPlacement.ConfirmAllAssignments -> mapOf("placement" to "confirmAllAssignments")
         is SuperwallPlacement.PaywallResourceLoadFail ->  mapOf("placement" to "paywallResourceLoadFail")
+        is SuperwallPlacement.ShimmerViewStart -> mapOf("placement" to "shimmerViewStart")
         is SuperwallPlacement.ShimmerViewComplete ->  mapOf("placement" to "shimmerViewComplete")
         else -> {mapOf()}
 

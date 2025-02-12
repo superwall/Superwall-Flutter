@@ -55,9 +55,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
           options: options, completion: () {
         logging.info('Executing Superwall configure completion block');
       });
-
       Superwall.shared.setDelegate(this);
-
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
       /// Always configure RevenueCat after Superwall and keep Superwall's
       /// subscription status up-to-date with RevenueCat's.
@@ -68,6 +66,14 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       // Handle any errors that occur during configuration
       logging.error('Failed to configure Superwall:', e);
     }
+  }
+
+  Future<void> listenToEvents() async {
+    final events = Superwall.shared.subscriptionStatus;
+    events.listen((event) {
+      debugPrint('event: $event');
+      logging.info('event: $event');
+    });
   }
 
   // // Method to call when the button is tapped
@@ -290,7 +296,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         initialRoute: '/',
         routes: {
           // Home screen is the default route.
-          '/': (context) => Home(),
+          '/': (context) => Home(onPressed: listenToEvents),
           // LaunchedFeature route receives a string argument.
           '/launchedFeature': (context) => LaunchedFeature(),
         },

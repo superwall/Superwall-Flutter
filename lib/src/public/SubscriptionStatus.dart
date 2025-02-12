@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/public/Entitlement.dart';
 
@@ -35,6 +36,24 @@ class SubscriptionStatus extends BridgeIdInstantiable {
 
   Future<String> get description async {
     return await bridgeId.communicator.invokeBridgeMethod('getDescription');
+  }
+
+  static SubscriptionStatus fromJson(Map<Object?, Object?> json) {
+    final type = json['type'] as String;
+    switch (type.toLowerCase()) {
+      case 'active':
+        final entitlementsList = json['entitlements'] as List;
+        final entitlements = entitlementsList
+            .map((e) => Entitlement.fromJson(Map<String, dynamic>.from(e)))
+            .toSet();
+        return SubscriptionStatusActive(entitlements: entitlements);
+      case 'inactive':
+        return SubscriptionStatus.inactive;
+      case 'unknown':
+        return SubscriptionStatus.unknown;
+      default:
+        throw FormatException('Unknown subscription status type: $type');
+    }
   }
 }
 

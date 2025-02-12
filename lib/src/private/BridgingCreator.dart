@@ -127,6 +127,10 @@ extension BridgeAdditions on BridgeId {
     return MethodChannel(this);
   }
 
+  EventChannel get eventStream {
+    return EventChannel("$this/events");
+  }
+
   BridgeClass get bridgeClass {
     return split('-').first;
   }

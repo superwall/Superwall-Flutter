@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import java.util.concurrent.ConcurrentHashMap
 import io.flutter.embedding.android.FlutterActivity
 import kotlinx.coroutines.flow.first
+import io.flutter.plugin.common.EventChannel
 
 class BridgingCreator(
     val flutterPluginBinding: suspend () -> FlutterPlugin.FlutterPluginBinding,
@@ -110,7 +111,6 @@ class BridgingCreator(
         bridgeId: BridgeId,
         initializationArgs: Map<String, Any>?
     ): BridgeInstance {
-        // An existing bridge instance might exist if it were created natively, instead of from Dart
         val existingBridgeInstance = instances[bridgeId]
 
         existingBridgeInstance?.let {
@@ -118,7 +118,6 @@ class BridgingCreator(
                 return it
         }
 
-        // Create an instance of the bridge
         val bridgeInstance = bridgeInitializers[bridgeId.bridgeClass()]?.invoke(
             flutterPluginBinding().applicationContext,
             bridgeId,
@@ -127,6 +126,7 @@ class BridgingCreator(
         bridgeInstance?.let { bridgeInstance ->
             instances[bridgeId] = bridgeInstance
             bridgeInstance.communicator().setMethodCallHandler(bridgeInstance)
+            bridgeInstance.events()
             return bridgeInstance
         } ?: run {
             throw AssertionError("Unable to find a bridge initializer for ${bridgeId}. Make sure to add to BridgingCreator+Constants.kt.}")
