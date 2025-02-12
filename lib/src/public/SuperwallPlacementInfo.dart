@@ -354,7 +354,7 @@ class SuperwallPlacement {
       case 'shimmerViewComplete':
         return SuperwallPlacement._(type: PlacementType.shimmerViewComplete);
       default:
-        throw ArgumentError('Invalid placement type ${json}');
+        throw ArgumentError('Invalid placement type: ${json}');
     }
   }
 }

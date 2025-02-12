@@ -11,8 +11,7 @@ class Home extends StatelessWidget {
 
 // Home screen with buttons to trigger Superwall events and navigation.
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text('Home'),
         ),
@@ -20,6 +19,13 @@ class Home extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              SuperwallBuilder(
+                  builder: (context, status) => Center(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                            Text('Subscription Status: ${status}'),
+                          ]))),
               ElevatedButton(
                 // Launch Non-Gated Feature.
                 child: Text('Launch Non-Gated Feature'),
@@ -46,12 +52,12 @@ class Home extends StatelessWidget {
                 onPressed: () async {
                   await Superwall.shared.registerPlacement('diamond',
                       feature: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/launchedFeature',
-                          arguments: 'Diamond feature launched',
-                        );
-                      });
+                    Navigator.pushNamed(
+                      context,
+                      '/launchedFeature',
+                      arguments: 'Diamond feature launched',
+                    );
+                  });
                 },
               ),
               ElevatedButton(

@@ -29,6 +29,7 @@ import com.superwall.superwallkit_flutter.BridgingCreator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
 import logLevelFromJson
 import superwallOptionsFromJson
 import toJson
@@ -47,7 +48,7 @@ class SuperwallBridge(
         val main = CoroutineScope(Dispatchers.Main)
         main.launch {
             events().setStreamHandler(
-                BridgeHandler { eventSink ->
+                BridgeHandler(scope) { eventSink ->
                     // Use the main dispatcher so that events are sent on the UI thread.
                     scope.launch {
                         try {
@@ -63,10 +64,10 @@ class SuperwallBridge(
                 }
             )
         }
-        
     }
 
     internal class BridgeHandler(
+        val scope: CoroutineScope,
         val sink: (EventChannel.EventSink) -> Unit
     ) : EventChannel.StreamHandler {
         private var listening: Job? = null
