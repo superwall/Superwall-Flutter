@@ -7,7 +7,7 @@ public class SuperwallBridge: BridgeInstance, FlutterStreamHandler {
   private var eventSink: FlutterEventSink?
   private var cancellable: AnyCancellable?
 
-  required init(bridgeId: BridgeId, initializationArgs: [String : Any]? = nil) {
+  required init(bridgeId: BridgeId, initializationArgs: [String: Any]? = nil) {
     super.init(bridgeId: bridgeId, initializationArgs: initializationArgs)
     // Use the base class's events() function to get the channel,
     // then register self as the stream handler.

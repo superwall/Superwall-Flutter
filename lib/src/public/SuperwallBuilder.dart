@@ -17,7 +17,7 @@ class SuperwallBuilder extends StatefulWidget {
 }
 
 class _SuperwallBuilderState extends State<SuperwallBuilder> {
-  late SubscriptionStatus _status;
+  SubscriptionStatus _status = SubscriptionStatus.unknown;
   StreamSubscription<SubscriptionStatus>? _subscription;
 
   @override
