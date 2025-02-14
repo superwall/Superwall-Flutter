@@ -2,6 +2,19 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+
+## 2.0.0-alpha.1
+- Adds entitlements to subscriptions, allowing you to set them using:
+- `await Superwall.shared.setSubscriptionStatus(status)` by passing in one of: 
+  - `SubscriptionStatusActive(entitlements: entitlements))`
+    - Note: Passing in empty entitlements will set the subscription status to inactive
+  - `SubscriptionStatusInactive`
+  - `SubscriptionStatusUnknown`
+- Subscribing to subscription status updates via stream `Superwall.shared.subscriptionStatus`
+- `SuperwallBuilder` which will automatically update the state whenever subscription status changes
+- `Superwall.shared.registerEvent` has now been replaced with `Superwall.shared.registerPlacement`
+- `handleSuperwallEvent(SuperwallEventInfo eventInfo)` has been replaced with `handleSuperwallPlacement(SuperwallPlacementInfo placementInfo)`
+
 ## 1.3.10
 
 ### Fixes
