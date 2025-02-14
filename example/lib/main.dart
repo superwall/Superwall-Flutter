@@ -68,14 +68,6 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
     }
   }
 
-  Future<void> listenToEvents() async {
-    final events = Superwall.shared.subscriptionStatus;
-    events.listen((event) {
-      debugPrint('event: $event');
-      logging.info('event: $event');
-    });
-  }
-
   // // Method to call when the button is tapped
   // Future<void> onRegisterTapped() async {
   //   try {
@@ -296,7 +288,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         initialRoute: '/',
         routes: {
           // Home screen is the default route.
-          '/': (context) => Home(onPressed: listenToEvents),
+          '/': (context) => Home(),
           // LaunchedFeature route receives a string argument.
           '/launchedFeature': (context) => LaunchedFeature(),
         },

@@ -2,13 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class Home extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const Home({
-    Key? key,
-    required this.onPressed,
-  }) : super(key: key);
-
 // Home screen with buttons to trigger Superwall events and navigation.
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -30,7 +23,14 @@ class Home extends StatelessWidget {
                 // Launch Non-Gated Feature.
                 child: Text('Launch Non-Gated Feature'),
                 onPressed: () async {
-                  onPressed();
+                  await Superwall.shared.registerPlacement('non_gated',
+                      feature: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/launchedFeature',
+                          arguments: 'Non-gated feature launched',
+                        );
+                      });
                 },
               ),
               ElevatedButton(
