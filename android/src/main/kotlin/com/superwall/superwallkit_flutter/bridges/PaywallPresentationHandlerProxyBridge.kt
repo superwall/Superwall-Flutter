@@ -6,6 +6,7 @@ import com.superwall.superwallkit_flutter.invokeMethodOnMain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import toJson
 
 class PaywallPresentationHandlerProxyBridge(
     context: Context,
@@ -28,11 +29,12 @@ class PaywallPresentationHandlerProxyBridge(
                     )
                 }
             }
-            onDismiss {
+            onDismiss { info, result ->
                 scope.launch {
                     communicator().invokeMethodOnMain(
                         "onDismiss",
-                        mapOf("paywallInfoBridgeId" to it.createBridgeId())
+                        mapOf("paywallInfoBridgeId" to info.createBridgeId(),
+                            "paywallResult" to result.toJson())
                     )
                 }
             }
