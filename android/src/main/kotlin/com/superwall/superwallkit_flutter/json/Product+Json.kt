@@ -1,17 +1,11 @@
-import com.superwall.sdk.models.product.Product
-import com.superwall.sdk.models.product.ProductType
+package com.superwall.superwallkit_flutter.json
 
-fun Product.toJson(): Map<String, Any> {
+import com.superwall.sdk.models.product.ProductItem
+import com.superwall.superwallkit_flutter.json.toJson
+
+fun ProductItem.toJson(): Map<String, Any> {
     return mapOf(
-        "type" to this.type.toJson(),
-        "id" to this.id
+        "type" to this.name,
+        "entitlements" to this.entitlements.map { it.toJson() }
     )
-}
-
-fun ProductType.toJson(): String {
-    return when (this) {
-        ProductType.PRIMARY -> "primary"
-        ProductType.SECONDARY -> "secondary"
-        ProductType.TERTIARY -> "tertiary"
-    }
 }

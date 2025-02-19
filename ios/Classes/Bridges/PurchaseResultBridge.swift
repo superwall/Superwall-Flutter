@@ -22,11 +22,6 @@ public class PurchaseResultPurchasedBridge: PurchaseResultBridge {
   override var purchaseResult: PurchaseResult { return .purchased }
 }
 
-public class PurchaseResultRestoredBridge: PurchaseResultBridge {
-  class override var bridgeClass: BridgeClass { "PurchaseResultRestoredBridge" }
-  override var purchaseResult: PurchaseResult { return .restored }
-}
-
 public class PurchaseResultPendingBridge: PurchaseResultBridge {
   class override var bridgeClass: BridgeClass { "PurchaseResultPendingBridge" }
   override var purchaseResult: PurchaseResult { return .pending }
@@ -38,7 +33,7 @@ public class PurchaseResultFailedBridge: PurchaseResultBridge {
 
   let error: Error
 
-  required init(bridgeId: BridgeId, initializationArgs: [String : Any]? = nil) {
+  required init(bridgeId: BridgeId, initializationArgs: [String: Any]? = nil) {
     guard let error = initializationArgs?["error"] as? String else {
       fatalError("Attempting to create `PurchaseResultFailedBridge` without providing `error`.")
     }

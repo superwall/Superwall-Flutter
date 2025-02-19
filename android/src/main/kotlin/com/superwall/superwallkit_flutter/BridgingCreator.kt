@@ -1,5 +1,6 @@
 package com.superwall.superwallkit_flutter
 
+import android.util.Log
 import com.superwall.superwallkit_flutter.bridges.BridgeClass
 import com.superwall.superwallkit_flutter.bridges.BridgeId
 import com.superwall.superwallkit_flutter.bridges.BridgeInstance
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import java.util.concurrent.ConcurrentHashMap
 import io.flutter.embedding.android.FlutterActivity
 import kotlinx.coroutines.flow.first
+import io.flutter.plugin.common.EventChannel
 
 class BridgingCreator(
     val flutterPluginBinding: suspend () -> FlutterPlugin.FlutterPluginBinding,
@@ -90,7 +92,6 @@ class BridgingCreator(
                 "createBridgeInstance" -> {
                     val bridgeId = call.argument<String>("bridgeId")
                     val initializationArgs = call.argument<Map<String, Any>>("args")
-
                     if (bridgeId != null) {
                         createBridgeInstanceFromBridgeId(bridgeId, initializationArgs)
                         result.success(null)
@@ -110,13 +111,13 @@ class BridgingCreator(
         bridgeId: BridgeId,
         initializationArgs: Map<String, Any>?
     ): BridgeInstance {
-        // An existing bridge instance might exist if it were created natively, instead of from Dart
         val existingBridgeInstance = instances[bridgeId]
+
         existingBridgeInstance?.let {
-            return it
+            if(existingBridgeInstance.cachable)
+                return it
         }
 
-        // Create an instance of the bridge
         val bridgeInstance = bridgeInitializers[bridgeId.bridgeClass()]?.invoke(
             flutterPluginBinding().applicationContext,
             bridgeId,
@@ -125,6 +126,7 @@ class BridgingCreator(
         bridgeInstance?.let { bridgeInstance ->
             instances[bridgeId] = bridgeInstance
             bridgeInstance.communicator().setMethodCallHandler(bridgeInstance)
+            bridgeInstance.events()
             return bridgeInstance
         } ?: run {
             throw AssertionError("Unable to find a bridge initializer for ${bridgeId}. Make sure to add to BridgingCreator+Constants.kt.}")

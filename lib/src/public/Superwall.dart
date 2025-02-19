@@ -1,10 +1,15 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
-import 'package:yaml/yaml.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'
+    show EventChannel, MethodChannel, MethodCall, rootBundle;
+import 'package:flutter/widgets.dart';
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/private/CompletionBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
+import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
+import 'package:superwallkit_flutter/src/private/SuperwallDelegateProxy.dart';
+import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
+import 'package:superwallkit_flutter/src/public/Entitlement.dart';
 import 'package:superwallkit_flutter/src/public/IdentityOptions.dart';
 import 'package:superwallkit_flutter/src/public/LogLevel.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
@@ -12,10 +17,10 @@ import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart'
 import 'package:superwallkit_flutter/src/public/PurchaseController.dart';
 import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallDelegate.dart';
-import 'package:superwallkit_flutter/src/private/CompletionBlockProxy.dart';
-import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
-import 'package:superwallkit_flutter/src/private/SuperwallDelegateProxy.dart';
 import 'package:superwallkit_flutter/src/public/SuperwallOptions.dart';
+import 'package:yaml/yaml.dart';
+
+import '../../superwallkit_flutter.dart';
 import '../private/LatestValueStreamController.dart';
 
 /// The primary class for integrating Superwall into your application.
@@ -23,10 +28,17 @@ import '../private/LatestValueStreamController.dart';
 /// it provides access to all its features via instance functions and variables.
 class Superwall extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = 'SuperwallBridge';
+
   Superwall({super.bridgeId}) : super(bridgeClass: bridgeClass);
 
   static Logging _logging = Logging();
   static final Superwall _superwall = Superwall();
+
+  Stream<SubscriptionStatus> get subscriptionStatus {
+    return bridgeId.eventStream.receiveBroadcastStream().map((json) {
+      return SubscriptionStatus.fromJson(json);
+    });
+  }
 
   // Used to prevent functions in this class from being used until after
   // the SDK has been configured on the native side
@@ -37,6 +49,7 @@ class Superwall extends BridgeIdInstantiable {
   static Superwall get shared {
     return _superwall;
   }
+
   static Logging get logging {
     return _logging;
   }
@@ -146,6 +159,14 @@ class Superwall extends BridgeIdInstantiable {
     return await bridgeId.communicator.invokeBridgeMethod('getIsInitialized');
   }
 
+  Future<Entitlements> getEntitlements() async {
+    await _waitForBridgeInstanceCreation();
+
+    final entitlements =
+        await bridgeId.communicator.invokeBridgeMethod('getEntitlements');
+    return Entitlements.fromJson(entitlements);
+  }
+
   // Asynchronous method to get the presented paywall view controller
   // Future<dynamic> getPresentedViewController() async {
   //   await _waitForBridgeInstanceCreation();
@@ -172,9 +193,10 @@ class Superwall extends BridgeIdInstantiable {
 
     final subscriptionStatusBridgeId = await bridgeId.communicator
         .invokeBridgeMethod('getSubscriptionStatusBridgeId');
-    final status = SubscriptionStatus.createSubscriptionStatusFromBridgeId(
-            subscriptionStatusBridgeId) ??
-        SubscriptionStatus.unknown;
+    final status =
+        await SubscriptionStatus.createSubscriptionStatusFromBridgeId(
+                subscriptionStatusBridgeId) ??
+            SubscriptionStatus.unknown;
 
     return status;
   }
@@ -184,7 +206,12 @@ class Superwall extends BridgeIdInstantiable {
     await _waitForBridgeInstanceCreation();
 
     final subscriptionStatusBridgeId = status.bridgeId;
-
+    var entitlements;
+    if (status is SubscriptionStatusActive) {
+      entitlements = status.entitlements.map((e) => e?.toJson()).toList();
+    } else {
+      entitlements = [];
+    }
     var result = await bridgeId.communicator.invokeBridgeMethod(
         'setSubscriptionStatus',
         {'subscriptionStatusBridgeId': subscriptionStatusBridgeId});
@@ -234,12 +261,13 @@ class Superwall extends BridgeIdInstantiable {
     await bridgeId.communicator.invokeBridgeMethod('preloadAllPaywalls');
   }
 
-  // Asynchronous method to preload paywalls for specific event names
-  Future<void> preloadPaywallsForEvents(Set<String> eventNames) async {
+  // Asynchronous method to preload paywalls for specific placement names
+  Future<void> preloadPaywallsForPlacements(Set<String> placementNames) async {
     await _waitForBridgeInstanceCreation();
 
     await bridgeId.communicator.invokeBridgeMethod(
-        'preloadPaywallsForEvents', {'eventNames': eventNames.toList()});
+        'preloadPaywallsForPlacements',
+        {'placementNames': placementNames.toList()});
   }
 
   // Asynchronous method to handle deep links for paywall previews
@@ -367,12 +395,12 @@ extension PublicPresentation on Superwall {
     await bridgeId.communicator.invokeBridgeMethod('dismiss');
   }
 
-  /// Registers an event to access a feature, potentially showing a paywall.
+  /// Registers an placement to access a feature, potentially showing a paywall.
   ///
-  /// Shows a paywall based on the event, user matching campaign rules, and subscription status.
+  /// Shows a paywall based on the placement, user matching campaign rules, and subscription status.
   /// Requires creating a campaign and adding the event on the Superwall Dashboard.
   /// The shown paywall is determined by campaign rules and user assignments.
-  Future<void> registerEvent(String event,
+  Future<void> registerPlacement(String placement,
       {Map<String, dynamic>? params,
       PaywallPresentationHandler? handler,
       Function? feature}) async {
@@ -396,14 +424,14 @@ extension PublicPresentation on Superwall {
     }
 
     var result =
-        await bridgeId.communicator.invokeBridgeMethod('registerEvent', {
-      'event': event,
+        await bridgeId.communicator.invokeBridgeMethod('registerPlacement', {
+      'placement': placement,
       'params': params,
       'handlerProxyBridgeId': handlerProxy?.bridgeId,
       'featureBlockProxyBridgeId': featureBlockProxy?.bridgeId
     });
 
-    Superwall.logging.debug('invokeBridgeResult registerEvent: $result');
+    Superwall.logging.debug('invokeBridgeResult registerPlacement: $result');
   }
 }
 

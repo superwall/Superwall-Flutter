@@ -2,22 +2,22 @@ import 'package:superwallkit_flutter/src/public/StoreProduct.dart';
 import 'package:superwallkit_flutter/src/public/StoreTransaction.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
-/// Contains information about the internally tracked superwall event.
-class SuperwallEventInfo {
-  SuperwallEvent event;
+/// Contains information about the internally tracked superwall placement.
+class SuperwallPlacementInfo {
+  SuperwallPlacement placement;
   Map<dynamic, dynamic>? params;
 
-  SuperwallEventInfo({required this.event, this.params});
+  SuperwallPlacementInfo({required this.placement, this.params});
 
-  factory SuperwallEventInfo.fromJson(Map<dynamic, dynamic> json) {
-    return SuperwallEventInfo(
-      event: SuperwallEvent.fromJson(json['event']),
+  factory SuperwallPlacementInfo.fromJson(Map<dynamic, dynamic> json) {
+    return SuperwallPlacementInfo(
+      placement: SuperwallPlacement.fromJson(json['placement']),
       params: json['params'],
     );
   }
 }
 
-enum EventType {
+enum PlacementType {
   firstSeen,
   appOpen,
   appLaunch,
@@ -75,11 +75,11 @@ enum EventType {
   shimmerViewComplete
 }
 
-class SuperwallEvent {
-  final EventType type;
+class SuperwallPlacement {
+  final PlacementType type;
 
-  // Optional per event type
-  final String? eventName;
+  // Optional per placement type
+  final String? placementName;
   final Map<dynamic, dynamic>? deviceAttributes;
   final String? deepLinkUrl;
   final TriggerResult? result;
@@ -87,7 +87,7 @@ class SuperwallEvent {
   final StoreTransaction? transaction;
   final StoreProduct? product;
   final String? error;
-  final String? triggeredEventName;
+  final String? triggeredPlacementName;
   final Map<dynamic, dynamic>? params;
   final String? attempt;
   final String? name;
@@ -100,9 +100,9 @@ class SuperwallEvent {
   final Map<dynamic, dynamic>? userAttributes;
   final String? token;
 
-  SuperwallEvent._(
+  SuperwallPlacement._(
       {required this.type,
-      this.eventName,
+      this.placementName,
       this.deviceAttributes,
       this.params,
       this.deepLinkUrl,
@@ -111,7 +111,7 @@ class SuperwallEvent {
       this.transaction,
       this.product,
       this.error,
-      this.triggeredEventName,
+      this.triggeredPlacementName,
       this.attempt,
       this.name,
       this.survey,
@@ -123,182 +123,185 @@ class SuperwallEvent {
       this.userAttributes,
       this.token});
 
-  factory SuperwallEvent.fromJson(Map<dynamic, dynamic> json) {
-    switch (json['event']) {
+  factory SuperwallPlacement.fromJson(Map<dynamic, dynamic> json) {
+    switch (json['placement']) {
       case 'firstSeen':
-        return SuperwallEvent._(type: EventType.firstSeen);
+        return SuperwallPlacement._(type: PlacementType.firstSeen);
       case 'appOpen':
-        return SuperwallEvent._(type: EventType.appOpen);
+        return SuperwallPlacement._(type: PlacementType.appOpen);
       case 'appLaunch':
-        return SuperwallEvent._(type: EventType.appLaunch);
+        return SuperwallPlacement._(type: PlacementType.appLaunch);
       case 'identityAlias':
-        return SuperwallEvent._(type: EventType.identityAlias);
+        return SuperwallPlacement._(type: PlacementType.identityAlias);
       case 'appInstall':
-        return SuperwallEvent._(type: EventType.appInstall);
+        return SuperwallPlacement._(type: PlacementType.appInstall);
       case 'sessionStart':
-        return SuperwallEvent._(type: EventType.sessionStart);
+        return SuperwallPlacement._(type: PlacementType.sessionStart);
       case 'deviceAttributes':
-        return SuperwallEvent._(
-            type: EventType.deviceAttributes,
+        return SuperwallPlacement._(
+            type: PlacementType.deviceAttributes,
             deviceAttributes: json['attributes']);
       case 'subscriptionStatusDidChange':
-        return SuperwallEvent._(type: EventType.subscriptionStatusDidChange);
+        return SuperwallPlacement._(
+            type: PlacementType.subscriptionStatusDidChange);
       case 'appClose':
-        return SuperwallEvent._(type: EventType.appClose);
+        return SuperwallPlacement._(type: PlacementType.appClose);
       case 'deepLink':
         var url = json['url'] as String?;
-        return SuperwallEvent._(type: EventType.deepLink, deepLinkUrl: url);
+        return SuperwallPlacement._(
+            type: PlacementType.deepLink, deepLinkUrl: url);
       case 'triggerFire':
-        return SuperwallEvent._(
-          type: EventType.triggerFire,
-          eventName: json['eventName'] as String?,
+        return SuperwallPlacement._(
+          type: PlacementType.triggerFire,
+          placementName: json['placementName'] as String?,
           result: TriggerResult.fromJson(json['result']),
         );
       case 'paywallOpen':
-        return SuperwallEvent._(
-          type: EventType.paywallOpen,
+        return SuperwallPlacement._(
+          type: PlacementType.paywallOpen,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallClose':
-        return SuperwallEvent._(
-          type: EventType.paywallClose,
+        return SuperwallPlacement._(
+          type: PlacementType.paywallClose,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallDecline':
-        return SuperwallEvent._(
-          type: EventType.paywallDecline,
+        return SuperwallPlacement._(
+          type: PlacementType.paywallDecline,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'transactionStart':
-        return SuperwallEvent._(
-          type: EventType.transactionStart,
+        return SuperwallPlacement._(
+          type: PlacementType.transactionStart,
           product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'transactionFail':
-        return SuperwallEvent._(
-          type: EventType.transactionFail,
+        return SuperwallPlacement._(
+          type: PlacementType.transactionFail,
           error: json['error'],
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'transactionAbandon':
-        return SuperwallEvent._(
-          type: EventType.transactionAbandon,
+        return SuperwallPlacement._(
+          type: PlacementType.transactionAbandon,
           product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'transactionComplete':
         final transactionJson = json['transaction'];
 
-        return SuperwallEvent._(
-            type: EventType.transactionComplete,
+        return SuperwallPlacement._(
+            type: PlacementType.transactionComplete,
             transaction: (transactionJson != null)
                 ? StoreTransaction.fromJson(transactionJson)
                 : null,
             product: StoreProduct.fromJson(json['product']),
             paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']));
       case 'subscriptionStart':
-        return SuperwallEvent._(
-          type: EventType.subscriptionStart,
+        return SuperwallPlacement._(
+          type: PlacementType.subscriptionStart,
           product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'freeTrialStart':
-        return SuperwallEvent._(
-          type: EventType.freeTrialStart,
+        return SuperwallPlacement._(
+          type: PlacementType.freeTrialStart,
           product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'transactionRestore':
-        return SuperwallEvent._(
-          type: EventType.transactionRestore,
+        return SuperwallPlacement._(
+          type: PlacementType.transactionRestore,
           restoreType: RestoreType.fromJson(json['restoreType']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'transactionTimeout':
-        return SuperwallEvent._(
-          type: EventType.transactionTimeout,
+        return SuperwallPlacement._(
+          type: PlacementType.transactionTimeout,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'userAttributes':
-        return SuperwallEvent._(
-            type: EventType.userAttributes, userAttributes: json['attributes']);
+        return SuperwallPlacement._(
+            type: PlacementType.userAttributes,
+            userAttributes: json['attributes']);
       case 'nonRecurringProductPurchase':
-        return SuperwallEvent._(
-          type: EventType.nonRecurringProductPurchase,
+        return SuperwallPlacement._(
+          type: PlacementType.nonRecurringProductPurchase,
           product: StoreProduct.fromJson(json['product']),
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallResponseLoadStart':
-        return SuperwallEvent._(
-            type: EventType.paywallResponseLoadStart,
-            triggeredEventName: json['triggeredEventName']);
+        return SuperwallPlacement._(
+            type: PlacementType.paywallResponseLoadStart,
+            triggeredPlacementName: json['triggeredPlacementName']);
       case 'paywallResponseLoadNotFound':
-        return SuperwallEvent._(
-            type: EventType.paywallResponseLoadNotFound,
-            triggeredEventName: json['triggeredEventName']);
+        return SuperwallPlacement._(
+            type: PlacementType.paywallResponseLoadNotFound,
+            triggeredPlacementName: json['triggeredPlacementName']);
       case 'paywallResponseLoadFail':
-        return SuperwallEvent._(
-            type: EventType.paywallResponseLoadFail,
-            triggeredEventName: json['triggeredEventName']);
+        return SuperwallPlacement._(
+            type: PlacementType.paywallResponseLoadFail,
+            triggeredPlacementName: json['triggeredPlacementName']);
       case 'paywallResponseLoadComplete':
-        return SuperwallEvent._(
-          type: EventType.paywallResponseLoadComplete,
-          triggeredEventName: json['triggeredEventName'],
+        return SuperwallPlacement._(
+          type: PlacementType.paywallResponseLoadComplete,
+          triggeredPlacementName: json['triggeredPlacementName'],
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallWebviewLoadStart':
-        return SuperwallEvent._(
-          type: EventType.paywallWebviewLoadStart,
+        return SuperwallPlacement._(
+          type: PlacementType.paywallWebviewLoadStart,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallWebviewLoadFail':
-        return SuperwallEvent._(
-          type: EventType.paywallWebviewLoadFail,
+        return SuperwallPlacement._(
+          type: PlacementType.paywallWebviewLoadFail,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallWebviewLoadComplete':
-        return SuperwallEvent._(
-          type: EventType.paywallWebviewLoadComplete,
+        return SuperwallPlacement._(
+          type: PlacementType.paywallWebviewLoadComplete,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallWebviewLoadTimeout':
-        return SuperwallEvent._(
-          type: EventType.paywallWebviewLoadTimeout,
+        return SuperwallPlacement._(
+          type: PlacementType.paywallWebviewLoadTimeout,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallWebviewLoadFallback':
-        return SuperwallEvent._(
-          type: EventType.paywallWebviewLoadFallback,
+        return SuperwallPlacement._(
+          type: PlacementType.paywallWebviewLoadFallback,
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallProductsLoadStart':
-        return SuperwallEvent._(
-          type: EventType.paywallProductsLoadStart,
-          triggeredEventName: json['triggeredEventName'],
+        return SuperwallPlacement._(
+          type: PlacementType.paywallProductsLoadStart,
+          triggeredPlacementName: json['triggeredPlacementName'],
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallProductsLoadFail':
-        return SuperwallEvent._(
-          type: EventType.paywallProductsLoadFail,
-          triggeredEventName: json['triggeredEventName'],
+        return SuperwallPlacement._(
+          type: PlacementType.paywallProductsLoadFail,
+          triggeredPlacementName: json['triggeredPlacementName'],
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'paywallProductsLoadComplete':
-        return SuperwallEvent._(
-          type: EventType.paywallProductsLoadComplete,
-          triggeredEventName: json['triggeredEventName'],
+        return SuperwallPlacement._(
+          type: PlacementType.paywallProductsLoadComplete,
+          triggeredPlacementName: json['triggeredPlacementName'],
         );
       case 'paywallProductsLoadRetry':
-        return SuperwallEvent._(
-          type: EventType.paywallProductsLoadRetry,
-          triggeredEventName: json['triggeredEventName'],
+        return SuperwallPlacement._(
+          type: PlacementType.paywallProductsLoadRetry,
+          triggeredPlacementName: json['triggeredPlacementName'],
           attempt: json['attempt'],
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'surveyResponse':
-        return SuperwallEvent._(
-          type: EventType.surveyResponse,
+        return SuperwallPlacement._(
+          type: PlacementType.surveyResponse,
           survey: Survey.fromJson(json['survey']),
           selectedOption: SurveyOption.fromJson(json['selectedOption']),
           customResponse: json['customResponse'],
@@ -307,49 +310,51 @@ class SuperwallEvent {
       case 'paywallPresentationRequest':
         final statusReasonJson = json['reason'];
 
-        return SuperwallEvent._(
-            type: EventType.paywallPresentationRequest,
+        return SuperwallPlacement._(
+            type: PlacementType.paywallPresentationRequest,
             status: PaywallPresentationRequestStatus.fromJson(json['status']),
             reason: (statusReasonJson != null)
                 ? PaywallPresentationRequestStatusReason.fromJson(
                     statusReasonJson)
                 : null);
       case 'touchesBegan':
-        return SuperwallEvent._(type: EventType.touchesBegan);
+        return SuperwallPlacement._(type: PlacementType.touchesBegan);
       case 'surveyClose':
-        return SuperwallEvent._(type: EventType.surveyClose);
+        return SuperwallPlacement._(type: PlacementType.surveyClose);
       case 'configRefresh':
-        return SuperwallEvent._(type: EventType.configRefresh);
+        return SuperwallPlacement._(type: PlacementType.configRefresh);
       case 'reset':
-        return SuperwallEvent._(type: EventType.reset);
+        return SuperwallPlacement._(type: PlacementType.reset);
       case 'customPlacement':
-        return SuperwallEvent._(
-          type: EventType.customPlacement,
+        return SuperwallPlacement._(
+          type: PlacementType.customPlacement,
           name: json['name'],
           params: json['params'],
           paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
         );
       case 'configAttributes':
-        return SuperwallEvent._(type: EventType.configAttributes);
+        return SuperwallPlacement._(type: PlacementType.configAttributes);
       case 'confirmAllAssignments':
-        return SuperwallEvent._(type: EventType.confirmAllAssignments);
+        return SuperwallPlacement._(type: PlacementType.confirmAllAssignments);
       case 'configFail':
-        return SuperwallEvent._(type: EventType.configFail);
+        return SuperwallPlacement._(type: PlacementType.configFail);
       case 'adServicesTokenRequestStart':
-        return SuperwallEvent._(type: EventType.adServicesTokenRequestStart);
+        return SuperwallPlacement._(
+            type: PlacementType.adServicesTokenRequestStart);
       case 'adServicesTokenRequestFail':
-        return SuperwallEvent._(
-            type: EventType.adServicesTokenRequestFail, error: json['error']);
+        return SuperwallPlacement._(
+            type: PlacementType.adServicesTokenRequestFail,
+            error: json['error']);
       case 'adServicesTokenRequestComplete':
-        return SuperwallEvent._(
-            type: EventType.adServicesTokenRequestComplete,
+        return SuperwallPlacement._(
+            type: PlacementType.adServicesTokenRequestComplete,
             token: json['token']);
       case 'shimmerViewStart':
-        return SuperwallEvent._(type: EventType.shimmerViewStart);
+        return SuperwallPlacement._(type: PlacementType.shimmerViewStart);
       case 'shimmerViewComplete':
-        return SuperwallEvent._(type: EventType.shimmerViewComplete);
+        return SuperwallPlacement._(type: PlacementType.shimmerViewComplete);
       default:
-        throw ArgumentError('Invalid event type');
+        throw ArgumentError('Invalid placement type: ${json}');
     }
   }
 }

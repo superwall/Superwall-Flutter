@@ -1,59 +1,31 @@
+import '../../superwallkit_flutter.dart';
+
 /// The product in the paywall.
 class Product {
-  /// The type of product.
-  final ProductType type;
+  /// The product's identifier.
+  final String? id;
 
-  /// The product identifier.
-  final String id;
+  /// The name of the product in the editor.
+  final String? name;
+
+  /// The entitlements associated with this product.
+  final Set<Entitlement> entitlements;
 
   Product({
-    required this.type,
     required this.id,
+    required this.name,
+    required this.entitlements,
   });
 
   // Factory constructor to create a Product instance from a JSON map
-  factory Product.fromJson(Map<dynamic, dynamic> json) {
+  factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      type: ProductTypeExtension.fromJson(json['type']),
       id: json['id'],
+      name: json['name'],
+      entitlements: (json['entitlements'] as List<dynamic>?)
+              ?.map((e) => Entitlement.fromJson(Map<String, dynamic>.from(e)))
+              .toSet() ??
+          {},
     );
-  }
-}
-
-/// The type of product.
-enum ProductType {
-  primary,
-  secondary,
-  tertiary,
-}
-
-// Extension on ProductType for explicit serialization and deserialization
-extension ProductTypeExtension on ProductType {
-  // Converts the enum to a JSON-valid string
-  String toJson() {
-    switch (this) {
-      case ProductType.primary:
-        return 'primary';
-      case ProductType.secondary:
-        return 'secondary';
-      case ProductType.tertiary:
-        return 'tertiary';
-      default:
-        throw ArgumentError('Invalid ProductType value');
-    }
-  }
-
-  // Parses a JSON string to get the corresponding ProductType enum value
-  static ProductType fromJson(String json) {
-    switch (json) {
-      case 'primary':
-        return ProductType.primary;
-      case 'secondary':
-        return ProductType.secondary;
-      case 'tertiary':
-        return ProductType.tertiary;
-      default:
-        throw ArgumentError('Invalid ProductType value: $json');
-    }
   }
 }

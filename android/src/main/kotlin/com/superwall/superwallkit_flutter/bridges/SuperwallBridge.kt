@@ -1,15 +1,18 @@
 package com.superwall.superwallkit_flutter.bridges
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.superwall.sdk.Superwall
+import com.superwall.sdk.analytics.superwall.SuperwallPlacementInfo
 import com.superwall.sdk.config.options.SuperwallOptions
-import com.superwall.sdk.delegate.SubscriptionStatus
 import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.identity.identify
 import com.superwall.sdk.identity.setUserAttributes
 import com.superwall.sdk.misc.ActivityProvider
+import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.paywall.presentation.PaywallPresentationHandler
 import com.superwall.sdk.paywall.presentation.dismiss
 import com.superwall.sdk.paywall.presentation.register
@@ -19,11 +22,14 @@ import com.superwall.superwallkit_flutter.argumentForKey
 import com.superwall.superwallkit_flutter.badArgs
 import com.superwall.superwallkit_flutter.bridgeInstance
 import com.superwall.superwallkit_flutter.json.*
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import com.superwall.superwallkit_flutter.BridgingCreator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
 import logLevelFromJson
 import superwallOptionsFromJson
 import toJson
@@ -36,6 +42,45 @@ class SuperwallBridge(
 ) : BridgeInstance(context, bridgeId, initializationArgs), ActivityProvider {
     companion object {
         fun bridgeClass(): BridgeClass = "SuperwallBridge"
+    }
+
+    init {
+        val main = CoroutineScope(Dispatchers.Main)
+        main.launch {
+            events().setStreamHandler(
+                BridgeHandler(scope) { eventSink ->
+                    // Use the main dispatcher so that events are sent on the UI thread.
+                    scope.launch {
+                        try {
+                            Superwall.instance.subscriptionStatus.collect { status ->
+                                main.launch {
+                                    eventSink.success(status.toJson())
+                                }
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    internal class BridgeHandler(
+        val scope: CoroutineScope,
+        val sink: (EventChannel.EventSink) -> Unit
+    ) : EventChannel.StreamHandler {
+        private var listening: Job? = null
+        override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+            listening?.cancel()
+            listening = scope.launch {
+                sink(events!!)
+            }
+        }
+
+        override fun onCancel(arguments: Any?) {
+            listening?.cancel()
+        }
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -135,7 +180,7 @@ class SuperwallBridge(
 
                         val updatedValue = Superwall.instance.subscriptionStatus.value;
                         val valid =
-                            (updatedValue == SubscriptionStatus.ACTIVE || updatedValue == SubscriptionStatus.INACTIVE) && (updatedValue != SubscriptionStatus.UNKNOWN);
+                            (updatedValue is SubscriptionStatus.Active || updatedValue is SubscriptionStatus.Inactive) && (updatedValue !is SubscriptionStatus.Unknown);
                         result.success(
                             mapOf(
                                 "providedStatus" to it.status.toString(),
@@ -183,9 +228,10 @@ class SuperwallBridge(
                     result.success(null)
                 }
 
-                "preloadPaywallsForEvents" -> {
-                    val eventNames = call.argumentForKey<List<String>>("eventNames")?.toSet()
-                    eventNames?.let {
+                "preloadPaywallsForPlacements" -> {
+                    val placementNames =
+                        call.argumentForKey<List<String>>("placementNames")?.toSet()
+                    placementNames?.let {
                         Superwall.instance.preloadPaywalls(it)
                     }
                     result.success(null)
@@ -235,7 +281,7 @@ class SuperwallBridge(
                             }
 
                         Superwall.configure(
-                            applicationContext = this@SuperwallBridge.context,
+                            applicationContext = this@SuperwallBridge.context.applicationContext as Application,
                             apiKey = apiKey,
                             purchaseController = purchaseControllerProxyBridge,
                             options = options,
@@ -271,11 +317,11 @@ class SuperwallBridge(
                     }
                 }
 
-                "registerEvent" -> {
-                    val event = call.argumentForKey<String>("event")
-                    event?.let { event ->
+                "registerPlacement" -> {
+                    val placement = call.argumentForKey<String>("placement")
+                    placement?.let { placement ->
                         val params = call.argument<Map<String, Any>>("params")
-                        BreadCrumbs.append("SuperwallBridge.kt: Invoke registerEvent")
+                        BreadCrumbs.append("SuperwallBridge.kt: Invoke registerPlacement")
                         val handlerProxyBridge =
                             call.bridgeInstance<PaywallPresentationHandlerProxyBridge?>("handlerProxyBridgeId")
                         BreadCrumbs.append("SuperwallBridge.kt: Found handlerProxyBridge instance: $handlerProxyBridge")
@@ -283,7 +329,7 @@ class SuperwallBridge(
                         val handler: PaywallPresentationHandler? = handlerProxyBridge?.handler
                         BreadCrumbs.append("SuperwallBridge.kt: Found handler: $handler")
 
-                        Superwall.instance.register(event, params, handler) {
+                        Superwall.instance.register(placement, params, handler) {
                             scope.launch {
                                 val featureBlockProxyBridge =
                                     call.bridgeInstance<CompletionBlockProxyBridge>("featureBlockProxyBridgeId")
@@ -322,6 +368,11 @@ class SuperwallBridge(
                                 result.badArgs(call)
                             })
                     }
+                }
+
+                "getEntitlements" -> {
+                    val entitlements = Superwall.instance.entitlements
+                    result.success(entitlements.toJson())
                 }
 
 

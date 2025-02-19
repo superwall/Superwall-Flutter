@@ -2,8 +2,8 @@ package com.superwall.superwallkit_flutter.bridges
 
 import android.content.Context
 import android.net.Uri
-import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
-import com.superwall.sdk.delegate.SubscriptionStatus
+import com.superwall.sdk.analytics.superwall.SuperwallPlacementInfo
+import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.paywall.presentation.PaywallInfo
 import com.superwall.superwallkit_flutter.invokeMethodOnMain
@@ -67,20 +67,20 @@ class SuperwallDelegateProxyBridge(
         }
     }
 
-    override fun subscriptionStatusDidChange(newValue: SubscriptionStatus) {
+    override fun subscriptionStatusDidChange(from: SubscriptionStatus, to: SubscriptionStatus) {
         coroutineScope.launch {
             communicator().invokeMethodOnMain(
                 "subscriptionStatusDidChange",
-                mapOf("subscriptionStatusBridgeId" to newValue.createBridgeId())
+                mapOf("subscriptionStatusBridgeId" to to.createBridgeId())
             )
         }
     }
 
-    override fun handleSuperwallEvent(eventInfo: SuperwallEventInfo) {
+    override fun handleSuperwallPlacement(placementInfo: SuperwallPlacementInfo) {
         coroutineScope.launch {
             communicator().invokeMethodOnMain(
-                "handleSuperwallEvent",
-                mapOf("eventInfo" to eventInfo.toJson())
+                "handleSuperwallPlacement",
+                mapOf("placementInfo" to placementInfo.toJson())
             )
         }
     }
