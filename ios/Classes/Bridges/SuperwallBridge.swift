@@ -1,8 +1,41 @@
+import Combine
 import Flutter
 import SuperwallKit
 
-public class SuperwallBridge: BridgeInstance {
+public class SuperwallBridge: BridgeInstance, FlutterStreamHandler {
   override class var bridgeClass: BridgeClass { "SuperwallBridge" }
+  private var eventSink: FlutterEventSink?
+  private var cancellable: AnyCancellable?
+
+  required init(bridgeId: BridgeId, initializationArgs: [String: Any]? = nil) {
+    super.init(bridgeId: bridgeId, initializationArgs: initializationArgs)
+    // Use the base class's events() function to get the channel,
+    // then register self as the stream handler.
+    events().setStreamHandler(self)
+  }
+
+  func startListening() {
+    // Listen to Superwall's subscriptionStatus and send updates
+    cancellable = Superwall.shared.$subscriptionStatus
+      .sink { [weak self] status in
+        self?.eventSink?(status.toJson())
+      }
+  }
+
+  public func onListen(
+    withArguments arguments: Any?,
+    eventSink: @escaping FlutterEventSink
+  ) -> FlutterError? {
+    self.eventSink = eventSink
+    startListening()
+    return nil
+  }
+
+  public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    cancellable?.cancel()
+    self.eventSink = nil
+    return nil
+  }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
@@ -95,17 +128,6 @@ public class SuperwallBridge: BridgeInstance {
       let configurationStatusBridgeId = Superwall.shared.configurationStatus.createBridgeId()
       result(configurationStatusBridgeId)
 
-    case "getIsConfigured":
-      // Implement logic to check if Superwall has finished configuring
-      result(Superwall.shared.isConfigured)
-
-    case "setIsConfigured":
-      // Implement logic to set the configured state of Superwall
-      if let configured: Bool = call.argument(for: "configured") {
-        Superwall.shared.isConfigured = configured
-      }
-      result(nil)
-
     case "getLocaleIdentifier":
       // Implement logic to check if Superwall has finished configuring
       result(Superwall.shared.localeIdentifier)
@@ -129,10 +151,10 @@ public class SuperwallBridge: BridgeInstance {
       Superwall.shared.preloadAllPaywalls()
       result(nil)
 
-    case "preloadPaywallsForEvents":
-      // Implement logic to preload paywalls for specific event names
-      if let eventNames: [String] = call.argument(for: "eventNames") {
-        Superwall.shared.preloadPaywalls(forEvents: Set(eventNames))
+    case "preloadPaywallsForPlacements":
+      // Implement logic to preload paywalls for specific placement names
+      if let placementNames: [String] = call.argument(for: "placementNames") {
+        Superwall.shared.preloadPaywalls(forPlacements: Set(placementNames))
       }
       result(nil)
 
@@ -197,8 +219,8 @@ public class SuperwallBridge: BridgeInstance {
         result(nil)
       }
 
-    case "registerEvent":
-      guard let event: String = call.argument(for: "event") else {
+    case "registerPlacement":
+      guard let placement: String = call.argument(for: "placement") else {
         result(call.badArgs)
         return
       }
@@ -216,7 +238,7 @@ public class SuperwallBridge: BridgeInstance {
         return handlerProxyBridge.handler
       }()
 
-      Superwall.shared.register(event: event, params: params, handler: handler) {
+      Superwall.shared.register(placement: placement, params: params, handler: handler) {
         if let featureBlockProxyBridge: CompletionBlockProxyBridge = call.bridgeInstance(
           for: "featureBlockProxyBridgeId")
         {
@@ -247,6 +269,9 @@ public class SuperwallBridge: BridgeInstance {
       Superwall.shared.confirmAllAssignments { assignments in
         result(assignments.map { $0.toJson() })
       }
+    case "getEntitlements":
+      let entitlements = Superwall.shared.entitlements
+      result(entitlements.toJson())
     default:
       result(FlutterMethodNotImplemented)
     }

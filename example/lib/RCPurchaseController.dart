@@ -12,19 +12,26 @@ class RCPurchaseController extends PurchaseController {
     // Configure RevenueCat
     await Purchases.setLogLevel(LogLevel.debug);
     final configuration = Platform.isIOS
-        ? PurchasesConfiguration('appl_XmYQBWbTAFiwLeWrBJOeeJJtTql')
+        ? PurchasesConfiguration('appl_PpUWCgFONlxwztRfNgEdvyGHiAG')
         : PurchasesConfiguration('goog_DCSOujJzRNnPmxdgjOwdOOjwilC');
     await Purchases.configure(configuration);
 
     // Listen for changes
-    Purchases.addCustomerInfoUpdateListener((customerInfo) {
+    Purchases.addCustomerInfoUpdateListener((customerInfo) async {
       // Gets called whenever new CustomerInfo is available
+      final entitlements = customerInfo.entitlements.active.keys
+          .map((id) => Entitlement(id: id))
+          .toSet();
+
       final hasActiveEntitlementOrSubscription = customerInfo
           .hasActiveEntitlementOrSubscription(); // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
+
       if (hasActiveEntitlementOrSubscription) {
-        Superwall.shared.setSubscriptionStatus(SubscriptionStatus.active);
+        await Superwall.shared.setSubscriptionStatus(
+            SubscriptionStatusActive(entitlements: entitlements));
       } else {
-        Superwall.shared.setSubscriptionStatus(SubscriptionStatus.inactive);
+        await Superwall.shared
+            .setSubscriptionStatus(SubscriptionStatusInactive());
       }
     });
   }

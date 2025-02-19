@@ -10,22 +10,29 @@ class TriggerResult {
 
   TriggerResult._({required this.type, this.experiment, this.error});
 
-  factory TriggerResult.eventNotFound() => TriggerResult._(type: TriggerResultType.eventNotFound);
-  factory TriggerResult.noRuleMatch() => TriggerResult._(type: TriggerResultType.noRuleMatch);
-  factory TriggerResult.paywall(Experiment experiment) => TriggerResult._(type: TriggerResultType.paywall, experiment: experiment);
-  factory TriggerResult.holdout(Experiment experiment) => TriggerResult._(type: TriggerResultType.holdout, experiment: experiment);
-  factory TriggerResult.error(String error) => TriggerResult._(type: TriggerResultType.error, error: error);
+  factory TriggerResult.placementNotFound() =>
+      TriggerResult._(type: TriggerResultType.placementNotFound);
+  factory TriggerResult.noAudienceMatch() =>
+      TriggerResult._(type: TriggerResultType.noAudienceMatch);
+  factory TriggerResult.paywall(Experiment experiment) =>
+      TriggerResult._(type: TriggerResultType.paywall, experiment: experiment);
+  factory TriggerResult.holdout(Experiment experiment) =>
+      TriggerResult._(type: TriggerResultType.holdout, experiment: experiment);
+  factory TriggerResult.error(String error) =>
+      TriggerResult._(type: TriggerResultType.error, error: error);
 
   factory TriggerResult.fromJson(Map<dynamic, dynamic> json) {
     switch (json['result']) {
-      case 'eventNotFound':
-        return TriggerResult.eventNotFound();
-      case 'noRuleMatch':
-        return TriggerResult.noRuleMatch();
+      case 'placementNotFound':
+        return TriggerResult.placementNotFound();
+      case 'noAudienceMatch':
+        return TriggerResult.noAudienceMatch();
       case 'paywall':
-        return TriggerResult.paywall(Experiment(bridgeId: json['experimentBridgeId']));
+        return TriggerResult.paywall(
+            Experiment(bridgeId: json['experimentBridgeId']));
       case 'holdout':
-        return TriggerResult.holdout(Experiment(bridgeId: json['experimentBridgeId']));
+        return TriggerResult.holdout(
+            Experiment(bridgeId: json['experimentBridgeId']));
       case 'error':
         return TriggerResult.error(json['error']);
       default:
@@ -34,4 +41,10 @@ class TriggerResult {
   }
 }
 
-enum TriggerResultType { eventNotFound, noRuleMatch, paywall, holdout, error }
+enum TriggerResultType {
+  placementNotFound,
+  noAudienceMatch,
+  paywall,
+  holdout,
+  error
+}

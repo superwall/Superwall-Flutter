@@ -6,13 +6,17 @@ typealias BridgeId = String
 typealias Communicator = FlutterMethodChannel
 
 public class BridgeInstance: NSObject {
+  private var eventsChannel: FlutterEventChannel?
+  private var eventSink: FlutterEventSink?
+
   class var bridgeClass: BridgeClass {
     assertionFailure("Subclasses must implement")
     return ""
   }
 
   lazy var communicator: Communicator = {
-    let communicator = Communicator(name: bridgeId, binaryMessenger: BridgingCreator.shared.registrar.messenger())
+    let communicator = Communicator(
+      name: bridgeId, binaryMessenger: BridgingCreator.shared.registrar.messenger())
 
     // Setting an associated object here because `FlutterMethodChannel / Communicator` doesn't make the `name` publicly available. Consider subclassing `FlutterMethodChannel` instead to avoid this.
     communicator.bridgeId = bridgeId
@@ -26,6 +30,17 @@ public class BridgeInstance: NSObject {
   required init(bridgeId: BridgeId, initializationArgs: [String: Any]? = nil) {
     self.bridgeId = bridgeId
     self.initializationArgs = initializationArgs
+  }
+
+  func events() -> FlutterEventChannel {
+    if eventsChannel == nil {
+      let messenger = BridgingCreator.shared.registrar.messenger()
+      eventsChannel = FlutterEventChannel(
+        name: "\(bridgeId)/events",
+        binaryMessenger: messenger
+      )
+    }
+    return eventsChannel!
   }
 }
 

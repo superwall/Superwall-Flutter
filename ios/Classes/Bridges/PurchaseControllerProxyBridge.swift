@@ -7,7 +7,7 @@ public class PurchaseControllerProxyBridge: BridgeInstance, PurchaseController {
 
   // MARK: - PurchaseController
 
-  public func purchase(product: SKProduct) async -> PurchaseResult {
+  public func purchase(product: StoreProduct) async -> PurchaseResult {
     print("Attempting to invoke purchaseFromAppStore method internally")
 
     guard let purchaseResultBridgeId = await communicator.asyncInvokeMethodOnMain("purchaseFromAppStore", arguments: ["productId": product.productIdentifier]) as? BridgeId else {

@@ -17,11 +17,11 @@ fun JsonExtensions.Companion.logScopeFromJson(json: String): LogScope? {
         "paywallevents" -> LogScope.paywallEvents
         "productsmanager" -> LogScope.productsManager
         "storekitmanager" -> LogScope.storeKitManager
-        "events" -> LogScope.events
+        "placements" -> LogScope.placements
         "receipts" -> LogScope.receipts
         "superwallcore" -> LogScope.superwallCore
         "paywallpresentation" -> LogScope.paywallPresentation
-        "paywalltransactions" -> LogScope.paywallTransactions
+        "transactions" -> LogScope.transactions
         "paywallviewcontroller" -> LogScope.paywallView
         "nativepurchasecontroller" -> LogScope.nativePurchaseController
         "cache" -> LogScope.cache

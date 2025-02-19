@@ -1,4 +1,4 @@
-/// An enum whose cases indicate whether the ``Superwall/register(event:params:handler:feature:)``
+/// An enum whose cases indicate whether the ``Superwall/register(placement:params:handler:feature:)``
 /// `feature` block executes or not.
 enum FeatureGatingBehavior {
   gated,
