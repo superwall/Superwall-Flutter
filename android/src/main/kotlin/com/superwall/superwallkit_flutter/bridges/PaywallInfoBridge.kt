@@ -35,7 +35,10 @@ class PaywallInfoBridge(
             when (call.method) {
                 "getName" -> result.success(paywallInfo.name)
                 "getIdentifier" -> result.success(paywallInfo.identifier)
-                "getExperimentBridgeId" -> result.success(paywallInfo.experiment?.createBridgeId())
+                "getExperimentBridgeId" -> result.success(
+                    mapOf("id" to paywallInfo.experiment?.id,
+                        "description" to paywallInfo.experiment.toString())
+                )
                 "getProducts" -> result.success(paywallInfo.products.map { it.toJson() })
                 "getProductIds" -> result.success(paywallInfo.productIds)
                 "getUrl" -> result.success(paywallInfo.url.toString())

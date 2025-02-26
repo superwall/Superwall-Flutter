@@ -24,7 +24,7 @@ object BreadCrumbs {
 }
 
 fun MutableMap<String, BridgeInstance>.toFormattedString(): String {
-    return this.entries.joinToString(separator = "\n") { (key, value) ->
+    return this.entries.joinToString(separator = "\n") { (key: String, value: BridgeInstance) ->
         "Key: $key, Value: $value"
     }
 }

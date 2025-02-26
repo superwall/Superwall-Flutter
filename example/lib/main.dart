@@ -1,13 +1,29 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import 'RCPurchaseController.dart';
 import 'home.dart';
 import 'launchedFeature.dart';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
-void main() {
+// Be sure to annotate your callback function to avoid issues in release mode on Flutter >= 3.3.0
+@pragma('vm:entry-point')
+void printHello() {
+  final DateTime now = DateTime.now();
+  final int isolateId = Isolate.current.hashCode;
+  print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await AndroidAlarmManager.initialize();
   runApp(const MyApp());
+  final int helloAlarmID = 0;
+  await AndroidAlarmManager.periodic(
+      const Duration(minutes: 1), helloAlarmID, printHello);
 }
 
 class MyApp extends StatefulWidget {
@@ -56,6 +72,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         logging.info('Executing Superwall configure completion block');
       });
       Superwall.shared.setDelegate(this);
+      Superwall.shared.identify('123456');
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
       /// Always configure RevenueCat after Superwall and keep Superwall's
       /// subscription status up-to-date with RevenueCat's.
@@ -67,36 +84,6 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       logging.error('Failed to configure Superwall:', e);
     }
   }
-
-  // // Method to call when the button is tapped
-  // Future<void> onRegisterTapped() async {
-  //   try {
-  //     final handler = PaywallPresentationHandler();
-  //     handler
-  //       ..onPresent((paywallInfo) async {
-  //         final name = await paywallInfo.name;
-  //         logging.info('Handler (onPresent): $name');
-  //       })
-  //       ..onDismiss((paywallInfo) async {
-  //         final name = await paywallInfo.name;
-  //         logging.info('Handler (onDismiss): $name');
-  //       })
-  //       ..onError((error) {
-  //         logging.error('Handler (onError):', error);
-  //       })
-  //       ..onSkip(handleSkipReason);
-
-  //     Superwall.shared.registerPlacement('flutter', handler: handler,
-  //         feature: () {
-  //       logging.info('Executing feature block');
-  //       performFeatureBlockActions();
-  //     });
-  //     logging.info('Register method called successfully.');
-  //   } catch (e) {
-  //     // Handle any errors that occur during registration
-  //     logging.error('Failed to call register method:', e);
-  //   }
-  // }
 
   // Future<void> performFeatureBlockActions() async {
   //   final paywallInfo = await Superwall.shared.getLatestPaywallInfo();

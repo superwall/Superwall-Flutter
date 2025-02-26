@@ -25,12 +25,12 @@ class Home extends StatelessWidget {
                 onPressed: () async {
                   await Superwall.shared.registerPlacement('non_gated',
                       feature: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/launchedFeature',
-                          arguments: 'Non-gated feature launched',
-                        );
-                      });
+                    Navigator.pushNamed(
+                      context,
+                      '/launchedFeature',
+                      arguments: 'Non-gated feature launched',
+                    );
+                  });
                 },
               ),
               ElevatedButton(
@@ -64,7 +64,7 @@ class Home extends StatelessWidget {
                 // Identify action.
                 child: Text('Identify'),
                 onPressed: () {
-                  Superwall.shared.identify('abc');
+                  onRegisterTapped();
                 },
               ),
               ElevatedButton(
@@ -78,4 +78,35 @@ class Home extends StatelessWidget {
           ),
         ),
       );
+}
+
+// Method to call when the button is tapped
+Future<void> onRegisterTapped() async {
+  try {
+    final handler = PaywallPresentationHandler();
+    handler
+      ..onPresent((paywallInfo) async {
+        final name = await paywallInfo.name;
+        debugPrint('Handler (onPresent): $name');
+      })
+      ..onDismiss((paywallInfo) async {
+        final name = await paywallInfo.name;
+        debugPrint('Handler (onDismiss): $name');
+      })
+      ..onError((error) {
+        debugPrint('Handler (onError): $error');
+      })
+      ..onSkip((skipReason) {
+        debugPrint('Handler (onSkip): $skipReason');
+      });
+
+    Superwall.shared.registerPlacement('flutter', handler: handler,
+        feature: () {
+      debugPrint('Executing feature block');
+    });
+    debugPrint('Register method called successfully.');
+  } catch (e) {
+    // Handle any errors that occur during registration
+    debugPrint('Failed to call register method: $e');
+  }
 }

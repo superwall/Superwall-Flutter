@@ -54,13 +54,11 @@ class BridgingCreator(
 
 
             binding?.let {
-                synchronized(BridgingCreator::class.java) {
                     val bridge = BridgingCreator({ waitForPlugin() })
                     _shared = bridge
                     _flutterPluginBinding.value = binding
                     val communicator = Communicator(binding.binaryMessenger, "SWK_BridgingCreator")
                     communicator.setMethodCallHandler(bridge)
-                }
             }
 
         }

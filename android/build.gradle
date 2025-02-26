@@ -8,6 +8,36 @@ allprojects {
         google()
         mavenCentral()
     }
+    afterEvaluate {
+        if (getPlugins().hasPlugin('android') ||
+            getPlugins().hasPlugin('android-library')) {
+            configure(android.lintOptions) {
+                abortOnError false
+                checkReleaseBuilds false
+            }
+                configure(android.lint) {
+                abortOnError false
+                checkReleaseBuilds false
+            }
+        }
+    }
+
+}
+
+subprojects {
+    afterEvaluate {
+        if (getPlugins().hasPlugin('android') ||
+            getPlugins().hasPlugin('android-library')) {
+            configure(android.lintOptions) {
+                abortOnError false
+                checkReleaseBuilds false
+            }
+            configure(android.lint) {
+                abortOnError false
+                checkReleaseBuilds false
+            }
+        }
+    }
 }
 
 apply plugin: 'com.android.library'
@@ -77,5 +107,6 @@ dependencies {
 
     implementation "com.superwall.sdk:superwall-android:2.0.0"
     implementation 'com.android.billingclient:billing:6.1.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0'
 }

@@ -51,12 +51,8 @@ class PaywallSkippedReasonHoldoutBridge(
                 scope.launch {
                     if (reason is PaywallSkippedReason.Holdout) {
                         val experiment = reason.experiment
-                        val experimentBridgeId =
-                            BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
-                                ExperimentBridge.bridgeClass(),
-                                mapOf("experiment" to experiment)
-                            )
-                        result.success(experimentBridgeId)
+                        result.success(mapOf("id" to experiment.id,
+                            "description" to experiment.toString()))
                     } else {
                         result.notImplemented()
                     }
