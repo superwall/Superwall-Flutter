@@ -9,11 +9,11 @@ PODS:
     - RevenueCat (= 4.43.0)
   - RevenueCat (4.43.0)
   - Superscript (0.1.17)
-  - SuperwallKit (4.0.0-beta.6):
+  - SuperwallKit (4.0.1):
     - Superscript (= 0.1.17)
   - superwallkit_flutter (0.0.1):
     - Flutter
-    - SuperwallKit (= 4.0.0-beta.6)
+    - SuperwallKit (= 4.0.1)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
