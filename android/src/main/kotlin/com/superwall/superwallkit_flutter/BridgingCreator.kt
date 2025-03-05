@@ -28,9 +28,8 @@ class BridgingCreator(
     object Constants {}
 
     companion object {
-        private var _shared: BridgingCreator? = null
-        val shared: BridgingCreator
-            get() = _shared ?: throw IllegalStateException("BridgingCreator not initialized")
+        private var _shared: MutableStateFlow<BridgingCreator?> = MutableStateFlow(null)
+        suspend fun shared() : BridgingCreator = _shared.filterNotNull().first()
 
         private var _flutterPluginBinding: MutableStateFlow<FlutterPlugin.FlutterPluginBinding?> =
             MutableStateFlow(null)
@@ -43,18 +42,14 @@ class BridgingCreator(
             // times (due to other SDK interference), we'll lose access to the
             // SuperwallKitFlutterPlugin current activity
             if (_flutterPluginBinding.value != null) {
-                SuperwallkitFlutterPlugin.reattachementCount.incrementAndGet()
                 println("WARNING: Attempting to set a flutter plugin binding again.")
                 return
             }
 
-            // Store for getter
-
-
             binding?.let {
                 synchronized(BridgingCreator::class.java) {
                     val bridge = BridgingCreator({ waitForPlugin() })
-                    _shared = bridge
+                    _shared.value = bridge
                     _flutterPluginBinding.value = binding
                     val communicator = Communicator(binding.binaryMessenger, "SWK_BridgingCreator")
                     communicator.setMethodCallHandler(bridge)
@@ -66,7 +61,7 @@ class BridgingCreator(
 
     fun tearDown() {
         print("Did tearDown BridgingCreator")
-        _shared = null
+        _shared.value = null
         _flutterPluginBinding.value = null
     }
 
@@ -122,6 +117,7 @@ class BridgingCreator(
             bridgeId,
             initializationArgs
         )
+
         bridgeInstance?.let { bridgeInstance ->
             instances[bridgeId] = bridgeInstance
             bridgeInstance.communicator().setMethodCallHandler(bridgeInstance)

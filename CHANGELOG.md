@@ -2,6 +2,14 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 1.3.11
+
+### Fixes
+
+- Fixes BridgeInstance crashes
+- Adds awaiting on shared instance of BridgeCreator to avoid crashes when plugin is yet to attach
+
+
 ## 1.3.10
 
 ### Fixes

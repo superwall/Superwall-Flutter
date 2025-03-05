@@ -38,7 +38,7 @@ abstract class BridgeInstance(
                 mainScope.launch {
 
                     val communicator = MethodChannel(
-                        BridgingCreator.shared.flutterPluginBinding().binaryMessenger,
+                        BridgingCreator.shared().flutterPluginBinding().binaryMessenger,
                         bridgeId
                     )
                     communicator.setBridgeId(bridgeId);

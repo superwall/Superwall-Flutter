@@ -58,7 +58,7 @@ suspend fun ConfigurationStatus.createBridgeId(): BridgeId {
         is ConfigurationStatus.Failed -> ConfigurationStatusFailedBridge.bridgeClass()
         is ConfigurationStatus.Configured -> ConfigurationStatusConfiguredBridge.bridgeClass()
     }
-    val bridge = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
+    val bridge = BridgingCreator.shared().createBridgeInstanceFromBridgeClass(
         bridgeClass = bridgeClass
     )
     return bridge.bridgeId
