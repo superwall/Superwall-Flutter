@@ -2,6 +2,13 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.0.3
+
+### Fixes
+
+- Fixes BridgeInstance crashes
+- Adds awaiting on shared instance of BridgeCreator to avoid crashes when plugin is yet to attach
+
 ## 2.0.2
 
 - Updates iOS SDK to 1.5.4 [View Android SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/4.0.1)
