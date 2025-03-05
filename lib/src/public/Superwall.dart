@@ -83,7 +83,7 @@ class Superwall extends BridgeIdInstantiable {
 
     // Store the Dart proxy
     final delegateProxy = SuperwallDelegateProxy(delegate: newDelegate);
-
+    print('delegateProxy.bridgeId: ${delegateProxy.bridgeId}');
     // Set the native instance as the delegate
     await bridgeId.communicator.invokeBridgeMethod(
         'setDelegate', {'delegateProxyBridgeId': delegateProxy.bridgeId});

@@ -2,6 +2,7 @@ package com.superwall.superwallkit_flutter
 
 import android.app.Activity
 import android.os.Debug
+import android.util.Log
 import com.superwall.sdk.misc.runOnUiThread
 import com.superwall.superwallkit_flutter.bridges.BridgeId
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -9,6 +10,9 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.WeakHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -21,8 +25,7 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
     companion object {
         private var instance: SuperwallkitFlutterPlugin? = null
         val reattachementCount = AtomicInteger(0)
-        val activityReattachementCount = AtomicInteger(0)
-
+        val lock = Object()
         val currentActivity: Activity?
             get() = instance?.currentActivity
     }
@@ -39,26 +42,22 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
     }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        if(reattachementCount.get() == 0) {
-            BridgingCreator.setFlutterPlugin(flutterPluginBinding)
-        } else reattachementCount.incrementAndGet()
-
+        synchronized(lock) {
+                BridgingCreator.setFlutterPlugin(flutterPluginBinding)
+        }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        if(reattachementCount.get() == 0) {
-            BridgingCreator.shared.tearDown()
-            instance = null
-        } else reattachementCount.decrementAndGet()
+        CoroutineScope(Dispatchers.Main).launch {
+                BridgingCreator.shared().tearDown()
+                instance = null
+        }
     }
 
     //region ActivityAware
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        if(currentActivity!=null || activityReattachementCount.get() != 0)
-            activityReattachementCount.incrementAndGet()
-        else
-            currentActivity = binding.activity
+        currentActivity = binding.activity
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -70,9 +69,7 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
     }
 
     override fun onDetachedFromActivity() {
-        if(activityReattachementCount.get() == 0) {
-            currentActivity = null
-        }else activityReattachementCount.decrementAndGet()
+        currentActivity = null
     }
 
     //endregion
@@ -85,14 +82,18 @@ fun <T> MethodCall.argumentForKey(key: String): T? {
 // Make sure to provide the key for the bridge (which provides the bridgeId)
 suspend fun <T> MethodCall.bridgeInstance(key: String): T? {
     BreadCrumbs.append("SuperwallKitFlutterPlugin.kt: Invoke bridgeInstance(key:) on $this. Key is $key")
-    val bridgeId = this.argument<String>(key) ?: return null
+    val bridgeId = this.argument<String>(key)
+    if (bridgeId == null) {
+        Log.e("SWKP", "No bridgeId found for key: $key")
+        return null
+    }
     BreadCrumbs.append("SuperwallKitFlutterPlugin.kt: Invoke bridgeInstance(key:) in on $this. Found bridgeId $bridgeId")
-    return BridgingCreator.shared.bridgeInstance(bridgeId)
+    return BridgingCreator.shared().bridgeInstance(bridgeId)
 }
 
 suspend fun <T> BridgeId.bridgeInstance(): T? {
     BreadCrumbs.append("SuperwallKitFlutterPlugin.kt: Invoke bridgeInstance() in on $this")
-    return BridgingCreator.shared.bridgeInstance(this)
+    return BridgingCreator.shared().bridgeInstance(this)
 }
 
 fun MethodChannel.Result.badArgs(call: MethodCall) {

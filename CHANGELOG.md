@@ -40,6 +40,14 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - `Superwall.shared.registerEvent` has now been replaced with `Superwall.shared.registerPlacement`
 - `handleSuperwallEvent(SuperwallEventInfo eventInfo)` has been replaced with `handleSuperwallPlacement(SuperwallPlacementInfo placementInfo)`
 
+## 1.3.11
+
+### Fixes
+
+- Fixes BridgeInstance crashes
+- Adds awaiting on shared instance of BridgeCreator to avoid crashes when plugin is yet to attach
+
+
 ## 1.3.10
 
 ### Fixes
