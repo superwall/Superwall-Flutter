@@ -3,15 +3,15 @@ import 'package:superwallkit_flutter/src/public/StoreTransaction.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// Contains information about the internally tracked superwall placement.
-class SuperwallPlacementInfo {
-  SuperwallPlacement placement;
+class SuperwallEventInfo {
+  SuperwallPlacement event;
   Map<dynamic, dynamic>? params;
 
-  SuperwallPlacementInfo({required this.placement, this.params});
+  SuperwallEventInfo({required this.event, this.params});
 
-  factory SuperwallPlacementInfo.fromJson(Map<dynamic, dynamic> json) {
-    return SuperwallPlacementInfo(
-      placement: SuperwallPlacement.fromJson(json['placement']),
+  factory SuperwallEventInfo.fromJson(Map<dynamic, dynamic> json) {
+    return SuperwallEventInfo(
+      event: SuperwallPlacement.fromJson(json['placement']),
       params: json['params'],
     );
   }
