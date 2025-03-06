@@ -3,10 +3,13 @@ import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart';
 import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
+import 'package:superwallkit_flutter/src/public/PaywallResult.dart';
 
 class PaywallPresentationHandlerProxy extends BridgeIdInstantiable {
-  static const BridgeClass bridgeClass = 'PaywallPresentationHandlerProxyBridge';
-  PaywallPresentationHandlerProxy({required this.handler, super.bridgeId }): super(bridgeClass: bridgeClass);
+  static const BridgeClass bridgeClass =
+      'PaywallPresentationHandlerProxyBridge';
+  PaywallPresentationHandlerProxy({required this.handler, super.bridgeId})
+      : super(bridgeClass: bridgeClass);
 
   PaywallPresentationHandler handler;
 
@@ -22,15 +25,19 @@ class PaywallPresentationHandlerProxy extends BridgeIdInstantiable {
       case 'onDismiss':
         final bridgeId = call.bridgeId('paywallInfoBridgeId');
         final paywallInfo = PaywallInfo(bridgeId: bridgeId);
-
-        handler.onDismissHandler?.call(paywallInfo);
+        final paywallResult = PaywallResult.fromJson(
+            Map<String, dynamic>.from(call.argument('paywallResult')));
+        handler.onDismissHandler?.call(paywallInfo, paywallResult);
       case 'onError':
         final errorString = call.argument('errorString');
         handler.onErrorHandler?.call(errorString);
       case 'onSkip':
         final bridgeId = call.bridgeId('paywallSkippedReasonBridgeId');
-        final paywallSkipReason = PaywallSkippedReason.createReasonFromBridgeId(bridgeId);
-        if (paywallSkipReason == null) { return; }
+        final paywallSkipReason =
+            PaywallSkippedReason.createReasonFromBridgeId(bridgeId);
+        if (paywallSkipReason == null) {
+          return;
+        }
 
         handler.onSkipHandler?.call(paywallSkipReason);
       default:
