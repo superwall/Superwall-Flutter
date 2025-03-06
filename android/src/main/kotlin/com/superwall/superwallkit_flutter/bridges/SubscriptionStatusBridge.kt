@@ -82,6 +82,6 @@ suspend fun SubscriptionStatus.createBridgeId(): BridgeId {
         is SubscriptionStatus.Unknown -> SubscriptionStatusUnknownBridge.bridgeClass()
     }
 
-    val bridgeInstance = BridgingCreator.shared.createBridgeInstanceFromBridgeClass(bridgeClass)
+    val bridgeInstance = BridgingCreator.shared().createBridgeInstanceFromBridgeClass(bridgeClass)
     return bridgeInstance.bridgeId
 }

@@ -2,6 +2,21 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.0.4
+
+- Updates onDismissHandler to now receive a PaywallResult also
+
+- Updates Android SDK to 2.0.2 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/iOS/releases/tag/2.0.2)
+- `handleSuperwallPlacement(SuperwallPlacementInfo eventInfo)` has been replaced with `handleSuperwallEvent(SuperwallEventtInfo eventInfo)`
+
+
+## 2.0.3
+
+### Fixes
+
+- Fixes BridgeInstance crashes
+- Adds awaiting on shared instance of BridgeCreator to avoid crashes when plugin is yet to attach
+
 ## 2.0.2
 
 - Updates iOS SDK to 1.5.4 [View Android SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/4.0.1)
@@ -39,6 +54,14 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - `SuperwallBuilder` which will automatically update the state whenever subscription status changes
 - `Superwall.shared.registerEvent` has now been replaced with `Superwall.shared.registerPlacement`
 - `handleSuperwallEvent(SuperwallEventInfo eventInfo)` has been replaced with `handleSuperwallPlacement(SuperwallPlacementInfo placementInfo)`
+
+## 1.3.11
+
+### Fixes
+
+- Fixes BridgeInstance crashes
+- Adds awaiting on shared instance of BridgeCreator to avoid crashes when plugin is yet to attach
+
 
 ## 1.3.10
 

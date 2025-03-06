@@ -71,7 +71,7 @@ class PaywallInfoBridge(
 }
 
 suspend fun PaywallInfo.createBridgeId(): BridgeId {
-    val bridgeInstance = (BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
+    val bridgeInstance = (BridgingCreator.shared().createBridgeInstanceFromBridgeClass(
         bridgeClass = PaywallInfoBridge.bridgeClass(),
         initializationArgs = mapOf("paywallInfo" to this)
     ) as PaywallInfoBridge).apply {

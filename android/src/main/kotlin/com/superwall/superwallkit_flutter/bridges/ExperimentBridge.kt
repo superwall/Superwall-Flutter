@@ -36,7 +36,7 @@ class ExperimentBridge(
 }
 
 suspend fun Experiment.createBridgeId(): BridgeId {
-    val bridgeInstance = (BridgingCreator.shared.createBridgeInstanceFromBridgeClass(
+    val bridgeInstance = (BridgingCreator.shared().createBridgeInstanceFromBridgeClass(
         bridgeClass = ExperimentBridge.bridgeClass(),
         initializationArgs = mapOf("experiment" to this)
     ) as ExperimentBridge).apply {

@@ -31,7 +31,7 @@ public class SuperwallDelegateProxyBridge: BridgeInstance, SuperwallDelegate {
   }
 
   public func handleSuperwallPlacement(withInfo placementInfo: SuperwallPlacementInfo) {
-    communicator.invokeMethodOnMain("handleSuperwallPlacement", arguments: ["placementInfo": placementInfo.toJson()])
+    communicator.invokeMethodOnMain("handleSuperwallEvent", arguments: ["eventInfo": placementInfo.toJson()])
   }
 
   public func paywallWillOpenURL(url: URL) {

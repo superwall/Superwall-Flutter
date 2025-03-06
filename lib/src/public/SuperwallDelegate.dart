@@ -1,6 +1,6 @@
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 import 'package:superwallkit_flutter/src/public/SubscriptionStatus.dart';
-import 'package:superwallkit_flutter/src/public/SuperwallPlacementInfo.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// The delegate protocol that handles Superwall lifecycle events.
 ///
@@ -15,7 +15,7 @@ abstract class SuperwallDelegate {
   void subscriptionStatusDidChange(SubscriptionStatus newValue);
 
   /// Called whenever an internal analytics placement is tracked.
-  void handleSuperwallPlacement(SuperwallPlacementInfo placementInfo);
+  void handleSuperwallEvent(SuperwallEventInfo eventInfo);
 
   /// Called when the user taps an element on your paywall with a custom action.
   void handleCustomPaywallAction(String name);

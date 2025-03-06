@@ -50,7 +50,7 @@ abstract class BridgeInstance(
                 mainScope.launch {
 
                     val communicator = MethodChannel(
-                        BridgingCreator.shared.flutterPluginBinding().binaryMessenger,
+                        BridgingCreator.shared().flutterPluginBinding().binaryMessenger,
                         bridgeId
                     )
                     communicator.setBridgeId(bridgeId);
@@ -63,7 +63,7 @@ abstract class BridgeInstance(
 
     suspend fun events(): EventChannel = withContext(Dispatchers.Main) {
         if (eventsFlow.value == null) {
-            val messenger = BridgingCreator.shared.flutterPluginBinding().binaryMessenger
+            val messenger = BridgingCreator.shared().flutterPluginBinding().binaryMessenger
             val events = EventChannel(messenger, "$bridgeId/events")
             eventsFlow.value = events
         }

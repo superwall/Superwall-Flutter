@@ -123,7 +123,7 @@ class Superwall extends BridgeIdInstantiable {
         'setUserAttributes', {'userAttributes': userAttributes});
   }
 
-  // Asynchronous method to get userAttributes
+  // Asynchronous method to get locale identifier.
   Future<String?> getLocaleIdentifier() async {
     await _waitForBridgeInstanceCreation();
 
@@ -132,7 +132,7 @@ class Superwall extends BridgeIdInstantiable {
     return identifier;
   }
 
-  // Asynchronous method to set userAttributes
+  // Asynchronous method to set locale identifier.
   Future<void> setLocaleIdentifier(String? localeIdentifier) async {
     await _waitForBridgeInstanceCreation();
 

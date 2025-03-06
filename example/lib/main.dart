@@ -316,8 +316,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   }
 
   @override
-  Future<void> handleSuperwallPlacement(
-      SuperwallPlacementInfo placementInfo) async {
+  Future<void> handleSuperwallEvent(SuperwallEventInfo eventInfo) async {
     //TODO: Change this
     // This delegate function is noisy. Uncomment to debug.
     //logging.info('handleSuperwallEvent: $eventInfo');

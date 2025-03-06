@@ -2,7 +2,7 @@ package com.superwall.superwallkit_flutter.bridges
 
 import android.content.Context
 import android.net.Uri
-import com.superwall.sdk.analytics.superwall.SuperwallPlacementInfo
+import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.paywall.presentation.PaywallInfo
@@ -76,11 +76,11 @@ class SuperwallDelegateProxyBridge(
         }
     }
 
-    override fun handleSuperwallPlacement(placementInfo: SuperwallPlacementInfo) {
+    override fun handleSuperwallEvent(eventInfo: SuperwallEventInfo) {
         coroutineScope.launch {
             communicator().invokeMethodOnMain(
-                "handleSuperwallPlacement",
-                mapOf("placementInfo" to placementInfo.toJson())
+                "handleSuperwallEvent",
+                mapOf("eventInfo" to eventInfo.toJson())
             )
         }
     }
