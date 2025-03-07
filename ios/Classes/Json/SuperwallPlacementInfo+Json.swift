@@ -1,15 +1,15 @@
 import SuperwallKit
 
-extension SuperwallPlacementInfo {
+extension SuperwallEventInfo {
   func toJson() -> [String: Any] {
     return [
-      "placement": placement.toJson(),
+      "placement": event.toJson(),
       "params": params,
     ]
   }
 }
 
-extension SuperwallPlacement {
+extension SuperwallEvent {
   func toJson() -> [String: Any] {
     switch self {
     case .firstSeen:

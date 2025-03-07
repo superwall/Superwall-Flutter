@@ -5,15 +5,15 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 ## 2.0.5
 - Update `SuperwallPlacement` to `SuperwallEvent`
 - Update `PlacementType` to `EventType`
-- Updates Android SDK to 2.0.3 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/2.0.3)
+- Updates Android SDK to 2.0.3 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.3)
+- Updates iOS SDK to 4.0.3 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.0.3)
 
 ## 2.0.4
 
 - Updates onDismissHandler to now receive a PaywallResult also
 
-- Updates Android SDK to 2.0.2 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/2.0.2)
+- Updates Android SDK to 2.0.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.2)
 - `handleSuperwallPlacement(SuperwallPlacementInfo eventInfo)` has been replaced with `handleSuperwallEvent(SuperwallEventtInfo eventInfo)`
-
 
 ## 2.0.3
 
@@ -24,14 +24,12 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 
 ## 2.0.2
 
-- Updates iOS SDK to 1.5.4 [View Android SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/4.0.1)
-
+- Updates iOS SDK to 1.5.4 [View iOS SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/4.0.1)
 - Updates Android SDK to 2.0.1 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/2.0.1)
 
 ## 2.0.1
 
 - Upgrades iOS SDK to 4.0.0 [View iOS SDK release notes](https://github.com/superwall-me/Superwall-iOS/releases/tag/4.0.0)
-
 
 ## 2.0.0
 
