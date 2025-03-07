@@ -17,6 +17,15 @@ class SuperwallEventInfo {
   }
 }
 
+@Deprecated('Use EventType instead')
+typedef PlacementType = EventType;
+
+@Deprecated('Use SuperwallEvent instead')
+typedef SuperwallPlacement = SuperwallEvent;
+
+@Deprecated('Use SuperwallEventInfo instead')
+typedef SuperwallPlacementInfo = SuperwallEventInfo;
+
 enum EventType {
   firstSeen,
   appOpen,
