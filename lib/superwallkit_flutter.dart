@@ -17,7 +17,7 @@ export 'src/public/Entitlement.dart';
 export 'src/public/SubscriptionStatus.dart';
 export 'src/public/Superwall.dart';
 export 'src/public/SuperwallDelegate.dart';
-export 'src/public/SuperwallPlacementInfo.dart';
+export 'src/public/SuperwallEventInfo.dart';
 export 'src/public/SuperwallOptions.dart';
 export 'src/public/Survey.dart';
 export 'src/public/TriggerResult.dart';
