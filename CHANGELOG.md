@@ -2,11 +2,16 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.0.5
+- Update `SuperwallPlacement` to `SuperwallEvent`
+- Update `PlacementType` to `EventType`
+- Updates Android SDK to 2.0.3 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/2.0.3)
+
 ## 2.0.4
 
 - Updates onDismissHandler to now receive a PaywallResult also
 
-- Updates Android SDK to 2.0.2 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/iOS/releases/tag/2.0.2)
+- Updates Android SDK to 2.0.2 [View Android SDK release notes](https://github.com/superwall-me/Superwall-Android/releases/tag/2.0.2)
 - `handleSuperwallPlacement(SuperwallPlacementInfo eventInfo)` has been replaced with `handleSuperwallEvent(SuperwallEventtInfo eventInfo)`
 
 
