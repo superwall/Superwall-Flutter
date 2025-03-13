@@ -2,6 +2,10 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.0.7
+
+- Fixes issue when accessing `presentedByPlacement*` properties from a custom placement
+
 ## 2.0.6
 
 ## Enhancements
