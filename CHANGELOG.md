@@ -2,6 +2,16 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.0.6
+
+## Enhancements
+
+- Adds a subscription stream example in the example app
+
+## Fixes
+
+- Fixes issue with `PurchasedPaywallResult` not properly deserialising in `onDismiss` 
+
 ## 2.0.5
 - Update `SuperwallPlacement` to `SuperwallEvent`
 - Update `PlacementType` to `EventType`

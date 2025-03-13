@@ -5,7 +5,7 @@ sealed class PaywallResult {
     final type = json['type'] as String;
     switch (type) {
       case 'purchased':
-        final product = json['product'] as Map<String, dynamic>;
+        final product = Map<String, dynamic>.from(json['product']);
         final productId = product['productId'] as String;
         return PurchasedPaywallResult(productId: productId);
       case 'declined':
