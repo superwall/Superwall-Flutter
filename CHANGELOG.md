@@ -9,7 +9,7 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - Adds a subscription stream example in the example app
 
 ## Fixes
-
+- Fixes issue with second subscriber not receiving the `SubscriptionStatus` broadcast stream
 - Fixes issue with `PurchasedPaywallResult` not properly deserialising in `onDismiss` 
 
 ## 2.0.5

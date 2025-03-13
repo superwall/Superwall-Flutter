@@ -29,15 +29,19 @@ import '../private/LatestValueStreamController.dart';
 class Superwall extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = 'SuperwallBridge';
 
-  Superwall({super.bridgeId}) : super(bridgeClass: bridgeClass);
+  late Stream<SubscriptionStatus> _subscriptionStatusStream;
+  Superwall({super.bridgeId}) : super(bridgeClass: bridgeClass) {
+    _subscriptionStatusStream =
+        bridgeId!.eventStream.receiveBroadcastStream().map((json) {
+      return SubscriptionStatus.fromJson(json);
+    }).asBroadcastStream();
+  }
 
   static Logging _logging = Logging();
   static final Superwall _superwall = Superwall();
 
   Stream<SubscriptionStatus> get subscriptionStatus {
-    return bridgeId.eventStream.receiveBroadcastStream().map((json) {
-      return SubscriptionStatus.fromJson(json);
-    });
+    return _subscriptionStatusStream.asBroadcastStream();
   }
 
   // Used to prevent functions in this class from being used until after
