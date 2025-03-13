@@ -25,12 +25,12 @@ class Home extends StatelessWidget {
                 onPressed: () async {
                   await Superwall.shared.registerPlacement('non_gated',
                       feature: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/launchedFeature',
-                          arguments: 'Non-gated feature launched',
-                        );
-                      });
+                    Navigator.pushNamed(
+                      context,
+                      '/launchedFeature',
+                      arguments: 'Non-gated feature launched',
+                    );
+                  });
                 },
               ),
               ElevatedButton(

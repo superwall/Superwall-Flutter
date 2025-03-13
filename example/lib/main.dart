@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   final logging = Logging();
+  StreamSubscription<SubscriptionStatus>? _subscription;
 
   @override
   void initState() {
@@ -26,6 +28,18 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
     super.initState();
     configureSuperwall(useRevenueCat);
+  }
+
+  void listenForPurchases() {
+    _subscription = Superwall.shared.subscriptionStatus.listen((status) {
+      logging.info('subscriptionStatusDidChange listener: $status');
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 
   // Configure Superwall
@@ -53,6 +67,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       Superwall.configure(apiKey,
           purchaseController: useRevenueCat ? purchaseController : null,
           options: options, completion: () {
+        listenForPurchases();
         logging.info('Executing Superwall configure completion block');
       });
       Superwall.shared.setDelegate(this);
