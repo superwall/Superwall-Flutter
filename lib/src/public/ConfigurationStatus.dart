@@ -1,4 +1,4 @@
-import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+/*import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 
 /// An enum representing the subscription status of the user.
 class ConfigurationStatus extends BridgeIdInstantiable {
@@ -45,3 +45,4 @@ class ConfigurationStatusFailed extends ConfigurationStatus {
   ConfigurationStatusFailed({BridgeId? bridgeId})
       : super(bridgeClass: bridgeClass, bridgeId: bridgeId);
 }
+*/

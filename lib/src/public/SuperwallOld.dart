@@ -1,4 +1,4 @@
-import 'dart:async';
+/*import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart'
     show EventChannel, MethodChannel, MethodCall, rootBundle;
@@ -26,11 +26,11 @@ import '../private/LatestValueStreamController.dart';
 /// The primary class for integrating Superwall into your application.
 /// After configuring via `configure(apiKey: purchaseController: options: completion:)`,
 /// it provides access to all its features via instance functions and variables.
-class Superwall extends BridgeIdInstantiable {
+class SuperwallOld extends BridgeIdInstantiable {
   static const BridgeClass bridgeClass = 'SuperwallBridge';
 
   late Stream<SubscriptionStatus> _subscriptionStatusStream;
-  Superwall({super.bridgeId}) : super(bridgeClass: bridgeClass) {
+  SuperwallOld({super.bridgeId}) : super(bridgeClass: bridgeClass) {
     _subscriptionStatusStream =
         bridgeId!.eventStream.receiveBroadcastStream().map((json) {
       return SubscriptionStatus.fromJson(json);
@@ -38,7 +38,7 @@ class Superwall extends BridgeIdInstantiable {
   }
 
   static Logging _logging = Logging();
-  static final Superwall _superwall = Superwall();
+  static final SuperwallOld _superwall = SuperwallOld();
 
   Stream<SubscriptionStatus> get subscriptionStatus {
     return _subscriptionStatusStream.asBroadcastStream();
@@ -454,3 +454,4 @@ extension PublicIdentity on Superwall {
 }
 
 //endregion
+*/

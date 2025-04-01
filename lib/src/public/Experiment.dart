@@ -1,5 +1,5 @@
+/*
 import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
-
 /// A campaign experiment that was assigned to a user.
 ///
 /// An experiment is part of a [Campaign Rule](https://docs.superwall.com/docs/campaign-rules)
@@ -23,3 +23,4 @@ class Experiment extends BridgeIdInstantiable {
     return description;
   }
 }
+*/

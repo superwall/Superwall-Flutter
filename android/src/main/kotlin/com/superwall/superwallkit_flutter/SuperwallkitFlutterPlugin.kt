@@ -1,6 +1,8 @@
 package com.superwall.superwallkit_flutter
 
+import SuperwallHostApi
 import android.app.Activity
+import android.app.Application
 import android.os.Debug
 import android.util.Log
 import com.superwall.sdk.misc.runOnUiThread
@@ -21,6 +23,7 @@ import kotlin.coroutines.resumeWithException
 
 class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
     var currentActivity: Activity? = null
+    var host: SuperwallHost? = null
 
     companion object {
         private var instance: SuperwallkitFlutterPlugin? = null
@@ -43,14 +46,17 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         synchronized(lock) {
-                BridgingCreator.setFlutterPlugin(flutterPluginBinding)
+            if (host == null)
+                host = SuperwallHost(
+                    { flutterPluginBinding?.applicationContext as Application }
+                )
         }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         CoroutineScope(Dispatchers.Main).launch {
-                BridgingCreator.shared().tearDown()
-                instance = null
+            BridgingCreator.shared().tearDown()
+            instance = null
         }
     }
 
