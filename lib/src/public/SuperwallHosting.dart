@@ -9,8 +9,8 @@ import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 /// it provides access to all its features via instance functions and variables.
 class Superwall {
   static final Superwall _superwall = Superwall._();
-  static final generated.SuperwallHostApi hostApi =
-      generated.SuperwallHostApi();
+  static final generated.PSuperwallHostApi hostApi =
+      generated.PSuperwallHostApi();
 
   // Private constructor
   Superwall._();
@@ -26,11 +26,11 @@ class Superwall {
       SuperwallOptions? options,
       Function? completion}) {
     final purchaseControllerHost = purchaseController != null
-        ? generated.PurchaseControllerHost(
+        ? generated.PPurchaseControllerHost(
             bridgeId: 'PurchaseControllerHost-bridgeId')
         : null;
 
-    // Convert SuperwallOptions to generated.SuperwallOptions if needed
+    // Convert SuperwallOptions to generated.PSuperwallOptions if needed
     final generatedOptions =
         options != null ? _convertToGeneratedOptions(options) : null;
 
@@ -45,10 +45,10 @@ class Superwall {
     return _superwall;
   }
 
-  // Helper method to convert SuperwallOptions to generated.SuperwallOptions
-  static generated.SuperwallOptions? _convertToGeneratedOptions(
+  // Helper method to convert SuperwallOptions to generated.PSuperwallOptions
+  static generated.PSuperwallOptions? _convertToGeneratedOptions(
       SuperwallOptions options) {
-    final generatedOptions = generated.SuperwallOptions();
+    final generatedOptions = generated.PSuperwallOptions();
 
     // Convert the PaywallOptions if available
     if (options.paywalls != null) {
@@ -78,9 +78,9 @@ class Superwall {
   }
 
   // Helper method to convert PaywallOptions
-  static generated.PaywallOptions _convertPaywallOptions(
+  static generated.PPaywallOptions _convertPaywallOptions(
       PaywallOptions options) {
-    final generatedOptions = generated.PaywallOptions();
+    final generatedOptions = generated.PPaywallOptions();
 
     generatedOptions.isHapticFeedbackEnabled = options.isHapticFeedbackEnabled;
     generatedOptions.shouldShowPurchaseFailureAlert =
@@ -89,7 +89,7 @@ class Superwall {
     generatedOptions.automaticallyDismiss = options.automaticallyDismiss;
 
     if (options.restoreFailed != null) {
-      generatedOptions.restoreFailed = generated.RestoreFailed()
+      generatedOptions.restoreFailed = generated.PRestoreFailed()
         ..title = options.restoreFailed!.title
         ..message = options.restoreFailed!.message
         ..closeButtonTitle = options.restoreFailed!.closeButtonTitle;
@@ -104,32 +104,32 @@ class Superwall {
   }
 
   // Helper method to convert TransactionBackgroundView
-  static generated.TransactionBackgroundView _convertTransactionBackgroundView(
+  static generated.PTransactionBackgroundView _convertTransactionBackgroundView(
       TransactionBackgroundView view) {
     switch (view) {
       case TransactionBackgroundView.spinner:
-        return generated.TransactionBackgroundView.spinner;
+        return generated.PTransactionBackgroundView.spinner;
       case TransactionBackgroundView.none:
-        return generated.TransactionBackgroundView.none;
+        return generated.PTransactionBackgroundView.none;
     }
   }
 
   // Helper method to convert NetworkEnvironment
-  static generated.NetworkEnvironment _convertNetworkEnvironment(
+  static generated.PNetworkEnvironment _convertNetworkEnvironment(
       NetworkEnvironment environment) {
     switch (environment) {
       case NetworkEnvironment.release:
-        return generated.NetworkEnvironment.release;
+        return generated.PNetworkEnvironment.release;
       case NetworkEnvironment.releaseCandidate:
-        return generated.NetworkEnvironment.releaseCandidate;
+        return generated.PNetworkEnvironment.releaseCandidate;
       case NetworkEnvironment.developer:
-        return generated.NetworkEnvironment.developer;
+        return generated.PNetworkEnvironment.developer;
     }
   }
 
   // Helper method to convert Logging object
-  static generated.Logging _convertLogging(Logging logging) {
-    final generatedLogging = generated.Logging();
+  static generated.PLogging _convertLogging(Logging logging) {
+    final generatedLogging = generated.PLogging();
 
     if (logging.level != null) {
       generatedLogging.level = _convertLogLevel(logging.level!);
@@ -144,83 +144,83 @@ class Superwall {
   }
 
   // Helper method to convert LogLevel
-  static generated.LogLevel _convertLogLevel(LogLevel level) {
+  static generated.PLogLevel _convertLogLevel(LogLevel level) {
     switch (level) {
       case LogLevel.debug:
-        return generated.LogLevel.debug;
+        return generated.PLogLevel.debug;
       case LogLevel.info:
-        return generated.LogLevel.info;
+        return generated.PLogLevel.info;
       case LogLevel.warn:
-        return generated.LogLevel.warn;
+        return generated.PLogLevel.warn;
       case LogLevel.error:
-        return generated.LogLevel.error;
+        return generated.PLogLevel.error;
       case LogLevel.none:
-        return generated.LogLevel.none;
+        return generated.PLogLevel.none;
     }
   }
 
   // Helper method to convert LogScope
-  static generated.LogScope _convertLogScope(LogScope scope) {
+  static generated.PLogScope _convertLogScope(LogScope scope) {
     switch (scope) {
       case LogScope.localizationManager:
-        return generated.LogScope.localizationManager;
+        return generated.PLogScope.localizationManager;
       case LogScope.bounceButton:
-        return generated.LogScope.bounceButton;
+        return generated.PLogScope.bounceButton;
       case LogScope.coreData:
-        return generated.LogScope.coreData;
+        return generated.PLogScope.coreData;
       case LogScope.configManager:
-        return generated.LogScope.configManager;
+        return generated.PLogScope.configManager;
       case LogScope.identityManager:
-        return generated.LogScope.identityManager;
+        return generated.PLogScope.identityManager;
       case LogScope.debugManager:
-        return generated.LogScope.debugManager;
+        return generated.PLogScope.debugManager;
       case LogScope.debugViewController:
-        return generated.LogScope.debugViewController;
+        return generated.PLogScope.debugViewController;
       case LogScope.localizationViewController:
-        return generated.LogScope.localizationViewController;
+        return generated.PLogScope.localizationViewController;
       case LogScope.gameControllerManager:
-        return generated.LogScope.gameControllerManager;
+        return generated.PLogScope.gameControllerManager;
       case LogScope.device:
-        return generated.LogScope.device;
+        return generated.PLogScope.device;
       case LogScope.network:
-        return generated.LogScope.network;
+        return generated.PLogScope.network;
       case LogScope.paywallEvents:
-        return generated.LogScope.paywallEvents;
+        return generated.PLogScope.paywallEvents;
       case LogScope.productsManager:
-        return generated.LogScope.productsManager;
+        return generated.PLogScope.productsManager;
       case LogScope.storeKitManager:
-        return generated.LogScope.storeKitManager;
+        return generated.PLogScope.storeKitManager;
       case LogScope.placements:
-        return generated.LogScope.placements;
+        return generated.PLogScope.placements;
       case LogScope.receipts:
-        return generated.LogScope.receipts;
+        return generated.PLogScope.receipts;
       case LogScope.superwallCore:
-        return generated.LogScope.superwallCore;
+        return generated.PLogScope.superwallCore;
       case LogScope.paywallPresentation:
-        return generated.LogScope.paywallPresentation;
+        return generated.PLogScope.paywallPresentation;
       case LogScope.transactions:
-        return generated.LogScope.transactions;
+        return generated.PLogScope.transactions;
       case LogScope.paywallViewController:
-        return generated.LogScope.paywallViewController;
+        return generated.PLogScope.paywallViewController;
       case LogScope.cache:
-        return generated.LogScope.cache;
+        return generated.PLogScope.cache;
       case LogScope.all:
-        return generated.LogScope.all;
+        return generated.PLogScope.all;
     }
   }
 
-  // Helper method to convert from generated.LogLevel to LogLevel
-  static LogLevel _convertFromGeneratedLogLevel(generated.LogLevel level) {
+  // Helper method to convert from generated.PLogLevel to LogLevel
+  static LogLevel _convertFromGeneratedLogLevel(generated.PLogLevel level) {
     switch (level) {
-      case generated.LogLevel.debug:
+      case generated.PLogLevel.debug:
         return LogLevel.debug;
-      case generated.LogLevel.info:
+      case generated.PLogLevel.info:
         return LogLevel.info;
-      case generated.LogLevel.warn:
+      case generated.PLogLevel.warn:
         return LogLevel.warn;
-      case generated.LogLevel.error:
+      case generated.PLogLevel.error:
         return LogLevel.error;
-      case generated.LogLevel.none:
+      case generated.PLogLevel.none:
         return LogLevel.none;
     }
   }
@@ -286,8 +286,7 @@ class Superwall {
 
   /// Gets the entitlements
   Future<Entitlements> getEntitlements() async {
-    final entitlements = await hostApi.getEntitlements();
-    return Entitlements.fromJson(entitlements);
+    return hostApi.getEntitlements().map((e) => Entitlement(id: e.id)).toList();
   }
 
   /// Gets the latest PaywallInfo object
@@ -321,7 +320,7 @@ class Superwall {
   /// Sets the subscription status of the user
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
     final subscriptionStatusBridgeId = _getSubscriptionStatusBridgeId(status);
-    await hostApi.setSubscriptionStatus(subscriptionStatusBridgeId);
+    await hostApi.setSubscriptionStatus(status);
   }
 
   String _getSubscriptionStatusBridgeId(SubscriptionStatus status) {

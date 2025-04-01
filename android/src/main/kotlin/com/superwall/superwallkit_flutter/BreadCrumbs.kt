@@ -1,6 +1,5 @@
 package com.superwall.superwallkit_flutter
 
-import com.superwall.superwallkit_flutter.bridges.BridgeInstance
 
 object BreadCrumbs {
     private val logBuilder = StringBuilder()
@@ -20,11 +19,5 @@ object BreadCrumbs {
 
     fun clear() {
         logBuilder.clear()
-    }
-}
-
-fun MutableMap<String, BridgeInstance>.toFormattedString(): String {
-    return this.entries.joinToString(separator = "\n") { (key, value) ->
-        "Key: $key, Value: $value"
     }
 }

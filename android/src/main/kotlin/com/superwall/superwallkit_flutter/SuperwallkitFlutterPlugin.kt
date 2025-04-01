@@ -48,6 +48,7 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
         synchronized(lock) {
             if (host == null)
                 host = SuperwallHost(
+                    binaryMessenger = flutterPluginBinding.binaryMessenger.getFlutterEngine().getDartExecutor(),
                     { flutterPluginBinding?.applicationContext as Application }
                 )
         }

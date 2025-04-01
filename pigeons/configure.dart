@@ -11,7 +11,7 @@ import 'package:pigeon/pigeon.dart';
 
 // ============= CLASSES, ENUMS, DATA MODELS =============
 
-// Data Models
+// Options for configuring Superwall
 class PSuperwallOptions {
   PPaywallOptions? paywalls;
   PNetworkEnvironment? networkEnvironment;
@@ -67,15 +67,15 @@ class PRestorationResult {
 }
 
 class PRestoreFailed {
-  /// The title of the alert presented to the user when restoring a transaction
-  /// fails.
+  // The title of the alert presented to the user when restoring a transaction
+  // fails.
   String? title;
 
-  /// Defines the message of the alert presented to the user when restoring a
-  /// transaction fails.
+  // Defines the message of the alert presented to the user when restoring a
+  // transaction fails.
   String? message;
 
-  /// Defines the title of the close button in the alert presented to the user.
+  // Defines the title of the close button in the alert presented to the user.
   String? closeButtonTitle;
 }
 
@@ -204,15 +204,15 @@ class PSuperwallEventInfoPigeon {
 
 // Enums
 enum PNetworkEnvironment {
-  /// Default: Uses the standard latest environment.
+  // Default: Uses the standard latest environment.
   release,
 
-  /// **WARNING**: Uses a release candidate environment. This is not meant
-  /// for a production environment.
+  // **WARNING**: Uses a release candidate environment. This is not meant
+  // for a production environment.
   releaseCandidate,
 
-  /// **WARNING**: Uses the nightly build environment. This is not meant for
-  /// a production environment.
+  // **WARNING**: Uses the nightly build environment. This is not meant for
+  // a production environment.
   developer,
 }
 
@@ -413,11 +413,15 @@ abstract class PSuperwallHostApi {
   // Entitlements methods
   List<PEntitlement> getEntitlements();
 
-  // Paywall methods
+  // Subscription status methods
   PSubscriptionStatus getSubscriptionStatus();
   void setSubscriptionStatus(PSubscriptionStatus subscriptionStatus);
+
+  // Configuration methods
   PConfigurationStatus getConfigurationStatus();
   bool getIsConfigured();
+
+  // Paywall methods
   bool getIsPaywallPresented();
   void preloadAllPaywalls();
   void preloadPaywallsForPlacements(List<String> placementNames);

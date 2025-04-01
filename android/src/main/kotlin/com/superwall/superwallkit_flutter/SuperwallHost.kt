@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import logLevelFromJson
 import toJson
 import androidx.core.net.toUri
+import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
 
 class SuperwallHost(
