@@ -22,6 +22,40 @@ class PSuperwallOptions {
   bool? passIdentifiersToPlayStore;
 }
 
+// PaywallInfo class for getting latest paywall info
+class PPaywallInfo {
+  String? identifier;
+  String? name;
+  String? experimentBridgeId;
+  List<String>? productIds;
+  List<Map<String, Object>>? products;
+  String? url;
+  String? presentedByPlacementWithName;
+  String? presentedByPlacementWithId;
+  String? presentedByPlacementAt;
+  String? presentedBy;
+  String? presentationSourceType;
+  String? responseLoadStartTime;
+  String? responseLoadCompleteTime;
+  String? responseLoadFailTime;
+  double? responseLoadDuration;
+  String? webViewLoadStartTime;
+  String? webViewLoadCompleteTime;
+  String? webViewLoadFailTime;
+  double? webViewLoadDuration;
+  String? productsLoadStartTime;
+  String? productsLoadCompleteTime;
+  String? productsLoadFailTime;
+  double? productsLoadDuration;
+  String? paywalljsVersion;
+  bool? isFreeTrialAvailable;
+  Map<String, Object>? featureGatingBehavior;
+  Map<String, Object>? closeReason;
+  List<Map<String, Object>>? localNotifications;
+  List<Map<String, Object>>? computedPropertyRequests;
+  List<Map<String, Object>>? surveys;
+}
+
 class PPurchaseResult {
   bool? success;
   String? error;
@@ -258,6 +292,7 @@ enum PEventType {
   paywallProductsLoadStart,
   paywallProductsLoadFail,
   paywallProductsLoadComplete,
+  paywallResourceLoadFail,
   surveyResponse,
   paywallPresentationRequest,
   touchesBegan,
@@ -352,6 +387,7 @@ abstract class PSuperwallHostApi {
       PSuperwallOptions? options});
 
   void reset();
+  void setDelegate(String delegateProxyBridgeId);
 
   @async
   List<PConfirmedAssignment> confirmAllAssignments();
@@ -387,9 +423,11 @@ abstract class PSuperwallHostApi {
   void preloadPaywallsForPlacements(List<String> placementNames);
   bool handleDeepLink(String url);
   void togglePaywallSpinner(bool isHidden);
+  PPaywallInfo? getLatestPaywallInfo();
 
   // Presentation methods
   void dismiss();
+  void registerPlacement(String placement, Map<String, Object>? params);
 }
 
 @HostApi()
@@ -397,10 +435,10 @@ abstract class PSuperwallDelegateApi {
   void subscriptionStatusDidChange(String subscriptionStatusBridgeId);
   void handleSuperwallEvent(PSuperwallEventInfoPigeon eventInfo);
   void handleCustomPaywallAction(String name);
-  void willDismissPaywall(String paywallInfoBridgeId);
-  void willPresentPaywall(String paywallInfoBridgeId);
-  void didDismissPaywall(String paywallInfoBridgeId);
-  void didPresentPaywall(String paywallInfoBridgeId);
+  void willDismissPaywall(PPaywallInfo paywallInfo);
+  void willPresentPaywall(PPaywallInfo paywallInfo);
+  void didDismissPaywall(PPaywallInfo paywallInfo);
+  void didPresentPaywall(PPaywallInfo paywallInfo);
   void paywallWillOpenURL(String url);
   void paywallWillOpenDeepLink(String url);
   void handleLog(String level, String scope, String? message,

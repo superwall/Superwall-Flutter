@@ -128,4 +128,256 @@ fun HostPaywallOptions.toSdkPaywallOptions(): PaywallOptions {
     }
     
     return sdkPaywallOptions
+}
+
+/**
+ * Utility class for mapping between PPaywallInfo and SDK's PaywallInfo
+ */
+class PaywallInfoMapper {
+    companion object {
+        /**
+         * Converts a PPaywallInfo (generated from Pigeon) to SDK's PaywallInfo
+         */
+        fun fromPPaywallInfo(pPaywallInfo: PPaywallInfo): com.superwall.sdk.paywall.presentation.PaywallInfo {
+            // Convert products to ProductItem list
+            val products = pPaywallInfo.products?.map { productMap ->
+                // Create ProductItem from product map - simplified for demonstration
+                // In a real implementation, you would have a proper conversion logic here
+                com.superwall.sdk.models.product.ProductItem(
+                    id = (productMap["id"] as? String) ?: "",
+                    name = (productMap["name"] as? String) ?: "",
+                    fullProductId = (productMap["fullProductId"] as? String) ?: "",
+                    rawPrice = (productMap["price"] as? Double) ?: 0.0,
+                    price = (productMap["localizedPrice"] as? String) ?: "",
+                    period = (productMap["period"] as? String) ?: "",
+                    periodUnit = (productMap["periodUnit"] as? String) ?: "",
+                    periodCount = (productMap["periodCount"] as? Int) ?: 0,
+                    periodText = (productMap["periodText"] as? String) ?: "",
+                    locale = (productMap["locale"] as? String) ?: "",
+                    isFamilyShareable = (productMap["isFamilyShareable"] as? Boolean) ?: false
+                )
+            } ?: emptyList()
+
+            // Create a basic PaywallURL
+            val paywallUrl = com.superwall.sdk.models.paywall.PaywallURL(pPaywallInfo.url ?: "")
+            
+            // Create experiment if experimentBridgeId exists
+            val experiment = pPaywallInfo.experimentBridgeId?.let {
+                // In a real implementation, you'd retrieve the experiment from a cache or repository
+                // This is a simplified version
+                com.superwall.sdk.models.triggers.Experiment(
+                    id = it,
+                    groupId = "",
+                    variant = com.superwall.sdk.models.triggers.Variant(
+                        id = "",
+                        type = com.superwall.sdk.models.triggers.VariantType.TREATMENT,
+                        paywallId = pPaywallInfo.identifier
+                    )
+                )
+            }
+
+            // Convert featureGatingBehavior
+            val featureGatingBehavior = when (pPaywallInfo.featureGatingBehavior?.get("type") as? String) {
+                "nonGated" -> com.superwall.sdk.models.config.FeatureGatingBehavior.NonGated
+                "gated" -> com.superwall.sdk.models.config.FeatureGatingBehavior.Gated
+                else -> com.superwall.sdk.models.config.FeatureGatingBehavior.NonGated
+            }
+
+            // Convert closeReason
+            val closeReason = when (pPaywallInfo.closeReason?.get("type") as? String) {
+                "none" -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.None
+                "user" -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.User
+                "webView" -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.WebView
+                else -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.None
+            }
+
+            // Convert localNotifications, computedPropertyRequests, and surveys
+            // These would need proper mapping in a real implementation
+            val localNotifications = pPaywallInfo.localNotifications?.map {
+                com.superwall.sdk.models.paywall.LocalNotification(
+                    title = (it["title"] as? String) ?: "",
+                    body = (it["body"] as? String) ?: "",
+                    delay = (it["delay"] as? Double) ?: 0.0
+                )
+            } ?: emptyList()
+
+            val computedPropertyRequests = pPaywallInfo.computedPropertyRequests?.map {
+                com.superwall.sdk.models.config.ComputedPropertyRequest(
+                    eventName = (it["eventName"] as? String) ?: "",
+                    parameters = (it["parameters"] as? Map<String, Any>) ?: emptyMap(),
+                    assignments = emptyList() // This would need proper conversion
+                )
+            } ?: emptyList()
+
+            val surveys = pPaywallInfo.surveys?.map {
+                com.superwall.sdk.config.models.Survey(
+                    id = (it["id"] as? String) ?: "",
+                    title = (it["title"] as? String) ?: "",
+                    message = (it["message"] as? String) ?: "",
+                    options = ((it["options"] as? List<Map<String, Any>>)?.map { option ->
+                        com.superwall.sdk.config.models.SurveyOption(
+                            id = (option["id"] as? String) ?: "",
+                            title = (option["title"] as? String) ?: ""
+                        )
+                    } ?: emptyList())
+                )
+            } ?: emptyList()
+
+            // For presentation info, create a basic one
+            val presentation = com.superwall.sdk.models.paywall.PaywallPresentationInfo(
+                com.superwall.sdk.models.paywall.PaywallPresentationStyle.NONE,
+                0
+            )
+
+            // Return PaywallInfo with available data
+            return com.superwall.sdk.paywall.presentation.PaywallInfo(
+                databaseId = pPaywallInfo.identifier ?: "",
+                identifier = pPaywallInfo.identifier ?: "",
+                name = pPaywallInfo.name ?: "",
+                url = paywallUrl,
+                experiment = experiment,
+                products = products,
+                productIds = pPaywallInfo.productIds?.toList() ?: emptyList(),
+                presentedByEventWithName = pPaywallInfo.presentedByPlacementWithName,
+                presentedByEventWithId = pPaywallInfo.presentedByPlacementWithId,
+                presentedByEventAt = pPaywallInfo.presentedByPlacementAt,
+                presentedBy = pPaywallInfo.presentedBy ?: "programmatically",
+                presentationSourceType = pPaywallInfo.presentationSourceType,
+                responseLoadStartTime = pPaywallInfo.responseLoadStartTime,
+                responseLoadCompleteTime = pPaywallInfo.responseLoadCompleteTime,
+                responseLoadFailTime = pPaywallInfo.responseLoadFailTime,
+                responseLoadDuration = pPaywallInfo.responseLoadDuration,
+                webViewLoadStartTime = pPaywallInfo.webViewLoadStartTime,
+                webViewLoadCompleteTime = pPaywallInfo.webViewLoadCompleteTime,
+                webViewLoadFailTime = pPaywallInfo.webViewLoadFailTime,
+                webViewLoadDuration = pPaywallInfo.webViewLoadDuration,
+                productsLoadStartTime = pPaywallInfo.productsLoadStartTime,
+                productsLoadCompleteTime = pPaywallInfo.productsLoadCompleteTime,
+                productsLoadFailTime = pPaywallInfo.productsLoadFailTime,
+                shimmerLoadStartTime = null,
+                shimmerLoadCompleteTime = null,
+                productsLoadDuration = pPaywallInfo.productsLoadDuration,
+                paywalljsVersion = pPaywallInfo.paywalljsVersion,
+                isFreeTrialAvailable = pPaywallInfo.isFreeTrialAvailable ?: false,
+                featureGatingBehavior = featureGatingBehavior,
+                closeReason = closeReason,
+                localNotifications = localNotifications,
+                computedPropertyRequests = computedPropertyRequests,
+                surveys = surveys,
+                presentation = presentation,
+                buildId = "", // Not available in PPaywallInfo
+                cacheKey = "", // Not available in PPaywallInfo
+                isScrollEnabled = true // Default value, not available in PPaywallInfo
+            )
+        }
+
+        /**
+         * Converts SDK's PaywallInfo to PPaywallInfo
+         */
+        fun toPPaywallInfo(paywallInfo: com.superwall.sdk.paywall.presentation.PaywallInfo): PPaywallInfo {
+            val pPaywallInfo = PPaywallInfo()
+            
+            // Map basic properties
+            pPaywallInfo.identifier = paywallInfo.identifier
+            pPaywallInfo.name = paywallInfo.name
+            pPaywallInfo.url = paywallInfo.url.toString()
+            
+            // Map experiment if available
+            paywallInfo.experiment?.let {
+                pPaywallInfo.experimentBridgeId = it.id
+            }
+            
+            // Map product IDs
+            pPaywallInfo.productIds = paywallInfo.productIds
+            
+            // Map products - convert ProductItem objects to Maps
+            pPaywallInfo.products = paywallInfo.products.map { product ->
+                mapOf(
+                    "id" to product.id,
+                    "name" to product.name,
+                    "fullProductId" to product.fullProductId,
+                    "price" to product.rawPrice,
+                    "localizedPrice" to product.price,
+                    "period" to product.period,
+                    "periodUnit" to product.periodUnit,
+                    "periodCount" to product.periodCount,
+                    "periodText" to product.periodText,
+                    "locale" to product.locale,
+                    "isFamilyShareable" to product.isFamilyShareable
+                ) as Map<String, Object>
+            }
+            
+            // Map presentation-related properties
+            pPaywallInfo.presentedByPlacementWithName = paywallInfo.presentedByEventWithName
+            pPaywallInfo.presentedByPlacementWithId = paywallInfo.presentedByEventWithId
+            pPaywallInfo.presentedByPlacementAt = paywallInfo.presentedByEventAt
+            pPaywallInfo.presentedBy = paywallInfo.presentedBy
+            pPaywallInfo.presentationSourceType = paywallInfo.presentationSourceType
+            
+            // Map loading times
+            pPaywallInfo.responseLoadStartTime = paywallInfo.responseLoadStartTime
+            pPaywallInfo.responseLoadCompleteTime = paywallInfo.responseLoadCompleteTime
+            pPaywallInfo.responseLoadFailTime = paywallInfo.responseLoadFailTime
+            pPaywallInfo.responseLoadDuration = paywallInfo.responseLoadDuration
+            pPaywallInfo.webViewLoadStartTime = paywallInfo.webViewLoadStartTime
+            pPaywallInfo.webViewLoadCompleteTime = paywallInfo.webViewLoadCompleteTime
+            pPaywallInfo.webViewLoadFailTime = paywallInfo.webViewLoadFailTime
+            pPaywallInfo.webViewLoadDuration = paywallInfo.webViewLoadDuration
+            pPaywallInfo.productsLoadStartTime = paywallInfo.productsLoadStartTime
+            pPaywallInfo.productsLoadCompleteTime = paywallInfo.productsLoadCompleteTime
+            pPaywallInfo.productsLoadFailTime = paywallInfo.productsLoadFailTime
+            pPaywallInfo.productsLoadDuration = paywallInfo.productsLoadDuration
+            
+            // Map other properties
+            pPaywallInfo.paywalljsVersion = paywallInfo.paywalljsVersion
+            pPaywallInfo.isFreeTrialAvailable = paywallInfo.isFreeTrialAvailable
+            
+            // Map feature gating behavior
+            pPaywallInfo.featureGatingBehavior = when (paywallInfo.featureGatingBehavior) {
+                is com.superwall.sdk.models.config.FeatureGatingBehavior.Gated -> mapOf("type" to "gated") as Map<String, Object>
+                else -> mapOf("type" to "nonGated") as Map<String, Object>
+            }
+            
+            // Map close reason
+            pPaywallInfo.closeReason = when (paywallInfo.closeReason) {
+                is com.superwall.sdk.paywall.presentation.PaywallCloseReason.User -> mapOf("type" to "user") as Map<String, Object>
+                is com.superwall.sdk.paywall.presentation.PaywallCloseReason.WebView -> mapOf("type" to "webView") as Map<String, Object>
+                else -> mapOf("type" to "none") as Map<String, Object>
+            }
+            
+            // Map local notifications
+            pPaywallInfo.localNotifications = paywallInfo.localNotifications.map { notification ->
+                mapOf(
+                    "title" to notification.title,
+                    "body" to notification.body,
+                    "delay" to notification.delay
+                ) as Map<String, Object>
+            }
+            
+            // Map computed property requests
+            pPaywallInfo.computedPropertyRequests = paywallInfo.computedPropertyRequests.map { request ->
+                mapOf(
+                    "eventName" to request.eventName,
+                    "parameters" to request.parameters
+                ) as Map<String, Object>
+            }
+            
+            // Map surveys
+            pPaywallInfo.surveys = paywallInfo.surveys.map { survey ->
+                mapOf(
+                    "id" to survey.id,
+                    "title" to survey.title,
+                    "message" to survey.message,
+                    "options" to survey.options.map { option ->
+                        mapOf(
+                            "id" to option.id,
+                            "title" to option.title
+                        )
+                    }
+                ) as Map<String, Object>
+            }
+            
+            return pPaywallInfo
+        }
+    }
 } 

@@ -242,13 +242,6 @@ class SuperwallOld extends BridgeIdInstantiable {
     return await bridgeId.communicator.invokeBridgeMethod('getIsConfigured');
   }
 
-  // Asynchronous method to set the configured state of Superwall
-  Future<void> setIsConfigured(bool configured) async {
-    await _waitForBridgeInstanceCreation();
-
-    await bridgeId.communicator
-        .invokeBridgeMethod('setIsConfigured', {'configured': configured});
-  }
 
   // Asynchronous method to check if a paywall is currently being presented
   Future<bool> getIsPaywallPresented() async {

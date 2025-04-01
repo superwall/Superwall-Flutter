@@ -136,6 +136,7 @@ enum PEventType {
   paywallProductsLoadStart,
   paywallProductsLoadFail,
   paywallProductsLoadComplete,
+  paywallResourceLoadFail,
   surveyResponse,
   paywallPresentationRequest,
   touchesBegan,
@@ -252,6 +253,222 @@ class PSuperwallOptions {
       && isGameControllerEnabled == other.isGameControllerEnabled
       && logging == other.logging
       && passIdentifiersToPlayStore == other.passIdentifiersToPlayStore;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PPaywallInfo {
+  PPaywallInfo({
+    this.identifier,
+    this.name,
+    this.experimentBridgeId,
+    this.productIds,
+    this.products,
+    this.url,
+    this.presentedByPlacementWithName,
+    this.presentedByPlacementWithId,
+    this.presentedByPlacementAt,
+    this.presentedBy,
+    this.presentationSourceType,
+    this.responseLoadStartTime,
+    this.responseLoadCompleteTime,
+    this.responseLoadFailTime,
+    this.responseLoadDuration,
+    this.webViewLoadStartTime,
+    this.webViewLoadCompleteTime,
+    this.webViewLoadFailTime,
+    this.webViewLoadDuration,
+    this.productsLoadStartTime,
+    this.productsLoadCompleteTime,
+    this.productsLoadFailTime,
+    this.productsLoadDuration,
+    this.paywalljsVersion,
+    this.isFreeTrialAvailable,
+    this.featureGatingBehavior,
+    this.closeReason,
+    this.localNotifications,
+    this.computedPropertyRequests,
+    this.surveys,
+  });
+
+  String? identifier;
+
+  String? name;
+
+  String? experimentBridgeId;
+
+  List<String>? productIds;
+
+  List<Map<String, Object>>? products;
+
+  String? url;
+
+  String? presentedByPlacementWithName;
+
+  String? presentedByPlacementWithId;
+
+  String? presentedByPlacementAt;
+
+  String? presentedBy;
+
+  String? presentationSourceType;
+
+  String? responseLoadStartTime;
+
+  String? responseLoadCompleteTime;
+
+  String? responseLoadFailTime;
+
+  double? responseLoadDuration;
+
+  String? webViewLoadStartTime;
+
+  String? webViewLoadCompleteTime;
+
+  String? webViewLoadFailTime;
+
+  double? webViewLoadDuration;
+
+  String? productsLoadStartTime;
+
+  String? productsLoadCompleteTime;
+
+  String? productsLoadFailTime;
+
+  double? productsLoadDuration;
+
+  String? paywalljsVersion;
+
+  bool? isFreeTrialAvailable;
+
+  Map<String, Object>? featureGatingBehavior;
+
+  Map<String, Object>? closeReason;
+
+  List<Map<String, Object>>? localNotifications;
+
+  List<Map<String, Object>>? computedPropertyRequests;
+
+  List<Map<String, Object>>? surveys;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      identifier,
+      name,
+      experimentBridgeId,
+      productIds,
+      products,
+      url,
+      presentedByPlacementWithName,
+      presentedByPlacementWithId,
+      presentedByPlacementAt,
+      presentedBy,
+      presentationSourceType,
+      responseLoadStartTime,
+      responseLoadCompleteTime,
+      responseLoadFailTime,
+      responseLoadDuration,
+      webViewLoadStartTime,
+      webViewLoadCompleteTime,
+      webViewLoadFailTime,
+      webViewLoadDuration,
+      productsLoadStartTime,
+      productsLoadCompleteTime,
+      productsLoadFailTime,
+      productsLoadDuration,
+      paywalljsVersion,
+      isFreeTrialAvailable,
+      featureGatingBehavior,
+      closeReason,
+      localNotifications,
+      computedPropertyRequests,
+      surveys,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PPaywallInfo decode(Object result) {
+    result as List<Object?>;
+    return PPaywallInfo(
+      identifier: result[0] as String?,
+      name: result[1] as String?,
+      experimentBridgeId: result[2] as String?,
+      productIds: (result[3] as List<Object?>?)?.cast<String>(),
+      products: (result[4] as List<Object?>?)?.cast<Map<String, Object>>(),
+      url: result[5] as String?,
+      presentedByPlacementWithName: result[6] as String?,
+      presentedByPlacementWithId: result[7] as String?,
+      presentedByPlacementAt: result[8] as String?,
+      presentedBy: result[9] as String?,
+      presentationSourceType: result[10] as String?,
+      responseLoadStartTime: result[11] as String?,
+      responseLoadCompleteTime: result[12] as String?,
+      responseLoadFailTime: result[13] as String?,
+      responseLoadDuration: result[14] as double?,
+      webViewLoadStartTime: result[15] as String?,
+      webViewLoadCompleteTime: result[16] as String?,
+      webViewLoadFailTime: result[17] as String?,
+      webViewLoadDuration: result[18] as double?,
+      productsLoadStartTime: result[19] as String?,
+      productsLoadCompleteTime: result[20] as String?,
+      productsLoadFailTime: result[21] as String?,
+      productsLoadDuration: result[22] as double?,
+      paywalljsVersion: result[23] as String?,
+      isFreeTrialAvailable: result[24] as bool?,
+      featureGatingBehavior: (result[25] as Map<Object?, Object?>?)?.cast<String, Object>(),
+      closeReason: (result[26] as Map<Object?, Object?>?)?.cast<String, Object>(),
+      localNotifications: (result[27] as List<Object?>?)?.cast<Map<String, Object>>(),
+      computedPropertyRequests: (result[28] as List<Object?>?)?.cast<Map<String, Object>>(),
+      surveys: (result[29] as List<Object?>?)?.cast<Map<String, Object>>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PPaywallInfo || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      identifier == other.identifier
+      && name == other.name
+      && experimentBridgeId == other.experimentBridgeId
+      && _deepEquals(productIds, other.productIds)
+      && _deepEquals(products, other.products)
+      && url == other.url
+      && presentedByPlacementWithName == other.presentedByPlacementWithName
+      && presentedByPlacementWithId == other.presentedByPlacementWithId
+      && presentedByPlacementAt == other.presentedByPlacementAt
+      && presentedBy == other.presentedBy
+      && presentationSourceType == other.presentationSourceType
+      && responseLoadStartTime == other.responseLoadStartTime
+      && responseLoadCompleteTime == other.responseLoadCompleteTime
+      && responseLoadFailTime == other.responseLoadFailTime
+      && responseLoadDuration == other.responseLoadDuration
+      && webViewLoadStartTime == other.webViewLoadStartTime
+      && webViewLoadCompleteTime == other.webViewLoadCompleteTime
+      && webViewLoadFailTime == other.webViewLoadFailTime
+      && webViewLoadDuration == other.webViewLoadDuration
+      && productsLoadStartTime == other.productsLoadStartTime
+      && productsLoadCompleteTime == other.productsLoadCompleteTime
+      && productsLoadFailTime == other.productsLoadFailTime
+      && productsLoadDuration == other.productsLoadDuration
+      && paywalljsVersion == other.paywalljsVersion
+      && isFreeTrialAvailable == other.isFreeTrialAvailable
+      && _deepEquals(featureGatingBehavior, other.featureGatingBehavior)
+      && _deepEquals(closeReason, other.closeReason)
+      && _deepEquals(localNotifications, other.localNotifications)
+      && _deepEquals(computedPropertyRequests, other.computedPropertyRequests)
+      && _deepEquals(surveys, other.surveys);
   }
 
   @override
@@ -1257,53 +1474,56 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PSuperwallOptions) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseResult) {
+    }    else if (value is PPaywallInfo) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationResult) {
+    }    else if (value is PPurchaseResult) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoreFailed) {
+    }    else if (value is PRestorationResult) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    }    else if (value is PLogging) {
+    }    else if (value is PRestoreFailed) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallOptions) {
+    }    else if (value is PLogging) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseControllerHost) {
+    }    else if (value is PPaywallOptions) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlement) {
+    }    else if (value is PPurchaseControllerHost) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    }    else if (value is PActive) {
+    }    else if (value is PEntitlement) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    }    else if (value is PInactive) {
+    }    else if (value is PActive) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknown) {
+    }    else if (value is PInactive) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallInfoPigeon) {
+    }    else if (value is PUnknown) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallEventInfoPigeon) {
+    }    else if (value is PPaywallInfoPigeon) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    }    else if (value is PIdentityOptions) {
+    }    else if (value is PSuperwallEventInfoPigeon) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    }    else if (value is PExperiment) {
+    }    else if (value is PIdentityOptions) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    }    else if (value is PVariant) {
+    }    else if (value is PExperiment) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfirmedAssignment) {
+    }    else if (value is PVariant) {
       buffer.putUint8(155);
+      writeValue(buffer, value.encode());
+    }    else if (value is PConfirmedAssignment) {
+      buffer.putUint8(156);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1346,36 +1566,38 @@ class _PigeonCodec extends StandardMessageCodec {
       case 139: 
         return PSuperwallOptions.decode(readValue(buffer)!);
       case 140: 
-        return PPurchaseResult.decode(readValue(buffer)!);
+        return PPaywallInfo.decode(readValue(buffer)!);
       case 141: 
-        return PRestorationResult.decode(readValue(buffer)!);
+        return PPurchaseResult.decode(readValue(buffer)!);
       case 142: 
-        return PRestoreFailed.decode(readValue(buffer)!);
+        return PRestorationResult.decode(readValue(buffer)!);
       case 143: 
-        return PLogging.decode(readValue(buffer)!);
+        return PRestoreFailed.decode(readValue(buffer)!);
       case 144: 
-        return PPaywallOptions.decode(readValue(buffer)!);
+        return PLogging.decode(readValue(buffer)!);
       case 145: 
-        return PPurchaseControllerHost.decode(readValue(buffer)!);
+        return PPaywallOptions.decode(readValue(buffer)!);
       case 146: 
-        return PEntitlement.decode(readValue(buffer)!);
+        return PPurchaseControllerHost.decode(readValue(buffer)!);
       case 147: 
-        return PActive.decode(readValue(buffer)!);
+        return PEntitlement.decode(readValue(buffer)!);
       case 148: 
-        return PInactive.decode(readValue(buffer)!);
+        return PActive.decode(readValue(buffer)!);
       case 149: 
-        return PUnknown.decode(readValue(buffer)!);
+        return PInactive.decode(readValue(buffer)!);
       case 150: 
-        return PPaywallInfoPigeon.decode(readValue(buffer)!);
+        return PUnknown.decode(readValue(buffer)!);
       case 151: 
-        return PSuperwallEventInfoPigeon.decode(readValue(buffer)!);
+        return PPaywallInfoPigeon.decode(readValue(buffer)!);
       case 152: 
-        return PIdentityOptions.decode(readValue(buffer)!);
+        return PSuperwallEventInfoPigeon.decode(readValue(buffer)!);
       case 153: 
-        return PExperiment.decode(readValue(buffer)!);
+        return PIdentityOptions.decode(readValue(buffer)!);
       case 154: 
-        return PVariant.decode(readValue(buffer)!);
+        return PExperiment.decode(readValue(buffer)!);
       case 155: 
+        return PVariant.decode(readValue(buffer)!);
+      case 156: 
         return PConfirmedAssignment.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1427,6 +1649,29 @@ class PSuperwallHostApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> setDelegate(String delegateProxyBridgeId) async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setDelegate$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[delegateProxyBridgeId]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1985,6 +2230,29 @@ class PSuperwallHostApi {
     }
   }
 
+  Future<PPaywallInfo?> getLatestPaywallInfo() async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLatestPaywallInfo$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as PPaywallInfo?);
+    }
+  }
+
   Future<void> dismiss() async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismiss$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -1993,6 +2261,29 @@ class PSuperwallHostApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> registerPlacement(String placement, Map<String, Object>? params) async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.registerPlacement$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[placement, params]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2091,14 +2382,14 @@ class PSuperwallDelegateApi {
     }
   }
 
-  Future<void> willDismissPaywall(String paywallInfoBridgeId) async {
+  Future<void> willDismissPaywall(PPaywallInfo paywallInfo) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.willDismissPaywall$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfoBridgeId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfo]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2114,14 +2405,14 @@ class PSuperwallDelegateApi {
     }
   }
 
-  Future<void> willPresentPaywall(String paywallInfoBridgeId) async {
+  Future<void> willPresentPaywall(PPaywallInfo paywallInfo) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.willPresentPaywall$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfoBridgeId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfo]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2137,14 +2428,14 @@ class PSuperwallDelegateApi {
     }
   }
 
-  Future<void> didDismissPaywall(String paywallInfoBridgeId) async {
+  Future<void> didDismissPaywall(PPaywallInfo paywallInfo) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.didDismissPaywall$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfoBridgeId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfo]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2160,14 +2451,14 @@ class PSuperwallDelegateApi {
     }
   }
 
-  Future<void> didPresentPaywall(String paywallInfoBridgeId) async {
+  Future<void> didPresentPaywall(PPaywallInfo paywallInfo) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.didPresentPaywall$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfoBridgeId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfo]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

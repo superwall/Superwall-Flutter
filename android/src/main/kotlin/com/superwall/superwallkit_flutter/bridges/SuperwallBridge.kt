@@ -25,7 +25,6 @@ import com.superwall.superwallkit_flutter.json.*
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import com.superwall.superwallkit_flutter.BridgingCreator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +32,7 @@ import kotlinx.coroutines.Job
 import logLevelFromJson
 import superwallOptionsFromJson
 import toJson
-
+/*
 class SuperwallBridge(
     context: Context,
     bridgeId: BridgeId,
@@ -208,15 +207,6 @@ class SuperwallBridge(
                     result.notImplemented()
                 }
 
-                "setIsConfigured" -> {
-                    // TODO: Add to Android
-                    //                val configured = call.argumentForKey<Boolean>("configured")
-                    //                configured?.let {
-                    //                    Superwall.instance.isConfigured = it
-                    //                }
-                    //                result.success(null)
-                    result.notImplemented()
-                }
 
                 "getIsPaywallPresented" -> {
                     val isPaywallPresented = Superwall.instance.isPaywallPresented
@@ -385,3 +375,4 @@ class SuperwallBridge(
         return SuperwallkitFlutterPlugin.currentActivity
     }
 }
+ */

@@ -204,21 +204,22 @@ enum class PEventType(val raw: Int) {
   PAYWALL_PRODUCTS_LOAD_START(37),
   PAYWALL_PRODUCTS_LOAD_FAIL(38),
   PAYWALL_PRODUCTS_LOAD_COMPLETE(39),
-  SURVEY_RESPONSE(40),
-  PAYWALL_PRESENTATION_REQUEST(41),
-  TOUCHES_BEGAN(42),
-  SURVEY_CLOSE(43),
-  RESET(44),
-  CONFIG_REFRESH(45),
-  CUSTOM_PLACEMENT(46),
-  CONFIG_ATTRIBUTES(47),
-  CONFIRM_ALL_ASSIGNMENTS(48),
-  CONFIG_FAIL(49),
-  AD_SERVICES_TOKEN_REQUEST_START(50),
-  AD_SERVICES_TOKEN_REQUEST_FAIL(51),
-  AD_SERVICES_TOKEN_REQUEST_COMPLETE(52),
-  SHIMMER_VIEW_START(53),
-  SHIMMER_VIEW_COMPLETE(54);
+  PAYWALL_RESOURCE_LOAD_FAIL(40),
+  SURVEY_RESPONSE(41),
+  PAYWALL_PRESENTATION_REQUEST(42),
+  TOUCHES_BEGAN(43),
+  SURVEY_CLOSE(44),
+  RESET(45),
+  CONFIG_REFRESH(46),
+  CUSTOM_PLACEMENT(47),
+  CONFIG_ATTRIBUTES(48),
+  CONFIRM_ALL_ASSIGNMENTS(49),
+  CONFIG_FAIL(50),
+  AD_SERVICES_TOKEN_REQUEST_START(51),
+  AD_SERVICES_TOKEN_REQUEST_FAIL(52),
+  AD_SERVICES_TOKEN_REQUEST_COMPLETE(53),
+  SHIMMER_VIEW_START(54),
+  SHIMMER_VIEW_COMPLETE(55);
 
   companion object {
     fun ofRaw(raw: Int): PEventType? {
@@ -328,6 +329,151 @@ data class PSuperwallOptions (
     && isGameControllerEnabled == other.isGameControllerEnabled
     && logging == other.logging
     && passIdentifiersToPlayStore == other.passIdentifiersToPlayStore
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PPaywallInfo (
+  val identifier: String? = null,
+  val name: String? = null,
+  val experimentBridgeId: String? = null,
+  val productIds: List<String>? = null,
+  val products: List<Map<String, Any>>? = null,
+  val url: String? = null,
+  val presentedByPlacementWithName: String? = null,
+  val presentedByPlacementWithId: String? = null,
+  val presentedByPlacementAt: String? = null,
+  val presentedBy: String? = null,
+  val presentationSourceType: String? = null,
+  val responseLoadStartTime: String? = null,
+  val responseLoadCompleteTime: String? = null,
+  val responseLoadFailTime: String? = null,
+  val responseLoadDuration: Double? = null,
+  val webViewLoadStartTime: String? = null,
+  val webViewLoadCompleteTime: String? = null,
+  val webViewLoadFailTime: String? = null,
+  val webViewLoadDuration: Double? = null,
+  val productsLoadStartTime: String? = null,
+  val productsLoadCompleteTime: String? = null,
+  val productsLoadFailTime: String? = null,
+  val productsLoadDuration: Double? = null,
+  val paywalljsVersion: String? = null,
+  val isFreeTrialAvailable: Boolean? = null,
+  val featureGatingBehavior: Map<String, Any>? = null,
+  val closeReason: Map<String, Any>? = null,
+  val localNotifications: List<Map<String, Any>>? = null,
+  val computedPropertyRequests: List<Map<String, Any>>? = null,
+  val surveys: List<Map<String, Any>>? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PPaywallInfo {
+      val identifier = pigeonVar_list[0] as String?
+      val name = pigeonVar_list[1] as String?
+      val experimentBridgeId = pigeonVar_list[2] as String?
+      val productIds = pigeonVar_list[3] as List<String>?
+      val products = pigeonVar_list[4] as List<Map<String, Any>>?
+      val url = pigeonVar_list[5] as String?
+      val presentedByPlacementWithName = pigeonVar_list[6] as String?
+      val presentedByPlacementWithId = pigeonVar_list[7] as String?
+      val presentedByPlacementAt = pigeonVar_list[8] as String?
+      val presentedBy = pigeonVar_list[9] as String?
+      val presentationSourceType = pigeonVar_list[10] as String?
+      val responseLoadStartTime = pigeonVar_list[11] as String?
+      val responseLoadCompleteTime = pigeonVar_list[12] as String?
+      val responseLoadFailTime = pigeonVar_list[13] as String?
+      val responseLoadDuration = pigeonVar_list[14] as Double?
+      val webViewLoadStartTime = pigeonVar_list[15] as String?
+      val webViewLoadCompleteTime = pigeonVar_list[16] as String?
+      val webViewLoadFailTime = pigeonVar_list[17] as String?
+      val webViewLoadDuration = pigeonVar_list[18] as Double?
+      val productsLoadStartTime = pigeonVar_list[19] as String?
+      val productsLoadCompleteTime = pigeonVar_list[20] as String?
+      val productsLoadFailTime = pigeonVar_list[21] as String?
+      val productsLoadDuration = pigeonVar_list[22] as Double?
+      val paywalljsVersion = pigeonVar_list[23] as String?
+      val isFreeTrialAvailable = pigeonVar_list[24] as Boolean?
+      val featureGatingBehavior = pigeonVar_list[25] as Map<String, Any>?
+      val closeReason = pigeonVar_list[26] as Map<String, Any>?
+      val localNotifications = pigeonVar_list[27] as List<Map<String, Any>>?
+      val computedPropertyRequests = pigeonVar_list[28] as List<Map<String, Any>>?
+      val surveys = pigeonVar_list[29] as List<Map<String, Any>>?
+      return PPaywallInfo(identifier, name, experimentBridgeId, productIds, products, url, presentedByPlacementWithName, presentedByPlacementWithId, presentedByPlacementAt, presentedBy, presentationSourceType, responseLoadStartTime, responseLoadCompleteTime, responseLoadFailTime, responseLoadDuration, webViewLoadStartTime, webViewLoadCompleteTime, webViewLoadFailTime, webViewLoadDuration, productsLoadStartTime, productsLoadCompleteTime, productsLoadFailTime, productsLoadDuration, paywalljsVersion, isFreeTrialAvailable, featureGatingBehavior, closeReason, localNotifications, computedPropertyRequests, surveys)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      identifier,
+      name,
+      experimentBridgeId,
+      productIds,
+      products,
+      url,
+      presentedByPlacementWithName,
+      presentedByPlacementWithId,
+      presentedByPlacementAt,
+      presentedBy,
+      presentationSourceType,
+      responseLoadStartTime,
+      responseLoadCompleteTime,
+      responseLoadFailTime,
+      responseLoadDuration,
+      webViewLoadStartTime,
+      webViewLoadCompleteTime,
+      webViewLoadFailTime,
+      webViewLoadDuration,
+      productsLoadStartTime,
+      productsLoadCompleteTime,
+      productsLoadFailTime,
+      productsLoadDuration,
+      paywalljsVersion,
+      isFreeTrialAvailable,
+      featureGatingBehavior,
+      closeReason,
+      localNotifications,
+      computedPropertyRequests,
+      surveys,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PPaywallInfo) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return identifier == other.identifier
+    && name == other.name
+    && experimentBridgeId == other.experimentBridgeId
+    && deepEqualsHost(productIds, other.productIds)
+    && deepEqualsHost(products, other.products)
+    && url == other.url
+    && presentedByPlacementWithName == other.presentedByPlacementWithName
+    && presentedByPlacementWithId == other.presentedByPlacementWithId
+    && presentedByPlacementAt == other.presentedByPlacementAt
+    && presentedBy == other.presentedBy
+    && presentationSourceType == other.presentationSourceType
+    && responseLoadStartTime == other.responseLoadStartTime
+    && responseLoadCompleteTime == other.responseLoadCompleteTime
+    && responseLoadFailTime == other.responseLoadFailTime
+    && responseLoadDuration == other.responseLoadDuration
+    && webViewLoadStartTime == other.webViewLoadStartTime
+    && webViewLoadCompleteTime == other.webViewLoadCompleteTime
+    && webViewLoadFailTime == other.webViewLoadFailTime
+    && webViewLoadDuration == other.webViewLoadDuration
+    && productsLoadStartTime == other.productsLoadStartTime
+    && productsLoadCompleteTime == other.productsLoadCompleteTime
+    && productsLoadFailTime == other.productsLoadFailTime
+    && productsLoadDuration == other.productsLoadDuration
+    && paywalljsVersion == other.paywalljsVersion
+    && isFreeTrialAvailable == other.isFreeTrialAvailable
+    && deepEqualsHost(featureGatingBehavior, other.featureGatingBehavior)
+    && deepEqualsHost(closeReason, other.closeReason)
+    && deepEqualsHost(localNotifications, other.localNotifications)
+    && deepEqualsHost(computedPropertyRequests, other.computedPropertyRequests)
+    && deepEqualsHost(surveys, other.surveys)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1054,80 +1200,85 @@ private open class HostPigeonCodec : StandardMessageCodec() {
       }
       140.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseResult.fromList(it)
+          PPaywallInfo.fromList(it)
         }
       }
       141.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestorationResult.fromList(it)
+          PPurchaseResult.fromList(it)
         }
       }
       142.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestoreFailed.fromList(it)
+          PRestorationResult.fromList(it)
         }
       }
       143.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PLogging.fromList(it)
+          PRestoreFailed.fromList(it)
         }
       }
       144.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallOptions.fromList(it)
+          PLogging.fromList(it)
         }
       }
       145.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseControllerHost.fromList(it)
+          PPaywallOptions.fromList(it)
         }
       }
       146.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PEntitlement.fromList(it)
+          PPurchaseControllerHost.fromList(it)
         }
       }
       147.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PActive.fromList(it)
+          PEntitlement.fromList(it)
         }
       }
       148.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PInactive.fromList(it)
+          PActive.fromList(it)
         }
       }
       149.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PUnknown.fromList(it)
+          PInactive.fromList(it)
         }
       }
       150.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallInfoPigeon.fromList(it)
+          PUnknown.fromList(it)
         }
       }
       151.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallEventInfoPigeon.fromList(it)
+          PPaywallInfoPigeon.fromList(it)
         }
       }
       152.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PIdentityOptions.fromList(it)
+          PSuperwallEventInfoPigeon.fromList(it)
         }
       }
       153.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExperiment.fromList(it)
+          PIdentityOptions.fromList(it)
         }
       }
       154.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PVariant.fromList(it)
+          PExperiment.fromList(it)
         }
       }
       155.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PVariant.fromList(it)
+        }
+      }
+      156.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PConfirmedAssignment.fromList(it)
         }
@@ -1181,68 +1332,72 @@ private open class HostPigeonCodec : StandardMessageCodec() {
         stream.write(139)
         writeValue(stream, value.toList())
       }
-      is PPurchaseResult -> {
+      is PPaywallInfo -> {
         stream.write(140)
         writeValue(stream, value.toList())
       }
-      is PRestorationResult -> {
+      is PPurchaseResult -> {
         stream.write(141)
         writeValue(stream, value.toList())
       }
-      is PRestoreFailed -> {
+      is PRestorationResult -> {
         stream.write(142)
         writeValue(stream, value.toList())
       }
-      is PLogging -> {
+      is PRestoreFailed -> {
         stream.write(143)
         writeValue(stream, value.toList())
       }
-      is PPaywallOptions -> {
+      is PLogging -> {
         stream.write(144)
         writeValue(stream, value.toList())
       }
-      is PPurchaseControllerHost -> {
+      is PPaywallOptions -> {
         stream.write(145)
         writeValue(stream, value.toList())
       }
-      is PEntitlement -> {
+      is PPurchaseControllerHost -> {
         stream.write(146)
         writeValue(stream, value.toList())
       }
-      is PActive -> {
+      is PEntitlement -> {
         stream.write(147)
         writeValue(stream, value.toList())
       }
-      is PInactive -> {
+      is PActive -> {
         stream.write(148)
         writeValue(stream, value.toList())
       }
-      is PUnknown -> {
+      is PInactive -> {
         stream.write(149)
         writeValue(stream, value.toList())
       }
-      is PPaywallInfoPigeon -> {
+      is PUnknown -> {
         stream.write(150)
         writeValue(stream, value.toList())
       }
-      is PSuperwallEventInfoPigeon -> {
+      is PPaywallInfoPigeon -> {
         stream.write(151)
         writeValue(stream, value.toList())
       }
-      is PIdentityOptions -> {
+      is PSuperwallEventInfoPigeon -> {
         stream.write(152)
         writeValue(stream, value.toList())
       }
-      is PExperiment -> {
+      is PIdentityOptions -> {
         stream.write(153)
         writeValue(stream, value.toList())
       }
-      is PVariant -> {
+      is PExperiment -> {
         stream.write(154)
         writeValue(stream, value.toList())
       }
-      is PConfirmedAssignment -> {
+      is PVariant -> {
         stream.write(155)
+        writeValue(stream, value.toList())
+      }
+      is PConfirmedAssignment -> {
+        stream.write(156)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -1255,6 +1410,7 @@ private open class HostPigeonCodec : StandardMessageCodec() {
 interface PSuperwallHostApi {
   fun configure(apiKey: String, purchaseController: PPurchaseControllerHost?, options: PSuperwallOptions?, callback: (Result<Unit>) -> Unit)
   fun reset()
+  fun setDelegate(delegateProxyBridgeId: String)
   fun confirmAllAssignments(callback: (Result<List<PConfirmedAssignment>>) -> Unit)
   fun getLogLevel(): String
   fun setLogLevel(logLevel: String)
@@ -1276,7 +1432,9 @@ interface PSuperwallHostApi {
   fun preloadPaywallsForPlacements(placementNames: List<String>)
   fun handleDeepLink(url: String): Boolean
   fun togglePaywallSpinner(isHidden: Boolean)
+  fun getLatestPaywallInfo(): PPaywallInfo?
   fun dismiss()
+  fun registerPlacement(placement: String, params: Map<String, Any>?)
 
   companion object {
     /** The codec used by PSuperwallHostApi. */
@@ -1314,6 +1472,24 @@ interface PSuperwallHostApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> = try {
               api.reset()
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setDelegate$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val delegateProxyBridgeIdArg = args[0] as String
+            val wrapped: List<Any?> = try {
+              api.setDelegate(delegateProxyBridgeIdArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -1668,11 +1844,45 @@ interface PSuperwallHostApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLatestPaywallInfo$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> = try {
+              listOf(api.getLatestPaywallInfo())
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismiss$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> = try {
               api.dismiss()
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.registerPlacement$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val placementArg = args[0] as String
+            val paramsArg = args[1] as Map<String, Any>?
+            val wrapped: List<Any?> = try {
+              api.registerPlacement(placementArg, paramsArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -1691,10 +1901,10 @@ interface PSuperwallDelegateApi {
   fun subscriptionStatusDidChange(subscriptionStatusBridgeId: String)
   fun handleSuperwallEvent(eventInfo: PSuperwallEventInfoPigeon)
   fun handleCustomPaywallAction(name: String)
-  fun willDismissPaywall(paywallInfoBridgeId: String)
-  fun willPresentPaywall(paywallInfoBridgeId: String)
-  fun didDismissPaywall(paywallInfoBridgeId: String)
-  fun didPresentPaywall(paywallInfoBridgeId: String)
+  fun willDismissPaywall(paywallInfo: PPaywallInfo)
+  fun willPresentPaywall(paywallInfo: PPaywallInfo)
+  fun didDismissPaywall(paywallInfo: PPaywallInfo)
+  fun didPresentPaywall(paywallInfo: PPaywallInfo)
   fun paywallWillOpenURL(url: String)
   fun paywallWillOpenDeepLink(url: String)
   fun handleLog(level: String, scope: String, message: String?, info: Map<String, Any>?, error: String?)
@@ -1767,9 +1977,9 @@ interface PSuperwallDelegateApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val paywallInfoBridgeIdArg = args[0] as String
+            val paywallInfoArg = args[0] as PPaywallInfo
             val wrapped: List<Any?> = try {
-              api.willDismissPaywall(paywallInfoBridgeIdArg)
+              api.willDismissPaywall(paywallInfoArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -1785,9 +1995,9 @@ interface PSuperwallDelegateApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val paywallInfoBridgeIdArg = args[0] as String
+            val paywallInfoArg = args[0] as PPaywallInfo
             val wrapped: List<Any?> = try {
-              api.willPresentPaywall(paywallInfoBridgeIdArg)
+              api.willPresentPaywall(paywallInfoArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -1803,9 +2013,9 @@ interface PSuperwallDelegateApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val paywallInfoBridgeIdArg = args[0] as String
+            val paywallInfoArg = args[0] as PPaywallInfo
             val wrapped: List<Any?> = try {
-              api.didDismissPaywall(paywallInfoBridgeIdArg)
+              api.didDismissPaywall(paywallInfoArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -1821,9 +2031,9 @@ interface PSuperwallDelegateApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val paywallInfoBridgeIdArg = args[0] as String
+            val paywallInfoArg = args[0] as PPaywallInfo
             val wrapped: List<Any?> = try {
-              api.didPresentPaywall(paywallInfoBridgeIdArg)
+              api.didPresentPaywall(paywallInfoArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)

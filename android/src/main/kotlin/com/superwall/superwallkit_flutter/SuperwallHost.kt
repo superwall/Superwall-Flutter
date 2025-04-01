@@ -64,6 +64,10 @@ class SuperwallHost(
         Superwall.instance.reset()
     }
 
+    override fun setDelegate(delegateProxyBridgeId: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun confirmAllAssignments(callback: (Result<List<PConfirmedAssignment>>) -> Unit) {
         ioScope.launch {
             callback(Superwall.instance.confirmAllAssignments().map {
@@ -197,9 +201,17 @@ class SuperwallHost(
         Superwall.instance.togglePaywallSpinner(isHidden)
     }
 
+    override fun getLatestPaywallInfo(): PPaywallInfo? {
+        TODO("Not yet implemented")
+    }
+
     override fun dismiss() {
         ioScope.launch {
             Superwall.instance.dismiss()
         }
+    }
+
+    override fun registerPlacement(placement: String, params: Map<String, Any>?) {
+        TODO("Not yet implemented")
     }
 }
