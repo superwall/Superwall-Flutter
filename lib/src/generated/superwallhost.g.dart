@@ -1883,14 +1883,14 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<void> setDelegate(String delegateProxyBridgeId) async {
+  Future<void> setDelegate(bool hasDelegate) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setDelegate$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[delegateProxyBridgeId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[hasDelegate]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2519,246 +2519,289 @@ class PSuperwallHostApi {
   }
 }
 
-class PSuperwallDelegateApi {
-  /// Constructor for [PSuperwallDelegateApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
-  /// BinaryMessenger will be used which routes to the host platform.
-  PSuperwallDelegateApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
-
+abstract class PSuperwallDelegateGenerated {
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-  final String pigeonVar_messageChannelSuffix;
+  void subscriptionStatusDidChange(PSubscriptionStatus from, PSubscriptionStatus to);
 
-  Future<void> subscriptionStatusDidChange(String subscriptionStatusBridgeId) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.subscriptionStatusDidChange$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[subscriptionStatusBridgeId]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+  void handleSuperwallEvent(PSuperwallEventInfoPigeon eventInfo);
+
+  void handleCustomPaywallAction(String name);
+
+  void willDismissPaywall(PPaywallInfo paywallInfo);
+
+  void willPresentPaywall(PPaywallInfo paywallInfo);
+
+  void didDismissPaywall(PPaywallInfo paywallInfo);
+
+  void didPresentPaywall(PPaywallInfo paywallInfo);
+
+  void paywallWillOpenURL(String url);
+
+  void paywallWillOpenDeepLink(String url);
+
+  void handleLog(String level, String scope, String? message, Map<String, Object>? info, String? error);
+
+  static void setUp(PSuperwallDelegateGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PSubscriptionStatus? arg_from = (args[0] as PSubscriptionStatus?);
+          assert(arg_from != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange was null, expected non-null PSubscriptionStatus.');
+          final PSubscriptionStatus? arg_to = (args[1] as PSubscriptionStatus?);
+          assert(arg_to != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange was null, expected non-null PSubscriptionStatus.');
+          try {
+            api.subscriptionStatusDidChange(arg_from!, arg_to!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
-  }
-
-  Future<void> handleSuperwallEvent(PSuperwallEventInfoPigeon eventInfo) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.handleSuperwallEvent$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[eventInfo]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PSuperwallEventInfoPigeon? arg_eventInfo = (args[0] as PSuperwallEventInfoPigeon?);
+          assert(arg_eventInfo != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent was null, expected non-null PSuperwallEventInfoPigeon.');
+          try {
+            api.handleSuperwallEvent(arg_eventInfo!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
-  }
-
-  Future<void> handleCustomPaywallAction(String name) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.handleCustomPaywallAction$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[name]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleCustomPaywallAction$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleCustomPaywallAction was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_name = (args[0] as String?);
+          assert(arg_name != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleCustomPaywallAction was null, expected non-null String.');
+          try {
+            api.handleCustomPaywallAction(arg_name!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
-  }
-
-  Future<void> willDismissPaywall(PPaywallInfo paywallInfo) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.willDismissPaywall$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfo]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willDismissPaywall$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willDismissPaywall was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
+          assert(arg_paywallInfo != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willDismissPaywall was null, expected non-null PPaywallInfo.');
+          try {
+            api.willDismissPaywall(arg_paywallInfo!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
-  }
-
-  Future<void> willPresentPaywall(PPaywallInfo paywallInfo) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.willPresentPaywall$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfo]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willPresentPaywall$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willPresentPaywall was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
+          assert(arg_paywallInfo != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willPresentPaywall was null, expected non-null PPaywallInfo.');
+          try {
+            api.willPresentPaywall(arg_paywallInfo!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
-  }
-
-  Future<void> didDismissPaywall(PPaywallInfo paywallInfo) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.didDismissPaywall$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfo]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didDismissPaywall$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didDismissPaywall was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
+          assert(arg_paywallInfo != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didDismissPaywall was null, expected non-null PPaywallInfo.');
+          try {
+            api.didDismissPaywall(arg_paywallInfo!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
-  }
-
-  Future<void> didPresentPaywall(PPaywallInfo paywallInfo) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.didPresentPaywall$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[paywallInfo]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didPresentPaywall$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didPresentPaywall was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
+          assert(arg_paywallInfo != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didPresentPaywall was null, expected non-null PPaywallInfo.');
+          try {
+            api.didPresentPaywall(arg_paywallInfo!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
-  }
-
-  Future<void> paywallWillOpenURL(String url) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.paywallWillOpenURL$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenURL$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenURL was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_url = (args[0] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenURL was null, expected non-null String.');
+          try {
+            api.paywallWillOpenURL(arg_url!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
-  }
-
-  Future<void> paywallWillOpenDeepLink(String url) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.paywallWillOpenDeepLink$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenDeepLink$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenDeepLink was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_url = (args[0] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenDeepLink was null, expected non-null String.');
+          try {
+            api.paywallWillOpenDeepLink(arg_url!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
-  }
-
-  Future<void> handleLog(String level, String scope, String? message, Map<String, Object>? info, String? error) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.handleLog$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[level, scope, message, info, error]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_level = (args[0] as String?);
+          assert(arg_level != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog was null, expected non-null String.');
+          final String? arg_scope = (args[1] as String?);
+          assert(arg_scope != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog was null, expected non-null String.');
+          final String? arg_message = (args[2] as String?);
+          final Map<String, Object>? arg_info = (args[3] as Map<Object?, Object?>?)?.cast<String, Object>();
+          final String? arg_error = (args[4] as String?);
+          try {
+            api.handleLog(arg_level!, arg_scope!, arg_message, arg_info, arg_error);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
   }
 }

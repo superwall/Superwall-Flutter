@@ -1584,7 +1584,7 @@ private open class HostPigeonCodec : StandardMessageCodec() {
 interface PSuperwallHostApi {
   fun configure(apiKey: String, purchaseController: PPurchaseControllerHost?, options: PSuperwallOptions?, completion: PConfigureCompletionHost?, callback: (Result<Unit>) -> Unit)
   fun reset()
-  fun setDelegate(delegateProxyBridgeId: String)
+  fun setDelegate(hasDelegate: Boolean)
   fun confirmAllAssignments(callback: (Result<List<PConfirmedAssignment>>) -> Unit)
   fun getLogLevel(): String
   fun setLogLevel(logLevel: String)
@@ -1662,9 +1662,9 @@ interface PSuperwallHostApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val delegateProxyBridgeIdArg = args[0] as String
+            val hasDelegateArg = args[0] as Boolean
             val wrapped: List<Any?> = try {
-              api.setDelegate(delegateProxyBridgeIdArg)
+              api.setDelegate(hasDelegateArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -2071,212 +2071,182 @@ interface PSuperwallHostApi {
     }
   }
 }
-/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-interface PSuperwallDelegateApi {
-  fun subscriptionStatusDidChange(subscriptionStatusBridgeId: String)
-  fun handleSuperwallEvent(eventInfo: PSuperwallEventInfoPigeon)
-  fun handleCustomPaywallAction(name: String)
-  fun willDismissPaywall(paywallInfo: PPaywallInfo)
-  fun willPresentPaywall(paywallInfo: PPaywallInfo)
-  fun didDismissPaywall(paywallInfo: PPaywallInfo)
-  fun didPresentPaywall(paywallInfo: PPaywallInfo)
-  fun paywallWillOpenURL(url: String)
-  fun paywallWillOpenDeepLink(url: String)
-  fun handleLog(level: String, scope: String, message: String?, info: Map<String, Any>?, error: String?)
-
+/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
+class PSuperwallDelegateGenerated(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
   companion object {
-    /** The codec used by PSuperwallDelegateApi. */
+    /** The codec used by PSuperwallDelegateGenerated. */
     val codec: MessageCodec<Any?> by lazy {
       HostPigeonCodec()
     }
-    /** Sets up an instance of `PSuperwallDelegateApi` to handle messages through the `binaryMessenger`. */
-    @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: PSuperwallDelegateApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.subscriptionStatusDidChange$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val subscriptionStatusBridgeIdArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              api.subscriptionStatusDidChange(subscriptionStatusBridgeIdArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+  }
+  fun subscriptionStatusDidChange(fromArg: PSubscriptionStatus, toArg: PSubscriptionStatus, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(fromArg, toArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.handleSuperwallEvent$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val eventInfoArg = args[0] as PSuperwallEventInfoPigeon
-            val wrapped: List<Any?> = try {
-              api.handleSuperwallEvent(eventInfoArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun handleSuperwallEvent(eventInfoArg: PSuperwallEventInfoPigeon, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(eventInfoArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.handleCustomPaywallAction$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val nameArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              api.handleCustomPaywallAction(nameArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun handleCustomPaywallAction(nameArg: String, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleCustomPaywallAction$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(nameArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.willDismissPaywall$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val paywallInfoArg = args[0] as PPaywallInfo
-            val wrapped: List<Any?> = try {
-              api.willDismissPaywall(paywallInfoArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun willDismissPaywall(paywallInfoArg: PPaywallInfo, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willDismissPaywall$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(paywallInfoArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.willPresentPaywall$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val paywallInfoArg = args[0] as PPaywallInfo
-            val wrapped: List<Any?> = try {
-              api.willPresentPaywall(paywallInfoArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun willPresentPaywall(paywallInfoArg: PPaywallInfo, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willPresentPaywall$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(paywallInfoArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.didDismissPaywall$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val paywallInfoArg = args[0] as PPaywallInfo
-            val wrapped: List<Any?> = try {
-              api.didDismissPaywall(paywallInfoArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun didDismissPaywall(paywallInfoArg: PPaywallInfo, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didDismissPaywall$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(paywallInfoArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.didPresentPaywall$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val paywallInfoArg = args[0] as PPaywallInfo
-            val wrapped: List<Any?> = try {
-              api.didPresentPaywall(paywallInfoArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun didPresentPaywall(paywallInfoArg: PPaywallInfo, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didPresentPaywall$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(paywallInfoArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.paywallWillOpenURL$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val urlArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              api.paywallWillOpenURL(urlArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun paywallWillOpenURL(urlArg: String, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenURL$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(urlArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.paywallWillOpenDeepLink$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val urlArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              api.paywallWillOpenDeepLink(urlArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun paywallWillOpenDeepLink(urlArg: String, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenDeepLink$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(urlArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateApi.handleLog$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val levelArg = args[0] as String
-            val scopeArg = args[1] as String
-            val messageArg = args[2] as String?
-            val infoArg = args[3] as Map<String, Any>?
-            val errorArg = args[4] as String?
-            val wrapped: List<Any?> = try {
-              api.handleLog(levelArg, scopeArg, messageArg, infoArg, errorArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun handleLog(levelArg: String, scopeArg: String, messageArg: String?, infoArg: Map<String, Any>?, errorArg: String?, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(levelArg, scopeArg, messageArg, infoArg, errorArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          channel.setMessageHandler(null)
+          callback(Result.success(Unit))
         }
-      }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
     }
   }
 }

@@ -12,6 +12,7 @@ import PPaywallInfo
 import PPurchaseControllerGenerated
 import PPurchaseControllerHost
 import PSubscriptionStatus
+import PSuperwallDelegateGenerated
 import PSuperwallHostApi
 import PSuperwallHostApi.Companion.setUp
 import PSuperwallOptions
@@ -76,14 +77,16 @@ class SuperwallHost(
         )
     }
 
-    //TODO missing delegate method
-
     override fun reset() {
         Superwall.instance.reset()
     }
 
-    override fun setDelegate(delegateProxyBridgeId: String) {
-        TODO("Not yet implemented")
+    override fun setDelegate(hasDelegate: Boolean) {
+        Superwall.instance.delegate =
+            if (hasDelegate)
+                SuperwallDelegateHost({
+                    PSuperwallDelegateGenerated(binaryMessenger())
+                }) else null
     }
 
     override fun confirmAllAssignments(callback: (Result<List<PConfirmedAssignment>>) -> Unit) {

@@ -1,9 +1,13 @@
 package com.superwall.superwallkit_flutter
 
+import PActive
+import PEntitlement
+import PInactive
 import PPaywallInfo
 import PSubscriptionStatus
-import PSuperwallDelegateApi
+import PSuperwallDelegateGenerated
 import PSuperwallEventInfoPigeon
+import PUnknown
 import android.net.Uri
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.sdk.delegate.SuperwallDelegate
@@ -13,34 +17,35 @@ import com.superwall.superwallkit_flutter.utils.EventMapper
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
 import java.net.URI
 
-class SuperwallDelegateHost(val backingDelegate: PSuperwallDelegateApi) : SuperwallDelegate {
+class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : SuperwallDelegate {
+    private val backingDelegate = setup()
 
     override fun didDismissPaywall(withInfo: PaywallInfo) {
         super.didDismissPaywall(withInfo)
-        backingDelegate.didDismissPaywall(PaywallInfoMapper.toPPaywallInfo(withInfo))
+        backingDelegate.didDismissPaywall(PaywallInfoMapper.toPPaywallInfo(withInfo), {})
     }
 
     override fun didPresentPaywall(withInfo: PaywallInfo) {
         super.didPresentPaywall(withInfo)
-        backingDelegate.didPresentPaywall(PaywallInfoMapper.toPPaywallInfo(withInfo))
+        backingDelegate.didPresentPaywall(PaywallInfoMapper.toPPaywallInfo(withInfo), {})
 
     }
 
     override fun willDismissPaywall(withInfo: PaywallInfo) {
         super.willDismissPaywall(withInfo)
-        backingDelegate.willDismissPaywall(PaywallInfoMapper.toPPaywallInfo(withInfo))
+        backingDelegate.willDismissPaywall(PaywallInfoMapper.toPPaywallInfo(withInfo), {})
 
     }
 
     override fun willPresentPaywall(withInfo: PaywallInfo) {
         super.willPresentPaywall(withInfo)
-        backingDelegate.willPresentPaywall(PaywallInfoMapper.toPPaywallInfo(withInfo))
+        backingDelegate.willPresentPaywall(PaywallInfoMapper.toPPaywallInfo(withInfo), {})
 
     }
 
     override fun handleCustomPaywallAction(withName: String) {
         super.handleCustomPaywallAction(withName)
-        backingDelegate.handleCustomPaywallAction(withName)
+        backingDelegate.handleCustomPaywallAction(withName, {})
     }
 
     override fun handleLog(
@@ -51,27 +56,40 @@ class SuperwallDelegateHost(val backingDelegate: PSuperwallDelegateApi) : Superw
         error: Throwable?
     ) {
         super.handleLog(level, scope, message, info, error)
-        backingDelegate.handleLog(level, scope, message, info, error?.message)
+        backingDelegate.handleLog(level, scope, message, info, error?.message, {})
     }
 
     override fun handleSuperwallEvent(eventInfo: SuperwallEventInfo) {
         super.handleSuperwallEvent(eventInfo)
         backingDelegate.handleSuperwallEvent(
-            EventMapper.toPigeonEventInfo(eventInfo)
+            EventMapper.toPigeonEventInfo(eventInfo), {}
         )
 
     }
 
     override fun paywallWillOpenDeepLink(url: Uri) {
         super.paywallWillOpenDeepLink(url)
+        backingDelegate.paywallWillOpenDeepLink(url.toString(), {})
     }
 
     override fun paywallWillOpenURL(url: URI) {
         super.paywallWillOpenURL(url)
+        backingDelegate.paywallWillOpenURL(url.toString(), {})
     }
 
     override fun subscriptionStatusDidChange(from: SubscriptionStatus, to: SubscriptionStatus) {
         super.subscriptionStatusDidChange(from, to)
+        val map = { status: SubscriptionStatus ->
+            when (status) {
+                is SubscriptionStatus.Active -> PActive(status.entitlements.map {
+                    PEntitlement(it.id!!)
+                })
+
+                is SubscriptionStatus.Inactive -> PInactive(false)
+                is SubscriptionStatus.Unknown -> PUnknown(false)
+            }
+        }
+        backingDelegate.subscriptionStatusDidChange(map(from), map(to), {})
     }
 
 }

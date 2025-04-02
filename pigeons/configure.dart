@@ -422,7 +422,7 @@ abstract class PSuperwallHostApi {
   });
 
   void reset();
-  void setDelegate(String delegateProxyBridgeId);
+  void setDelegate(bool hasDelegate);
 
   @async
   List<PConfirmedAssignment> confirmAllAssignments();
@@ -469,9 +469,10 @@ abstract class PSuperwallHostApi {
   void registerPlacement(String placement, Map<String, Object>? params);
 }
 
-@HostApi()
-abstract class PSuperwallDelegateApi {
-  void subscriptionStatusDidChange(String subscriptionStatusBridgeId);
+@FlutterApi()
+abstract class PSuperwallDelegateGenerated {
+  void subscriptionStatusDidChange(
+      PSubscriptionStatus from, PSubscriptionStatus to);
   void handleSuperwallEvent(PSuperwallEventInfoPigeon eventInfo);
   void handleCustomPaywallAction(String name);
   void willDismissPaywall(PPaywallInfo paywallInfo);
