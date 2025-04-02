@@ -283,10 +283,17 @@ class PPaywallOptions {
 }
 
 class PPurchaseControllerHost {
+  // The hostId is unused since only one can exist here at a time
   String? hostId;
 }
 
 class PConfigureCompletionHost {
+  // The hostId is unused since only one can exist here at a time
+  String? hostId;
+}
+
+class PPaywallPresentationHandlerHost {
+  // The hostId is used here to identify the flutter handler based on the id
   String? hostId;
 }
 
@@ -503,6 +510,31 @@ class PConfirmedAssignment {
   PVariant variant;
 }
 
+enum PPaywallSkippedReason {
+  holdout,
+  noAudienceMatch,
+  placementNotFound,
+}
+
+sealed class PPaywallResult {
+  PPaywallResult();
+}
+
+class PPurchasedPaywallResult extends PPaywallResult {
+  String productId;
+  PPurchasedPaywallResult({required this.productId});
+}
+
+class PDeclinedPaywallResult extends PPaywallResult {
+  bool? _ignore;
+  PDeclinedPaywallResult(this._ignore);
+}
+
+class PRestoredPaywallResult extends PPaywallResult {
+  bool? _ignore;
+  PRestoredPaywallResult(this._ignore);
+}
+
 // ============= HOST APIs =============
 
 @HostApi()
@@ -594,4 +626,12 @@ abstract class PPurchaseControllerGenerated {
 @FlutterApi()
 abstract class PConfigureCompletionGenerated {
   void onConfigureCompleted(bool success);
+}
+
+@FlutterApi()
+abstract class PPaywallPresentationHandlerGenerated {
+  void onPresent(PPaywallInfo paywallInfo);
+  void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult);
+  void onError(String error);
+  void onSkip(PPaywallSkippedReason reason);
 }

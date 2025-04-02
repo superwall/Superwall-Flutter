@@ -221,6 +221,12 @@ enum PVariantType {
   holdout,
 }
 
+enum PPaywallSkippedReason {
+  holdout,
+  noAudienceMatch,
+  placementNotFound,
+}
+
 class PSuperwallOptions {
   PSuperwallOptions({
     this.paywalls,
@@ -1343,6 +1349,48 @@ class PConfigureCompletionHost {
 ;
 }
 
+class PPaywallPresentationHandlerHost {
+  PPaywallPresentationHandlerHost({
+    this.hostId,
+  });
+
+  String? hostId;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      hostId,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PPaywallPresentationHandlerHost decode(Object result) {
+    result as List<Object?>;
+    return PPaywallPresentationHandlerHost(
+      hostId: result[0] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PPaywallPresentationHandlerHost || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      hostId == other.hostId;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
 class PEntitlement {
   PEntitlement({
     this.id,
@@ -1766,6 +1814,135 @@ class PConfirmedAssignment {
 ;
 }
 
+sealed class PPaywallResult {
+}
+
+class PPurchasedPaywallResult extends PPaywallResult {
+  PPurchasedPaywallResult({
+    required this.productId,
+  });
+
+  String productId;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      productId,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PPurchasedPaywallResult decode(Object result) {
+    result as List<Object?>;
+    return PPurchasedPaywallResult(
+      productId: result[0]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PPurchasedPaywallResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      productId == other.productId;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PDeclinedPaywallResult extends PPaywallResult {
+  PDeclinedPaywallResult({
+    this._ignore,
+  });
+
+  bool? _ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      _ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PDeclinedPaywallResult decode(Object result) {
+    result as List<Object?>;
+    return PDeclinedPaywallResult(
+      _ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PDeclinedPaywallResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      _ignore == other._ignore;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PRestoredPaywallResult extends PPaywallResult {
+  PRestoredPaywallResult({
+    this._ignore,
+  });
+
+  bool? _ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      _ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PRestoredPaywallResult decode(Object result) {
+    result as List<Object?>;
+    return PRestoredPaywallResult(
+      _ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PRestoredPaywallResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      _ignore == other._ignore;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -1819,86 +1996,101 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PVariantType) {
       buffer.putUint8(143);
       writeValue(buffer, value.index);
-    }    else if (value is PSuperwallOptions) {
+    }    else if (value is PPaywallSkippedReason) {
       buffer.putUint8(144);
-      writeValue(buffer, value.encode());
-    }    else if (value is PPaywallInfo) {
+      writeValue(buffer, value.index);
+    }    else if (value is PSuperwallOptions) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    }    else if (value is PProduct) {
+    }    else if (value is PPaywallInfo) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    }    else if (value is PLocalNotification) {
+    }    else if (value is PProduct) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    }    else if (value is PComputedPropertyRequest) {
+    }    else if (value is PLocalNotification) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurvey) {
+    }    else if (value is PComputedPropertyRequest) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurveyOption) {
+    }    else if (value is PSurvey) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseCancelled) {
+    }    else if (value is PSurveyOption) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePurchased) {
+    }    else if (value is PPurchaseCancelled) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePending) {
+    }    else if (value is PPurchasePurchased) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseFailed) {
+    }    else if (value is PPurchasePending) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationRestored) {
+    }    else if (value is PPurchaseFailed) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationFailed) {
+    }    else if (value is PRestorationRestored) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoreFailed) {
+    }    else if (value is PRestorationFailed) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    }    else if (value is PLogging) {
+    }    else if (value is PRestoreFailed) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallOptions) {
+    }    else if (value is PLogging) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseControllerHost) {
+    }    else if (value is PPaywallOptions) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfigureCompletionHost) {
+    }    else if (value is PPurchaseControllerHost) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlement) {
+    }    else if (value is PConfigureCompletionHost) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    }    else if (value is PActive) {
+    }    else if (value is PPaywallPresentationHandlerHost) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    }    else if (value is PInactive) {
+    }    else if (value is PEntitlement) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknown) {
+    }    else if (value is PActive) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallEventInfoPigeon) {
+    }    else if (value is PInactive) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    }    else if (value is PIdentityOptions) {
+    }    else if (value is PUnknown) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    }    else if (value is PExperiment) {
+    }    else if (value is PSuperwallEventInfoPigeon) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is PVariant) {
+    }    else if (value is PIdentityOptions) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfirmedAssignment) {
+    }    else if (value is PExperiment) {
       buffer.putUint8(170);
+      writeValue(buffer, value.encode());
+    }    else if (value is PVariant) {
+      buffer.putUint8(171);
+      writeValue(buffer, value.encode());
+    }    else if (value is PConfirmedAssignment) {
+      buffer.putUint8(172);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPurchasedPaywallResult) {
+      buffer.putUint8(173);
+      writeValue(buffer, value.encode());
+    }    else if (value is PDeclinedPaywallResult) {
+      buffer.putUint8(174);
+      writeValue(buffer, value.encode());
+    }    else if (value is PRestoredPaywallResult) {
+      buffer.putUint8(175);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1954,59 +2146,70 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PVariantType.values[value];
       case 144: 
-        return PSuperwallOptions.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PPaywallSkippedReason.values[value];
       case 145: 
-        return PPaywallInfo.decode(readValue(buffer)!);
+        return PSuperwallOptions.decode(readValue(buffer)!);
       case 146: 
-        return PProduct.decode(readValue(buffer)!);
+        return PPaywallInfo.decode(readValue(buffer)!);
       case 147: 
-        return PLocalNotification.decode(readValue(buffer)!);
+        return PProduct.decode(readValue(buffer)!);
       case 148: 
-        return PComputedPropertyRequest.decode(readValue(buffer)!);
+        return PLocalNotification.decode(readValue(buffer)!);
       case 149: 
-        return PSurvey.decode(readValue(buffer)!);
+        return PComputedPropertyRequest.decode(readValue(buffer)!);
       case 150: 
-        return PSurveyOption.decode(readValue(buffer)!);
+        return PSurvey.decode(readValue(buffer)!);
       case 151: 
-        return PPurchaseCancelled.decode(readValue(buffer)!);
+        return PSurveyOption.decode(readValue(buffer)!);
       case 152: 
-        return PPurchasePurchased.decode(readValue(buffer)!);
+        return PPurchaseCancelled.decode(readValue(buffer)!);
       case 153: 
-        return PPurchasePending.decode(readValue(buffer)!);
+        return PPurchasePurchased.decode(readValue(buffer)!);
       case 154: 
-        return PPurchaseFailed.decode(readValue(buffer)!);
+        return PPurchasePending.decode(readValue(buffer)!);
       case 155: 
-        return PRestorationRestored.decode(readValue(buffer)!);
+        return PPurchaseFailed.decode(readValue(buffer)!);
       case 156: 
-        return PRestorationFailed.decode(readValue(buffer)!);
+        return PRestorationRestored.decode(readValue(buffer)!);
       case 157: 
-        return PRestoreFailed.decode(readValue(buffer)!);
+        return PRestorationFailed.decode(readValue(buffer)!);
       case 158: 
-        return PLogging.decode(readValue(buffer)!);
+        return PRestoreFailed.decode(readValue(buffer)!);
       case 159: 
-        return PPaywallOptions.decode(readValue(buffer)!);
+        return PLogging.decode(readValue(buffer)!);
       case 160: 
-        return PPurchaseControllerHost.decode(readValue(buffer)!);
+        return PPaywallOptions.decode(readValue(buffer)!);
       case 161: 
-        return PConfigureCompletionHost.decode(readValue(buffer)!);
+        return PPurchaseControllerHost.decode(readValue(buffer)!);
       case 162: 
-        return PEntitlement.decode(readValue(buffer)!);
+        return PConfigureCompletionHost.decode(readValue(buffer)!);
       case 163: 
-        return PActive.decode(readValue(buffer)!);
+        return PPaywallPresentationHandlerHost.decode(readValue(buffer)!);
       case 164: 
-        return PInactive.decode(readValue(buffer)!);
+        return PEntitlement.decode(readValue(buffer)!);
       case 165: 
-        return PUnknown.decode(readValue(buffer)!);
+        return PActive.decode(readValue(buffer)!);
       case 166: 
-        return PSuperwallEventInfoPigeon.decode(readValue(buffer)!);
+        return PInactive.decode(readValue(buffer)!);
       case 167: 
-        return PIdentityOptions.decode(readValue(buffer)!);
+        return PUnknown.decode(readValue(buffer)!);
       case 168: 
-        return PExperiment.decode(readValue(buffer)!);
+        return PSuperwallEventInfoPigeon.decode(readValue(buffer)!);
       case 169: 
-        return PVariant.decode(readValue(buffer)!);
+        return PIdentityOptions.decode(readValue(buffer)!);
       case 170: 
+        return PExperiment.decode(readValue(buffer)!);
+      case 171: 
+        return PVariant.decode(readValue(buffer)!);
+      case 172: 
         return PConfirmedAssignment.decode(readValue(buffer)!);
+      case 173: 
+        return PPurchasedPaywallResult.decode(readValue(buffer)!);
+      case 174: 
+        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+      case 175: 
+        return PRestoredPaywallResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -3103,6 +3306,125 @@ abstract class PConfigureCompletionGenerated {
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PConfigureCompletionGenerated.onConfigureCompleted was null, expected non-null bool.');
           try {
             api.onConfigureCompleted(arg_success!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+}
+
+abstract class PPaywallPresentationHandlerGenerated {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  void onPresent(PPaywallInfo paywallInfo);
+
+  void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult);
+
+  void onError(String error);
+
+  void onSkip(PPaywallSkippedReason reason);
+
+  static void setUp(PPaywallPresentationHandlerGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onPresent$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onPresent was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
+          assert(arg_paywallInfo != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onPresent was null, expected non-null PPaywallInfo.');
+          try {
+            api.onPresent(arg_paywallInfo!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
+          assert(arg_paywallInfo != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss was null, expected non-null PPaywallInfo.');
+          final PPaywallResult? arg_paywallResult = (args[1] as PPaywallResult?);
+          assert(arg_paywallResult != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss was null, expected non-null PPaywallResult.');
+          try {
+            api.onDismiss(arg_paywallInfo!, arg_paywallResult!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onError$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onError was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_error = (args[0] as String?);
+          assert(arg_error != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onError was null, expected non-null String.');
+          try {
+            api.onError(arg_error!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PPaywallSkippedReason? arg_reason = (args[0] as PPaywallSkippedReason?);
+          assert(arg_reason != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip was null, expected non-null PPaywallSkippedReason.');
+          try {
+            api.onSkip(arg_reason!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
