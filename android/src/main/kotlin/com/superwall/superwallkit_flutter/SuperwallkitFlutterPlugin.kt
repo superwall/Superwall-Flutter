@@ -1,12 +1,10 @@
 package com.superwall.superwallkit_flutter
 
-import SuperwallHostApi
 import android.app.Activity
 import android.app.Application
 import android.os.Debug
 import android.util.Log
 import com.superwall.sdk.misc.runOnUiThread
-import com.superwall.superwallkit_flutter.bridges.BridgeId
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -48,17 +46,14 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
         synchronized(lock) {
             if (host == null)
                 host = SuperwallHost(
-                    binaryMessenger = flutterPluginBinding.binaryMessenger.getFlutterEngine().getDartExecutor(),
-                    { flutterPluginBinding?.applicationContext as Application }
+                    binaryMessenger = { flutterPluginBinding.binaryMessenger},
+                    context = { flutterPluginBinding?.applicationContext as Application }
                 )
         }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        CoroutineScope(Dispatchers.Main).launch {
-            BridgingCreator.shared().tearDown()
-            instance = null
-        }
+        host = null
     }
 
     //region ActivityAware
@@ -84,23 +79,6 @@ class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
 
 fun <T> MethodCall.argumentForKey(key: String): T? {
     return this.argument(key)
-}
-
-// Make sure to provide the key for the bridge (which provides the bridgeId)
-suspend fun <T> MethodCall.bridgeInstance(key: String): T? {
-    BreadCrumbs.append("SuperwallKitFlutterPlugin.kt: Invoke bridgeInstance(key:) on $this. Key is $key")
-    val bridgeId = this.argument<String>(key)
-    if (bridgeId == null) {
-        Log.e("SWKP", "No bridgeId found for key: $key")
-        return null
-    }
-    BreadCrumbs.append("SuperwallKitFlutterPlugin.kt: Invoke bridgeInstance(key:) in on $this. Found bridgeId $bridgeId")
-    return BridgingCreator.shared().bridgeInstance(bridgeId)
-}
-
-suspend fun <T> BridgeId.bridgeInstance(): T? {
-    BreadCrumbs.append("SuperwallKitFlutterPlugin.kt: Invoke bridgeInstance() in on $this")
-    return BridgingCreator.shared().bridgeInstance(this)
 }
 
 fun MethodChannel.Result.badArgs(call: MethodCall) {

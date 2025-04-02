@@ -297,6 +297,11 @@ class PPaywallPresentationHandlerHost {
   String? hostId;
 }
 
+class PFeatureHandlerHost {
+  // The hostId is used here to identify the flutter handler based on the id
+  String? hostId;
+}
+
 class PEntitlement {
   String? id;
 }
@@ -589,10 +594,13 @@ abstract class PSuperwallHostApi {
   bool handleDeepLink(String url);
   void togglePaywallSpinner(bool isHidden);
   PPaywallInfo? getLatestPaywallInfo();
-
+  @async
+  void registerPlacement(String placement,
+      {Map<String, Object>? params,
+      PPaywallPresentationHandlerHost? handler,
+      PFeatureHandlerHost? feature});
   // Presentation methods
   void dismiss();
-  void registerPlacement(String placement, Map<String, Object>? params);
 }
 
 @FlutterApi()
@@ -634,4 +642,9 @@ abstract class PPaywallPresentationHandlerGenerated {
   void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult);
   void onError(String error);
   void onSkip(PPaywallSkippedReason reason);
+}
+
+@FlutterApi()
+abstract class PFeatureHandlerGenerated {
+  void onFeature(String id);
 }

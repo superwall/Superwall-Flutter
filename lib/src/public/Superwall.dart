@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
+import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// The primary class for integrating Superwall into your application.
@@ -25,10 +26,8 @@ class Superwall {
       {PurchaseController? purchaseController,
       SuperwallOptions? options,
       Function? completion}) {
-    final purchaseControllerHost = purchaseController != null
-        ? generated.PPurchaseControllerHost(
-            bridgeId: 'PurchaseControllerHost-bridgeId')
-        : null;
+    final purchaseControllerHost =
+        purchaseController != null ? generated.PPurchaseControllerHost() : null;
 
     // Convert SuperwallOptions to generated.PSuperwallOptions if needed
     final generatedOptions =
@@ -255,7 +254,7 @@ class Superwall {
   }
 
   /// Sets the user attributes
-  Future<void> setUserAttributes(Map<String, dynamic> userAttributes) async {
+  Future<void> setUserAttributes(Map<String, Object> userAttributes) async {
     await hostApi.setUserAttributes(userAttributes);
   }
 
@@ -285,8 +284,9 @@ class Superwall {
   }
 
   /// Gets the entitlements
-  Future<Entitlements> getEntitlements() async {
-    return hostApi.getEntitlements().map((e) => Entitlement(id: e.id)).toList();
+  Future<Set<Entitlement>> getEntitlements() async {
+    final entitlements = await hostApi.getEntitlements();
+    return entitlements.map((e) => Entitlement(id: e.id!!)).toSet();
   }
 
   /// Gets the latest PaywallInfo object
@@ -299,7 +299,9 @@ class Superwall {
     final subscriptionStatusBridgeId = await hostApi.getSubscriptionStatus();
 
     try {
-      return await _createSubscriptionStatus(subscriptionStatusBridgeId);
+      return await SubscriptionStatus
+          .createSubscriptionStatusFromPSubscriptionStatus(
+              subscriptionStatusBridgeId);
     } catch (e) {
       return SubscriptionStatus.unknown;
     }
@@ -313,19 +315,14 @@ class Superwall {
 
   /// Sets the subscription status of the user
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
-    final subscriptionStatusBridgeId = _getSubscriptionStatusBridgeId(status);
-    await hostApi.setSubscriptionStatus(status);
-  }
-
-  String _getSubscriptionStatusBridgeId(SubscriptionStatus status) {
-    // Implementation would depend on your SubscriptionStatus class
-    // This is a placeholder that returns a dummy ID
-    return "subscription-status-bridge-id";
+    await hostApi.setSubscriptionStatus(status.toPSubscriptionStatus());
   }
 
   /// Gets the configuration status of Superwall
-  Future<String> getConfigurationStatus() async {
-    return await hostApi.getConfigurationStatusBridgeId();
+  Future<ConfigurationStatus> getConfigurationStatus() async {
+    final res = await hostApi.getConfigurationStatus();
+    return ConfigurationStatus
+        .createConfigurationStatusFromPConfigurationStatus(res);
   }
 
   /// Checks if Superwall has finished configuring

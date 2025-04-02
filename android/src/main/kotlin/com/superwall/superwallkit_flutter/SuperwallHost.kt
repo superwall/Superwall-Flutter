@@ -6,9 +6,13 @@ import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
 import PEntitlement
+import PFeatureHandlerGenerated
+import PFeatureHandlerHost
 import PIdentityOptions
 import PInactive
 import PPaywallInfo
+import PPaywallPresentationHandlerGenerated
+import PPaywallPresentationHandlerHost
 import PPurchaseControllerGenerated
 import PPurchaseControllerHost
 import PSubscriptionStatus
@@ -37,6 +41,7 @@ import kotlinx.coroutines.launch
 import logLevelFromJson
 import toJson
 import androidx.core.net.toUri
+import com.superwall.sdk.paywall.presentation.register
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
 import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
@@ -228,13 +233,31 @@ class SuperwallHost(
         }
     }
 
+    override fun registerPlacement(
+        placement: String,
+        params: Map<String, Any>?,
+        handler: PPaywallPresentationHandlerHost?,
+        feature: PFeatureHandlerHost?,
+        callback: (Result<Unit>) -> Unit
+    ) {
+        val host = if (handler != null) PaywallPresentationHandlerHost({
+            PPaywallPresentationHandlerGenerated(binaryMessenger())
+        }) else null
+
+        Superwall.instance.register(
+            placement, params, host?.handler, if (feature != null) {
+                {
+                    PFeatureHandlerGenerated(binaryMessenger(), feature.hostId ?: "").onFeature(
+                        feature.hostId ?: "", {}
+                    )
+                }
+            } else null
+        )
+    }
+
     override fun dismiss() {
         ioScope.launch {
             Superwall.instance.dismiss()
         }
-    }
-
-    override fun registerPlacement(placement: String, params: Map<String, Any>?) {
-        TODO("Not yet implemented")
     }
 }

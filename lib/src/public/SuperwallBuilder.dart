@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:superwallkit_flutter/src/public/Superwall.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class SuperwallBuilder extends StatefulWidget {
@@ -28,14 +29,14 @@ class _SuperwallBuilderState extends State<SuperwallBuilder> {
 
   Future<void> _initializeStatus() async {
     _status = await Superwall.shared.getSubscriptionStatus();
-    _subscription = Superwall.shared.subscriptionStatus.listen((status) {
+    /*_subscription = Superwall.shared.subscriptionStatus.listen((status) {
       setState(() {
         _status = status;
       });
     });
     if (mounted) {
       setState(() {});
-    }
+    }*/
   }
 
   @override

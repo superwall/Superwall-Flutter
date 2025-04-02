@@ -1165,6 +1165,35 @@ data class PPaywallPresentationHandlerHost (
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
+data class PFeatureHandlerHost (
+  val hostId: String? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PFeatureHandlerHost {
+      val hostId = pigeonVar_list[0] as String?
+      return PFeatureHandlerHost(hostId)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      hostId,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PFeatureHandlerHost) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return hostId == other.hostId
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
 data class PEntitlement (
   val id: String? = null
 )
@@ -1729,60 +1758,65 @@ private open class HostPigeonCodec : StandardMessageCodec() {
       }
       164.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PEntitlement.fromList(it)
+          PFeatureHandlerHost.fromList(it)
         }
       }
       165.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PActive.fromList(it)
+          PEntitlement.fromList(it)
         }
       }
       166.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PInactive.fromList(it)
+          PActive.fromList(it)
         }
       }
       167.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PUnknown.fromList(it)
+          PInactive.fromList(it)
         }
       }
       168.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallEventInfoPigeon.fromList(it)
+          PUnknown.fromList(it)
         }
       }
       169.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PIdentityOptions.fromList(it)
+          PSuperwallEventInfoPigeon.fromList(it)
         }
       }
       170.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExperiment.fromList(it)
+          PIdentityOptions.fromList(it)
         }
       }
       171.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PVariant.fromList(it)
+          PExperiment.fromList(it)
         }
       }
       172.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfirmedAssignment.fromList(it)
+          PVariant.fromList(it)
         }
       }
       173.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasedPaywallResult.fromList(it)
+          PConfirmedAssignment.fromList(it)
         }
       }
       174.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PDeclinedPaywallResult.fromList(it)
+          PPurchasedPaywallResult.fromList(it)
         }
       }
       175.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PDeclinedPaywallResult.fromList(it)
+        }
+      }
+      176.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PRestoredPaywallResult.fromList(it)
         }
@@ -1932,52 +1966,56 @@ private open class HostPigeonCodec : StandardMessageCodec() {
         stream.write(163)
         writeValue(stream, value.toList())
       }
-      is PEntitlement -> {
+      is PFeatureHandlerHost -> {
         stream.write(164)
         writeValue(stream, value.toList())
       }
-      is PActive -> {
+      is PEntitlement -> {
         stream.write(165)
         writeValue(stream, value.toList())
       }
-      is PInactive -> {
+      is PActive -> {
         stream.write(166)
         writeValue(stream, value.toList())
       }
-      is PUnknown -> {
+      is PInactive -> {
         stream.write(167)
         writeValue(stream, value.toList())
       }
-      is PSuperwallEventInfoPigeon -> {
+      is PUnknown -> {
         stream.write(168)
         writeValue(stream, value.toList())
       }
-      is PIdentityOptions -> {
+      is PSuperwallEventInfoPigeon -> {
         stream.write(169)
         writeValue(stream, value.toList())
       }
-      is PExperiment -> {
+      is PIdentityOptions -> {
         stream.write(170)
         writeValue(stream, value.toList())
       }
-      is PVariant -> {
+      is PExperiment -> {
         stream.write(171)
         writeValue(stream, value.toList())
       }
-      is PConfirmedAssignment -> {
+      is PVariant -> {
         stream.write(172)
         writeValue(stream, value.toList())
       }
-      is PPurchasedPaywallResult -> {
+      is PConfirmedAssignment -> {
         stream.write(173)
         writeValue(stream, value.toList())
       }
-      is PDeclinedPaywallResult -> {
+      is PPurchasedPaywallResult -> {
         stream.write(174)
         writeValue(stream, value.toList())
       }
-      is PRestoredPaywallResult -> {
+      is PDeclinedPaywallResult -> {
         stream.write(175)
+        writeValue(stream, value.toList())
+      }
+      is PRestoredPaywallResult -> {
+        stream.write(176)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -2013,8 +2051,8 @@ interface PSuperwallHostApi {
   fun handleDeepLink(url: String): Boolean
   fun togglePaywallSpinner(isHidden: Boolean)
   fun getLatestPaywallInfo(): PPaywallInfo?
+  fun registerPlacement(placement: String, params: Map<String, Any>?, handler: PPaywallPresentationHandlerHost?, feature: PFeatureHandlerHost?, callback: (Result<Unit>) -> Unit)
   fun dismiss()
-  fun registerPlacement(placement: String, params: Map<String, Any>?)
 
   companion object {
     /** The codec used by PSuperwallHostApi. */
@@ -2440,30 +2478,33 @@ interface PSuperwallHostApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismiss$separatedMessageChannelSuffix", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.dismiss()
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.registerPlacement$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val placementArg = args[0] as String
             val paramsArg = args[1] as Map<String, Any>?
+            val handlerArg = args[2] as PPaywallPresentationHandlerHost?
+            val featureArg = args[3] as PFeatureHandlerHost?
+            api.registerPlacement(placementArg, paramsArg, handlerArg, featureArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismiss$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> = try {
-              api.registerPlacement(placementArg, paramsArg)
+              api.dismiss()
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -2816,6 +2857,32 @@ class PPaywallPresentationHandlerGenerated(private val binaryMessenger: BinaryMe
     val channelName = "dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(reasonArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+}
+/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
+class PFeatureHandlerGenerated(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+  companion object {
+    /** The codec used by PFeatureHandlerGenerated. */
+    val codec: MessageCodec<Any?> by lazy {
+      HostPigeonCodec()
+    }
+  }
+  fun onFeature(idArg: String, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PFeatureHandlerGenerated.onFeature$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(idArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))

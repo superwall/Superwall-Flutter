@@ -1391,6 +1391,48 @@ class PPaywallPresentationHandlerHost {
 ;
 }
 
+class PFeatureHandlerHost {
+  PFeatureHandlerHost({
+    this.hostId,
+  });
+
+  String? hostId;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      hostId,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PFeatureHandlerHost decode(Object result) {
+    result as List<Object?>;
+    return PFeatureHandlerHost(
+      hostId: result[0] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PFeatureHandlerHost || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      hostId == other.hostId;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
 class PEntitlement {
   PEntitlement({
     this.id,
@@ -2056,41 +2098,44 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PPaywallPresentationHandlerHost) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlement) {
+    }    else if (value is PFeatureHandlerHost) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    }    else if (value is PActive) {
+    }    else if (value is PEntitlement) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    }    else if (value is PInactive) {
+    }    else if (value is PActive) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknown) {
+    }    else if (value is PInactive) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallEventInfoPigeon) {
+    }    else if (value is PUnknown) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is PIdentityOptions) {
+    }    else if (value is PSuperwallEventInfoPigeon) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    }    else if (value is PExperiment) {
+    }    else if (value is PIdentityOptions) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    }    else if (value is PVariant) {
+    }    else if (value is PExperiment) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfirmedAssignment) {
+    }    else if (value is PVariant) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasedPaywallResult) {
+    }    else if (value is PConfirmedAssignment) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    }    else if (value is PDeclinedPaywallResult) {
+    }    else if (value is PPurchasedPaywallResult) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoredPaywallResult) {
+    }    else if (value is PDeclinedPaywallResult) {
       buffer.putUint8(175);
+      writeValue(buffer, value.encode());
+    }    else if (value is PRestoredPaywallResult) {
+      buffer.putUint8(176);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2187,28 +2232,30 @@ class _PigeonCodec extends StandardMessageCodec {
       case 163: 
         return PPaywallPresentationHandlerHost.decode(readValue(buffer)!);
       case 164: 
-        return PEntitlement.decode(readValue(buffer)!);
+        return PFeatureHandlerHost.decode(readValue(buffer)!);
       case 165: 
-        return PActive.decode(readValue(buffer)!);
+        return PEntitlement.decode(readValue(buffer)!);
       case 166: 
-        return PInactive.decode(readValue(buffer)!);
+        return PActive.decode(readValue(buffer)!);
       case 167: 
-        return PUnknown.decode(readValue(buffer)!);
+        return PInactive.decode(readValue(buffer)!);
       case 168: 
-        return PSuperwallEventInfoPigeon.decode(readValue(buffer)!);
+        return PUnknown.decode(readValue(buffer)!);
       case 169: 
-        return PIdentityOptions.decode(readValue(buffer)!);
+        return PSuperwallEventInfoPigeon.decode(readValue(buffer)!);
       case 170: 
-        return PExperiment.decode(readValue(buffer)!);
+        return PIdentityOptions.decode(readValue(buffer)!);
       case 171: 
-        return PVariant.decode(readValue(buffer)!);
+        return PExperiment.decode(readValue(buffer)!);
       case 172: 
-        return PConfirmedAssignment.decode(readValue(buffer)!);
+        return PVariant.decode(readValue(buffer)!);
       case 173: 
-        return PPurchasedPaywallResult.decode(readValue(buffer)!);
+        return PConfirmedAssignment.decode(readValue(buffer)!);
       case 174: 
-        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+        return PPurchasedPaywallResult.decode(readValue(buffer)!);
       case 175: 
+        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+      case 176: 
         return PRestoredPaywallResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2864,14 +2911,14 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<void> dismiss() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismiss$pigeonVar_messageChannelSuffix';
+  Future<void> registerPlacement(String placement, {Map<String, Object>? params, PPaywallPresentationHandlerHost? handler, PFeatureHandlerHost? feature, }) async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.registerPlacement$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[placement, params, handler, feature]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2887,14 +2934,14 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<void> registerPlacement(String placement, Map<String, Object>? params) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.registerPlacement$pigeonVar_messageChannelSuffix';
+  Future<void> dismiss() async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismiss$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[placement, params]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3425,6 +3472,41 @@ abstract class PPaywallPresentationHandlerGenerated {
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip was null, expected non-null PPaywallSkippedReason.');
           try {
             api.onSkip(arg_reason!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+}
+
+abstract class PFeatureHandlerGenerated {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  void onFeature(String id);
+
+  static void setUp(PFeatureHandlerGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PFeatureHandlerGenerated.onFeature$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PFeatureHandlerGenerated.onFeature was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_id = (args[0] as String?);
+          assert(arg_id != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PFeatureHandlerGenerated.onFeature was null, expected non-null String.');
+          try {
+            api.onFeature(arg_id!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

@@ -1,5 +1,5 @@
-/*
-import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+
 /// A campaign experiment that was assigned to a user.
 ///
 /// An experiment is part of a [Campaign Rule](https://docs.superwall.com/docs/campaign-rules)
@@ -9,18 +9,19 @@ import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 /// they are in a holdout group.
 ///
 /// To learn more, read [our docs](https://docs.superwall.com/docs/home#how-it-work
-class Experiment extends BridgeIdInstantiable {
-  static const BridgeClass bridgeClass = 'ExperimentBridge';
-  Experiment({super.bridgeId}): super(bridgeClass: bridgeClass);
+class Experiment {
+  final String id;
+  final String groupId;
 
-  Future<String> get id async {
-    final id = await bridgeId.communicator.invokeBridgeMethod('getId');
-    return id;
-  }
+  Experiment({
+    required this.id,
+    required this.groupId,
+  });
 
-  Future<String> get description async {
-    final description = await bridgeId.communicator.invokeBridgeMethod('getDescription');
-    return description;
+  factory Experiment.fromPExperiment(PExperiment pExperiment) {
+    return Experiment(
+      id: pExperiment.id,
+      groupId: pExperiment.groupId,
+    );
   }
 }
-*/

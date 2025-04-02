@@ -1,12 +1,11 @@
-import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 
 /// An enum that defines the possible outcomes of attempting to restore a product.
 ///
 /// When implementing the ``PurchaseController/restorePurchases()`` delegate
 /// method, all cases should be considered.
-class PurchaseResult extends BridgeIdInstantiable {
-  PurchaseResult(
-      {required super.bridgeClass, super.bridgeId, super.initializationArgs});
+sealed class PurchaseResult {
+  PurchaseResult();
 
   /// The purchase was cancelled.
   ///
@@ -27,25 +26,49 @@ class PurchaseResult extends BridgeIdInstantiable {
   /// The associated `Error` should be sent back for further handling.
   static PurchaseResult failed(String error) =>
       PurchaseResultFailed(error: error);
+
+  static PPurchaseResult toPPurchaseResult(PurchaseResult result) {
+    if (result is PurchaseResultCancelled) {
+      return PPurchaseCancelled();
+    } else if (result is PurchaseResultPurchased) {
+      return PPurchasePurchased();
+    } else if (result is PurchaseResultPending) {
+      return PPurchasePending();
+    } else if (result is PurchaseResultFailed) {
+      return PPurchaseFailed(error: (result as PurchaseResultFailed).error);
+    } else {
+      throw ArgumentError('Unknown PurchaseResult type');
+    }
+  }
+
+  static PurchaseResult fromPPurchaseResult(PPurchaseResult pResult) {
+    if (pResult is PPurchaseCancelled) {
+      return PurchaseResultCancelled();
+    } else if (pResult is PPurchasePurchased) {
+      return PurchaseResultPurchased();
+    } else if (pResult is PPurchasePending) {
+      return PurchaseResultPending();
+    } else if (pResult is PPurchaseFailed) {
+      return PurchaseResultFailed(error: pResult.error ?? '');
+    } else {
+      throw ArgumentError('Unknown PPurchaseResult type');
+    }
+  }
 }
 
 class PurchaseResultCancelled extends PurchaseResult {
-  static const BridgeClass bridgeClass = 'PurchaseResultCancelledBridge';
-  PurchaseResultCancelled({super.bridgeId}) : super(bridgeClass: bridgeClass);
+  PurchaseResultCancelled();
 }
 
 class PurchaseResultPurchased extends PurchaseResult {
-  static const BridgeClass bridgeClass = 'PurchaseResultPurchasedBridge';
-  PurchaseResultPurchased({super.bridgeId}) : super(bridgeClass: bridgeClass);
+  PurchaseResultPurchased();
 }
 
 class PurchaseResultPending extends PurchaseResult {
-  static const BridgeClass bridgeClass = 'PurchaseResultPendingBridge';
-  PurchaseResultPending({super.bridgeId}) : super(bridgeClass: bridgeClass);
+  PurchaseResultPending();
 }
 
 class PurchaseResultFailed extends PurchaseResult {
-  static const BridgeClass bridgeClass = 'PurchaseResultFailedBridge';
-  PurchaseResultFailed({required String error, super.bridgeId})
-      : super(bridgeClass: bridgeClass, initializationArgs: {'error': error});
+  final String error;
+  PurchaseResultFailed({required this.error});
 }

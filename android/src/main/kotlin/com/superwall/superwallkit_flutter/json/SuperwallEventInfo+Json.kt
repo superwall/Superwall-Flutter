@@ -1,7 +1,6 @@
 import com.superwall.sdk.analytics.superwall.SuperwallEvent
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.sdk.store.abstractions.transactions.StoreTransaction
-import com.superwall.superwallkit_flutter.bridges.createBridgeId
 import com.superwall.superwallkit_flutter.json.toJson
 
 suspend fun SuperwallEventInfo.toJson(): Map<String, Any> {
@@ -43,42 +42,42 @@ suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
 
         is SuperwallEvent.PaywallOpen -> mapOf(
             "placement" to "paywallOpen",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallClose -> mapOf(
             "placement" to "paywallClose",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallDecline -> mapOf(
             "placement" to "paywallDecline",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.TransactionStart -> mapOf(
             "placement" to "transactionStart",
             "product" to this.product.toJson(),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.TransactionFail -> mapOf(
             "placement" to "transactionFail",
             "error" to this.error.localizedMessage,
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.TransactionAbandon -> mapOf(
             "placement" to "transactionAbandon",
             "product" to this.product.toJson(),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.TransactionComplete -> {
             val json = mutableMapOf<String, Any?>(
                 "placement" to "transactionComplete",
                 "product" to this.product.toJson(),
-                "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+                "paywallInfoBridgeId" to ""
             )
             val transaction = this.transaction as? StoreTransaction
             val transactionJson = transaction?.toJson()
@@ -93,24 +92,24 @@ suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
         is SuperwallEvent.SubscriptionStart -> mapOf(
             "placement" to "subscriptionStart",
             "product" to this.product.toJson(),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.FreeTrialStart -> mapOf(
             "placement" to "freeTrialStart",
             "product" to this.product.toJson(),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.TransactionRestore -> mapOf(
             "placement" to "transactionRestore",
             "restoreType" to this.restoreType.toJson(),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.TransactionTimeout -> mapOf(
             "placement" to "transactionTimeout",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.UserAttributes -> mapOf(
@@ -121,7 +120,7 @@ suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
         is SuperwallEvent.NonRecurringProductPurchase -> mapOf(
             "placement" to "nonRecurringProductPurchase",
             "product" to this.product.toJson(),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallResponseLoadStart -> mapOf(
@@ -142,43 +141,43 @@ suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
         is SuperwallEvent.PaywallResponseLoadComplete -> mapOf(
             "placement" to "paywallResponseLoadComplete",
             "triggeredPlacementName" to (this.triggeredPlacementName ?: ""),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallWebviewLoadStart -> mapOf(
             "placement" to "paywallWebviewLoadStart",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallWebviewLoadFail -> mapOf(
             "placement" to "paywallWebviewLoadFail",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallWebviewLoadComplete -> mapOf(
             "placement" to "paywallWebviewLoadComplete",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
         is SuperwallEvent.PaywallWebviewLoadFallback -> mapOf(
             "placement" to "paywallWebviewLoadFallback",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallWebviewLoadTimeout -> mapOf(
             "placement" to "paywallWebviewLoadTimeout",
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallProductsLoadStart -> mapOf(
             "placement" to "paywallProductsLoadStart",
             "triggeredPlacementName" to (this.triggeredPlacementName ?: ""),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallProductsLoadFail -> mapOf(
             "placement" to "paywallProductsLoadFail",
             "triggeredPlacementName" to (this.triggeredPlacementName ?: ""),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallProductsLoadComplete -> mapOf(
@@ -191,7 +190,7 @@ suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
             "survey" to this.survey.toJson(),
             "selectedOption" to this.selectedOption.toJson(),
             "customResponse" to (this.customResponse ?: ""),
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
 
         is SuperwallEvent.PaywallPresentationRequest -> {
@@ -212,7 +211,7 @@ suspend fun SuperwallEvent.toJson(): Map<String, Any?> {
             "placement" to "customPlacement",
             "name" to this.placementName,
             "params" to this.params,
-            "paywallInfoBridgeId" to this.paywallInfo.createBridgeId()
+            "paywallInfoBridgeId" to ""
         )
         is SuperwallEvent.ConfigFail -> mapOf("placement" to "configFail")
         is SuperwallEvent.ConfirmAllAssignments -> mapOf("placement" to "confirmAllAssignments")
