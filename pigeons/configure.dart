@@ -56,14 +56,42 @@ class PPaywallInfo {
   List<Map<String, Object>>? surveys;
 }
 
-class PPurchaseResult {
-  bool? success;
-  String? error;
+sealed class PPurchaseResult {
+  PPurchaseResult();
 }
 
-class PRestorationResult {
-  bool? restored;
+class PPurchaseCancelled extends PPurchaseResult {
+  bool? _ignore;
+  PPurchaseCancelled(this._ignore);
+}
+
+class PPurchasePurchased extends PPurchaseResult {
+  bool? _ignore;
+  PPurchasePurchased(this._ignore);
+}
+
+class PPurchasePending extends PPurchaseResult {
+  bool? _ignore;
+  PPurchasePending(this._ignore);
+}
+
+class PPurchaseFailed extends PPurchaseResult {
   String? error;
+  PPurchaseFailed(this.error);
+}
+
+sealed class PRestorationResult {
+  PRestorationResult();
+}
+
+class PRestorationRestored extends PRestorationResult {
+  bool? _ignore;
+  PRestorationRestored(this._ignore);
+}
+
+class PRestorationFailed extends PRestorationResult {
+  String? error;
+  PRestorationFailed(this.error);
 }
 
 class PRestoreFailed {
@@ -94,7 +122,11 @@ class PPaywallOptions {
 }
 
 class PPurchaseControllerHost {
-  String? bridgeId;
+  String? hostId;
+}
+
+class PConfigureCompletionHost {
+  String? hostId;
 }
 
 class PEntitlement {
@@ -382,9 +414,12 @@ class PConfirmedAssignment {
 @HostApi()
 abstract class PSuperwallHostApi {
   @async
-  void configure(String apiKey,
-      {PPurchaseControllerHost? purchaseController,
-      PSuperwallOptions? options});
+  void configure(
+    String apiKey, {
+    PPurchaseControllerHost? purchaseController,
+    PSuperwallOptions? options,
+    PConfigureCompletionHost? completion,
+  });
 
   void reset();
   void setDelegate(String delegateProxyBridgeId);
@@ -459,4 +494,9 @@ abstract class PPurchaseControllerGenerated {
       String productId, String? basePlanId, String? offerId);
 
   PRestorationResult restorePurchases();
+}
+
+@FlutterApi()
+abstract class PConfigureCompletionGenerated {
+  void onConfigureCompleted(bool success);
 }

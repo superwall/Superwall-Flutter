@@ -2,10 +2,14 @@ package com.superwall.superwallkit_flutter
 
 import PActive
 import PConfigurationStatus
+import PConfigureCompletionGenerated
+import PConfigureCompletionHost
 import PConfirmedAssignment
 import PEntitlement
 import PIdentityOptions
 import PInactive
+import PPaywallInfo
+import PPurchaseControllerGenerated
 import PPurchaseControllerHost
 import PSubscriptionStatus
 import PSuperwallHostApi
@@ -32,30 +36,43 @@ import kotlinx.coroutines.launch
 import logLevelFromJson
 import toJson
 import androidx.core.net.toUri
+import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
 import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
 
 class SuperwallHost(
     val context: () -> Application,
-    binaryMessenger: BinaryMessenger
+    val binaryMessenger: () -> BinaryMessenger
 ) : PSuperwallHostApi {
 
     init {
-        setUp(binaryMessenger = binaryMessenger, this)
+        setUp(binaryMessenger = binaryMessenger(), this)
     }
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
     override fun configure(
         apiKey: String,
-        purchaseController: PPurchaseControllerHost?, //TODO pass in controller as proxy here
+        purchaseController: PPurchaseControllerHost?,
         options: PSuperwallOptions?,
+        completion: PConfigureCompletionHost?,
         callback: (Result<Unit>) -> Unit
     ) {
         val sdkOptions = options?.toSdkOptions()
         Superwall.configure(
-            applicationContext = context(), apiKey = apiKey, options = sdkOptions,
-            completion = callback
+            applicationContext = context(),
+            apiKey = apiKey,
+            options = sdkOptions,
+            purchaseController = if (purchaseController != null) {
+                PurchaseControllerHost { PPurchaseControllerGenerated(binaryMessenger()) }
+            } else null,
+            completion = if (completion != null) {
+                { result: Result<Unit> ->
+                    PConfigureCompletionGenerated(binaryMessenger()).onConfigureCompleted(
+                        result.isSuccess,
+                        {})
+                }
+            } else null
         )
     }
 
@@ -203,7 +220,9 @@ class SuperwallHost(
     }
 
     override fun getLatestPaywallInfo(): PPaywallInfo? {
-        TODO("Not yet implemented")
+        return Superwall.instance.latestPaywallInfo?.let {
+            PaywallInfoMapper.toPPaywallInfo(it)
+        }
     }
 
     override fun dismiss() {
