@@ -24,11 +24,44 @@ class PSuperwallOptions {
 
 // PaywallInfo class for getting latest paywall info
 class PPaywallInfo {
+  PPaywallInfo({
+    this.identifier,
+    this.name,
+    this.experiment,
+    this.productIds,
+    this.products,
+    this.url,
+    this.presentedByPlacementWithName,
+    this.presentedByPlacementWithId,
+    this.presentedByPlacementAt,
+    this.presentedBy,
+    this.presentationSourceType,
+    this.responseLoadStartTime,
+    this.responseLoadCompleteTime,
+    this.responseLoadFailTime,
+    this.responseLoadDuration,
+    this.webViewLoadStartTime,
+    this.webViewLoadCompleteTime,
+    this.webViewLoadFailTime,
+    this.webViewLoadDuration,
+    this.productsLoadStartTime,
+    this.productsLoadCompleteTime,
+    this.productsLoadFailTime,
+    this.productsLoadDuration,
+    this.paywalljsVersion,
+    this.isFreeTrialAvailable,
+    this.featureGatingBehavior,
+    this.closeReason,
+    this.localNotifications,
+    this.computedPropertyRequests,
+    this.surveys,
+  });
+
   String? identifier;
   String? name;
-  String? experimentBridgeId;
+  PExperiment? experiment;
   List<String>? productIds;
-  List<Map<String, Object>>? products;
+  List<PProduct>? products;
   String? url;
   String? presentedByPlacementWithName;
   String? presentedByPlacementWithId;
@@ -49,11 +82,139 @@ class PPaywallInfo {
   double? productsLoadDuration;
   String? paywalljsVersion;
   bool? isFreeTrialAvailable;
-  Map<String, Object>? featureGatingBehavior;
-  Map<String, Object>? closeReason;
-  List<Map<String, Object>>? localNotifications;
-  List<Map<String, Object>>? computedPropertyRequests;
-  List<Map<String, Object>>? surveys;
+  PFeatureGatingBehavior? featureGatingBehavior;
+  PPaywallCloseReason? closeReason;
+  List<PLocalNotification>? localNotifications;
+  List<PComputedPropertyRequest>? computedPropertyRequests;
+  List<PSurvey>? surveys;
+}
+
+// Product class for paywall products
+class PProduct {
+  String? id;
+  String? name;
+  List<PEntitlement>? entitlements;
+
+  PProduct({
+    this.id,
+    this.name,
+    this.entitlements,
+  });
+}
+
+// FeatureGatingBehavior class
+enum PFeatureGatingBehavior {
+  gated,
+  nonGated,
+}
+
+// PaywallCloseReason class
+enum PPaywallCloseReason {
+  /// The paywall was closed by system logic, either after a purchase, because
+  /// a deeplink was presented, close button pressed, etc.
+  systemLogic,
+
+  /// The paywall was automatically closed because another paywall will show.
+  ///
+  /// This prevents ``Superwall/register(placement:params:handler:feature:)`` `feature`
+  /// block from executing on dismiss of the paywall, because another paywall is set to show
+  forNextPaywall,
+
+  /// The paywall was closed because the webview couldn't be loaded.
+  ///
+  /// If this happens for a gated paywall, the ``PaywallPresentationHandler/onError(_:)``
+  /// handler will be called. If it's for a non-gated paywall, the feature block will be called.
+  webViewFailedToLoad,
+
+  /// The paywall was closed because the user tapped the close button or dragged to dismiss.
+  manualClose,
+
+  /// The paywall hasn't been closed yet.
+  none;
+}
+
+// LocalNotification class
+class PLocalNotification {
+  int id;
+  PLocalNotificationType type;
+  String title;
+  String? subtitle;
+  String body;
+  int delay;
+
+  PLocalNotification({
+    this.id = 0,
+    required this.type,
+    required this.title,
+    this.subtitle,
+    required this.body,
+    required this.delay,
+  });
+}
+
+enum PLocalNotificationType {
+  trialStarted,
+  unsupported,
+}
+
+// ComputedPropertyRequest class
+class PComputedPropertyRequest {
+  final PComputedPropertyRequestType type;
+  final String eventName;
+
+  PComputedPropertyRequest({
+    required this.type,
+    required this.eventName,
+  });
+}
+
+enum PComputedPropertyRequestType {
+  minutesSince,
+  hoursSince,
+  daysSince,
+  monthsSince,
+  yearsSince,
+}
+
+// Survey class
+class PSurvey {
+  String id;
+  String assignmentKey;
+  String title;
+  String message;
+  List<PSurveyOption> options;
+  PSurveyShowCondition presentationCondition;
+  double presentationProbability;
+  bool includeOtherOption;
+  bool includeCloseOption;
+
+  PSurvey({
+    required this.id,
+    required this.assignmentKey,
+    required this.title,
+    required this.message,
+    required this.options,
+    required this.presentationCondition,
+    required this.presentationProbability,
+    required this.includeOtherOption,
+    required this.includeCloseOption,
+  });
+}
+
+enum PSurveyShowCondition {
+  onManualClose,
+  onPurchase,
+}
+
+// SurveyOption class
+class PSurveyOption {
+  String? id;
+  String? text;
+
+  PSurveyOption({
+    this.id,
+    this.text,
+  });
 }
 
 sealed class PPurchaseResult {
@@ -152,73 +313,6 @@ class PInactive extends PSubscriptionStatus {
 class PUnknown extends PSubscriptionStatus {
   bool? _alwaysFalse;
   PUnknown(this._alwaysFalse);
-}
-
-// PaywallInfo class for delegate methods
-class PPaywallInfoPigeon {
-  PPaywallInfoPigeon({
-    required this.identifier,
-    required this.name,
-    this.experimentBridgeId,
-    required this.productIds,
-    required this.products,
-    required this.url,
-    this.presentedByEventWithName,
-    this.presentedByEventWithId,
-    this.presentedByEventAt,
-    this.presentedBy,
-    this.presentationSourceType,
-    this.responseLoadStartTime,
-    this.responseLoadCompleteTime,
-    this.responseLoadFailTime,
-    this.responseLoadDuration,
-    this.webViewLoadStartTime,
-    this.webViewLoadCompleteTime,
-    this.webViewLoadFailTime,
-    this.webViewLoadDuration,
-    this.productsLoadStartTime,
-    this.productsLoadCompleteTime,
-    this.productsLoadFailTime,
-    this.productsLoadDuration,
-    this.paywalljsVersion,
-    this.isFreeTrialAvailable,
-    this.featureGatingBehavior,
-    this.closeReason,
-    this.localNotifications,
-    this.computedPropertyRequests,
-    this.surveys,
-  });
-
-  String identifier;
-  String name;
-  String? experimentBridgeId;
-  List<String> productIds;
-  List<Map<String, Object>> products;
-  String url;
-  String? presentedByEventWithName;
-  String? presentedByEventWithId;
-  double? presentedByEventAt;
-  String? presentedBy;
-  String? presentationSourceType;
-  double? responseLoadStartTime;
-  double? responseLoadCompleteTime;
-  double? responseLoadFailTime;
-  double? responseLoadDuration;
-  double? webViewLoadStartTime;
-  double? webViewLoadCompleteTime;
-  double? webViewLoadFailTime;
-  double? webViewLoadDuration;
-  double? productsLoadStartTime;
-  double? productsLoadCompleteTime;
-  double? productsLoadFailTime;
-  double? productsLoadDuration;
-  String? paywalljsVersion;
-  bool? isFreeTrialAvailable;
-  Map<String, Object>? featureGatingBehavior;
-  Map<String, Object>? closeReason;
-  List<Map<String, Object>>? localNotifications;
-  List<Map<String, Object>>? computedPropertyRequests;
-  List<Map<String, Object>>? surveys;
 }
 
 // SuperwallEventInfo class for event handling

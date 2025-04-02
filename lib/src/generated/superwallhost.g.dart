@@ -40,6 +40,49 @@ bool _deepEquals(Object? a, Object? b) {
 }
     
 
+enum PFeatureGatingBehavior {
+  gated,
+  nonGated,
+}
+
+enum PPaywallCloseReason {
+  /// The paywall was closed by system logic, either after a purchase, because
+  /// a deeplink was presented, close button pressed, etc.
+  systemLogic,
+  /// The paywall was automatically closed because another paywall will show.
+  ///
+  /// This prevents ``Superwall/register(placement:params:handler:feature:)`` `feature`
+  /// block from executing on dismiss of the paywall, because another paywall is set to show
+  forNextPaywall,
+  /// The paywall was closed because the webview couldn't be loaded.
+  ///
+  /// If this happens for a gated paywall, the ``PaywallPresentationHandler/onError(_:)``
+  /// handler will be called. If it's for a non-gated paywall, the feature block will be called.
+  webViewFailedToLoad,
+  /// The paywall was closed because the user tapped the close button or dragged to dismiss.
+  manualClose,
+  /// The paywall hasn't been closed yet.
+  none,
+}
+
+enum PLocalNotificationType {
+  trialStarted,
+  unsupported,
+}
+
+enum PComputedPropertyRequestType {
+  minutesSince,
+  hoursSince,
+  daysSince,
+  monthsSince,
+  yearsSince,
+}
+
+enum PSurveyShowCondition {
+  onManualClose,
+  onPurchase,
+}
+
 enum PNetworkEnvironment {
   release,
   releaseCandidate,
@@ -260,7 +303,7 @@ class PPaywallInfo {
   PPaywallInfo({
     this.identifier,
     this.name,
-    this.experimentBridgeId,
+    this.experiment,
     this.productIds,
     this.products,
     this.url,
@@ -294,11 +337,11 @@ class PPaywallInfo {
 
   String? name;
 
-  String? experimentBridgeId;
+  PExperiment? experiment;
 
   List<String>? productIds;
 
-  List<Map<String, Object>>? products;
+  List<PProduct>? products;
 
   String? url;
 
@@ -340,21 +383,21 @@ class PPaywallInfo {
 
   bool? isFreeTrialAvailable;
 
-  Map<String, Object>? featureGatingBehavior;
+  PFeatureGatingBehavior? featureGatingBehavior;
 
-  Map<String, Object>? closeReason;
+  PPaywallCloseReason? closeReason;
 
-  List<Map<String, Object>>? localNotifications;
+  List<PLocalNotification>? localNotifications;
 
-  List<Map<String, Object>>? computedPropertyRequests;
+  List<PComputedPropertyRequest>? computedPropertyRequests;
 
-  List<Map<String, Object>>? surveys;
+  List<PSurvey>? surveys;
 
   List<Object?> _toList() {
     return <Object?>[
       identifier,
       name,
-      experimentBridgeId,
+      experiment,
       productIds,
       products,
       url,
@@ -393,9 +436,9 @@ class PPaywallInfo {
     return PPaywallInfo(
       identifier: result[0] as String?,
       name: result[1] as String?,
-      experimentBridgeId: result[2] as String?,
+      experiment: result[2] as PExperiment?,
       productIds: (result[3] as List<Object?>?)?.cast<String>(),
-      products: (result[4] as List<Object?>?)?.cast<Map<String, Object>>(),
+      products: (result[4] as List<Object?>?)?.cast<PProduct>(),
       url: result[5] as String?,
       presentedByPlacementWithName: result[6] as String?,
       presentedByPlacementWithId: result[7] as String?,
@@ -416,11 +459,11 @@ class PPaywallInfo {
       productsLoadDuration: result[22] as double?,
       paywalljsVersion: result[23] as String?,
       isFreeTrialAvailable: result[24] as bool?,
-      featureGatingBehavior: (result[25] as Map<Object?, Object?>?)?.cast<String, Object>(),
-      closeReason: (result[26] as Map<Object?, Object?>?)?.cast<String, Object>(),
-      localNotifications: (result[27] as List<Object?>?)?.cast<Map<String, Object>>(),
-      computedPropertyRequests: (result[28] as List<Object?>?)?.cast<Map<String, Object>>(),
-      surveys: (result[29] as List<Object?>?)?.cast<Map<String, Object>>(),
+      featureGatingBehavior: result[25] as PFeatureGatingBehavior?,
+      closeReason: result[26] as PPaywallCloseReason?,
+      localNotifications: (result[27] as List<Object?>?)?.cast<PLocalNotification>(),
+      computedPropertyRequests: (result[28] as List<Object?>?)?.cast<PComputedPropertyRequest>(),
+      surveys: (result[29] as List<Object?>?)?.cast<PSurvey>(),
     );
   }
 
@@ -436,7 +479,7 @@ class PPaywallInfo {
     return 
       identifier == other.identifier
       && name == other.name
-      && experimentBridgeId == other.experimentBridgeId
+      && experiment == other.experiment
       && _deepEquals(productIds, other.productIds)
       && _deepEquals(products, other.products)
       && url == other.url
@@ -459,11 +502,323 @@ class PPaywallInfo {
       && productsLoadDuration == other.productsLoadDuration
       && paywalljsVersion == other.paywalljsVersion
       && isFreeTrialAvailable == other.isFreeTrialAvailable
-      && _deepEquals(featureGatingBehavior, other.featureGatingBehavior)
-      && _deepEquals(closeReason, other.closeReason)
+      && featureGatingBehavior == other.featureGatingBehavior
+      && closeReason == other.closeReason
       && _deepEquals(localNotifications, other.localNotifications)
       && _deepEquals(computedPropertyRequests, other.computedPropertyRequests)
       && _deepEquals(surveys, other.surveys);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PProduct {
+  PProduct({
+    this.id,
+    this.name,
+    this.entitlements,
+  });
+
+  String? id;
+
+  String? name;
+
+  List<PEntitlement>? entitlements;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      name,
+      entitlements,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PProduct decode(Object result) {
+    result as List<Object?>;
+    return PProduct(
+      id: result[0] as String?,
+      name: result[1] as String?,
+      entitlements: (result[2] as List<Object?>?)?.cast<PEntitlement>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PProduct || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      id == other.id
+      && name == other.name
+      && _deepEquals(entitlements, other.entitlements);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PLocalNotification {
+  PLocalNotification({
+    required this.id,
+    required this.type,
+    required this.title,
+    this.subtitle,
+    required this.body,
+    required this.delay,
+  });
+
+  int id;
+
+  PLocalNotificationType type;
+
+  String title;
+
+  String? subtitle;
+
+  String body;
+
+  int delay;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      type,
+      title,
+      subtitle,
+      body,
+      delay,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PLocalNotification decode(Object result) {
+    result as List<Object?>;
+    return PLocalNotification(
+      id: result[0]! as int,
+      type: result[1]! as PLocalNotificationType,
+      title: result[2]! as String,
+      subtitle: result[3] as String?,
+      body: result[4]! as String,
+      delay: result[5]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PLocalNotification || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      id == other.id
+      && type == other.type
+      && title == other.title
+      && subtitle == other.subtitle
+      && body == other.body
+      && delay == other.delay;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PComputedPropertyRequest {
+  PComputedPropertyRequest({
+    required this.type,
+    required this.eventName,
+  });
+
+  PComputedPropertyRequestType type;
+
+  String eventName;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      type,
+      eventName,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PComputedPropertyRequest decode(Object result) {
+    result as List<Object?>;
+    return PComputedPropertyRequest(
+      type: result[0]! as PComputedPropertyRequestType,
+      eventName: result[1]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PComputedPropertyRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      type == other.type
+      && eventName == other.eventName;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PSurvey {
+  PSurvey({
+    required this.id,
+    required this.assignmentKey,
+    required this.title,
+    required this.message,
+    required this.options,
+    required this.presentationCondition,
+    required this.presentationProbability,
+    required this.includeOtherOption,
+    required this.includeCloseOption,
+  });
+
+  String id;
+
+  String assignmentKey;
+
+  String title;
+
+  String message;
+
+  List<PSurveyOption> options;
+
+  PSurveyShowCondition presentationCondition;
+
+  double presentationProbability;
+
+  bool includeOtherOption;
+
+  bool includeCloseOption;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      assignmentKey,
+      title,
+      message,
+      options,
+      presentationCondition,
+      presentationProbability,
+      includeOtherOption,
+      includeCloseOption,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PSurvey decode(Object result) {
+    result as List<Object?>;
+    return PSurvey(
+      id: result[0]! as String,
+      assignmentKey: result[1]! as String,
+      title: result[2]! as String,
+      message: result[3]! as String,
+      options: (result[4] as List<Object?>?)!.cast<PSurveyOption>(),
+      presentationCondition: result[5]! as PSurveyShowCondition,
+      presentationProbability: result[6]! as double,
+      includeOtherOption: result[7]! as bool,
+      includeCloseOption: result[8]! as bool,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PSurvey || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      id == other.id
+      && assignmentKey == other.assignmentKey
+      && title == other.title
+      && message == other.message
+      && _deepEquals(options, other.options)
+      && presentationCondition == other.presentationCondition
+      && presentationProbability == other.presentationProbability
+      && includeOtherOption == other.includeOtherOption
+      && includeCloseOption == other.includeCloseOption;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PSurveyOption {
+  PSurveyOption({
+    this.id,
+    this.text,
+  });
+
+  String? id;
+
+  String? text;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      text,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PSurveyOption decode(Object result) {
+    result as List<Object?>;
+    return PSurveyOption(
+      id: result[0] as String?,
+      text: result[1] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PSurveyOption || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      id == other.id
+      && text == other.text;
   }
 
   @override
@@ -1159,222 +1514,6 @@ class PUnknown extends PSubscriptionStatus {
 ;
 }
 
-class PPaywallInfoPigeon {
-  PPaywallInfoPigeon({
-    required this.identifier,
-    required this.name,
-    this.experimentBridgeId,
-    required this.productIds,
-    required this.products,
-    required this.url,
-    this.presentedByEventWithName,
-    this.presentedByEventWithId,
-    this.presentedByEventAt,
-    this.presentedBy,
-    this.presentationSourceType,
-    this.responseLoadStartTime,
-    this.responseLoadCompleteTime,
-    this.responseLoadFailTime,
-    this.responseLoadDuration,
-    this.webViewLoadStartTime,
-    this.webViewLoadCompleteTime,
-    this.webViewLoadFailTime,
-    this.webViewLoadDuration,
-    this.productsLoadStartTime,
-    this.productsLoadCompleteTime,
-    this.productsLoadFailTime,
-    this.productsLoadDuration,
-    this.paywalljsVersion,
-    this.isFreeTrialAvailable,
-    this.featureGatingBehavior,
-    this.closeReason,
-    this.localNotifications,
-    this.computedPropertyRequests,
-    this.surveys,
-  });
-
-  String identifier;
-
-  String name;
-
-  String? experimentBridgeId;
-
-  List<String> productIds;
-
-  List<Map<String, Object>> products;
-
-  String url;
-
-  String? presentedByEventWithName;
-
-  String? presentedByEventWithId;
-
-  double? presentedByEventAt;
-
-  String? presentedBy;
-
-  String? presentationSourceType;
-
-  double? responseLoadStartTime;
-
-  double? responseLoadCompleteTime;
-
-  double? responseLoadFailTime;
-
-  double? responseLoadDuration;
-
-  double? webViewLoadStartTime;
-
-  double? webViewLoadCompleteTime;
-
-  double? webViewLoadFailTime;
-
-  double? webViewLoadDuration;
-
-  double? productsLoadStartTime;
-
-  double? productsLoadCompleteTime;
-
-  double? productsLoadFailTime;
-
-  double? productsLoadDuration;
-
-  String? paywalljsVersion;
-
-  bool? isFreeTrialAvailable;
-
-  Map<String, Object>? featureGatingBehavior;
-
-  Map<String, Object>? closeReason;
-
-  List<Map<String, Object>>? localNotifications;
-
-  List<Map<String, Object>>? computedPropertyRequests;
-
-  List<Map<String, Object>>? surveys;
-
-  List<Object?> _toList() {
-    return <Object?>[
-      identifier,
-      name,
-      experimentBridgeId,
-      productIds,
-      products,
-      url,
-      presentedByEventWithName,
-      presentedByEventWithId,
-      presentedByEventAt,
-      presentedBy,
-      presentationSourceType,
-      responseLoadStartTime,
-      responseLoadCompleteTime,
-      responseLoadFailTime,
-      responseLoadDuration,
-      webViewLoadStartTime,
-      webViewLoadCompleteTime,
-      webViewLoadFailTime,
-      webViewLoadDuration,
-      productsLoadStartTime,
-      productsLoadCompleteTime,
-      productsLoadFailTime,
-      productsLoadDuration,
-      paywalljsVersion,
-      isFreeTrialAvailable,
-      featureGatingBehavior,
-      closeReason,
-      localNotifications,
-      computedPropertyRequests,
-      surveys,
-    ];
-  }
-
-  Object encode() {
-    return _toList();  }
-
-  static PPaywallInfoPigeon decode(Object result) {
-    result as List<Object?>;
-    return PPaywallInfoPigeon(
-      identifier: result[0]! as String,
-      name: result[1]! as String,
-      experimentBridgeId: result[2] as String?,
-      productIds: (result[3] as List<Object?>?)!.cast<String>(),
-      products: (result[4] as List<Object?>?)!.cast<Map<String, Object>>(),
-      url: result[5]! as String,
-      presentedByEventWithName: result[6] as String?,
-      presentedByEventWithId: result[7] as String?,
-      presentedByEventAt: result[8] as double?,
-      presentedBy: result[9] as String?,
-      presentationSourceType: result[10] as String?,
-      responseLoadStartTime: result[11] as double?,
-      responseLoadCompleteTime: result[12] as double?,
-      responseLoadFailTime: result[13] as double?,
-      responseLoadDuration: result[14] as double?,
-      webViewLoadStartTime: result[15] as double?,
-      webViewLoadCompleteTime: result[16] as double?,
-      webViewLoadFailTime: result[17] as double?,
-      webViewLoadDuration: result[18] as double?,
-      productsLoadStartTime: result[19] as double?,
-      productsLoadCompleteTime: result[20] as double?,
-      productsLoadFailTime: result[21] as double?,
-      productsLoadDuration: result[22] as double?,
-      paywalljsVersion: result[23] as String?,
-      isFreeTrialAvailable: result[24] as bool?,
-      featureGatingBehavior: (result[25] as Map<Object?, Object?>?)?.cast<String, Object>(),
-      closeReason: (result[26] as Map<Object?, Object?>?)?.cast<String, Object>(),
-      localNotifications: (result[27] as List<Object?>?)?.cast<Map<String, Object>>(),
-      computedPropertyRequests: (result[28] as List<Object?>?)?.cast<Map<String, Object>>(),
-      surveys: (result[29] as List<Object?>?)?.cast<Map<String, Object>>(),
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! PPaywallInfoPigeon || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return 
-      identifier == other.identifier
-      && name == other.name
-      && experimentBridgeId == other.experimentBridgeId
-      && _deepEquals(productIds, other.productIds)
-      && _deepEquals(products, other.products)
-      && url == other.url
-      && presentedByEventWithName == other.presentedByEventWithName
-      && presentedByEventWithId == other.presentedByEventWithId
-      && presentedByEventAt == other.presentedByEventAt
-      && presentedBy == other.presentedBy
-      && presentationSourceType == other.presentationSourceType
-      && responseLoadStartTime == other.responseLoadStartTime
-      && responseLoadCompleteTime == other.responseLoadCompleteTime
-      && responseLoadFailTime == other.responseLoadFailTime
-      && responseLoadDuration == other.responseLoadDuration
-      && webViewLoadStartTime == other.webViewLoadStartTime
-      && webViewLoadCompleteTime == other.webViewLoadCompleteTime
-      && webViewLoadFailTime == other.webViewLoadFailTime
-      && webViewLoadDuration == other.webViewLoadDuration
-      && productsLoadStartTime == other.productsLoadStartTime
-      && productsLoadCompleteTime == other.productsLoadCompleteTime
-      && productsLoadFailTime == other.productsLoadFailTime
-      && productsLoadDuration == other.productsLoadDuration
-      && paywalljsVersion == other.paywalljsVersion
-      && isFreeTrialAvailable == other.isFreeTrialAvailable
-      && _deepEquals(featureGatingBehavior, other.featureGatingBehavior)
-      && _deepEquals(closeReason, other.closeReason)
-      && _deepEquals(localNotifications, other.localNotifications)
-      && _deepEquals(computedPropertyRequests, other.computedPropertyRequests)
-      && _deepEquals(surveys, other.surveys);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
-}
-
 class PSuperwallEventInfoPigeon {
   PSuperwallEventInfoPigeon({
     required this.eventType,
@@ -1635,104 +1774,131 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is PNetworkEnvironment) {
+    }    else if (value is PFeatureGatingBehavior) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is PLogLevel) {
+    }    else if (value is PPaywallCloseReason) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is PTransactionBackgroundView) {
+    }    else if (value is PLocalNotificationType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is PLogScope) {
+    }    else if (value is PComputedPropertyRequestType) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is PConfigurationStatus) {
+    }    else if (value is PSurveyShowCondition) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is PEventType) {
+    }    else if (value is PNetworkEnvironment) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is PSubscriptionStatusType) {
+    }    else if (value is PLogLevel) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallPresentationRequestStatusType) {
+    }    else if (value is PTransactionBackgroundView) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallPresentationRequestStatusReason) {
+    }    else if (value is PLogScope) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    }    else if (value is PVariantType) {
+    }    else if (value is PConfigurationStatus) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    }    else if (value is PSuperwallOptions) {
+    }    else if (value is PEventType) {
       buffer.putUint8(139);
-      writeValue(buffer, value.encode());
-    }    else if (value is PPaywallInfo) {
+      writeValue(buffer, value.index);
+    }    else if (value is PSubscriptionStatusType) {
       buffer.putUint8(140);
-      writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseCancelled) {
+      writeValue(buffer, value.index);
+    }    else if (value is PPaywallPresentationRequestStatusType) {
       buffer.putUint8(141);
-      writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePurchased) {
+      writeValue(buffer, value.index);
+    }    else if (value is PPaywallPresentationRequestStatusReason) {
       buffer.putUint8(142);
-      writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePending) {
+      writeValue(buffer, value.index);
+    }    else if (value is PVariantType) {
       buffer.putUint8(143);
-      writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseFailed) {
+      writeValue(buffer, value.index);
+    }    else if (value is PSuperwallOptions) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationRestored) {
+    }    else if (value is PPaywallInfo) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationFailed) {
+    }    else if (value is PProduct) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoreFailed) {
+    }    else if (value is PLocalNotification) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    }    else if (value is PLogging) {
+    }    else if (value is PComputedPropertyRequest) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallOptions) {
+    }    else if (value is PSurvey) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseControllerHost) {
+    }    else if (value is PSurveyOption) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfigureCompletionHost) {
+    }    else if (value is PPurchaseCancelled) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlement) {
+    }    else if (value is PPurchasePurchased) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    }    else if (value is PActive) {
+    }    else if (value is PPurchasePending) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    }    else if (value is PInactive) {
+    }    else if (value is PPurchaseFailed) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknown) {
+    }    else if (value is PRestorationRestored) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallInfoPigeon) {
+    }    else if (value is PRestorationFailed) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallEventInfoPigeon) {
+    }    else if (value is PRestoreFailed) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    }    else if (value is PIdentityOptions) {
+    }    else if (value is PLogging) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    }    else if (value is PExperiment) {
+    }    else if (value is PPaywallOptions) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    }    else if (value is PVariant) {
+    }    else if (value is PPurchaseControllerHost) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfirmedAssignment) {
+    }    else if (value is PConfigureCompletionHost) {
       buffer.putUint8(161);
+      writeValue(buffer, value.encode());
+    }    else if (value is PEntitlement) {
+      buffer.putUint8(162);
+      writeValue(buffer, value.encode());
+    }    else if (value is PActive) {
+      buffer.putUint8(163);
+      writeValue(buffer, value.encode());
+    }    else if (value is PInactive) {
+      buffer.putUint8(164);
+      writeValue(buffer, value.encode());
+    }    else if (value is PUnknown) {
+      buffer.putUint8(165);
+      writeValue(buffer, value.encode());
+    }    else if (value is PSuperwallEventInfoPigeon) {
+      buffer.putUint8(166);
+      writeValue(buffer, value.encode());
+    }    else if (value is PIdentityOptions) {
+      buffer.putUint8(167);
+      writeValue(buffer, value.encode());
+    }    else if (value is PExperiment) {
+      buffer.putUint8(168);
+      writeValue(buffer, value.encode());
+    }    else if (value is PVariant) {
+      buffer.putUint8(169);
+      writeValue(buffer, value.encode());
+    }    else if (value is PConfirmedAssignment) {
+      buffer.putUint8(170);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1744,79 +1910,102 @@ class _PigeonCodec extends StandardMessageCodec {
     switch (type) {
       case 129: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PNetworkEnvironment.values[value];
+        return value == null ? null : PFeatureGatingBehavior.values[value];
       case 130: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PLogLevel.values[value];
+        return value == null ? null : PPaywallCloseReason.values[value];
       case 131: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PTransactionBackgroundView.values[value];
+        return value == null ? null : PLocalNotificationType.values[value];
       case 132: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PLogScope.values[value];
+        return value == null ? null : PComputedPropertyRequestType.values[value];
       case 133: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PConfigurationStatus.values[value];
+        return value == null ? null : PSurveyShowCondition.values[value];
       case 134: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PEventType.values[value];
+        return value == null ? null : PNetworkEnvironment.values[value];
       case 135: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PSubscriptionStatusType.values[value];
+        return value == null ? null : PLogLevel.values[value];
       case 136: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PPaywallPresentationRequestStatusType.values[value];
+        return value == null ? null : PTransactionBackgroundView.values[value];
       case 137: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PPaywallPresentationRequestStatusReason.values[value];
+        return value == null ? null : PLogScope.values[value];
       case 138: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PVariantType.values[value];
+        return value == null ? null : PConfigurationStatus.values[value];
       case 139: 
-        return PSuperwallOptions.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PEventType.values[value];
       case 140: 
-        return PPaywallInfo.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PSubscriptionStatusType.values[value];
       case 141: 
-        return PPurchaseCancelled.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PPaywallPresentationRequestStatusType.values[value];
       case 142: 
-        return PPurchasePurchased.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PPaywallPresentationRequestStatusReason.values[value];
       case 143: 
-        return PPurchasePending.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PVariantType.values[value];
       case 144: 
-        return PPurchaseFailed.decode(readValue(buffer)!);
+        return PSuperwallOptions.decode(readValue(buffer)!);
       case 145: 
-        return PRestorationRestored.decode(readValue(buffer)!);
+        return PPaywallInfo.decode(readValue(buffer)!);
       case 146: 
-        return PRestorationFailed.decode(readValue(buffer)!);
+        return PProduct.decode(readValue(buffer)!);
       case 147: 
-        return PRestoreFailed.decode(readValue(buffer)!);
+        return PLocalNotification.decode(readValue(buffer)!);
       case 148: 
-        return PLogging.decode(readValue(buffer)!);
+        return PComputedPropertyRequest.decode(readValue(buffer)!);
       case 149: 
-        return PPaywallOptions.decode(readValue(buffer)!);
+        return PSurvey.decode(readValue(buffer)!);
       case 150: 
-        return PPurchaseControllerHost.decode(readValue(buffer)!);
+        return PSurveyOption.decode(readValue(buffer)!);
       case 151: 
-        return PConfigureCompletionHost.decode(readValue(buffer)!);
+        return PPurchaseCancelled.decode(readValue(buffer)!);
       case 152: 
-        return PEntitlement.decode(readValue(buffer)!);
+        return PPurchasePurchased.decode(readValue(buffer)!);
       case 153: 
-        return PActive.decode(readValue(buffer)!);
+        return PPurchasePending.decode(readValue(buffer)!);
       case 154: 
-        return PInactive.decode(readValue(buffer)!);
+        return PPurchaseFailed.decode(readValue(buffer)!);
       case 155: 
-        return PUnknown.decode(readValue(buffer)!);
+        return PRestorationRestored.decode(readValue(buffer)!);
       case 156: 
-        return PPaywallInfoPigeon.decode(readValue(buffer)!);
+        return PRestorationFailed.decode(readValue(buffer)!);
       case 157: 
-        return PSuperwallEventInfoPigeon.decode(readValue(buffer)!);
+        return PRestoreFailed.decode(readValue(buffer)!);
       case 158: 
-        return PIdentityOptions.decode(readValue(buffer)!);
+        return PLogging.decode(readValue(buffer)!);
       case 159: 
-        return PExperiment.decode(readValue(buffer)!);
+        return PPaywallOptions.decode(readValue(buffer)!);
       case 160: 
-        return PVariant.decode(readValue(buffer)!);
+        return PPurchaseControllerHost.decode(readValue(buffer)!);
       case 161: 
+        return PConfigureCompletionHost.decode(readValue(buffer)!);
+      case 162: 
+        return PEntitlement.decode(readValue(buffer)!);
+      case 163: 
+        return PActive.decode(readValue(buffer)!);
+      case 164: 
+        return PInactive.decode(readValue(buffer)!);
+      case 165: 
+        return PUnknown.decode(readValue(buffer)!);
+      case 166: 
+        return PSuperwallEventInfoPigeon.decode(readValue(buffer)!);
+      case 167: 
+        return PIdentityOptions.decode(readValue(buffer)!);
+      case 168: 
+        return PExperiment.decode(readValue(buffer)!);
+      case 169: 
+        return PVariant.decode(readValue(buffer)!);
+      case 170: 
         return PConfirmedAssignment.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

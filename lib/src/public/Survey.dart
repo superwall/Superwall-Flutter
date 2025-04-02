@@ -52,7 +52,8 @@ class Survey {
       options: (json['options'] as List)
           .map((optionJson) => SurveyOption.fromJson(optionJson))
           .toList(),
-      presentationCondition: SurveyShowConditionExtension.fromJson(json['presentationCondition']),
+      presentationCondition:
+          SurveyShowConditionExtension.fromJson(json['presentationCondition']),
       presentationProbability: json['presentationProbability'].toDouble(),
       includeOtherOption: json['includeOtherOption'],
       includeCloseOption: json['includeCloseOption'],

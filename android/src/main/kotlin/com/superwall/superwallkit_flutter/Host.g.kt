@@ -74,6 +74,85 @@ private fun deepEqualsHost(a: Any?, b: Any?): Boolean {
 }
     
 
+enum class PFeatureGatingBehavior(val raw: Int) {
+  GATED(0),
+  NON_GATED(1);
+
+  companion object {
+    fun ofRaw(raw: Int): PFeatureGatingBehavior? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class PPaywallCloseReason(val raw: Int) {
+  /**
+   * The paywall was closed by system logic, either after a purchase, because
+   * a deeplink was presented, close button pressed, etc.
+   */
+  SYSTEM_LOGIC(0),
+  /**
+   * The paywall was automatically closed because another paywall will show.
+   *
+   * This prevents ``Superwall/register(placement:params:handler:feature:)`` `feature`
+   * block from executing on dismiss of the paywall, because another paywall is set to show
+   */
+  FOR_NEXT_PAYWALL(1),
+  /**
+   * The paywall was closed because the webview couldn't be loaded.
+   *
+   * If this happens for a gated paywall, the ``PaywallPresentationHandler/onError(_:)``
+   * handler will be called. If it's for a non-gated paywall, the feature block will be called.
+   */
+  WEB_VIEW_FAILED_TO_LOAD(2),
+  /** The paywall was closed because the user tapped the close button or dragged to dismiss. */
+  MANUAL_CLOSE(3),
+  /** The paywall hasn't been closed yet. */
+  NONE(4);
+
+  companion object {
+    fun ofRaw(raw: Int): PPaywallCloseReason? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class PLocalNotificationType(val raw: Int) {
+  TRIAL_STARTED(0),
+  UNSUPPORTED(1);
+
+  companion object {
+    fun ofRaw(raw: Int): PLocalNotificationType? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class PComputedPropertyRequestType(val raw: Int) {
+  MINUTES_SINCE(0),
+  HOURS_SINCE(1),
+  DAYS_SINCE(2),
+  MONTHS_SINCE(3),
+  YEARS_SINCE(4);
+
+  companion object {
+    fun ofRaw(raw: Int): PComputedPropertyRequestType? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class PSurveyShowCondition(val raw: Int) {
+  ON_MANUAL_CLOSE(0),
+  ON_PURCHASE(1);
+
+  companion object {
+    fun ofRaw(raw: Int): PSurveyShowCondition? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 enum class PNetworkEnvironment(val raw: Int) {
   RELEASE(0),
   RELEASE_CANDIDATE(1),
@@ -329,9 +408,9 @@ data class PSuperwallOptions (
 data class PPaywallInfo (
   val identifier: String? = null,
   val name: String? = null,
-  val experimentBridgeId: String? = null,
+  val experiment: PExperiment? = null,
   val productIds: List<String>? = null,
-  val products: List<Map<String, Any>>? = null,
+  val products: List<PProduct>? = null,
   val url: String? = null,
   val presentedByPlacementWithName: String? = null,
   val presentedByPlacementWithId: String? = null,
@@ -352,20 +431,20 @@ data class PPaywallInfo (
   val productsLoadDuration: Double? = null,
   val paywalljsVersion: String? = null,
   val isFreeTrialAvailable: Boolean? = null,
-  val featureGatingBehavior: Map<String, Any>? = null,
-  val closeReason: Map<String, Any>? = null,
-  val localNotifications: List<Map<String, Any>>? = null,
-  val computedPropertyRequests: List<Map<String, Any>>? = null,
-  val surveys: List<Map<String, Any>>? = null
+  val featureGatingBehavior: PFeatureGatingBehavior? = null,
+  val closeReason: PPaywallCloseReason? = null,
+  val localNotifications: List<PLocalNotification>? = null,
+  val computedPropertyRequests: List<PComputedPropertyRequest>? = null,
+  val surveys: List<PSurvey>? = null
 )
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PPaywallInfo {
       val identifier = pigeonVar_list[0] as String?
       val name = pigeonVar_list[1] as String?
-      val experimentBridgeId = pigeonVar_list[2] as String?
+      val experiment = pigeonVar_list[2] as PExperiment?
       val productIds = pigeonVar_list[3] as List<String>?
-      val products = pigeonVar_list[4] as List<Map<String, Any>>?
+      val products = pigeonVar_list[4] as List<PProduct>?
       val url = pigeonVar_list[5] as String?
       val presentedByPlacementWithName = pigeonVar_list[6] as String?
       val presentedByPlacementWithId = pigeonVar_list[7] as String?
@@ -386,19 +465,19 @@ data class PPaywallInfo (
       val productsLoadDuration = pigeonVar_list[22] as Double?
       val paywalljsVersion = pigeonVar_list[23] as String?
       val isFreeTrialAvailable = pigeonVar_list[24] as Boolean?
-      val featureGatingBehavior = pigeonVar_list[25] as Map<String, Any>?
-      val closeReason = pigeonVar_list[26] as Map<String, Any>?
-      val localNotifications = pigeonVar_list[27] as List<Map<String, Any>>?
-      val computedPropertyRequests = pigeonVar_list[28] as List<Map<String, Any>>?
-      val surveys = pigeonVar_list[29] as List<Map<String, Any>>?
-      return PPaywallInfo(identifier, name, experimentBridgeId, productIds, products, url, presentedByPlacementWithName, presentedByPlacementWithId, presentedByPlacementAt, presentedBy, presentationSourceType, responseLoadStartTime, responseLoadCompleteTime, responseLoadFailTime, responseLoadDuration, webViewLoadStartTime, webViewLoadCompleteTime, webViewLoadFailTime, webViewLoadDuration, productsLoadStartTime, productsLoadCompleteTime, productsLoadFailTime, productsLoadDuration, paywalljsVersion, isFreeTrialAvailable, featureGatingBehavior, closeReason, localNotifications, computedPropertyRequests, surveys)
+      val featureGatingBehavior = pigeonVar_list[25] as PFeatureGatingBehavior?
+      val closeReason = pigeonVar_list[26] as PPaywallCloseReason?
+      val localNotifications = pigeonVar_list[27] as List<PLocalNotification>?
+      val computedPropertyRequests = pigeonVar_list[28] as List<PComputedPropertyRequest>?
+      val surveys = pigeonVar_list[29] as List<PSurvey>?
+      return PPaywallInfo(identifier, name, experiment, productIds, products, url, presentedByPlacementWithName, presentedByPlacementWithId, presentedByPlacementAt, presentedBy, presentationSourceType, responseLoadStartTime, responseLoadCompleteTime, responseLoadFailTime, responseLoadDuration, webViewLoadStartTime, webViewLoadCompleteTime, webViewLoadFailTime, webViewLoadDuration, productsLoadStartTime, productsLoadCompleteTime, productsLoadFailTime, productsLoadDuration, paywalljsVersion, isFreeTrialAvailable, featureGatingBehavior, closeReason, localNotifications, computedPropertyRequests, surveys)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
       identifier,
       name,
-      experimentBridgeId,
+      experiment,
       productIds,
       products,
       url,
@@ -437,7 +516,7 @@ data class PPaywallInfo (
     }
     return identifier == other.identifier
     && name == other.name
-    && experimentBridgeId == other.experimentBridgeId
+    && experiment == other.experiment
     && deepEqualsHost(productIds, other.productIds)
     && deepEqualsHost(products, other.products)
     && url == other.url
@@ -460,11 +539,224 @@ data class PPaywallInfo (
     && productsLoadDuration == other.productsLoadDuration
     && paywalljsVersion == other.paywalljsVersion
     && isFreeTrialAvailable == other.isFreeTrialAvailable
-    && deepEqualsHost(featureGatingBehavior, other.featureGatingBehavior)
-    && deepEqualsHost(closeReason, other.closeReason)
+    && featureGatingBehavior == other.featureGatingBehavior
+    && closeReason == other.closeReason
     && deepEqualsHost(localNotifications, other.localNotifications)
     && deepEqualsHost(computedPropertyRequests, other.computedPropertyRequests)
     && deepEqualsHost(surveys, other.surveys)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PProduct (
+  val id: String? = null,
+  val name: String? = null,
+  val entitlements: List<PEntitlement>? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PProduct {
+      val id = pigeonVar_list[0] as String?
+      val name = pigeonVar_list[1] as String?
+      val entitlements = pigeonVar_list[2] as List<PEntitlement>?
+      return PProduct(id, name, entitlements)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      name,
+      entitlements,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PProduct) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return id == other.id
+    && name == other.name
+    && deepEqualsHost(entitlements, other.entitlements)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PLocalNotification (
+  val id: Long,
+  val type: PLocalNotificationType,
+  val title: String,
+  val subtitle: String? = null,
+  val body: String,
+  val delay: Long
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PLocalNotification {
+      val id = pigeonVar_list[0] as Long
+      val type = pigeonVar_list[1] as PLocalNotificationType
+      val title = pigeonVar_list[2] as String
+      val subtitle = pigeonVar_list[3] as String?
+      val body = pigeonVar_list[4] as String
+      val delay = pigeonVar_list[5] as Long
+      return PLocalNotification(id, type, title, subtitle, body, delay)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      type,
+      title,
+      subtitle,
+      body,
+      delay,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PLocalNotification) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return id == other.id
+    && type == other.type
+    && title == other.title
+    && subtitle == other.subtitle
+    && body == other.body
+    && delay == other.delay
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PComputedPropertyRequest (
+  val type: PComputedPropertyRequestType,
+  val eventName: String
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PComputedPropertyRequest {
+      val type = pigeonVar_list[0] as PComputedPropertyRequestType
+      val eventName = pigeonVar_list[1] as String
+      return PComputedPropertyRequest(type, eventName)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      type,
+      eventName,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PComputedPropertyRequest) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return type == other.type
+    && eventName == other.eventName
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PSurvey (
+  val id: String,
+  val assignmentKey: String,
+  val title: String,
+  val message: String,
+  val options: List<PSurveyOption>,
+  val presentationCondition: PSurveyShowCondition,
+  val presentationProbability: Double,
+  val includeOtherOption: Boolean,
+  val includeCloseOption: Boolean
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PSurvey {
+      val id = pigeonVar_list[0] as String
+      val assignmentKey = pigeonVar_list[1] as String
+      val title = pigeonVar_list[2] as String
+      val message = pigeonVar_list[3] as String
+      val options = pigeonVar_list[4] as List<PSurveyOption>
+      val presentationCondition = pigeonVar_list[5] as PSurveyShowCondition
+      val presentationProbability = pigeonVar_list[6] as Double
+      val includeOtherOption = pigeonVar_list[7] as Boolean
+      val includeCloseOption = pigeonVar_list[8] as Boolean
+      return PSurvey(id, assignmentKey, title, message, options, presentationCondition, presentationProbability, includeOtherOption, includeCloseOption)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      assignmentKey,
+      title,
+      message,
+      options,
+      presentationCondition,
+      presentationProbability,
+      includeOtherOption,
+      includeCloseOption,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PSurvey) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return id == other.id
+    && assignmentKey == other.assignmentKey
+    && title == other.title
+    && message == other.message
+    && deepEqualsHost(options, other.options)
+    && presentationCondition == other.presentationCondition
+    && presentationProbability == other.presentationProbability
+    && includeOtherOption == other.includeOtherOption
+    && includeCloseOption == other.includeCloseOption
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PSurveyOption (
+  val id: String? = null,
+  val text: String? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PSurveyOption {
+      val id = pigeonVar_list[0] as String?
+      val text = pigeonVar_list[1] as String?
+      return PSurveyOption(id, text)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      text,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PSurveyOption) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return id == other.id
+    && text == other.text
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -953,151 +1245,6 @@ data class PUnknown (
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class PPaywallInfoPigeon (
-  val identifier: String,
-  val name: String,
-  val experimentBridgeId: String? = null,
-  val productIds: List<String>,
-  val products: List<Map<String, Any>>,
-  val url: String,
-  val presentedByEventWithName: String? = null,
-  val presentedByEventWithId: String? = null,
-  val presentedByEventAt: Double? = null,
-  val presentedBy: String? = null,
-  val presentationSourceType: String? = null,
-  val responseLoadStartTime: Double? = null,
-  val responseLoadCompleteTime: Double? = null,
-  val responseLoadFailTime: Double? = null,
-  val responseLoadDuration: Double? = null,
-  val webViewLoadStartTime: Double? = null,
-  val webViewLoadCompleteTime: Double? = null,
-  val webViewLoadFailTime: Double? = null,
-  val webViewLoadDuration: Double? = null,
-  val productsLoadStartTime: Double? = null,
-  val productsLoadCompleteTime: Double? = null,
-  val productsLoadFailTime: Double? = null,
-  val productsLoadDuration: Double? = null,
-  val paywalljsVersion: String? = null,
-  val isFreeTrialAvailable: Boolean? = null,
-  val featureGatingBehavior: Map<String, Any>? = null,
-  val closeReason: Map<String, Any>? = null,
-  val localNotifications: List<Map<String, Any>>? = null,
-  val computedPropertyRequests: List<Map<String, Any>>? = null,
-  val surveys: List<Map<String, Any>>? = null
-)
- {
-  companion object {
-    fun fromList(pigeonVar_list: List<Any?>): PPaywallInfoPigeon {
-      val identifier = pigeonVar_list[0] as String
-      val name = pigeonVar_list[1] as String
-      val experimentBridgeId = pigeonVar_list[2] as String?
-      val productIds = pigeonVar_list[3] as List<String>
-      val products = pigeonVar_list[4] as List<Map<String, Any>>
-      val url = pigeonVar_list[5] as String
-      val presentedByEventWithName = pigeonVar_list[6] as String?
-      val presentedByEventWithId = pigeonVar_list[7] as String?
-      val presentedByEventAt = pigeonVar_list[8] as Double?
-      val presentedBy = pigeonVar_list[9] as String?
-      val presentationSourceType = pigeonVar_list[10] as String?
-      val responseLoadStartTime = pigeonVar_list[11] as Double?
-      val responseLoadCompleteTime = pigeonVar_list[12] as Double?
-      val responseLoadFailTime = pigeonVar_list[13] as Double?
-      val responseLoadDuration = pigeonVar_list[14] as Double?
-      val webViewLoadStartTime = pigeonVar_list[15] as Double?
-      val webViewLoadCompleteTime = pigeonVar_list[16] as Double?
-      val webViewLoadFailTime = pigeonVar_list[17] as Double?
-      val webViewLoadDuration = pigeonVar_list[18] as Double?
-      val productsLoadStartTime = pigeonVar_list[19] as Double?
-      val productsLoadCompleteTime = pigeonVar_list[20] as Double?
-      val productsLoadFailTime = pigeonVar_list[21] as Double?
-      val productsLoadDuration = pigeonVar_list[22] as Double?
-      val paywalljsVersion = pigeonVar_list[23] as String?
-      val isFreeTrialAvailable = pigeonVar_list[24] as Boolean?
-      val featureGatingBehavior = pigeonVar_list[25] as Map<String, Any>?
-      val closeReason = pigeonVar_list[26] as Map<String, Any>?
-      val localNotifications = pigeonVar_list[27] as List<Map<String, Any>>?
-      val computedPropertyRequests = pigeonVar_list[28] as List<Map<String, Any>>?
-      val surveys = pigeonVar_list[29] as List<Map<String, Any>>?
-      return PPaywallInfoPigeon(identifier, name, experimentBridgeId, productIds, products, url, presentedByEventWithName, presentedByEventWithId, presentedByEventAt, presentedBy, presentationSourceType, responseLoadStartTime, responseLoadCompleteTime, responseLoadFailTime, responseLoadDuration, webViewLoadStartTime, webViewLoadCompleteTime, webViewLoadFailTime, webViewLoadDuration, productsLoadStartTime, productsLoadCompleteTime, productsLoadFailTime, productsLoadDuration, paywalljsVersion, isFreeTrialAvailable, featureGatingBehavior, closeReason, localNotifications, computedPropertyRequests, surveys)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf(
-      identifier,
-      name,
-      experimentBridgeId,
-      productIds,
-      products,
-      url,
-      presentedByEventWithName,
-      presentedByEventWithId,
-      presentedByEventAt,
-      presentedBy,
-      presentationSourceType,
-      responseLoadStartTime,
-      responseLoadCompleteTime,
-      responseLoadFailTime,
-      responseLoadDuration,
-      webViewLoadStartTime,
-      webViewLoadCompleteTime,
-      webViewLoadFailTime,
-      webViewLoadDuration,
-      productsLoadStartTime,
-      productsLoadCompleteTime,
-      productsLoadFailTime,
-      productsLoadDuration,
-      paywalljsVersion,
-      isFreeTrialAvailable,
-      featureGatingBehavior,
-      closeReason,
-      localNotifications,
-      computedPropertyRequests,
-      surveys,
-    )
-  }
-  override fun equals(other: Any?): Boolean {
-    if (other !is PPaywallInfoPigeon) {
-      return false
-    }
-    if (this === other) {
-      return true
-    }
-    return identifier == other.identifier
-    && name == other.name
-    && experimentBridgeId == other.experimentBridgeId
-    && deepEqualsHost(productIds, other.productIds)
-    && deepEqualsHost(products, other.products)
-    && url == other.url
-    && presentedByEventWithName == other.presentedByEventWithName
-    && presentedByEventWithId == other.presentedByEventWithId
-    && presentedByEventAt == other.presentedByEventAt
-    && presentedBy == other.presentedBy
-    && presentationSourceType == other.presentationSourceType
-    && responseLoadStartTime == other.responseLoadStartTime
-    && responseLoadCompleteTime == other.responseLoadCompleteTime
-    && responseLoadFailTime == other.responseLoadFailTime
-    && responseLoadDuration == other.responseLoadDuration
-    && webViewLoadStartTime == other.webViewLoadStartTime
-    && webViewLoadCompleteTime == other.webViewLoadCompleteTime
-    && webViewLoadFailTime == other.webViewLoadFailTime
-    && webViewLoadDuration == other.webViewLoadDuration
-    && productsLoadStartTime == other.productsLoadStartTime
-    && productsLoadCompleteTime == other.productsLoadCompleteTime
-    && productsLoadFailTime == other.productsLoadFailTime
-    && productsLoadDuration == other.productsLoadDuration
-    && paywalljsVersion == other.paywalljsVersion
-    && isFreeTrialAvailable == other.isFreeTrialAvailable
-    && deepEqualsHost(featureGatingBehavior, other.featureGatingBehavior)
-    && deepEqualsHost(closeReason, other.closeReason)
-    && deepEqualsHost(localNotifications, other.localNotifications)
-    && deepEqualsHost(computedPropertyRequests, other.computedPropertyRequests)
-    && deepEqualsHost(surveys, other.surveys)
-  }
-
-  override fun hashCode(): Int = toList().hashCode()
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
 data class PSuperwallEventInfoPigeon (
   val eventType: PEventType,
   val params: Map<String, Any>? = null,
@@ -1274,165 +1421,210 @@ private open class HostPigeonCodec : StandardMessageCodec() {
     return when (type) {
       129.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PNetworkEnvironment.ofRaw(it.toInt())
+          PFeatureGatingBehavior.ofRaw(it.toInt())
         }
       }
       130.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PLogLevel.ofRaw(it.toInt())
+          PPaywallCloseReason.ofRaw(it.toInt())
         }
       }
       131.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PTransactionBackgroundView.ofRaw(it.toInt())
+          PLocalNotificationType.ofRaw(it.toInt())
         }
       }
       132.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PLogScope.ofRaw(it.toInt())
+          PComputedPropertyRequestType.ofRaw(it.toInt())
         }
       }
       133.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PConfigurationStatus.ofRaw(it.toInt())
+          PSurveyShowCondition.ofRaw(it.toInt())
         }
       }
       134.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PEventType.ofRaw(it.toInt())
+          PNetworkEnvironment.ofRaw(it.toInt())
         }
       }
       135.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PSubscriptionStatusType.ofRaw(it.toInt())
+          PLogLevel.ofRaw(it.toInt())
         }
       }
       136.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PPaywallPresentationRequestStatusType.ofRaw(it.toInt())
+          PTransactionBackgroundView.ofRaw(it.toInt())
         }
       }
       137.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PPaywallPresentationRequestStatusReason.ofRaw(it.toInt())
+          PLogScope.ofRaw(it.toInt())
         }
       }
       138.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PVariantType.ofRaw(it.toInt())
+          PConfigurationStatus.ofRaw(it.toInt())
         }
       }
       139.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallOptions.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PEventType.ofRaw(it.toInt())
         }
       }
       140.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallInfo.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PSubscriptionStatusType.ofRaw(it.toInt())
         }
       }
       141.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseCancelled.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PPaywallPresentationRequestStatusType.ofRaw(it.toInt())
         }
       }
       142.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasePurchased.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PPaywallPresentationRequestStatusReason.ofRaw(it.toInt())
         }
       }
       143.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasePending.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PVariantType.ofRaw(it.toInt())
         }
       }
       144.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseFailed.fromList(it)
+          PSuperwallOptions.fromList(it)
         }
       }
       145.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestorationRestored.fromList(it)
+          PPaywallInfo.fromList(it)
         }
       }
       146.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestorationFailed.fromList(it)
+          PProduct.fromList(it)
         }
       }
       147.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestoreFailed.fromList(it)
+          PLocalNotification.fromList(it)
         }
       }
       148.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PLogging.fromList(it)
+          PComputedPropertyRequest.fromList(it)
         }
       }
       149.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallOptions.fromList(it)
+          PSurvey.fromList(it)
         }
       }
       150.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseControllerHost.fromList(it)
+          PSurveyOption.fromList(it)
         }
       }
       151.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfigureCompletionHost.fromList(it)
+          PPurchaseCancelled.fromList(it)
         }
       }
       152.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PEntitlement.fromList(it)
+          PPurchasePurchased.fromList(it)
         }
       }
       153.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PActive.fromList(it)
+          PPurchasePending.fromList(it)
         }
       }
       154.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PInactive.fromList(it)
+          PPurchaseFailed.fromList(it)
         }
       }
       155.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PUnknown.fromList(it)
+          PRestorationRestored.fromList(it)
         }
       }
       156.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallInfoPigeon.fromList(it)
+          PRestorationFailed.fromList(it)
         }
       }
       157.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallEventInfoPigeon.fromList(it)
+          PRestoreFailed.fromList(it)
         }
       }
       158.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PIdentityOptions.fromList(it)
+          PLogging.fromList(it)
         }
       }
       159.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExperiment.fromList(it)
+          PPaywallOptions.fromList(it)
         }
       }
       160.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PVariant.fromList(it)
+          PPurchaseControllerHost.fromList(it)
         }
       }
       161.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PConfigureCompletionHost.fromList(it)
+        }
+      }
+      162.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PEntitlement.fromList(it)
+        }
+      }
+      163.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PActive.fromList(it)
+        }
+      }
+      164.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PInactive.fromList(it)
+        }
+      }
+      165.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PUnknown.fromList(it)
+        }
+      }
+      166.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PSuperwallEventInfoPigeon.fromList(it)
+        }
+      }
+      167.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PIdentityOptions.fromList(it)
+        }
+      }
+      168.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PExperiment.fromList(it)
+        }
+      }
+      169.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PVariant.fromList(it)
+        }
+      }
+      170.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PConfirmedAssignment.fromList(it)
         }
@@ -1442,136 +1634,172 @@ private open class HostPigeonCodec : StandardMessageCodec() {
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is PNetworkEnvironment -> {
+      is PFeatureGatingBehavior -> {
         stream.write(129)
         writeValue(stream, value.raw)
       }
-      is PLogLevel -> {
+      is PPaywallCloseReason -> {
         stream.write(130)
         writeValue(stream, value.raw)
       }
-      is PTransactionBackgroundView -> {
+      is PLocalNotificationType -> {
         stream.write(131)
         writeValue(stream, value.raw)
       }
-      is PLogScope -> {
+      is PComputedPropertyRequestType -> {
         stream.write(132)
         writeValue(stream, value.raw)
       }
-      is PConfigurationStatus -> {
+      is PSurveyShowCondition -> {
         stream.write(133)
         writeValue(stream, value.raw)
       }
-      is PEventType -> {
+      is PNetworkEnvironment -> {
         stream.write(134)
         writeValue(stream, value.raw)
       }
-      is PSubscriptionStatusType -> {
+      is PLogLevel -> {
         stream.write(135)
         writeValue(stream, value.raw)
       }
-      is PPaywallPresentationRequestStatusType -> {
+      is PTransactionBackgroundView -> {
         stream.write(136)
         writeValue(stream, value.raw)
       }
-      is PPaywallPresentationRequestStatusReason -> {
+      is PLogScope -> {
         stream.write(137)
         writeValue(stream, value.raw)
       }
-      is PVariantType -> {
+      is PConfigurationStatus -> {
         stream.write(138)
         writeValue(stream, value.raw)
       }
-      is PSuperwallOptions -> {
+      is PEventType -> {
         stream.write(139)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is PPaywallInfo -> {
+      is PSubscriptionStatusType -> {
         stream.write(140)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is PPurchaseCancelled -> {
+      is PPaywallPresentationRequestStatusType -> {
         stream.write(141)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is PPurchasePurchased -> {
+      is PPaywallPresentationRequestStatusReason -> {
         stream.write(142)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is PPurchasePending -> {
+      is PVariantType -> {
         stream.write(143)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is PPurchaseFailed -> {
+      is PSuperwallOptions -> {
         stream.write(144)
         writeValue(stream, value.toList())
       }
-      is PRestorationRestored -> {
+      is PPaywallInfo -> {
         stream.write(145)
         writeValue(stream, value.toList())
       }
-      is PRestorationFailed -> {
+      is PProduct -> {
         stream.write(146)
         writeValue(stream, value.toList())
       }
-      is PRestoreFailed -> {
+      is PLocalNotification -> {
         stream.write(147)
         writeValue(stream, value.toList())
       }
-      is PLogging -> {
+      is PComputedPropertyRequest -> {
         stream.write(148)
         writeValue(stream, value.toList())
       }
-      is PPaywallOptions -> {
+      is PSurvey -> {
         stream.write(149)
         writeValue(stream, value.toList())
       }
-      is PPurchaseControllerHost -> {
+      is PSurveyOption -> {
         stream.write(150)
         writeValue(stream, value.toList())
       }
-      is PConfigureCompletionHost -> {
+      is PPurchaseCancelled -> {
         stream.write(151)
         writeValue(stream, value.toList())
       }
-      is PEntitlement -> {
+      is PPurchasePurchased -> {
         stream.write(152)
         writeValue(stream, value.toList())
       }
-      is PActive -> {
+      is PPurchasePending -> {
         stream.write(153)
         writeValue(stream, value.toList())
       }
-      is PInactive -> {
+      is PPurchaseFailed -> {
         stream.write(154)
         writeValue(stream, value.toList())
       }
-      is PUnknown -> {
+      is PRestorationRestored -> {
         stream.write(155)
         writeValue(stream, value.toList())
       }
-      is PPaywallInfoPigeon -> {
+      is PRestorationFailed -> {
         stream.write(156)
         writeValue(stream, value.toList())
       }
-      is PSuperwallEventInfoPigeon -> {
+      is PRestoreFailed -> {
         stream.write(157)
         writeValue(stream, value.toList())
       }
-      is PIdentityOptions -> {
+      is PLogging -> {
         stream.write(158)
         writeValue(stream, value.toList())
       }
-      is PExperiment -> {
+      is PPaywallOptions -> {
         stream.write(159)
         writeValue(stream, value.toList())
       }
-      is PVariant -> {
+      is PPurchaseControllerHost -> {
         stream.write(160)
         writeValue(stream, value.toList())
       }
-      is PConfirmedAssignment -> {
+      is PConfigureCompletionHost -> {
         stream.write(161)
+        writeValue(stream, value.toList())
+      }
+      is PEntitlement -> {
+        stream.write(162)
+        writeValue(stream, value.toList())
+      }
+      is PActive -> {
+        stream.write(163)
+        writeValue(stream, value.toList())
+      }
+      is PInactive -> {
+        stream.write(164)
+        writeValue(stream, value.toList())
+      }
+      is PUnknown -> {
+        stream.write(165)
+        writeValue(stream, value.toList())
+      }
+      is PSuperwallEventInfoPigeon -> {
+        stream.write(166)
+        writeValue(stream, value.toList())
+      }
+      is PIdentityOptions -> {
+        stream.write(167)
+        writeValue(stream, value.toList())
+      }
+      is PExperiment -> {
+        stream.write(168)
+        writeValue(stream, value.toList())
+      }
+      is PVariant -> {
+        stream.write(169)
+        writeValue(stream, value.toList())
+      }
+      is PConfirmedAssignment -> {
+        stream.write(170)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

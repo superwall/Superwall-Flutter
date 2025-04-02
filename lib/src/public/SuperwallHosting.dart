@@ -291,18 +291,12 @@ class Superwall {
 
   /// Gets the latest PaywallInfo object
   Future<PaywallInfo?> getLatestPaywallInfo() async {
-    final paywallInfoBridgeId = await hostApi.getLatestPaywallInfoBridgeId();
-    if (paywallInfoBridgeId != null) {
-      return PaywallInfo(bridgeId: paywallInfoBridgeId);
-    } else {
-      return null;
-    }
+    final paywallInfoBridgeId = await hostApi.getLatestPaywallInfo();
   }
 
   /// Gets the subscription status of the user
   Future<SubscriptionStatus> getSubscriptionStatus() async {
-    final subscriptionStatusBridgeId =
-        await hostApi.getSubscriptionStatusBridgeId();
+    final subscriptionStatusBridgeId = await hostApi.getSubscriptionStatus();
 
     try {
       return await _createSubscriptionStatus(subscriptionStatusBridgeId);
@@ -337,11 +331,6 @@ class Superwall {
   /// Checks if Superwall has finished configuring
   Future<bool> getIsConfigured() async {
     return await hostApi.getIsConfigured();
-  }
-
-  /// Sets the configured state of Superwall
-  Future<void> setIsConfigured(bool configured) async {
-    await hostApi.setIsConfigured(configured);
   }
 
   /// Checks if a paywall is currently being presented
@@ -385,22 +374,13 @@ class Superwall {
 
   /// Identifies a user with the given ID and options
   Future<void> identify(String userId, [IdentityOptions? options]) async {
-    Map<String, dynamic>? optionsMap;
+    generated.PIdentityOptions? generatedOptions;
 
     if (options != null) {
-      optionsMap = options.toJson() as Map<String, dynamic>?;
+      generated.PIdentityOptions generatedOptions = generated.PIdentityOptions(
+          restorePaywallAssignments: options.restorePaywallAssignments);
     }
 
-    await hostApi.identify(userId, optionsMap);
-  }
-
-  /// Presents a paywall with the given ID and parameters
-  Future<void> presentPaywall(String paywallId,
-      {String? productId,
-      String? customerId,
-      String? customerEmail,
-      String? customerName}) async {
-    await hostApi.presentPaywall(
-        paywallId, productId, customerId, customerEmail, customerName);
+    await hostApi.identify(userId, generatedOptions);
   }
 }
