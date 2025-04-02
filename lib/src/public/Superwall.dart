@@ -380,4 +380,14 @@ class Superwall {
 
     await hostApi.identify(userId, generatedOptions);
   }
+
+  void setDelegate(SuperwallDelegate? delegate) {
+    if (delegate == null) {
+      hostApi.setDelegate(false);
+      return;
+    }
+    final middleman = SuperwallDelegateHost(delegate);
+    generated.PSuperwallDelegateGenerated.setUp(middleman);
+    hostApi.setDelegate(true);
+  }
 }

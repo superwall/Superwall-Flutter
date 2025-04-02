@@ -1,3 +1,5 @@
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+
 /// An enum whose cases indicate whether the ``Superwall/register(placement:params:handler:feature:)``
 /// `feature` block executes or not.
 enum FeatureGatingBehavior {
@@ -28,6 +30,30 @@ extension FeatureGatingBehaviorExtension on FeatureGatingBehavior {
         return FeatureGatingBehavior.nonGated;
       default:
         throw ArgumentError('Invalid FeatureGatingBehavior value: $json');
+    }
+  }
+
+  /// Convert this FeatureGatingBehavior to a PFeatureGatingBehavior
+  PFeatureGatingBehavior toPigeon() {
+    switch (this) {
+      case FeatureGatingBehavior.gated:
+        return PFeatureGatingBehavior.gated;
+      case FeatureGatingBehavior.nonGated:
+        return PFeatureGatingBehavior.nonGated;
+      default:
+        throw ArgumentError('Invalid FeatureGatingBehavior value');
+    }
+  }
+
+  /// Convert a PFeatureGatingBehavior to a FeatureGatingBehavior
+  static FeatureGatingBehavior fromPigeon(PFeatureGatingBehavior behavior) {
+    switch (behavior) {
+      case PFeatureGatingBehavior.gated:
+        return FeatureGatingBehavior.gated;
+      case PFeatureGatingBehavior.nonGated:
+        return FeatureGatingBehavior.nonGated;
+      default:
+        throw ArgumentError('Invalid PFeatureGatingBehavior value');
     }
   }
 }

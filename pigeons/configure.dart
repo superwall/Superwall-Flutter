@@ -7,6 +7,8 @@ import 'package:pigeon/pigeon.dart';
       'android/src/main/kotlin/com/superwall/superwallkit_flutter/Host.g.kt',
   kotlinOptions: KotlinOptions(),
   dartPackageName: 'superwallkit_flutter',
+  swiftOut: 'ios/Classes/SuperwallHost.swift',
+  swiftOptions: SwiftOptions(),
 ))
 
 // ============= CLASSES, ENUMS, DATA MODELS =============
@@ -222,18 +224,18 @@ sealed class PPurchaseResult {
 }
 
 class PPurchaseCancelled extends PPurchaseResult {
-  bool? _ignore;
-  PPurchaseCancelled(this._ignore);
+  bool? ignore;
+  PPurchaseCancelled(this.ignore);
 }
 
 class PPurchasePurchased extends PPurchaseResult {
-  bool? _ignore;
-  PPurchasePurchased(this._ignore);
+  bool? ignore;
+  PPurchasePurchased(this.ignore);
 }
 
 class PPurchasePending extends PPurchaseResult {
-  bool? _ignore;
-  PPurchasePending(this._ignore);
+  bool? ignore;
+  PPurchasePending(this.ignore);
 }
 
 class PPurchaseFailed extends PPurchaseResult {
@@ -246,8 +248,8 @@ sealed class PRestorationResult {
 }
 
 class PRestorationRestored extends PRestorationResult {
-  bool? _ignore;
-  PRestorationRestored(this._ignore);
+  bool? ignore;
+  PRestorationRestored(this.ignore);
 }
 
 class PRestorationFailed extends PRestorationResult {
@@ -318,13 +320,13 @@ class PActive extends PSubscriptionStatus {
 // Pigeon has issues generating empty sealed classes, so we need to use a bool.
 // It is irrelevant and here just to satisfy pigeon.
 class PInactive extends PSubscriptionStatus {
-  bool? _alwaysFalse;
-  PInactive(this._alwaysFalse);
+  bool? ignore;
+  PInactive(this.ignore);
 }
 
 class PUnknown extends PSubscriptionStatus {
-  bool? _alwaysFalse;
-  PUnknown(this._alwaysFalse);
+  bool? ignore;
+  PUnknown(this.ignore);
 }
 
 // SuperwallEventInfo class for event handling
@@ -494,13 +496,13 @@ sealed class PTriggerResult {
 }
 
 class PPlacementNotFoundTriggerResult extends PTriggerResult {
-  bool? _ignore;
-  PPlacementNotFoundTriggerResult(this._ignore);
+  bool? ignore;
+  PPlacementNotFoundTriggerResult(this.ignore);
 }
 
 class PNoAudienceMatchTriggerResult extends PTriggerResult {
-  bool? _ignore;
-  PNoAudienceMatchTriggerResult(this._ignore);
+  bool? ignore;
+  PNoAudienceMatchTriggerResult(this.ignore);
 }
 
 class PPaywallTriggerResult extends PTriggerResult {
@@ -561,13 +563,13 @@ class PPurchasedPaywallResult extends PPaywallResult {
 }
 
 class PDeclinedPaywallResult extends PPaywallResult {
-  bool? _ignore;
-  PDeclinedPaywallResult(this._ignore);
+  bool? ignore;
+  PDeclinedPaywallResult(this.ignore);
 }
 
 class PRestoredPaywallResult extends PPaywallResult {
-  bool? _ignore;
-  PRestoredPaywallResult(this._ignore);
+  bool? ignore;
+  PRestoredPaywallResult(this.ignore);
 }
 
 // ============= HOST APIs =============

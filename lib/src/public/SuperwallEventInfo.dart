@@ -161,40 +161,40 @@ class SuperwallEvent {
         return SuperwallEvent._(
           type: EventType.triggerFire,
           placementName: json['placementName'] as String?,
-          result: TriggerResult.fromJson(json['result']),
+          result: TriggerResult.fromPTriggerResult(json['result']),
         );
       case 'paywallOpen':
         return SuperwallEvent._(
           type: EventType.paywallOpen,
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallClose':
         return SuperwallEvent._(
           type: EventType.paywallClose,
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallDecline':
         return SuperwallEvent._(
           type: EventType.paywallDecline,
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'transactionStart':
         return SuperwallEvent._(
           type: EventType.transactionStart,
           product: StoreProduct.fromJson(json['product']),
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'transactionFail':
         return SuperwallEvent._(
           type: EventType.transactionFail,
           error: json['error'],
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'transactionAbandon':
         return SuperwallEvent._(
           type: EventType.transactionAbandon,
           product: StoreProduct.fromJson(json['product']),
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'transactionComplete':
         final transactionJson = json['transaction'];
@@ -205,29 +205,29 @@ class SuperwallEvent {
                 ? StoreTransaction.fromJson(transactionJson)
                 : null,
             product: StoreProduct.fromJson(json['product']),
-            paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']));
+            paywallInfo: PaywallInfo());
       case 'subscriptionStart':
         return SuperwallEvent._(
           type: EventType.subscriptionStart,
           product: StoreProduct.fromJson(json['product']),
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'freeTrialStart':
         return SuperwallEvent._(
           type: EventType.freeTrialStart,
           product: StoreProduct.fromJson(json['product']),
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'transactionRestore':
         return SuperwallEvent._(
           type: EventType.transactionRestore,
           restoreType: RestoreType.fromJson(json['restoreType']),
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'transactionTimeout':
         return SuperwallEvent._(
           type: EventType.transactionTimeout,
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'userAttributes':
         return SuperwallEvent._(
@@ -236,7 +236,7 @@ class SuperwallEvent {
         return SuperwallEvent._(
           type: EventType.nonRecurringProductPurchase,
           product: StoreProduct.fromJson(json['product']),
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallResponseLoadStart':
         return SuperwallEvent._(
@@ -254,44 +254,44 @@ class SuperwallEvent {
         return SuperwallEvent._(
           type: EventType.paywallResponseLoadComplete,
           triggeredPlacementName: json['triggeredPlacementName'],
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallWebviewLoadStart':
         return SuperwallEvent._(
           type: EventType.paywallWebviewLoadStart,
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallWebviewLoadFail':
         return SuperwallEvent._(
           type: EventType.paywallWebviewLoadFail,
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallWebviewLoadComplete':
         return SuperwallEvent._(
           type: EventType.paywallWebviewLoadComplete,
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallWebviewLoadTimeout':
         return SuperwallEvent._(
           type: EventType.paywallWebviewLoadTimeout,
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallWebviewLoadFallback':
         return SuperwallEvent._(
           type: EventType.paywallWebviewLoadFallback,
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallProductsLoadStart':
         return SuperwallEvent._(
           type: EventType.paywallProductsLoadStart,
           triggeredPlacementName: json['triggeredPlacementName'],
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallProductsLoadFail':
         return SuperwallEvent._(
           type: EventType.paywallProductsLoadFail,
           triggeredPlacementName: json['triggeredPlacementName'],
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallProductsLoadComplete':
         return SuperwallEvent._(
@@ -303,7 +303,7 @@ class SuperwallEvent {
           type: EventType.paywallProductsLoadRetry,
           triggeredPlacementName: json['triggeredPlacementName'],
           attempt: json['attempt'],
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'surveyResponse':
         return SuperwallEvent._(
@@ -311,7 +311,7 @@ class SuperwallEvent {
           survey: Survey.fromJson(json['survey']),
           selectedOption: SurveyOption.fromJson(json['selectedOption']),
           customResponse: json['customResponse'],
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'paywallPresentationRequest':
         final statusReasonJson = json['reason'];
@@ -320,8 +320,9 @@ class SuperwallEvent {
             type: EventType.paywallPresentationRequest,
             status: PaywallPresentationRequestStatus.fromJson(json['status']),
             reason: (statusReasonJson != null)
-                ? PaywallPresentationRequestStatusReason.fromJson(
-                    statusReasonJson)
+                ? PaywallPresentationRequestStatusReason
+                    .fromPPaywallPresentationRequestStatusReason(
+                        statusReasonJson)
                 : null);
       case 'touchesBegan':
         return SuperwallEvent._(type: EventType.touchesBegan);
@@ -336,7 +337,7 @@ class SuperwallEvent {
           type: EventType.customPlacement,
           name: json['name'],
           params: json['params'],
-          paywallInfo: PaywallInfo(bridgeId: json['paywallInfoBridgeId']),
+          paywallInfo: PaywallInfo(),
         );
       case 'configAttributes':
         return SuperwallEvent._(type: EventType.configAttributes);

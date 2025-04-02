@@ -1,18 +1,27 @@
-import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 
-class RestorationResult extends BridgeIdInstantiable {
-  RestorationResult({required super.bridgeClass, super.bridgeId, super.initializationArgs});
+sealed class RestorationResult {
+  const RestorationResult();
+  static const RestorationResult restored = RestorationResultRestored();
+  static RestorationResult failed(String error) =>
+      RestorationResultFailed(error: error);
 
-  static RestorationResult restored = RestorationResultRestored();
-  static RestorationResult failed(String error) => RestorationResultFailed(error: error);
+  static RestorationResult fromPRestorationResult(dynamic result) {
+    if (result is PRestorationRestored) {
+      return RestorationResultRestored();
+    } else if (result is PRestoreFailed) {
+      return RestorationResultFailed(error: result.message ?? 'Unknown error');
+    } else {
+      throw ArgumentError('Unknown PRestorationResult type');
+    }
+  }
 }
 
 class RestorationResultRestored extends RestorationResult {
-  static const BridgeClass bridgeClass = 'RestorationResultRestoredBridge';
-  RestorationResultRestored({super.bridgeId}): super(bridgeClass: bridgeClass);
+  const RestorationResultRestored();
 }
 
 class RestorationResultFailed extends RestorationResult {
-  static const BridgeClass bridgeClass = 'RestorationResultFailedBridge';
-  RestorationResultFailed({required String error, super.bridgeId}): super(bridgeClass: bridgeClass, initializationArgs: {'error': error});
+  final String error;
+  const RestorationResultFailed({required this.error});
 }

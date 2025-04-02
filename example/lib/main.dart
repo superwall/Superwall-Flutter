@@ -31,9 +31,9 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   }
 
   void listenForPurchases() {
-    _subscription = Superwall.shared.subscriptionStatus.listen((status) {
+/*    _subscription = Superwall.shared.subscriptionStatus.listen((status) {
       logging.info('subscriptionStatusDidChange listener: $status');
-    });
+    });*/
   }
 
   @override
@@ -384,7 +384,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
   Future<void> printSubscriptionStatus() async {
     final status = await Superwall.shared.getSubscriptionStatus();
-    final description = await status.description;
+    final description = status;
 
     logging.info('Status: $description');
   }

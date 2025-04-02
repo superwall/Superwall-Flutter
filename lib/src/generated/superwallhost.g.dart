@@ -838,14 +838,14 @@ sealed class PPurchaseResult {
 
 class PPurchaseCancelled extends PPurchaseResult {
   PPurchaseCancelled({
-    this._ignore,
+    this.ignore,
   });
 
-  bool? _ignore;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _ignore,
+      ignore,
     ];
   }
 
@@ -855,7 +855,7 @@ class PPurchaseCancelled extends PPurchaseResult {
   static PPurchaseCancelled decode(Object result) {
     result as List<Object?>;
     return PPurchaseCancelled(
-      _ignore: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -869,7 +869,7 @@ class PPurchaseCancelled extends PPurchaseResult {
       return true;
     }
     return 
-      _ignore == other._ignore;
+      ignore == other.ignore;
   }
 
   @override
@@ -880,14 +880,14 @@ class PPurchaseCancelled extends PPurchaseResult {
 
 class PPurchasePurchased extends PPurchaseResult {
   PPurchasePurchased({
-    this._ignore,
+    this.ignore,
   });
 
-  bool? _ignore;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _ignore,
+      ignore,
     ];
   }
 
@@ -897,7 +897,7 @@ class PPurchasePurchased extends PPurchaseResult {
   static PPurchasePurchased decode(Object result) {
     result as List<Object?>;
     return PPurchasePurchased(
-      _ignore: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -911,7 +911,7 @@ class PPurchasePurchased extends PPurchaseResult {
       return true;
     }
     return 
-      _ignore == other._ignore;
+      ignore == other.ignore;
   }
 
   @override
@@ -922,14 +922,14 @@ class PPurchasePurchased extends PPurchaseResult {
 
 class PPurchasePending extends PPurchaseResult {
   PPurchasePending({
-    this._ignore,
+    this.ignore,
   });
 
-  bool? _ignore;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _ignore,
+      ignore,
     ];
   }
 
@@ -939,7 +939,7 @@ class PPurchasePending extends PPurchaseResult {
   static PPurchasePending decode(Object result) {
     result as List<Object?>;
     return PPurchasePending(
-      _ignore: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -953,7 +953,7 @@ class PPurchasePending extends PPurchaseResult {
       return true;
     }
     return 
-      _ignore == other._ignore;
+      ignore == other.ignore;
   }
 
   @override
@@ -1009,14 +1009,14 @@ sealed class PRestorationResult {
 
 class PRestorationRestored extends PRestorationResult {
   PRestorationRestored({
-    this._ignore,
+    this.ignore,
   });
 
-  bool? _ignore;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _ignore,
+      ignore,
     ];
   }
 
@@ -1026,7 +1026,7 @@ class PRestorationRestored extends PRestorationResult {
   static PRestorationRestored decode(Object result) {
     result as List<Object?>;
     return PRestorationRestored(
-      _ignore: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -1040,7 +1040,7 @@ class PRestorationRestored extends PRestorationResult {
       return true;
     }
     return 
-      _ignore == other._ignore;
+      ignore == other.ignore;
   }
 
   @override
@@ -1522,14 +1522,14 @@ class PActive extends PSubscriptionStatus {
 
 class PInactive extends PSubscriptionStatus {
   PInactive({
-    this._alwaysFalse,
+    this.ignore,
   });
 
-  bool? _alwaysFalse;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _alwaysFalse,
+      ignore,
     ];
   }
 
@@ -1539,7 +1539,7 @@ class PInactive extends PSubscriptionStatus {
   static PInactive decode(Object result) {
     result as List<Object?>;
     return PInactive(
-      _alwaysFalse: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -1553,7 +1553,7 @@ class PInactive extends PSubscriptionStatus {
       return true;
     }
     return 
-      _alwaysFalse == other._alwaysFalse;
+      ignore == other.ignore;
   }
 
   @override
@@ -1564,14 +1564,14 @@ class PInactive extends PSubscriptionStatus {
 
 class PUnknown extends PSubscriptionStatus {
   PUnknown({
-    this._alwaysFalse,
+    this.ignore,
   });
 
-  bool? _alwaysFalse;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _alwaysFalse,
+      ignore,
     ];
   }
 
@@ -1581,7 +1581,7 @@ class PUnknown extends PSubscriptionStatus {
   static PUnknown decode(Object result) {
     result as List<Object?>;
     return PUnknown(
-      _alwaysFalse: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -1595,7 +1595,7 @@ class PUnknown extends PSubscriptionStatus {
       return true;
     }
     return 
-      _alwaysFalse == other._alwaysFalse;
+      ignore == other.ignore;
   }
 
   @override
@@ -1759,14 +1759,14 @@ sealed class PTriggerResult {
 
 class PPlacementNotFoundTriggerResult extends PTriggerResult {
   PPlacementNotFoundTriggerResult({
-    this._ignore,
+    this.ignore,
   });
 
-  bool? _ignore;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _ignore,
+      ignore,
     ];
   }
 
@@ -1776,7 +1776,7 @@ class PPlacementNotFoundTriggerResult extends PTriggerResult {
   static PPlacementNotFoundTriggerResult decode(Object result) {
     result as List<Object?>;
     return PPlacementNotFoundTriggerResult(
-      _ignore: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -1790,7 +1790,7 @@ class PPlacementNotFoundTriggerResult extends PTriggerResult {
       return true;
     }
     return 
-      _ignore == other._ignore;
+      ignore == other.ignore;
   }
 
   @override
@@ -1801,14 +1801,14 @@ class PPlacementNotFoundTriggerResult extends PTriggerResult {
 
 class PNoAudienceMatchTriggerResult extends PTriggerResult {
   PNoAudienceMatchTriggerResult({
-    this._ignore,
+    this.ignore,
   });
 
-  bool? _ignore;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _ignore,
+      ignore,
     ];
   }
 
@@ -1818,7 +1818,7 @@ class PNoAudienceMatchTriggerResult extends PTriggerResult {
   static PNoAudienceMatchTriggerResult decode(Object result) {
     result as List<Object?>;
     return PNoAudienceMatchTriggerResult(
-      _ignore: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -1832,7 +1832,7 @@ class PNoAudienceMatchTriggerResult extends PTriggerResult {
       return true;
     }
     return 
-      _ignore == other._ignore;
+      ignore == other.ignore;
   }
 
   @override
@@ -2116,14 +2116,14 @@ class PPurchasedPaywallResult extends PPaywallResult {
 
 class PDeclinedPaywallResult extends PPaywallResult {
   PDeclinedPaywallResult({
-    this._ignore,
+    this.ignore,
   });
 
-  bool? _ignore;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _ignore,
+      ignore,
     ];
   }
 
@@ -2133,7 +2133,7 @@ class PDeclinedPaywallResult extends PPaywallResult {
   static PDeclinedPaywallResult decode(Object result) {
     result as List<Object?>;
     return PDeclinedPaywallResult(
-      _ignore: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -2147,7 +2147,7 @@ class PDeclinedPaywallResult extends PPaywallResult {
       return true;
     }
     return 
-      _ignore == other._ignore;
+      ignore == other.ignore;
   }
 
   @override
@@ -2158,14 +2158,14 @@ class PDeclinedPaywallResult extends PPaywallResult {
 
 class PRestoredPaywallResult extends PPaywallResult {
   PRestoredPaywallResult({
-    this._ignore,
+    this.ignore,
   });
 
-  bool? _ignore;
+  bool? ignore;
 
   List<Object?> _toList() {
     return <Object?>[
-      _ignore,
+      ignore,
     ];
   }
 
@@ -2175,7 +2175,7 @@ class PRestoredPaywallResult extends PPaywallResult {
   static PRestoredPaywallResult decode(Object result) {
     result as List<Object?>;
     return PRestoredPaywallResult(
-      _ignore: result[0] as bool?,
+      ignore: result[0] as bool?,
     );
   }
 
@@ -2189,7 +2189,7 @@ class PRestoredPaywallResult extends PPaywallResult {
       return true;
     }
     return 
-      _ignore == other._ignore;
+      ignore == other.ignore;
   }
 
   @override

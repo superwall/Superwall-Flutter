@@ -18,10 +18,24 @@ class Experiment {
     required this.groupId,
   });
 
-  factory Experiment.fromPExperiment(PExperiment pExperiment) {
+  /// Creates an Experiment from a PExperiment from the pigeon generated code
+  static Experiment? fromPigeon(PExperiment? pExperiment) {
+    if (pExperiment == null) return null;
     return Experiment(
       id: pExperiment.id,
       groupId: pExperiment.groupId,
+    );
+  }
+
+  /// Converts this Experiment to a PExperiment for the pigeon generated code
+  PExperiment toPigeon() {
+    return PExperiment(
+      id: id,
+      groupId: groupId,
+      variant: PVariant(
+        id: "", // This is needed for the PExperiment constructor but not used
+        type: PVariantType.treatment, // Default value, not used
+      ),
     );
   }
 }

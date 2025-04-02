@@ -781,18 +781,18 @@ data class PSurveyOption (
 sealed class PPurchaseResult 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PPurchaseCancelled (
-  val _ignore: Boolean? = null
+  val ignore: Boolean? = null
 ) : PPurchaseResult()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PPurchaseCancelled {
-      val _ignore = pigeonVar_list[0] as Boolean?
-      return PPurchaseCancelled(_ignore)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PPurchaseCancelled(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _ignore,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -802,7 +802,7 @@ data class PPurchaseCancelled (
     if (this === other) {
       return true
     }
-    return _ignore == other._ignore
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -810,18 +810,18 @@ data class PPurchaseCancelled (
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PPurchasePurchased (
-  val _ignore: Boolean? = null
+  val ignore: Boolean? = null
 ) : PPurchaseResult()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PPurchasePurchased {
-      val _ignore = pigeonVar_list[0] as Boolean?
-      return PPurchasePurchased(_ignore)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PPurchasePurchased(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _ignore,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -831,7 +831,7 @@ data class PPurchasePurchased (
     if (this === other) {
       return true
     }
-    return _ignore == other._ignore
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -839,18 +839,18 @@ data class PPurchasePurchased (
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PPurchasePending (
-  val _ignore: Boolean? = null
+  val ignore: Boolean? = null
 ) : PPurchaseResult()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PPurchasePending {
-      val _ignore = pigeonVar_list[0] as Boolean?
-      return PPurchasePending(_ignore)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PPurchasePending(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _ignore,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -860,7 +860,7 @@ data class PPurchasePending (
     if (this === other) {
       return true
     }
-    return _ignore == other._ignore
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -902,18 +902,18 @@ data class PPurchaseFailed (
 sealed class PRestorationResult 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PRestorationRestored (
-  val _ignore: Boolean? = null
+  val ignore: Boolean? = null
 ) : PRestorationResult()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PRestorationRestored {
-      val _ignore = pigeonVar_list[0] as Boolean?
-      return PRestorationRestored(_ignore)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PRestorationRestored(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _ignore,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -923,7 +923,7 @@ data class PRestorationRestored (
     if (this === other) {
       return true
     }
-    return _ignore == other._ignore
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1258,18 +1258,18 @@ data class PActive (
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PInactive (
-  val _alwaysFalse: Boolean? = null
+  val ignore: Boolean? = null
 ) : PSubscriptionStatus()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PInactive {
-      val _alwaysFalse = pigeonVar_list[0] as Boolean?
-      return PInactive(_alwaysFalse)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PInactive(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _alwaysFalse,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -1279,7 +1279,7 @@ data class PInactive (
     if (this === other) {
       return true
     }
-    return _alwaysFalse == other._alwaysFalse
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1287,18 +1287,18 @@ data class PInactive (
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PUnknown (
-  val _alwaysFalse: Boolean? = null
+  val ignore: Boolean? = null
 ) : PSubscriptionStatus()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PUnknown {
-      val _alwaysFalse = pigeonVar_list[0] as Boolean?
-      return PUnknown(_alwaysFalse)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PUnknown(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _alwaysFalse,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -1308,7 +1308,7 @@ data class PUnknown (
     if (this === other) {
       return true
     }
-    return _alwaysFalse == other._alwaysFalse
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1424,18 +1424,18 @@ data class PExperiment (
 sealed class PTriggerResult 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PPlacementNotFoundTriggerResult (
-  val _ignore: Boolean? = null
+  val ignore: Boolean? = null
 ) : PTriggerResult()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PPlacementNotFoundTriggerResult {
-      val _ignore = pigeonVar_list[0] as Boolean?
-      return PPlacementNotFoundTriggerResult(_ignore)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PPlacementNotFoundTriggerResult(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _ignore,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -1445,7 +1445,7 @@ data class PPlacementNotFoundTriggerResult (
     if (this === other) {
       return true
     }
-    return _ignore == other._ignore
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1453,18 +1453,18 @@ data class PPlacementNotFoundTriggerResult (
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PNoAudienceMatchTriggerResult (
-  val _ignore: Boolean? = null
+  val ignore: Boolean? = null
 ) : PTriggerResult()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PNoAudienceMatchTriggerResult {
-      val _ignore = pigeonVar_list[0] as Boolean?
-      return PNoAudienceMatchTriggerResult(_ignore)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PNoAudienceMatchTriggerResult(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _ignore,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -1474,7 +1474,7 @@ data class PNoAudienceMatchTriggerResult (
     if (this === other) {
       return true
     }
-    return _ignore == other._ignore
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1673,18 +1673,18 @@ data class PPurchasedPaywallResult (
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PDeclinedPaywallResult (
-  val _ignore: Boolean? = null
+  val ignore: Boolean? = null
 ) : PPaywallResult()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PDeclinedPaywallResult {
-      val _ignore = pigeonVar_list[0] as Boolean?
-      return PDeclinedPaywallResult(_ignore)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PDeclinedPaywallResult(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _ignore,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -1694,7 +1694,7 @@ data class PDeclinedPaywallResult (
     if (this === other) {
       return true
     }
-    return _ignore == other._ignore
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1702,18 +1702,18 @@ data class PDeclinedPaywallResult (
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PRestoredPaywallResult (
-  val _ignore: Boolean? = null
+  val ignore: Boolean? = null
 ) : PPaywallResult()
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PRestoredPaywallResult {
-      val _ignore = pigeonVar_list[0] as Boolean?
-      return PRestoredPaywallResult(_ignore)
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PRestoredPaywallResult(ignore)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
-      _ignore,
+      ignore,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -1723,7 +1723,7 @@ data class PRestoredPaywallResult (
     if (this === other) {
       return true
     }
-    return _ignore == other._ignore
+    return ignore == other.ignore
   }
 
   override fun hashCode(): Int = toList().hashCode()
