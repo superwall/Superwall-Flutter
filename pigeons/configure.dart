@@ -488,6 +488,36 @@ class PExperiment {
   PVariant variant;
 }
 
+// TriggerResult sealed class and related types
+sealed class PTriggerResult {
+  PTriggerResult();
+}
+
+class PPlacementNotFoundTriggerResult extends PTriggerResult {
+  bool? _ignore;
+  PPlacementNotFoundTriggerResult(this._ignore);
+}
+
+class PNoAudienceMatchTriggerResult extends PTriggerResult {
+  bool? _ignore;
+  PNoAudienceMatchTriggerResult(this._ignore);
+}
+
+class PPaywallTriggerResult extends PTriggerResult {
+  PExperiment experiment;
+  PPaywallTriggerResult({required this.experiment});
+}
+
+class PHoldoutTriggerResult extends PTriggerResult {
+  PExperiment experiment;
+  PHoldoutTriggerResult({required this.experiment});
+}
+
+class PErrorTriggerResult extends PTriggerResult {
+  String error;
+  PErrorTriggerResult({required this.error});
+}
+
 class PVariant {
   PVariant({
     required this.id,

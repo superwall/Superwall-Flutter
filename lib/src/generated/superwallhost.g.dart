@@ -1754,6 +1754,219 @@ class PExperiment {
 ;
 }
 
+sealed class PTriggerResult {
+}
+
+class PPlacementNotFoundTriggerResult extends PTriggerResult {
+  PPlacementNotFoundTriggerResult({
+    this._ignore,
+  });
+
+  bool? _ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      _ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PPlacementNotFoundTriggerResult decode(Object result) {
+    result as List<Object?>;
+    return PPlacementNotFoundTriggerResult(
+      _ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PPlacementNotFoundTriggerResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      _ignore == other._ignore;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PNoAudienceMatchTriggerResult extends PTriggerResult {
+  PNoAudienceMatchTriggerResult({
+    this._ignore,
+  });
+
+  bool? _ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      _ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PNoAudienceMatchTriggerResult decode(Object result) {
+    result as List<Object?>;
+    return PNoAudienceMatchTriggerResult(
+      _ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PNoAudienceMatchTriggerResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      _ignore == other._ignore;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PPaywallTriggerResult extends PTriggerResult {
+  PPaywallTriggerResult({
+    required this.experiment,
+  });
+
+  PExperiment experiment;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      experiment,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PPaywallTriggerResult decode(Object result) {
+    result as List<Object?>;
+    return PPaywallTriggerResult(
+      experiment: result[0]! as PExperiment,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PPaywallTriggerResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      experiment == other.experiment;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PHoldoutTriggerResult extends PTriggerResult {
+  PHoldoutTriggerResult({
+    required this.experiment,
+  });
+
+  PExperiment experiment;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      experiment,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PHoldoutTriggerResult decode(Object result) {
+    result as List<Object?>;
+    return PHoldoutTriggerResult(
+      experiment: result[0]! as PExperiment,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PHoldoutTriggerResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      experiment == other.experiment;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PErrorTriggerResult extends PTriggerResult {
+  PErrorTriggerResult({
+    required this.error,
+  });
+
+  String error;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      error,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PErrorTriggerResult decode(Object result) {
+    result as List<Object?>;
+    return PErrorTriggerResult(
+      error: result[0]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PErrorTriggerResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      error == other.error;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
 class PVariant {
   PVariant({
     required this.id,
@@ -2122,20 +2335,35 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PExperiment) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    }    else if (value is PVariant) {
+    }    else if (value is PPlacementNotFoundTriggerResult) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfirmedAssignment) {
+    }    else if (value is PNoAudienceMatchTriggerResult) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasedPaywallResult) {
+    }    else if (value is PPaywallTriggerResult) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    }    else if (value is PDeclinedPaywallResult) {
+    }    else if (value is PHoldoutTriggerResult) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoredPaywallResult) {
+    }    else if (value is PErrorTriggerResult) {
       buffer.putUint8(176);
+      writeValue(buffer, value.encode());
+    }    else if (value is PVariant) {
+      buffer.putUint8(177);
+      writeValue(buffer, value.encode());
+    }    else if (value is PConfirmedAssignment) {
+      buffer.putUint8(178);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPurchasedPaywallResult) {
+      buffer.putUint8(179);
+      writeValue(buffer, value.encode());
+    }    else if (value is PDeclinedPaywallResult) {
+      buffer.putUint8(180);
+      writeValue(buffer, value.encode());
+    }    else if (value is PRestoredPaywallResult) {
+      buffer.putUint8(181);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2248,14 +2476,24 @@ class _PigeonCodec extends StandardMessageCodec {
       case 171: 
         return PExperiment.decode(readValue(buffer)!);
       case 172: 
-        return PVariant.decode(readValue(buffer)!);
+        return PPlacementNotFoundTriggerResult.decode(readValue(buffer)!);
       case 173: 
-        return PConfirmedAssignment.decode(readValue(buffer)!);
+        return PNoAudienceMatchTriggerResult.decode(readValue(buffer)!);
       case 174: 
-        return PPurchasedPaywallResult.decode(readValue(buffer)!);
+        return PPaywallTriggerResult.decode(readValue(buffer)!);
       case 175: 
-        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+        return PHoldoutTriggerResult.decode(readValue(buffer)!);
       case 176: 
+        return PErrorTriggerResult.decode(readValue(buffer)!);
+      case 177: 
+        return PVariant.decode(readValue(buffer)!);
+      case 178: 
+        return PConfirmedAssignment.decode(readValue(buffer)!);
+      case 179: 
+        return PPurchasedPaywallResult.decode(readValue(buffer)!);
+      case 180: 
+        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+      case 181: 
         return PRestoredPaywallResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

@@ -1417,6 +1417,156 @@ data class PExperiment (
   override fun hashCode(): Int = toList().hashCode()
 }
 
+/**
+ * Generated class from Pigeon that represents data sent in messages.
+ * This class should not be extended by any user class outside of the generated file.
+ */
+sealed class PTriggerResult 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PPlacementNotFoundTriggerResult (
+  val _ignore: Boolean? = null
+) : PTriggerResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PPlacementNotFoundTriggerResult {
+      val _ignore = pigeonVar_list[0] as Boolean?
+      return PPlacementNotFoundTriggerResult(_ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      _ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PPlacementNotFoundTriggerResult) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return _ignore == other._ignore
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PNoAudienceMatchTriggerResult (
+  val _ignore: Boolean? = null
+) : PTriggerResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PNoAudienceMatchTriggerResult {
+      val _ignore = pigeonVar_list[0] as Boolean?
+      return PNoAudienceMatchTriggerResult(_ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      _ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PNoAudienceMatchTriggerResult) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return _ignore == other._ignore
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PPaywallTriggerResult (
+  val experiment: PExperiment
+) : PTriggerResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PPaywallTriggerResult {
+      val experiment = pigeonVar_list[0] as PExperiment
+      return PPaywallTriggerResult(experiment)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      experiment,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PPaywallTriggerResult) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return experiment == other.experiment
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PHoldoutTriggerResult (
+  val experiment: PExperiment
+) : PTriggerResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PHoldoutTriggerResult {
+      val experiment = pigeonVar_list[0] as PExperiment
+      return PHoldoutTriggerResult(experiment)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      experiment,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PHoldoutTriggerResult) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return experiment == other.experiment
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PErrorTriggerResult (
+  val error: String
+) : PTriggerResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PErrorTriggerResult {
+      val error = pigeonVar_list[0] as String
+      return PErrorTriggerResult(error)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      error,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PErrorTriggerResult) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return error == other.error
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PVariant (
   val id: String,
@@ -1798,25 +1948,50 @@ private open class HostPigeonCodec : StandardMessageCodec() {
       }
       172.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PVariant.fromList(it)
+          PPlacementNotFoundTriggerResult.fromList(it)
         }
       }
       173.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfirmedAssignment.fromList(it)
+          PNoAudienceMatchTriggerResult.fromList(it)
         }
       }
       174.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasedPaywallResult.fromList(it)
+          PPaywallTriggerResult.fromList(it)
         }
       }
       175.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PDeclinedPaywallResult.fromList(it)
+          PHoldoutTriggerResult.fromList(it)
         }
       }
       176.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PErrorTriggerResult.fromList(it)
+        }
+      }
+      177.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PVariant.fromList(it)
+        }
+      }
+      178.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PConfirmedAssignment.fromList(it)
+        }
+      }
+      179.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PPurchasedPaywallResult.fromList(it)
+        }
+      }
+      180.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PDeclinedPaywallResult.fromList(it)
+        }
+      }
+      181.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PRestoredPaywallResult.fromList(it)
         }
@@ -1998,24 +2173,44 @@ private open class HostPigeonCodec : StandardMessageCodec() {
         stream.write(171)
         writeValue(stream, value.toList())
       }
-      is PVariant -> {
+      is PPlacementNotFoundTriggerResult -> {
         stream.write(172)
         writeValue(stream, value.toList())
       }
-      is PConfirmedAssignment -> {
+      is PNoAudienceMatchTriggerResult -> {
         stream.write(173)
         writeValue(stream, value.toList())
       }
-      is PPurchasedPaywallResult -> {
+      is PPaywallTriggerResult -> {
         stream.write(174)
         writeValue(stream, value.toList())
       }
-      is PDeclinedPaywallResult -> {
+      is PHoldoutTriggerResult -> {
         stream.write(175)
         writeValue(stream, value.toList())
       }
-      is PRestoredPaywallResult -> {
+      is PErrorTriggerResult -> {
         stream.write(176)
+        writeValue(stream, value.toList())
+      }
+      is PVariant -> {
+        stream.write(177)
+        writeValue(stream, value.toList())
+      }
+      is PConfirmedAssignment -> {
+        stream.write(178)
+        writeValue(stream, value.toList())
+      }
+      is PPurchasedPaywallResult -> {
+        stream.write(179)
+        writeValue(stream, value.toList())
+      }
+      is PDeclinedPaywallResult -> {
+        stream.write(180)
+        writeValue(stream, value.toList())
+      }
+      is PRestoredPaywallResult -> {
+        stream.write(181)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
