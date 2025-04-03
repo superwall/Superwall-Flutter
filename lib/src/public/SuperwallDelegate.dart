@@ -61,7 +61,14 @@ class SuperwallDelegateHost implements PSuperwallDelegateGenerated {
 
   @override
   void handleSuperwallEvent(PSuperwallEventInfoPigeon eventInfo) {
-//    _delegate.handleSuperwallEvent(info);
+    // Create a map with eventType and params
+    final Map<dynamic, dynamic> json = {
+      'placement': eventInfo.eventType.toString().split('.').last,
+      ...?eventInfo.params?.cast<dynamic, dynamic>()
+    };
+
+    final info = SuperwallEventInfo.fromJson(json);
+    _delegate.handleSuperwallEvent(info);
   }
 
   @override

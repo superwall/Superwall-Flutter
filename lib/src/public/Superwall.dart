@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
+import 'package:superwallkit_flutter/src/private/FeatureBlockProxy.dart';
+import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
 import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
@@ -362,11 +364,29 @@ class Superwall {
 
   /// Registers a placement to access a feature, potentially showing a paywall
   Future<void> registerPlacement(String placement,
-      {Map<String, dynamic>? params,
+      {Map<String, Object>? params,
       PaywallPresentationHandler? handler,
       Function? feature}) async {
-    throw UnimplementedError(
-        'registerPlacement is not yet implemented in the new API');
+    final handlerProxy = handler != null
+        ? PaywallPresentationHandlerProxy.register(handler, hostId: placement)
+        : null;
+
+    final handlerHost = handler != null
+        ? generated.PPaywallPresentationHandlerHost(hostId: placement)
+        : null;
+    final featureBlockHost = feature != null
+        ? generated.PFeatureHandlerHost(hostId: "${placement}handler")
+        : null;
+    final featureBlock = feature != null
+        ? FeatureBlockProxy.register(feature, hostId: placement)
+        : null;
+    print("Registered callers $placement");
+
+    await hostApi.registerPlacement(placement,
+        params: params,
+        handler: handler != null ? handlerHost : null,
+        feature: feature != null ? featureBlockHost : null);
+    print("Registered placement $placement");
   }
 
   /// Identifies a user with the given ID and options

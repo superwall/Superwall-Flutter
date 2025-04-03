@@ -4,8 +4,7 @@ import '../generated/superwallhost.g.dart';
 sealed class PaywallSkippedReason {
   const PaywallSkippedReason();
 
-  static PaywallSkippedReason? fromPPaywallSkippedReason(
-      PPaywallSkippedReason reason) {
+  static PaywallSkippedReason? fromPigeon(PPaywallSkippedReason reason) {
     switch (reason) {
       case PPaywallSkippedReason.holdout:
         return const PaywallSkippedReasonHoldout();

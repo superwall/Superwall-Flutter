@@ -45,6 +45,9 @@ import com.superwall.sdk.paywall.presentation.register
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
 import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
+import android.util.Log
+import com.superwall.sdk.config.options.SuperwallOptions
+import com.superwall.sdk.logger.LogLevel
 
 class SuperwallHost(
     val context: () -> Application,
@@ -64,9 +67,12 @@ class SuperwallHost(
         completion: PConfigureCompletionHost?,
         callback: (Result<Unit>) -> Unit
     ) {
-        val sdkOptions = options?.toSdkOptions()
+        Log.e("SuperwallHost", "Calling configure")
+        val sdkOptions = (options?.toSdkOptions()?: SuperwallOptions()).apply {
+            logging.level = LogLevel.debug
+        }
         Superwall.configure(
-            applicationContext = context(),
+            applicationContext = context().applicationContext as Application,
             apiKey = apiKey,
             options = sdkOptions,
             purchaseController = if (purchaseController != null) {
@@ -74,12 +80,14 @@ class SuperwallHost(
             } else null,
             completion = if (completion != null) {
                 { result: Result<Unit> ->
+                    Log.e("SuperwallHost","Completed")
                     PConfigureCompletionGenerated(binaryMessenger()).onConfigureCompleted(
                         result.isSuccess,
                         {})
                 }
             } else null
         )
+        Log.e("SuperwallHost", "Called configure")
     }
 
     override fun reset() {
@@ -241,13 +249,14 @@ class SuperwallHost(
         callback: (Result<Unit>) -> Unit
     ) {
         val host = if (handler != null) PaywallPresentationHandlerHost({
-            PPaywallPresentationHandlerGenerated(binaryMessenger())
+            PPaywallPresentationHandlerGenerated(binaryMessenger(), placement)
         }) else null
 
+        Log.e("SuperwallHost", "registerPlacement $placement")
         Superwall.instance.register(
             placement, params, host?.handler, if (feature != null) {
                 {
-                    PFeatureHandlerGenerated(binaryMessenger(), feature.hostId ?: "").onFeature(
+                    PFeatureHandlerGenerated(binaryMessenger(), placement).onFeature(
                         feature.hostId ?: "", {}
                     )
                 }
