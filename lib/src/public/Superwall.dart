@@ -1,17 +1,18 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/src/private/ConfigureCompletionProxy.dart';
 import 'package:superwallkit_flutter/src/private/FeatureBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
 import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
 import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
+import 'package:superwallkit_flutter/src/public/ConfirmedAssignments.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
-/// The primary class for integrating Superwall into your application.
-/// After configuring via `configure(apiKey: purchaseController: options: completion:)`,
-/// it provides access to all its features via instance functions and variables.
+// The primary class for integrating Superwall into your application.
+// After configuring via `configure(apiKey: purchaseController: options: completion:)`,
+// it provides access to all its features via instance functions and variables.
 class Superwall {
   static final Superwall _superwall = Superwall._();
   static final generated.PSuperwallHostApi hostApi =
@@ -20,12 +21,12 @@ class Superwall {
   // Private constructor
   Superwall._();
 
-  /// Getter for the shared instance
+  // Getter for the shared instance
   static Superwall get shared {
     return _superwall;
   }
 
-  /// Static method to configure the Superwall instance
+  // Static method to configure the Superwall instance
   static Superwall configure(String apiKey,
       {PurchaseController? purchaseController,
       SuperwallOptions? options,
@@ -235,77 +236,84 @@ class Superwall {
     }
   }
 
-  /// Resets the user ID, on-device paywall assignments, and stored data
+  // Resets the user ID, on-device paywall assignments, and stored data
   Future<void> reset() async {
     await hostApi.reset();
   }
 
-  /// Confirms all user assignments
-  Future<void> confirmAllAssignments() async {
-    await hostApi.confirmAllAssignments();
+  // Confirms all user assignments
+  Future<Set<ConfirmedAssignment>> confirmAllAssignments() async {
+    final assignments = await hostApi.confirmAllAssignments();
+    return assignments.map((e) => ConfirmedAssignment.fromPigeon(e)).toSet();
   }
 
-  /// Gets the log level
+  // Gets the log level
   Future<LogLevel> getLogLevel() async {
     final logLevelJson = await hostApi.getLogLevel();
     // Convert from JSON string to LogLevel using the extension method
     return LogLevelJson.fromJson(logLevelJson);
   }
 
-  /// Sets the log level
+  // Sets the log level
   Future<void> setLogLevel(LogLevel newLogLevel) async {
     // Convert LogLevel to string using the extension method
     final logLevelString = newLogLevel.toJson();
     await hostApi.setLogLevel(logLevelString);
   }
 
-  /// Gets the user attributes
+  // Gets the user attributes
   Future<Map<String, dynamic>> getUserAttributes() async {
     return await hostApi.getUserAttributes();
   }
 
-  /// Sets the user attributes
+  // Sets the user attributes
   Future<void> setUserAttributes(Map<String, Object> userAttributes) async {
     await hostApi.setUserAttributes(userAttributes);
   }
 
-  /// Gets the locale identifier
+  // Gets the locale identifier
   Future<String?> getLocaleIdentifier() async {
     return await hostApi.getLocaleIdentifier();
   }
 
-  /// Sets the locale identifier
+  // Sets the locale identifier
   Future<void> setLocaleIdentifier(String? localeIdentifier) async {
     await hostApi.setLocaleIdentifier(localeIdentifier);
   }
 
-  /// Gets the current user's ID
+  // Gets the current user's ID
   Future<String> getUserId() async {
     return await hostApi.getUserId();
   }
 
-  /// Checks if the user is logged in to Superwall
+  // Checks if the user is logged in to Superwall
   Future<bool> getIsLoggedIn() async {
     return await hostApi.getIsLoggedIn();
   }
 
-  /// Checks if Superwall is initialized
+  // Checks if Superwall is initialized
   Future<bool> getIsInitialized() async {
     return await hostApi.getIsInitialized();
   }
 
-  /// Gets the entitlements
-  Future<Set<Entitlement>> getEntitlements() async {
+  // Gets the entitlements
+  Future<Entitlements> getEntitlements() async {
     final entitlements = await hostApi.getEntitlements();
-    return entitlements.map((e) => Entitlement(id: e.id!!)).toSet();
+    map(List<PEntitlement> entitlements) =>
+        entitlements.map((e) => Entitlement(id: e.id!!)).toSet();
+
+    return Entitlements(
+        active: map(entitlements.active),
+        inactive: map(entitlements.inactive),
+        all: map(entitlements.all));
   }
 
-  /// Gets the latest PaywallInfo object
+  // Gets the latest PaywallInfo object
   Future<PaywallInfo?> getLatestPaywallInfo() async {
     final paywallInfoBridgeId = await hostApi.getLatestPaywallInfo();
   }
 
-  /// Gets the subscription status of the user
+  // Gets the subscription status of the user
   Future<SubscriptionStatus> getSubscriptionStatus() async {
     final subscriptionStatusBridgeId = await hostApi.getSubscriptionStatus();
 
@@ -324,54 +332,54 @@ class Superwall {
     return SubscriptionStatus.unknown;
   }
 
-  /// Sets the subscription status of the user
+  // Sets the subscription status of the user
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
     await hostApi.setSubscriptionStatus(status.toPSubscriptionStatus());
   }
 
-  /// Gets the configuration status of Superwall
+  // Gets the configuration status of Superwall
   Future<ConfigurationStatus> getConfigurationStatus() async {
     final res = await hostApi.getConfigurationStatus();
     return ConfigurationStatus
         .createConfigurationStatusFromPConfigurationStatus(res);
   }
 
-  /// Checks if Superwall has finished configuring
+  // Checks if Superwall has finished configuring
   Future<bool> getIsConfigured() async {
     return await hostApi.getIsConfigured();
   }
 
-  /// Checks if a paywall is currently being presented
+  // Checks if a paywall is currently being presented
   Future<bool> getIsPaywallPresented() async {
     return await hostApi.getIsPaywallPresented();
   }
 
-  /// Preloads all paywalls
+  // Preloads all paywalls
   Future<void> preloadAllPaywalls() async {
     await hostApi.preloadAllPaywalls();
   }
 
-  /// Preloads paywalls for specific placement names
+  // Preloads paywalls for specific placement names
   Future<void> preloadPaywallsForPlacements(Set<String> placementNames) async {
     await hostApi.preloadPaywallsForPlacements(placementNames.toList());
   }
 
-  /// Handles deep links for paywall previews
+  // Handles deep links for paywall previews
   Future<bool> handleDeepLink(Uri url) async {
     return await hostApi.handleDeepLink(url.toString());
   }
 
-  /// Toggles the paywall loading spinner
+  // Toggles the paywall loading spinner
   Future<void> togglePaywallSpinner(bool isHidden) async {
     await hostApi.togglePaywallSpinner(isHidden);
   }
 
-  /// Dismisses the presented paywall, if one exists
+  // Dismisses the presented paywall, if one exists
   Future<void> dismiss() async {
     await hostApi.dismiss();
   }
 
-  /// Registers a placement to access a feature, potentially showing a paywall
+  // Registers a placement to access a feature, potentially showing a paywall
   Future<void> registerPlacement(String placement,
       {Map<String, Object>? params,
       PaywallPresentationHandler? handler,
@@ -398,7 +406,7 @@ class Superwall {
     print("Registered placement $placement");
   }
 
-  /// Identifies a user with the given ID and options
+  // Identifies a user with the given ID and options
   Future<void> identify(String userId, [IdentityOptions? options]) async {
     generated.PIdentityOptions? generatedOptions;
 
@@ -410,13 +418,13 @@ class Superwall {
     await hostApi.identify(userId, generatedOptions);
   }
 
-  void setDelegate(SuperwallDelegate? delegate) {
+  void setDelegate(SuperwallDelegate? delegate) async {
     if (delegate == null) {
-      hostApi.setDelegate(false);
+      await hostApi.setDelegate(false);
       return;
     }
     final middleman = SuperwallDelegateHost(delegate);
     generated.PSuperwallDelegateGenerated.setUp(middleman);
-    hostApi.setDelegate(true);
+    await hostApi.setDelegate(true);
   }
 }

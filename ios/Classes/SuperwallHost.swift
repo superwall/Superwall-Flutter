@@ -928,6 +928,34 @@ struct PEntitlement {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
+struct PEntitlements {
+  var active: [PEntitlement]
+  var inactive: [PEntitlement]
+  var all: [PEntitlement]
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PEntitlements? {
+    let active = pigeonVar_list[0] as! [PEntitlement]
+    let inactive = pigeonVar_list[1] as! [PEntitlement]
+    let all = pigeonVar_list[2] as! [PEntitlement]
+
+    return PEntitlements(
+      active: active,
+      inactive: inactive,
+      all: all
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      active,
+      inactive,
+      all,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
 /// This protocol should not be extended by any user class outside of the generated file.
 protocol PSubscriptionStatus {
 
@@ -1435,36 +1463,38 @@ private class SuperwallHostPigeonCodecReader: FlutterStandardReader {
     case 165:
       return PEntitlement.fromList(self.readValue() as! [Any?])
     case 166:
-      return PActive.fromList(self.readValue() as! [Any?])
+      return PEntitlements.fromList(self.readValue() as! [Any?])
     case 167:
-      return PInactive.fromList(self.readValue() as! [Any?])
+      return PActive.fromList(self.readValue() as! [Any?])
     case 168:
-      return PUnknown.fromList(self.readValue() as! [Any?])
+      return PInactive.fromList(self.readValue() as! [Any?])
     case 169:
-      return PSuperwallEventInfo.fromList(self.readValue() as! [Any?])
+      return PUnknown.fromList(self.readValue() as! [Any?])
     case 170:
-      return PIdentityOptions.fromList(self.readValue() as! [Any?])
+      return PSuperwallEventInfo.fromList(self.readValue() as! [Any?])
     case 171:
-      return PExperiment.fromList(self.readValue() as! [Any?])
+      return PIdentityOptions.fromList(self.readValue() as! [Any?])
     case 172:
-      return PPlacementNotFoundTriggerResult.fromList(self.readValue() as! [Any?])
+      return PExperiment.fromList(self.readValue() as! [Any?])
     case 173:
-      return PNoAudienceMatchTriggerResult.fromList(self.readValue() as! [Any?])
+      return PPlacementNotFoundTriggerResult.fromList(self.readValue() as! [Any?])
     case 174:
-      return PPaywallTriggerResult.fromList(self.readValue() as! [Any?])
+      return PNoAudienceMatchTriggerResult.fromList(self.readValue() as! [Any?])
     case 175:
-      return PHoldoutTriggerResult.fromList(self.readValue() as! [Any?])
+      return PPaywallTriggerResult.fromList(self.readValue() as! [Any?])
     case 176:
-      return PErrorTriggerResult.fromList(self.readValue() as! [Any?])
+      return PHoldoutTriggerResult.fromList(self.readValue() as! [Any?])
     case 177:
-      return PVariant.fromList(self.readValue() as! [Any?])
+      return PErrorTriggerResult.fromList(self.readValue() as! [Any?])
     case 178:
-      return PConfirmedAssignment.fromList(self.readValue() as! [Any?])
+      return PVariant.fromList(self.readValue() as! [Any?])
     case 179:
-      return PPurchasedPaywallResult.fromList(self.readValue() as! [Any?])
+      return PConfirmedAssignment.fromList(self.readValue() as! [Any?])
     case 180:
-      return PDeclinedPaywallResult.fromList(self.readValue() as! [Any?])
+      return PPurchasedPaywallResult.fromList(self.readValue() as! [Any?])
     case 181:
+      return PDeclinedPaywallResult.fromList(self.readValue() as! [Any?])
+    case 182:
       return PRestoredPaywallResult.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -1585,53 +1615,56 @@ private class SuperwallHostPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PEntitlement {
       super.writeByte(165)
       super.writeValue(value.toList())
-    } else if let value = value as? PActive {
+    } else if let value = value as? PEntitlements {
       super.writeByte(166)
       super.writeValue(value.toList())
-    } else if let value = value as? PInactive {
+    } else if let value = value as? PActive {
       super.writeByte(167)
       super.writeValue(value.toList())
-    } else if let value = value as? PUnknown {
+    } else if let value = value as? PInactive {
       super.writeByte(168)
       super.writeValue(value.toList())
-    } else if let value = value as? PSuperwallEventInfo {
+    } else if let value = value as? PUnknown {
       super.writeByte(169)
       super.writeValue(value.toList())
-    } else if let value = value as? PIdentityOptions {
+    } else if let value = value as? PSuperwallEventInfo {
       super.writeByte(170)
       super.writeValue(value.toList())
-    } else if let value = value as? PExperiment {
+    } else if let value = value as? PIdentityOptions {
       super.writeByte(171)
       super.writeValue(value.toList())
-    } else if let value = value as? PPlacementNotFoundTriggerResult {
+    } else if let value = value as? PExperiment {
       super.writeByte(172)
       super.writeValue(value.toList())
-    } else if let value = value as? PNoAudienceMatchTriggerResult {
+    } else if let value = value as? PPlacementNotFoundTriggerResult {
       super.writeByte(173)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallTriggerResult {
+    } else if let value = value as? PNoAudienceMatchTriggerResult {
       super.writeByte(174)
       super.writeValue(value.toList())
-    } else if let value = value as? PHoldoutTriggerResult {
+    } else if let value = value as? PPaywallTriggerResult {
       super.writeByte(175)
       super.writeValue(value.toList())
-    } else if let value = value as? PErrorTriggerResult {
+    } else if let value = value as? PHoldoutTriggerResult {
       super.writeByte(176)
       super.writeValue(value.toList())
-    } else if let value = value as? PVariant {
+    } else if let value = value as? PErrorTriggerResult {
       super.writeByte(177)
       super.writeValue(value.toList())
-    } else if let value = value as? PConfirmedAssignment {
+    } else if let value = value as? PVariant {
       super.writeByte(178)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchasedPaywallResult {
+    } else if let value = value as? PConfirmedAssignment {
       super.writeByte(179)
       super.writeValue(value.toList())
-    } else if let value = value as? PDeclinedPaywallResult {
+    } else if let value = value as? PPurchasedPaywallResult {
       super.writeByte(180)
       super.writeValue(value.toList())
-    } else if let value = value as? PRestoredPaywallResult {
+    } else if let value = value as? PDeclinedPaywallResult {
       super.writeByte(181)
+      super.writeValue(value.toList())
+    } else if let value = value as? PRestoredPaywallResult {
+      super.writeByte(182)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -1670,7 +1703,7 @@ protocol PSuperwallHostApi {
   func getIsLoggedIn() throws -> Bool
   func getIsInitialized() throws -> Bool
   func identify(userId: String, identityOptions: PIdentityOptions?) throws
-  func getEntitlements() throws -> [PEntitlement]
+  func getEntitlements() throws -> PEntitlements
   func getSubscriptionStatus() throws -> PSubscriptionStatus
   func setSubscriptionStatus(subscriptionStatus: PSubscriptionStatus) throws
   func getConfigurationStatus() throws -> PConfigurationStatus

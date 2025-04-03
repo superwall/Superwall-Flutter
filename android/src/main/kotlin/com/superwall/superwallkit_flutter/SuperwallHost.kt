@@ -6,6 +6,7 @@ import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
 import PEntitlement
+import PEntitlements
 import PFeatureHandlerGenerated
 import PFeatureHandlerHost
 import PIdentityOptions
@@ -170,10 +171,15 @@ class SuperwallHost(
         })
     }
 
-    override fun getEntitlements(): List<PEntitlement> {
-        return Superwall.instance.entitlements.active.map {
-            PEntitlement(it.id)
-        }
+    override fun getEntitlements(): PEntitlements {
+        return PEntitlements(
+            active = Superwall.instance.entitlements.active.map {
+                PEntitlement(it.id)
+            }, inactive = Superwall.instance.entitlements.inactive.map {
+                PEntitlement(it.id)
+            }, all = Superwall.instance.entitlements.all.map {
+                PEntitlement(it.id)
+            })
     }
 
 

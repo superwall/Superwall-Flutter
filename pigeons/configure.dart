@@ -308,6 +308,14 @@ class PEntitlement {
   String? id;
 }
 
+class PEntitlements {
+  List<PEntitlement> active;
+  List<PEntitlement> inactive;
+  List<PEntitlement> all;
+
+  PEntitlements(this.active, this.inactive, this.all);
+}
+
 sealed class PSubscriptionStatus {
   PSubscriptionStatus();
 }
@@ -609,7 +617,7 @@ abstract class PSuperwallHostApi {
   void identify(String userId, PIdentityOptions? identityOptions);
 
   // Entitlements methods
-  List<PEntitlement> getEntitlements();
+  PEntitlements getEntitlements();
 
   // Subscription status methods
   PSubscriptionStatus getSubscriptionStatus();

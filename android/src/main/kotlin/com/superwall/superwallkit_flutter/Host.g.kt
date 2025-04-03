@@ -1222,6 +1222,43 @@ data class PEntitlement (
   override fun hashCode(): Int = toList().hashCode()
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PEntitlements (
+  val active: List<PEntitlement>,
+  val inactive: List<PEntitlement>,
+  val all: List<PEntitlement>
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PEntitlements {
+      val active = pigeonVar_list[0] as List<PEntitlement>
+      val inactive = pigeonVar_list[1] as List<PEntitlement>
+      val all = pigeonVar_list[2] as List<PEntitlement>
+      return PEntitlements(active, inactive, all)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      active,
+      inactive,
+      all,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PEntitlements) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return deepEqualsHost(active, other.active)
+    && deepEqualsHost(inactive, other.inactive)
+    && deepEqualsHost(all, other.all)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
 /**
  * Generated class from Pigeon that represents data sent in messages.
  * This class should not be extended by any user class outside of the generated file.
@@ -1918,80 +1955,85 @@ private open class HostPigeonCodec : StandardMessageCodec() {
       }
       166.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PActive.fromList(it)
+          PEntitlements.fromList(it)
         }
       }
       167.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PInactive.fromList(it)
+          PActive.fromList(it)
         }
       }
       168.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PUnknown.fromList(it)
+          PInactive.fromList(it)
         }
       }
       169.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallEventInfo.fromList(it)
+          PUnknown.fromList(it)
         }
       }
       170.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PIdentityOptions.fromList(it)
+          PSuperwallEventInfo.fromList(it)
         }
       }
       171.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExperiment.fromList(it)
+          PIdentityOptions.fromList(it)
         }
       }
       172.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPlacementNotFoundTriggerResult.fromList(it)
+          PExperiment.fromList(it)
         }
       }
       173.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PNoAudienceMatchTriggerResult.fromList(it)
+          PPlacementNotFoundTriggerResult.fromList(it)
         }
       }
       174.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallTriggerResult.fromList(it)
+          PNoAudienceMatchTriggerResult.fromList(it)
         }
       }
       175.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PHoldoutTriggerResult.fromList(it)
+          PPaywallTriggerResult.fromList(it)
         }
       }
       176.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PErrorTriggerResult.fromList(it)
+          PHoldoutTriggerResult.fromList(it)
         }
       }
       177.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PVariant.fromList(it)
+          PErrorTriggerResult.fromList(it)
         }
       }
       178.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfirmedAssignment.fromList(it)
+          PVariant.fromList(it)
         }
       }
       179.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasedPaywallResult.fromList(it)
+          PConfirmedAssignment.fromList(it)
         }
       }
       180.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PDeclinedPaywallResult.fromList(it)
+          PPurchasedPaywallResult.fromList(it)
         }
       }
       181.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PDeclinedPaywallResult.fromList(it)
+        }
+      }
+      182.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PRestoredPaywallResult.fromList(it)
         }
@@ -2149,68 +2191,72 @@ private open class HostPigeonCodec : StandardMessageCodec() {
         stream.write(165)
         writeValue(stream, value.toList())
       }
-      is PActive -> {
+      is PEntitlements -> {
         stream.write(166)
         writeValue(stream, value.toList())
       }
-      is PInactive -> {
+      is PActive -> {
         stream.write(167)
         writeValue(stream, value.toList())
       }
-      is PUnknown -> {
+      is PInactive -> {
         stream.write(168)
         writeValue(stream, value.toList())
       }
-      is PSuperwallEventInfo -> {
+      is PUnknown -> {
         stream.write(169)
         writeValue(stream, value.toList())
       }
-      is PIdentityOptions -> {
+      is PSuperwallEventInfo -> {
         stream.write(170)
         writeValue(stream, value.toList())
       }
-      is PExperiment -> {
+      is PIdentityOptions -> {
         stream.write(171)
         writeValue(stream, value.toList())
       }
-      is PPlacementNotFoundTriggerResult -> {
+      is PExperiment -> {
         stream.write(172)
         writeValue(stream, value.toList())
       }
-      is PNoAudienceMatchTriggerResult -> {
+      is PPlacementNotFoundTriggerResult -> {
         stream.write(173)
         writeValue(stream, value.toList())
       }
-      is PPaywallTriggerResult -> {
+      is PNoAudienceMatchTriggerResult -> {
         stream.write(174)
         writeValue(stream, value.toList())
       }
-      is PHoldoutTriggerResult -> {
+      is PPaywallTriggerResult -> {
         stream.write(175)
         writeValue(stream, value.toList())
       }
-      is PErrorTriggerResult -> {
+      is PHoldoutTriggerResult -> {
         stream.write(176)
         writeValue(stream, value.toList())
       }
-      is PVariant -> {
+      is PErrorTriggerResult -> {
         stream.write(177)
         writeValue(stream, value.toList())
       }
-      is PConfirmedAssignment -> {
+      is PVariant -> {
         stream.write(178)
         writeValue(stream, value.toList())
       }
-      is PPurchasedPaywallResult -> {
+      is PConfirmedAssignment -> {
         stream.write(179)
         writeValue(stream, value.toList())
       }
-      is PDeclinedPaywallResult -> {
+      is PPurchasedPaywallResult -> {
         stream.write(180)
         writeValue(stream, value.toList())
       }
-      is PRestoredPaywallResult -> {
+      is PDeclinedPaywallResult -> {
         stream.write(181)
+        writeValue(stream, value.toList())
+      }
+      is PRestoredPaywallResult -> {
+        stream.write(182)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -2235,7 +2281,7 @@ interface PSuperwallHostApi {
   fun getIsLoggedIn(): Boolean
   fun getIsInitialized(): Boolean
   fun identify(userId: String, identityOptions: PIdentityOptions?)
-  fun getEntitlements(): List<PEntitlement>
+  fun getEntitlements(): PEntitlements
   fun getSubscriptionStatus(): PSubscriptionStatus
   fun setSubscriptionStatus(subscriptionStatus: PSubscriptionStatus)
   fun getConfigurationStatus(): PConfigurationStatus
