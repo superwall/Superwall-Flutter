@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
+import 'package:superwallkit_flutter/src/private/ConfigureCompletionProxy.dart';
 import 'package:superwallkit_flutter/src/private/FeatureBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
+import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
 import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
@@ -31,17 +33,24 @@ class Superwall {
     final purchaseControllerHost =
         purchaseController != null ? generated.PPurchaseControllerHost() : null;
 
+    final proxy = purchaseController != null
+        ? PurchaseControllerProxy.register(purchaseController)
+        : null;
     // Convert SuperwallOptions to generated.PSuperwallOptions if needed
     final generatedOptions =
         options != null ? _convertToGeneratedOptions(options) : null;
 
-    hostApi.configure(apiKey,
-        purchaseController: purchaseControllerHost, options: generatedOptions);
+    final completionHost =
+        completion != null ? generated.PConfigureCompletionHost() : null;
 
-    // If completion callback provided, call it
-    if (completion != null) {
-      completion();
-    }
+    final completionProxy = completion != null
+        ? ConfigureCompletionProxy.register(completion)
+        : null;
+
+    hostApi.configure(apiKey,
+        purchaseController: purchaseControllerHost,
+        options: generatedOptions,
+        completion: completionHost);
 
     return _superwall;
   }

@@ -994,29 +994,29 @@ struct PUnknown: PSubscriptionStatus {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct PSuperwallEventInfoPigeon {
+struct PSuperwallEventInfo {
   var eventType: PEventType
   var params: [String: Any]? = nil
-  var paywallInfoBridgeId: String? = nil
+  var paywallInfo: PPaywallInfo? = nil
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeonVar_list: [Any?]) -> PSuperwallEventInfoPigeon? {
+  static func fromList(_ pigeonVar_list: [Any?]) -> PSuperwallEventInfo? {
     let eventType = pigeonVar_list[0] as! PEventType
     let params: [String: Any]? = nilOrValue(pigeonVar_list[1])
-    let paywallInfoBridgeId: String? = nilOrValue(pigeonVar_list[2])
+    let paywallInfo: PPaywallInfo? = nilOrValue(pigeonVar_list[2])
 
-    return PSuperwallEventInfoPigeon(
+    return PSuperwallEventInfo(
       eventType: eventType,
       params: params,
-      paywallInfoBridgeId: paywallInfoBridgeId
+      paywallInfo: paywallInfo
     )
   }
   func toList() -> [Any?] {
     return [
       eventType,
       params,
-      paywallInfoBridgeId,
+      paywallInfo,
     ]
   }
 }
@@ -1441,7 +1441,7 @@ private class SuperwallHostPigeonCodecReader: FlutterStandardReader {
     case 168:
       return PUnknown.fromList(self.readValue() as! [Any?])
     case 169:
-      return PSuperwallEventInfoPigeon.fromList(self.readValue() as! [Any?])
+      return PSuperwallEventInfo.fromList(self.readValue() as! [Any?])
     case 170:
       return PIdentityOptions.fromList(self.readValue() as! [Any?])
     case 171:
@@ -1594,7 +1594,7 @@ private class SuperwallHostPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PUnknown {
       super.writeByte(168)
       super.writeValue(value.toList())
-    } else if let value = value as? PSuperwallEventInfoPigeon {
+    } else if let value = value as? PSuperwallEventInfo {
       super.writeByte(169)
       super.writeValue(value.toList())
     } else if let value = value as? PIdentityOptions {
@@ -2082,7 +2082,7 @@ class PSuperwallHostApiSetup {
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol PSuperwallDelegateGeneratedProtocol {
   func subscriptionStatusDidChange(from fromArg: PSubscriptionStatus, to toArg: PSubscriptionStatus, completion: @escaping (Result<Void, PigeonError>) -> Void)
-  func handleSuperwallEvent(eventInfo eventInfoArg: PSuperwallEventInfoPigeon, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func handleSuperwallEvent(eventInfo eventInfoArg: PSuperwallEventInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func handleCustomPaywallAction(name nameArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func willDismissPaywall(paywallInfo paywallInfoArg: PPaywallInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func willPresentPaywall(paywallInfo paywallInfoArg: PPaywallInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)
@@ -2120,7 +2120,7 @@ class PSuperwallDelegateGenerated: PSuperwallDelegateGeneratedProtocol {
       }
     }
   }
-  func handleSuperwallEvent(eventInfo eventInfoArg: PSuperwallEventInfoPigeon, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func handleSuperwallEvent(eventInfo eventInfoArg: PSuperwallEventInfo, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     let channelName: String = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([eventInfoArg] as [Any?]) { response in

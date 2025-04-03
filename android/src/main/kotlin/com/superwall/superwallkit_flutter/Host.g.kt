@@ -1315,29 +1315,29 @@ data class PUnknown (
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class PSuperwallEventInfoPigeon (
+data class PSuperwallEventInfo (
   val eventType: PEventType,
   val params: Map<String, Any>? = null,
-  val paywallInfoBridgeId: String? = null
+  val paywallInfo: PPaywallInfo? = null
 )
  {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): PSuperwallEventInfoPigeon {
+    fun fromList(pigeonVar_list: List<Any?>): PSuperwallEventInfo {
       val eventType = pigeonVar_list[0] as PEventType
       val params = pigeonVar_list[1] as Map<String, Any>?
-      val paywallInfoBridgeId = pigeonVar_list[2] as String?
-      return PSuperwallEventInfoPigeon(eventType, params, paywallInfoBridgeId)
+      val paywallInfo = pigeonVar_list[2] as PPaywallInfo?
+      return PSuperwallEventInfo(eventType, params, paywallInfo)
     }
   }
   fun toList(): List<Any?> {
     return listOf(
       eventType,
       params,
-      paywallInfoBridgeId,
+      paywallInfo,
     )
   }
   override fun equals(other: Any?): Boolean {
-    if (other !is PSuperwallEventInfoPigeon) {
+    if (other !is PSuperwallEventInfo) {
       return false
     }
     if (this === other) {
@@ -1345,7 +1345,7 @@ data class PSuperwallEventInfoPigeon (
     }
     return eventType == other.eventType
     && deepEqualsHost(params, other.params)
-    && paywallInfoBridgeId == other.paywallInfoBridgeId
+    && paywallInfo == other.paywallInfo
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1933,7 +1933,7 @@ private open class HostPigeonCodec : StandardMessageCodec() {
       }
       169.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallEventInfoPigeon.fromList(it)
+          PSuperwallEventInfo.fromList(it)
         }
       }
       170.toByte() -> {
@@ -2161,7 +2161,7 @@ private open class HostPigeonCodec : StandardMessageCodec() {
         stream.write(168)
         writeValue(stream, value.toList())
       }
-      is PSuperwallEventInfoPigeon -> {
+      is PSuperwallEventInfo -> {
         stream.write(169)
         writeValue(stream, value.toList())
       }
@@ -2738,7 +2738,7 @@ class PSuperwallDelegateGenerated(private val binaryMessenger: BinaryMessenger, 
       } 
     }
   }
-  fun handleSuperwallEvent(eventInfoArg: PSuperwallEventInfoPigeon, callback: (Result<Unit>) -> Unit)
+  fun handleSuperwallEvent(eventInfoArg: PSuperwallEventInfo, callback: (Result<Unit>) -> Unit)
 {
     val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent$separatedMessageChannelSuffix"

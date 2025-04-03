@@ -1604,43 +1604,43 @@ class PUnknown extends PSubscriptionStatus {
 ;
 }
 
-class PSuperwallEventInfoPigeon {
-  PSuperwallEventInfoPigeon({
+class PSuperwallEventInfo {
+  PSuperwallEventInfo({
     required this.eventType,
     this.params,
-    this.paywallInfoBridgeId,
+    this.paywallInfo,
   });
 
   PEventType eventType;
 
   Map<String, Object>? params;
 
-  String? paywallInfoBridgeId;
+  PPaywallInfo? paywallInfo;
 
   List<Object?> _toList() {
     return <Object?>[
       eventType,
       params,
-      paywallInfoBridgeId,
+      paywallInfo,
     ];
   }
 
   Object encode() {
     return _toList();  }
 
-  static PSuperwallEventInfoPigeon decode(Object result) {
+  static PSuperwallEventInfo decode(Object result) {
     result as List<Object?>;
-    return PSuperwallEventInfoPigeon(
+    return PSuperwallEventInfo(
       eventType: result[0]! as PEventType,
       params: (result[1] as Map<Object?, Object?>?)?.cast<String, Object>(),
-      paywallInfoBridgeId: result[2] as String?,
+      paywallInfo: result[2] as PPaywallInfo?,
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PSuperwallEventInfoPigeon || other.runtimeType != runtimeType) {
+    if (other is! PSuperwallEventInfo || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1649,7 +1649,7 @@ class PSuperwallEventInfoPigeon {
     return 
       eventType == other.eventType
       && _deepEquals(params, other.params)
-      && paywallInfoBridgeId == other.paywallInfoBridgeId;
+      && paywallInfo == other.paywallInfo;
   }
 
   @override
@@ -2326,7 +2326,7 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PUnknown) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallEventInfoPigeon) {
+    }    else if (value is PSuperwallEventInfo) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
     }    else if (value is PIdentityOptions) {
@@ -2470,7 +2470,7 @@ class _PigeonCodec extends StandardMessageCodec {
       case 168: 
         return PUnknown.decode(readValue(buffer)!);
       case 169: 
-        return PSuperwallEventInfoPigeon.decode(readValue(buffer)!);
+        return PSuperwallEventInfo.decode(readValue(buffer)!);
       case 170: 
         return PIdentityOptions.decode(readValue(buffer)!);
       case 171: 
@@ -3201,7 +3201,7 @@ abstract class PSuperwallDelegateGenerated {
 
   void subscriptionStatusDidChange(PSubscriptionStatus from, PSubscriptionStatus to);
 
-  void handleSuperwallEvent(PSuperwallEventInfoPigeon eventInfo);
+  void handleSuperwallEvent(PSuperwallEventInfo eventInfo);
 
   void handleCustomPaywallAction(String name);
 
@@ -3260,9 +3260,9 @@ abstract class PSuperwallDelegateGenerated {
           assert(message != null,
           'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final PSuperwallEventInfoPigeon? arg_eventInfo = (args[0] as PSuperwallEventInfoPigeon?);
+          final PSuperwallEventInfo? arg_eventInfo = (args[0] as PSuperwallEventInfo?);
           assert(arg_eventInfo != null,
-              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent was null, expected non-null PSuperwallEventInfoPigeon.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent was null, expected non-null PSuperwallEventInfo.');
           try {
             api.handleSuperwallEvent(arg_eventInfo!);
             return wrapResponse(empty: true);
@@ -3486,11 +3486,11 @@ abstract class PSuperwallDelegateGenerated {
 abstract class PPurchaseControllerGenerated {
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-  PPurchaseResult purchaseFromAppStore(String productId);
+  Future<PPurchaseResult> purchaseFromAppStore(String productId);
 
-  PPurchaseResult purchaseFromGooglePlay(String productId, String? basePlanId, String? offerId);
+  Future<PPurchaseResult> purchaseFromGooglePlay(String productId, String? basePlanId, String? offerId);
 
-  PRestorationResult restorePurchases();
+  Future<PRestorationResult> restorePurchases();
 
   static void setUp(PPurchaseControllerGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
@@ -3509,7 +3509,7 @@ abstract class PPurchaseControllerGenerated {
           assert(arg_productId != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromAppStore was null, expected non-null String.');
           try {
-            final PPurchaseResult output = api.purchaseFromAppStore(arg_productId!);
+            final PPurchaseResult output = await api.purchaseFromAppStore(arg_productId!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3536,7 +3536,7 @@ abstract class PPurchaseControllerGenerated {
           final String? arg_basePlanId = (args[1] as String?);
           final String? arg_offerId = (args[2] as String?);
           try {
-            final PPurchaseResult output = api.purchaseFromGooglePlay(arg_productId!, arg_basePlanId, arg_offerId);
+            final PPurchaseResult output = await api.purchaseFromGooglePlay(arg_productId!, arg_basePlanId, arg_offerId);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3555,7 +3555,7 @@ abstract class PPurchaseControllerGenerated {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           try {
-            final PRestorationResult output = api.restorePurchases();
+            final PRestorationResult output = await api.restorePurchases();
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

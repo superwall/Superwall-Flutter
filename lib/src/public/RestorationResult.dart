@@ -15,6 +15,21 @@ sealed class RestorationResult {
       throw ArgumentError('Unknown PRestorationResult type');
     }
   }
+
+  static PRestorationResult toPRestorationResult(RestorationResult result) {
+    try {
+      final restorationResult = result;
+      if (restorationResult is RestorationResultRestored) {
+        return PRestorationRestored();
+      } else if (restorationResult is RestorationResultFailed) {
+        return PRestorationFailed(error: restorationResult.error);
+      } else {
+        throw ArgumentError('Unknown RestorationResult type');
+      }
+    } catch (e) {
+      return PRestorationFailed(error: e.toString());
+    }
+  }
 }
 
 class RestorationResultRestored extends RestorationResult {

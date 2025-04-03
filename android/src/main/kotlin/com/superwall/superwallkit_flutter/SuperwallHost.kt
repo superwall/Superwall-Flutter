@@ -23,6 +23,7 @@ import PSuperwallOptions
 import PUnknown
 import PVariant
 import PVariantType
+import android.app.Activity
 import android.app.Application
 import com.superwall.sdk.Superwall
 import com.superwall.sdk.config.models.ConfigurationStatus
@@ -48,6 +49,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import android.util.Log
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.logger.LogLevel
+import com.superwall.sdk.misc.ActivityProvider
 
 class SuperwallHost(
     val context: () -> Application,
@@ -65,10 +67,9 @@ class SuperwallHost(
         purchaseController: PPurchaseControllerHost?,
         options: PSuperwallOptions?,
         completion: PConfigureCompletionHost?,
-        callback: (Result<Unit>) -> Unit
+        callback: (Result<Unit>) -> Unit,
     ) {
-        Log.e("SuperwallHost", "Calling configure")
-        val sdkOptions = (options?.toSdkOptions()?: SuperwallOptions()).apply {
+        val sdkOptions = (options?.toSdkOptions() ?: SuperwallOptions()).apply {
             logging.level = LogLevel.debug
         }
         Superwall.configure(
@@ -78,16 +79,19 @@ class SuperwallHost(
             purchaseController = if (purchaseController != null) {
                 PurchaseControllerHost { PPurchaseControllerGenerated(binaryMessenger()) }
             } else null,
+            activityProvider = object : ActivityProvider {
+                override fun getCurrentActivity(): Activity? {
+                    return SuperwallkitFlutterPlugin.currentActivity
+                }
+            },
             completion = if (completion != null) {
                 { result: Result<Unit> ->
-                    Log.e("SuperwallHost","Completed")
                     PConfigureCompletionGenerated(binaryMessenger()).onConfigureCompleted(
                         result.isSuccess,
                         {})
                 }
             } else null
         )
-        Log.e("SuperwallHost", "Called configure")
     }
 
     override fun reset() {

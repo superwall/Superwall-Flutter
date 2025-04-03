@@ -1,6 +1,6 @@
 package com.superwall.superwallkit_flutter.utils
 
-import PSuperwallEventInfoPigeon
+import PSuperwallEventInfo
 import android.net.Uri
 import com.superwall.sdk.analytics.superwall.SuperwallEvent
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
@@ -22,7 +22,7 @@ class EventMapper {
         /**
          * Converts SDK's SuperwallEventInfo to PSuperwallEventInfoPigeon
          */
-        fun toPigeonEventInfo(eventInfo: SuperwallEventInfo): PSuperwallEventInfoPigeon {
+        fun toPigeonEventInfo(eventInfo: SuperwallEventInfo): PSuperwallEventInfo {
             val eventType = when (eventInfo.event) {
                 is SuperwallEvent.FirstSeen -> PEventType.FIRST_SEEN
                 is SuperwallEvent.AppOpen -> PEventType.APP_OPEN
@@ -130,37 +130,37 @@ class EventMapper {
                 else -> emptyMap()
             }
 
-            val paywallInfoBridgeId = when (eventInfo.event) {
-                is SuperwallEvent.PaywallOpen -> (eventInfo.event as SuperwallEvent.PaywallOpen).paywallInfo.identifier
-                is SuperwallEvent.PaywallClose -> (eventInfo.event as SuperwallEvent.PaywallClose).paywallInfo.identifier
-                is SuperwallEvent.PaywallDecline -> (eventInfo.event as SuperwallEvent.PaywallDecline).paywallInfo.identifier
-                is SuperwallEvent.TransactionStart -> (eventInfo.event as SuperwallEvent.TransactionStart).paywallInfo.identifier
-                is SuperwallEvent.TransactionFail -> (eventInfo.event as SuperwallEvent.TransactionFail).paywallInfo.identifier
-                is SuperwallEvent.TransactionAbandon -> (eventInfo.event as SuperwallEvent.TransactionAbandon).paywallInfo.identifier
-                is SuperwallEvent.TransactionComplete -> (eventInfo.event as SuperwallEvent.TransactionComplete).paywallInfo.identifier
-                is SuperwallEvent.SubscriptionStart -> (eventInfo.event as SuperwallEvent.SubscriptionStart).paywallInfo.identifier
-                is SuperwallEvent.FreeTrialStart -> (eventInfo.event as SuperwallEvent.FreeTrialStart).paywallInfo.identifier
-                is SuperwallEvent.TransactionRestore -> (eventInfo.event as SuperwallEvent.TransactionRestore).paywallInfo.identifier
-                is SuperwallEvent.TransactionTimeout -> (eventInfo.event as SuperwallEvent.TransactionTimeout).paywallInfo.identifier
-                is SuperwallEvent.NonRecurringProductPurchase -> (eventInfo.event as SuperwallEvent.NonRecurringProductPurchase).paywallInfo.identifier
-                is SuperwallEvent.PaywallResponseLoadComplete -> (eventInfo.event as SuperwallEvent.PaywallResponseLoadComplete).paywallInfo.identifier
-                is SuperwallEvent.PaywallWebviewLoadStart -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadStart).paywallInfo.identifier
-                is SuperwallEvent.PaywallWebviewLoadFail -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadFail).paywallInfo.identifier
-                is SuperwallEvent.PaywallWebviewLoadComplete -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadComplete).paywallInfo.identifier
-                is SuperwallEvent.PaywallWebviewLoadTimeout -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadTimeout).paywallInfo.identifier
-                is SuperwallEvent.PaywallWebviewLoadFallback -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadFallback).paywallInfo.identifier
-                is SuperwallEvent.PaywallProductsLoadStart -> (eventInfo.event as SuperwallEvent.PaywallProductsLoadStart).paywallInfo.identifier
-                is SuperwallEvent.PaywallProductsLoadFail -> (eventInfo.event as SuperwallEvent.PaywallProductsLoadFail).paywallInfo.identifier
-                is SuperwallEvent.PaywallProductsLoadComplete -> (eventInfo.event as SuperwallEvent.PaywallProductsLoadComplete).paywallInfo.identifier
-                is SuperwallEvent.SurveyResponse -> (eventInfo.event as SuperwallEvent.SurveyResponse).paywallInfo.identifier
-                is SuperwallEvent.CustomPlacement -> (eventInfo.event as SuperwallEvent.CustomPlacement).paywallInfo.identifier
+            val paywallInfo= when (eventInfo.event) {
+                is SuperwallEvent.PaywallOpen -> (eventInfo.event as SuperwallEvent.PaywallOpen).paywallInfo
+                is SuperwallEvent.PaywallClose -> (eventInfo.event as SuperwallEvent.PaywallClose).paywallInfo
+                is SuperwallEvent.PaywallDecline -> (eventInfo.event as SuperwallEvent.PaywallDecline).paywallInfo
+                is SuperwallEvent.TransactionStart -> (eventInfo.event as SuperwallEvent.TransactionStart).paywallInfo
+                is SuperwallEvent.TransactionFail -> (eventInfo.event as SuperwallEvent.TransactionFail).paywallInfo
+                is SuperwallEvent.TransactionAbandon -> (eventInfo.event as SuperwallEvent.TransactionAbandon).paywallInfo
+                is SuperwallEvent.TransactionComplete -> (eventInfo.event as SuperwallEvent.TransactionComplete).paywallInfo
+                is SuperwallEvent.SubscriptionStart -> (eventInfo.event as SuperwallEvent.SubscriptionStart).paywallInfo
+                is SuperwallEvent.FreeTrialStart -> (eventInfo.event as SuperwallEvent.FreeTrialStart).paywallInfo
+                is SuperwallEvent.TransactionRestore -> (eventInfo.event as SuperwallEvent.TransactionRestore).paywallInfo
+                is SuperwallEvent.TransactionTimeout -> (eventInfo.event as SuperwallEvent.TransactionTimeout).paywallInfo
+                is SuperwallEvent.NonRecurringProductPurchase -> (eventInfo.event as SuperwallEvent.NonRecurringProductPurchase).paywallInfo
+                is SuperwallEvent.PaywallResponseLoadComplete -> (eventInfo.event as SuperwallEvent.PaywallResponseLoadComplete).paywallInfo
+                is SuperwallEvent.PaywallWebviewLoadStart -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadStart).paywallInfo
+                is SuperwallEvent.PaywallWebviewLoadFail -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadFail).paywallInfo
+                is SuperwallEvent.PaywallWebviewLoadComplete -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadComplete).paywallInfo
+                is SuperwallEvent.PaywallWebviewLoadTimeout -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadTimeout).paywallInfo
+                is SuperwallEvent.PaywallWebviewLoadFallback -> (eventInfo.event as SuperwallEvent.PaywallWebviewLoadFallback).paywallInfo
+                is SuperwallEvent.PaywallProductsLoadStart -> (eventInfo.event as SuperwallEvent.PaywallProductsLoadStart).paywallInfo
+                is SuperwallEvent.PaywallProductsLoadFail -> (eventInfo.event as SuperwallEvent.PaywallProductsLoadFail).paywallInfo
+                is SuperwallEvent.PaywallProductsLoadComplete -> (eventInfo.event as SuperwallEvent.PaywallProductsLoadComplete).paywallInfo
+                is SuperwallEvent.SurveyResponse -> (eventInfo.event as SuperwallEvent.SurveyResponse).paywallInfo
+                is SuperwallEvent.CustomPlacement -> (eventInfo.event as SuperwallEvent.CustomPlacement).paywallInfo
                 else -> null
             }
 
-            return PSuperwallEventInfoPigeon(
+            return PSuperwallEventInfo(
                 eventType = eventType,
                 params = params?.filterValues { it!=null } as Map<String,Any>?,
-                paywallInfoBridgeId = paywallInfoBridgeId
+                paywallInfo = paywallInfo?.let { PaywallInfoMapper.toPPaywallInfo(it) }
             )
         }
     }

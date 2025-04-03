@@ -330,16 +330,16 @@ class PUnknown extends PSubscriptionStatus {
 }
 
 // SuperwallEventInfo class for event handling
-class PSuperwallEventInfoPigeon {
-  PSuperwallEventInfoPigeon({
+class PSuperwallEventInfo {
+  PSuperwallEventInfo({
     required this.eventType,
     this.params,
-    this.paywallInfoBridgeId,
+    this.paywallInfo,
   });
 
   PEventType eventType;
   Map<String, Object>? params;
-  String? paywallInfoBridgeId;
+  PPaywallInfo? paywallInfo;
 }
 
 // Enums
@@ -639,7 +639,7 @@ abstract class PSuperwallHostApi {
 abstract class PSuperwallDelegateGenerated {
   void subscriptionStatusDidChange(
       PSubscriptionStatus from, PSubscriptionStatus to);
-  void handleSuperwallEvent(PSuperwallEventInfoPigeon eventInfo);
+  void handleSuperwallEvent(PSuperwallEventInfo eventInfo);
   void handleCustomPaywallAction(String name);
   void willDismissPaywall(PPaywallInfo paywallInfo);
   void willPresentPaywall(PPaywallInfo paywallInfo);
@@ -655,11 +655,14 @@ abstract class PSuperwallDelegateGenerated {
 
 @FlutterApi()
 abstract class PPurchaseControllerGenerated {
+  @async
   PPurchaseResult purchaseFromAppStore(String productId);
 
+  @async
   PPurchaseResult purchaseFromGooglePlay(
       String productId, String? basePlanId, String? offerId);
 
+  @async
   PRestorationResult restorePurchases();
 }
 
