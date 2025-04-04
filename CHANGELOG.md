@@ -2,7 +2,16 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.0.8
+
+### Enhancements
+
+- Updates iOS SDK to 4.0.6 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.0.6)
+- Updates Android SDK to 2.0.5 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.5)
+
 ## 2.0.7
+
+### Fixes
 
 - Fixes issue when accessing `presentedByPlacement*` properties from a custom placement
 
@@ -13,10 +22,14 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - Adds a subscription stream example in the example app
 
 ## Fixes
+
 - Fixes issue with second subscriber not receiving the `SubscriptionStatus` broadcast stream
-- Fixes issue with `PurchasedPaywallResult` not properly deserialising in `onDismiss` 
+- Fixes issue with `PurchasedPaywallResult` not properly deserialising in `onDismiss`
 
 ## 2.0.5
+
+### Enhancements
+
 - Update `SuperwallPlacement` to `SuperwallEvent`
 - Update `PlacementType` to `EventType`
 - Updates Android SDK to 2.0.3 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.3)
@@ -24,8 +37,9 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 
 ## 2.0.4
 
-- Updates onDismissHandler to now receive a PaywallResult also
+### Enhancements
 
+- Updates onDismissHandler to now receive a PaywallResult also
 - Updates Android SDK to 2.0.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.2)
 - `handleSuperwallPlacement(SuperwallPlacementInfo eventInfo)` has been replaced with `handleSuperwallEvent(SuperwallEventtInfo eventInfo)`
 
@@ -48,6 +62,7 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 ## 2.0.0
 
 ###
+
 - Adds entitlements to subscriptions, allowing you to set them using:
   - `await Superwall.shared.setSubscriptionStatus(status)` by passing in one of:
     - `SubscriptionStatusActive(entitlements: entitlements))`
@@ -61,8 +76,9 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - `PaywallPresentationHandler.onDismiss` now has 2 arguments, `PaywallInfo` and `PaywallResult`
 
 ## 2.0.0-alpha.1
+
 - Adds entitlements to subscriptions, allowing you to set them using:
-- `await Superwall.shared.setSubscriptionStatus(status)` by passing in one of: 
+- `await Superwall.shared.setSubscriptionStatus(status)` by passing in one of:
   - `SubscriptionStatusActive(entitlements: entitlements))`
     - Note: Passing in empty entitlements will set the subscription status to inactive
   - `SubscriptionStatusInactive`
@@ -78,7 +94,6 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 
 - Fixes BridgeInstance crashes
 - Adds awaiting on shared instance of BridgeCreator to avoid crashes when plugin is yet to attach
-
 
 ## 1.3.10
 
