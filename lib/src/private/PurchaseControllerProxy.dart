@@ -22,14 +22,17 @@ class PurchaseControllerProxy implements PPurchaseControllerGenerated {
   @override
   Future<PPurchaseResult> purchaseFromAppStore(String productId) async {
     final result = await controller.purchaseFromAppStore(productId);
+    print("PurchaseControllerProxy: purchaseFromAppStore: $result");
     return PurchaseResult.toPPurchaseResult(result);
   }
 
   @override
   Future<PPurchaseResult> purchaseFromGooglePlay(
       String productId, String? basePlanId, String? offerId) async {
+    print("PurchaseControllerProxy: purchaseFromGooglePlay: invoked");
     final result =
         await controller.purchaseFromGooglePlay(productId, basePlanId, offerId);
+    print("PurchaseControllerProxy: purchaseFromGooglePlay: $result");
     return PurchaseResult.toPPurchaseResult(result);
   }
 

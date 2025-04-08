@@ -1,0 +1,29 @@
+appId: com.superwall.superapp
+---
+- launchApp
+- tapOn: "Purchase Controller Test"
+- tapOn: "Mock PC Test"
+- tapOn: "Configure with PC"
+# We mark this as optional as sometimes it triggers but doesnt register as visible
+- tapOn: 
+    text: "Trigger Paywall"
+    waitToSettleTimeoutMs: 1000
+    optional: true
+- tapOn: "Continue"
+- assertVisible: "An error occurred"
+- tapOn: "DONE"
+- back
+- tapOn: "OK"
+- tapOn: "Enable purchases"
+- tapOn: 
+    text: "Trigger Paywall"
+    waitToSettleTimeoutMs: 1000
+    optional: true
+
+- tapOn: "Continue"
+- assertVisible: "Subscribed"
+- assertVisible: "Feature triggered"
+- tapOn: "OK"
+- tapOn: "Reset status"
+- tapOn: "Trigger Paywall"
+

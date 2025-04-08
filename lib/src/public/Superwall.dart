@@ -326,12 +326,6 @@ class Superwall {
     }
   }
 
-  Future<SubscriptionStatus> _createSubscriptionStatus(String bridgeId) async {
-    // Implementation would depend on your SubscriptionStatus class
-    // This is a placeholder that just returns unknown
-    return SubscriptionStatus.unknown;
-  }
-
   // Sets the subscription status of the user
   Future<void> setSubscriptionStatus(SubscriptionStatus status) async {
     await hostApi.setSubscriptionStatus(status.toPSubscriptionStatus());

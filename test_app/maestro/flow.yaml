@@ -1,0 +1,11 @@
+appId: com.superwall.superapp
+---
+- launchApp
+- tapOn: "Configuration test"
+- tapOn: "Configure with dialog shown + no PC"
+- assertVisible:
+    text: "Configuration completed"
+- tapOn: "OK"
+- back
+- runFlow:
+    file: "subscription_status_flow.yaml"

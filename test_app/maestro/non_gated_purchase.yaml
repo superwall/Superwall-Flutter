@@ -1,0 +1,11 @@
+- tapOn: "Launch Non-Gated Feature"
+- assertVisible:
+    text: "Continue"
+    index: 1
+- runFlow:
+    when:
+      visible:
+        text: "Agree"
+    commands:
+      - tapOn: "Agree"
+- tapOn: "1-tap buy"
