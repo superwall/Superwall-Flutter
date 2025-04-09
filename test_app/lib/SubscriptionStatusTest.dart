@@ -52,13 +52,6 @@ class SubscriptionStatusTest extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SuperwallBuilder(
-                builder: (context, status) => Center(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                          Text('Configuration Status: ${status}'),
-                        ]))),
             ElevatedButton(
               child: Text('Set Subscription Status Active'),
               onPressed: () async {

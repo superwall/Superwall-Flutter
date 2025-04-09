@@ -380,14 +380,6 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
   @override
   void willPresentPaywall(PaywallInfo paywallInfo) {
-    printSubscriptionStatus();
     logging.info('willPresentPaywall: $paywallInfo');
-  }
-
-  Future<void> printSubscriptionStatus() async {
-    final status = await Superwall.shared.getSubscriptionStatus();
-    final description = status;
-
-    logging.info('Status: $description');
   }
 }

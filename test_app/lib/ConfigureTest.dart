@@ -7,7 +7,7 @@ import 'TestingPurchaseController.dart';
 
 class ConfigureTest extends StatelessWidget {
   final apiKey = Platform.isIOS
-      ? 'pk_e361c8a9662281f4249f2fa11d1a63854615fa80e15e7a4d'
+      ? 'pk_25605698906751f5383385f9976e21f840d44aa11cd4639c'
       : 'pk_6d16c4c892b1e792490ab8bfe831f1ad96e7c18aee7a5257';
 
   final logging = Logging();
@@ -45,13 +45,6 @@ class ConfigureTest extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SuperwallBuilder(
-                  builder: (context, status) => Center(
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                            Text('Configuration Status: ${status}'),
-                          ]))),
               ElevatedButton(
                 // Launch Non-Gated Feature.
                 child: Text('Configure with dialog shown + PC'),

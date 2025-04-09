@@ -51,7 +51,7 @@ class SuperwallBridge(
                             Superwall.instance.subscriptionStatus.collect { status ->
                                 main.launch {
                                     eventSink.success(status.toJson())
-                                }
+                                }q
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()

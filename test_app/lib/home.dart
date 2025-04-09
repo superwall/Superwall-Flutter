@@ -12,13 +12,6 @@ class Home extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SuperwallBuilder(
-                  builder: (context, status) => Center(
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                            Text('Subscription Status: ${status}'),
-                          ]))),
               ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/configureTest');
@@ -34,6 +27,16 @@ class Home extends StatelessWidget {
                     Navigator.pushNamed(context, '/purchaseControllerTest');
                   },
                   child: Text("Purchase Controller Test")),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/delegateTest');
+                  },
+                  child: Text("Delegate Test")),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/handlerTest');
+                  },
+                  child: Text("Handler Test")),
             ],
           ),
         ),

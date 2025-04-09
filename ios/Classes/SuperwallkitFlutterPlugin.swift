@@ -17,10 +17,6 @@ public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
     superwallProxy = SuperwallProxy(flutterBinaryMessenger: registrar.messenger())
     
   }
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result(FlutterMethodNotImplemented)
-  }
 }
 
 

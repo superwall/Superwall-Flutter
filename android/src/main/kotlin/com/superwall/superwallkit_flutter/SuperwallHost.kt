@@ -279,4 +279,5 @@ class SuperwallHost(
             Superwall.instance.dismiss()
         }
     }
+
 }
