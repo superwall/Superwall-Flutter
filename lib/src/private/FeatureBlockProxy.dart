@@ -17,6 +17,7 @@ class FeatureBlockProxy implements PFeatureHandlerGenerated {
 
   @override
   void onFeature(String id) {
+    print("onFeature: $id");
     handler();
   }
 }

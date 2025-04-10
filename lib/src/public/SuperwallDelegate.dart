@@ -54,114 +54,113 @@ class SuperwallDelegateHost implements PSuperwallDelegateGenerated {
   @override
   void subscriptionStatusDidChange(
       PSubscriptionStatus from, PSubscriptionStatus to) async {
-    debugPrint('SuperwallDelegateDart: subscriptionStatusDidChange called');
+    print('SuperwallDelegateDart: subscriptionStatusDidChange called');
     final status = await SubscriptionStatus
         .createSubscriptionStatusFromPSubscriptionStatus(to);
     _delegate.subscriptionStatusDidChange(status);
-    debugPrint('SuperwallDelegateDart: subscriptionStatusDidChange completed');
+    print('SuperwallDelegateDart: subscriptionStatusDidChange completed');
   }
 
   @override
   void handleSuperwallEvent(PSuperwallEventInfo eventInfo) {
-    debugPrint(
+    print(
         'SuperwallDelegateDart: handleSuperwallEvent called with event: ${eventInfo.eventType}');
     final info = SuperwallEventInfo.fromPEventInfo(eventInfo);
     _delegate.handleSuperwallEvent(info);
-    debugPrint('SuperwallDelegateDart: handleSuperwallEvent completed');
+    print('SuperwallDelegateDart: handleSuperwallEvent completed');
   }
 
   @override
   void handleCustomPaywallAction(String name) {
-    debugPrint(
+    print(
         'SuperwallDelegateDart: handleCustomPaywallAction called with name: $name');
     _delegate.handleCustomPaywallAction(name);
-    debugPrint('SuperwallDelegateDart: handleCustomPaywallAction completed');
+    print('SuperwallDelegateDart: handleCustomPaywallAction completed');
   }
 
   @override
   void willDismissPaywall(PPaywallInfo paywallInfo) {
-    debugPrint('SuperwallDelegateDart: willDismissPaywall called');
+    print('SuperwallDelegateDart: willDismissPaywall called');
     final info = PaywallInfo.fromPigeon(paywallInfo);
     if (info != null) {
       _delegate.willDismissPaywall(info);
-      debugPrint('SuperwallDelegateDart: willDismissPaywall completed');
+      print('SuperwallDelegateDart: willDismissPaywall completed');
     } else {
-      debugPrint(
+      print(
           'SuperwallDelegateDart: willDismissPaywall skipped - null PaywallInfo');
     }
   }
 
   @override
   void willPresentPaywall(PPaywallInfo paywallInfo) {
-    debugPrint('SuperwallDelegateDart: willPresentPaywall called');
+    print('SuperwallDelegateDart: willPresentPaywall called');
     final info = PaywallInfo.fromPigeon(paywallInfo);
     if (info != null) {
       _delegate.willPresentPaywall(info);
-      debugPrint('SuperwallDelegateDart: willPresentPaywall completed');
+      print('SuperwallDelegateDart: willPresentPaywall completed');
     } else {
-      debugPrint(
+      print(
           'SuperwallDelegateDart: willPresentPaywall skipped - null PaywallInfo');
     }
   }
 
   @override
   void didDismissPaywall(PPaywallInfo paywallInfo) {
-    debugPrint('SuperwallDelegateDart: didDismissPaywall called');
+    print('SuperwallDelegateDart: didDismissPaywall called');
     final info = PaywallInfo.fromPigeon(paywallInfo);
     if (info != null) {
       _delegate.didDismissPaywall(info);
-      debugPrint('SuperwallDelegateDart: didDismissPaywall completed');
+      print('SuperwallDelegateDart: didDismissPaywall completed');
     } else {
-      debugPrint(
+      print(
           'SuperwallDelegateDart: didDismissPaywall skipped - null PaywallInfo');
     }
   }
 
   @override
   void didPresentPaywall(PPaywallInfo paywallInfo) {
-    debugPrint('SuperwallDelegateDart: didPresentPaywall called');
+    print('SuperwallDelegateDart: didPresentPaywall called');
     final info = PaywallInfo.fromPigeon(paywallInfo);
     if (info != null) {
       _delegate.didPresentPaywall(info);
-      debugPrint('SuperwallDelegateDart: didPresentPaywall completed');
+      print('SuperwallDelegateDart: didPresentPaywall completed');
     } else {
-      debugPrint(
+      print(
           'SuperwallDelegateDart: didPresentPaywall skipped - null PaywallInfo');
     }
   }
 
   @override
   void paywallWillOpenURL(String url) {
-    debugPrint(
-        'SuperwallDelegateDart: paywallWillOpenURL called with url: $url');
+    print('SuperwallDelegateDart: paywallWillOpenURL called with url: $url');
     try {
       final uri = Uri.parse(url);
       _delegate.paywallWillOpenURL(uri);
-      debugPrint('SuperwallDelegateDart: paywallWillOpenURL completed');
+      print('SuperwallDelegateDart: paywallWillOpenURL completed');
     } catch (e) {
-      debugPrint('SuperwallDelegateDart: Error parsing URL: $e');
+      print('SuperwallDelegateDart: Error parsing URL: $e');
     }
   }
 
   @override
   void paywallWillOpenDeepLink(String url) {
-    debugPrint(
+    print(
         'SuperwallDelegateDart: paywallWillOpenDeepLink called with url: $url');
     try {
       final uri = Uri.parse(url);
       _delegate.paywallWillOpenDeepLink(uri);
-      debugPrint('SuperwallDelegateDart: paywallWillOpenDeepLink completed');
+      print('SuperwallDelegateDart: paywallWillOpenDeepLink completed');
     } catch (e) {
-      debugPrint('SuperwallDelegateDart: Error parsing deep link URL: $e');
+      print('SuperwallDelegateDart: Error parsing deep link URL: $e');
     }
   }
 
   @override
   void handleLog(String level, String scope, String? message,
       Map<String, Object>? info, String? error) {
-    debugPrint(
+    print(
         'SuperwallDelegateDart: handleLog called with level: $level, scope: $scope');
     _delegate.handleLog(level, scope, message, info, error);
-    debugPrint('SuperwallDelegateDart: handleLog completed');
+    print('SuperwallDelegateDart: handleLog completed');
   }
 }

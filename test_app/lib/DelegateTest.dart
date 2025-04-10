@@ -141,7 +141,9 @@ class _DelegateTestState extends State<DelegateTest> {
                 ElevatedButton(
                   child: Text('Show Delegate Events with log'),
                   onPressed: () {
-                    _showDelegateEventsListDialog(testDelegate.events);
+                    _showDelegateEventsListDialog(testDelegate.events
+                        .where((event) => event is HandleLogEvent)
+                        .toList());
                   },
                 ),
                 ElevatedButton(
@@ -152,7 +154,8 @@ class _DelegateTestState extends State<DelegateTest> {
                             event is! WillPresentPaywallEvent &&
                             event is! DidPresentPaywallEvent &&
                             event is! WillDismissPaywallEvent &&
-                            event is! DidDismissPaywallEvent)
+                            event is! DidDismissPaywallEvent &&
+                            event is! HandleSuperwallEventEvent)
                         .toList());
                   },
                 ),

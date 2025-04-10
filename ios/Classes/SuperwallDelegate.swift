@@ -165,15 +165,36 @@ final class SuperwallDelegateHost: SuperwallDelegate {
     }
   }
 
-  func handleLog(level: String, scope: String, message: String?, info: [String : Any]?, error: (any Error)?) {
-    flutterDelegate().handleLog(
-      level: level,
-      scope: scope,
-      message: message,
-      info: info,
-      error: error?.localizedDescription
-    ) { result in
-      // NO-OP
-    }
+private func transformValue(_ value: Any) -> Any? {
+  switch value {
+  case let stringValue as String:
+    return stringValue
+  case let intValue as Int:
+    return intValue
+  case let boolValue as Bool:
+    return boolValue
+  case let dictValue as [String: Any]:
+    return dictValue.compactMapValues { transformValue($0) }
+  case let arrayValue as [Any]:
+    return arrayValue.compactMap { transformValue($0) }
+  case let setValue as Set<AnyHashable>:
+    return Array(setValue).compactMap { transformValue($0) }
+  default:
+    return nil
   }
+}
+
+func handleLog(level: String, scope: String, message: String?, info: [String : Any]?, error: (any Error)?) {
+  let transformedInfo = info?.compactMapValues { transformValue($0) }
+  
+  flutterDelegate().handleLog(
+    level: level,
+    scope: scope,
+    message: message,
+    info: transformedInfo,
+    error: error?.localizedDescription
+  ) { result in
+    // NO-OP
+  }
+} 
 }

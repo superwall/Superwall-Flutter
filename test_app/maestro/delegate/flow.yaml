@@ -43,10 +43,30 @@ appId: com.superwall.superapp
 # Test various interaction events (deep link, URL, custom action)
 - tapOn: "Show Paywall"
 - tapOn: "Open DL"
-- runFlow: "../util/back.yaml"
+- runFlow:
+    when:
+      platform: iOS
+      visible: "Return to Superwallkit Flutter"
+    commands:
+      - tapOn: "Return to Superwallkit Flutter"
+      - tapOn: "Show Paywall"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
 
 - tapOn: "Open URL"
-- runFlow: "../util/back.yaml"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Done"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - back
 
 - tapOn: "Custom Action"
 - runFlow: "../util/back.yaml"

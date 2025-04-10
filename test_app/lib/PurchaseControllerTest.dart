@@ -94,6 +94,7 @@ class _PurchaseControllerTestState extends State<PurchaseControllerTest> {
                 onPressed: () async {
                   await Superwall.shared.registerPlacement('campaign_trigger',
                       feature: () {
+                    print("feature triggered");
                     _showFeatureDialog(context);
                   });
                 },

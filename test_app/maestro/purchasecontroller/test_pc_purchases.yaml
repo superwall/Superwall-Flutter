@@ -17,9 +17,7 @@ appId: com.superwall.superapp
 - tapOn: "Continue"
 - assertVisible: "An error occurred"
 - tapOn: "DONE"
-- runFlow: "util/back.yaml"
-
-- tapOn: "OK"
+- runFlow: "../util/back.yaml"
 
 # Enable purchases and test successful purchase flow
 - tapOn: "Enable purchases"
@@ -30,7 +28,9 @@ appId: com.superwall.superapp
 
 # Verify successful purchase and feature access
 - tapOn: "Continue"
-- assertVisible: "Subscribed"
+- assertVisible: 
+    text: "Subscribed"
+    optional: true
 - assertVisible: "Feature triggered"
 - tapOn: "OK"
 

@@ -6,15 +6,19 @@ class TestHandler {
 
   TestHandler(this.handler) {
     handler.onDismissHandler = (info, result) {
+      print('onDismissHandler: $info, $result');
       events.add(DismissEvent(info, result));
     };
     handler.onErrorHandler = (error) {
+      print('onErrorHandler: $error');
       events.add(ErrorEvent(error));
     };
     handler.onPresentHandler = (info) {
+      print('onPresentHandler: $info');
       events.add(PresentEvent(info));
     };
     handler.onSkipHandler = (reason) {
+      print('onSkipHandler: $reason');
       events.add(SkipEvent(reason));
     };
   }

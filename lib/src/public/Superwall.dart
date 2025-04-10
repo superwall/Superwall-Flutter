@@ -391,13 +391,11 @@ class Superwall {
     final featureBlock = feature != null
         ? FeatureBlockProxy.register(feature, hostId: placement)
         : null;
-    print("Registered callers $placement");
 
     await hostApi.registerPlacement(placement,
         params: params,
         handler: handler != null ? handlerHost : null,
         feature: feature != null ? featureBlockHost : null);
-    print("Registered placement $placement");
   }
 
   // Identifies a user with the given ID and options

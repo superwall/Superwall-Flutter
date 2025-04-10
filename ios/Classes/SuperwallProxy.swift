@@ -40,13 +40,18 @@ class SuperwallProxy: NSObject, PSuperwallHostApi {
     }
     
     func setDelegate(hasDelegate: Bool) {
-        Superwall.shared.delegate = hasDelegate ? 
-            SuperwallDelegateHost(flutterDelegate: { [weak self] in
+        if hasDelegate {
+            let delegate = PSuperwallDelegateGenerated(binaryMessenger: self.flutterBinaryMessenger)
+            let flutterDelegate = { [weak self] () -> PSuperwallDelegateGenerated in
                 guard let self = self else {
                     fatalError("Binary messenger is nil")
                 }
-                return PSuperwallDelegateGenerated(binaryMessenger: self.flutterBinaryMessenger)
-            }) : nil
+                return delegate
+            }
+            Superwall.shared.delegate = SuperwallDelegateHost(flutterDelegate: flutterDelegate)
+        } else {
+            Superwall.shared.delegate = nil
+        }
     }
     
     func confirmAllAssignments(completion: @escaping (Result<[PConfirmedAssignment], Error>) -> Void) {
@@ -233,47 +238,33 @@ class SuperwallProxy: NSObject, PSuperwallHostApi {
     }
     
     func registerPlacement(placement: String, params: [String : Any]?, handler: PPaywallPresentationHandlerHost?, feature: PFeatureHandlerHost?, completion: @escaping (Result<Void, Error>) -> Void) {
-        let presentationHandler = handler != nil ? 
-            PaywallPresentationHandlerHost(flutterHandler: { 
-                PPaywallPresentationHandlerGenerated(binaryMessenger: self.flutterBinaryMessenger, messageChannelSuffix: placement) 
-            }).handler : nil
+        let presentationHandler: PaywallPresentationHandler?
         
-        let featureHandler: (() -> Void)? = feature != nil ? { [weak self] in
-            guard let self = self else { return }
-            if let messageChannelSuffix = placement.isEmpty ? nil : placement {
-                let flutterHandler = PFeatureHandlerGenerated(binaryMessenger: self.flutterBinaryMessenger, messageChannelSuffix: messageChannelSuffix)
-                flutterHandler.onFeature(id: placement, completion: { _ in })
-            }
+        if handler != nil {
+            let flutterHandler = PPaywallPresentationHandlerGenerated(binaryMessenger: self.flutterBinaryMessenger, messageChannelSuffix: placement)
+            presentationHandler = PaywallPresentationHandlerHost(flutterHandler: flutterHandler).handler
+        } else {
+            presentationHandler = nil
+        }
+        
+        let featureHandler: (() -> Void)? = feature != nil ? { [self] in
+            let flutterHandler = PFeatureHandlerGenerated(binaryMessenger: self.flutterBinaryMessenger, messageChannelSuffix: placement)
+            flutterHandler.onFeature(id: placement, completion: { _ in })
         } : nil
         
-        if let handler = presentationHandler {
-            if let feature = featureHandler {
-                Superwall.shared.register(
-                    placement: placement,
-                    params: params,
-                    handler: handler,
-                    feature: feature
-                )
-            } else {
-                Superwall.shared.register(
-                    placement: placement,
-                    params: params,
-                    handler: handler
-                )
-            }
+        if let castedFeatureHandler = featureHandler {
+            Superwall.shared.register(
+                placement: placement,
+                params: params,
+                handler: presentationHandler,
+                feature: castedFeatureHandler
+            )
         } else {
-            if let feature = featureHandler {
-                Superwall.shared.register(
-                    placement: placement,
-                    params: params,
-                    feature: feature
-                )
-            } else {
-                Superwall.shared.register(
-                    placement: placement,
-                    params: params
-                )
-            }
+            Superwall.shared.register(
+                placement: placement,
+                params: params,
+                handler: presentationHandler
+            )
         }
         
         completion(.success(()))

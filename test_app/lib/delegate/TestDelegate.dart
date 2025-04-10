@@ -5,8 +5,10 @@ class TestDelegate extends SuperwallDelegate {
   final List<TestDelegateEvent> _events = [];
 
   List<TestDelegateEvent> get events => _events;
-  List<TestDelegateEvent> get eventsWithoutLog =>
-      _events.where((event) => event is! HandleLogEvent).toList();
+  List<TestDelegateEvent> get eventsWithoutLog => _events
+      .where((event) =>
+          event is! HandleLogEvent && event is! HandleSuperwallEventEvent)
+      .toList();
 
   @override
   void didDismissPaywall(PaywallInfo paywallInfo) {
