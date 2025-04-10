@@ -19,6 +19,7 @@ appId: com.superwall.superapp
 - tapOn: "DONE"
 - runFlow: "../util/back.yaml"
 
+- tapOn: "OK"
 # Enable purchases and test successful purchase flow
 - tapOn: "Enable purchases"
 - tapOn: 

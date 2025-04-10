@@ -107,6 +107,7 @@ class _PurchaseControllerTestState extends State<PurchaseControllerTest> {
                 onPressed: () async {
                   purchaseController!.rejectPurchase =
                       !purchaseController!.rejectPurchase;
+                  setState(() {});
                 },
               ),
             if (isConfigured)
@@ -117,6 +118,7 @@ class _PurchaseControllerTestState extends State<PurchaseControllerTest> {
                 onPressed: () async {
                   purchaseController!.restorePurchase =
                       !purchaseController!.restorePurchase;
+                  setState(() {});
                 },
               ),
             if (isConfigured)
