@@ -1,3 +1,5 @@
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+
 /// An enum whose cases indicate whether the paywall was closed by user
 /// interaction or because another paywall will show.
 enum PaywallCloseReason {
@@ -43,6 +45,42 @@ extension PaywallCloseReasonExtension on PaywallCloseReason {
         return PaywallCloseReason.none;
       default:
         throw ArgumentError('Invalid PaywallCloseReason value: $json');
+    }
+  }
+
+  /// Convert this PaywallCloseReason to a PPaywallCloseReason
+  PPaywallCloseReason toPigeon() {
+    switch (this) {
+      case PaywallCloseReason.systemLogic:
+        return PPaywallCloseReason.systemLogic;
+      case PaywallCloseReason.forNextPaywall:
+        return PPaywallCloseReason.forNextPaywall;
+      case PaywallCloseReason.webViewFailedToLoad:
+        return PPaywallCloseReason.webViewFailedToLoad;
+      case PaywallCloseReason.manualClose:
+        return PPaywallCloseReason.manualClose;
+      case PaywallCloseReason.none:
+        return PPaywallCloseReason.none;
+      default:
+        throw ArgumentError('Invalid PaywallCloseReason value');
+    }
+  }
+
+  /// Convert a PPaywallCloseReason to a PaywallCloseReason
+  static PaywallCloseReason fromPigeon(PPaywallCloseReason reason) {
+    switch (reason) {
+      case PPaywallCloseReason.systemLogic:
+        return PaywallCloseReason.systemLogic;
+      case PPaywallCloseReason.forNextPaywall:
+        return PaywallCloseReason.forNextPaywall;
+      case PPaywallCloseReason.webViewFailedToLoad:
+        return PaywallCloseReason.webViewFailedToLoad;
+      case PPaywallCloseReason.manualClose:
+        return PaywallCloseReason.manualClose;
+      case PPaywallCloseReason.none:
+        return PaywallCloseReason.none;
+      default:
+        throw ArgumentError('Invalid PPaywallCloseReason value');
     }
   }
 }

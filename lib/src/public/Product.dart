@@ -1,4 +1,5 @@
 import '../../superwallkit_flutter.dart';
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 
 /// The product in the paywall.
 class Product {
@@ -17,15 +18,30 @@ class Product {
     required this.entitlements,
   });
 
-  // Factory constructor to create a Product instance from a JSON map
-  factory Product.fromJson(Map<String, dynamic> json) {
+  /// Creates a Product from a PProduct from the pigeon generated code
+  static Product? fromPigeon(PProduct? pProduct) {
+    if (pProduct == null) return null;
+
+    Set<Entitlement> entitlements = {};
+    if (pProduct.entitlements != null) {
+      entitlements = pProduct.entitlements!
+          .map((e) => Entitlement(id: e.id ?? ''))
+          .toSet();
+    }
+
     return Product(
-      id: json['id'],
-      name: json['name'],
-      entitlements: (json['entitlements'] as List<dynamic>?)
-              ?.map((e) => Entitlement.fromJson(Map<String, dynamic>.from(e)))
-              .toSet() ??
-          {},
+      id: pProduct.id,
+      name: pProduct.name,
+      entitlements: entitlements,
+    );
+  }
+
+  /// Converts this Product to a PProduct for the pigeon generated code
+  PProduct toPigeon() {
+    return PProduct(
+      id: id,
+      name: name,
+      entitlements: entitlements.map((e) => PEntitlement(id: e.id)).toList(),
     );
   }
 }

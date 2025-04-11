@@ -1,3 +1,5 @@
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+
 /// A request to compute a device property associated with an placement at runtime.
 class ComputedPropertyRequest {
   /// The type of device property to compute.
@@ -16,6 +18,22 @@ class ComputedPropertyRequest {
     return ComputedPropertyRequest(
       type: ComputedPropertyRequestTypeExtension.fromJson(json['type']),
       placememtName: json['placememtName'],
+    );
+  }
+
+  /// Create a ComputedPropertyRequest from a PComputedPropertyRequest
+  static ComputedPropertyRequest fromPigeon(PComputedPropertyRequest request) {
+    return ComputedPropertyRequest(
+      type: ComputedPropertyRequestTypeExtension.fromPigeon(request.type),
+      placememtName: request.eventName,
+    );
+  }
+
+  /// Convert this ComputedPropertyRequest to a PComputedPropertyRequest
+  PComputedPropertyRequest toPigeon() {
+    return PComputedPropertyRequest(
+      type: ComputedPropertyRequestTypeExtension(type).toPigeon(),
+      eventName: placememtName,
     );
   }
 }
@@ -63,6 +81,43 @@ extension ComputedPropertyRequestTypeExtension on ComputedPropertyRequestType {
         return ComputedPropertyRequestType.yearsSince;
       default:
         throw ArgumentError('Invalid ComputedPropertyRequestType value: $json');
+    }
+  }
+
+  /// Convert this ComputedPropertyRequestType to PComputedPropertyRequestType
+  PComputedPropertyRequestType toPigeon() {
+    switch (this) {
+      case ComputedPropertyRequestType.minutesSince:
+        return PComputedPropertyRequestType.minutesSince;
+      case ComputedPropertyRequestType.hoursSince:
+        return PComputedPropertyRequestType.hoursSince;
+      case ComputedPropertyRequestType.daysSince:
+        return PComputedPropertyRequestType.daysSince;
+      case ComputedPropertyRequestType.monthsSince:
+        return PComputedPropertyRequestType.monthsSince;
+      case ComputedPropertyRequestType.yearsSince:
+        return PComputedPropertyRequestType.yearsSince;
+      default:
+        throw ArgumentError('Invalid ComputedPropertyRequestType value');
+    }
+  }
+
+  /// Convert a PComputedPropertyRequestType to a ComputedPropertyRequestType
+  static ComputedPropertyRequestType fromPigeon(
+      PComputedPropertyRequestType type) {
+    switch (type) {
+      case PComputedPropertyRequestType.minutesSince:
+        return ComputedPropertyRequestType.minutesSince;
+      case PComputedPropertyRequestType.hoursSince:
+        return ComputedPropertyRequestType.hoursSince;
+      case PComputedPropertyRequestType.daysSince:
+        return ComputedPropertyRequestType.daysSince;
+      case PComputedPropertyRequestType.monthsSince:
+        return ComputedPropertyRequestType.monthsSince;
+      case PComputedPropertyRequestType.yearsSince:
+        return ComputedPropertyRequestType.yearsSince;
+      default:
+        throw ArgumentError('Invalid PComputedPropertyRequestType value');
     }
   }
 }

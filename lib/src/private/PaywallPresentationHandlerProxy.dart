@@ -1,47 +1,51 @@
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
+
 import 'package:flutter/services.dart';
-import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
-import 'package:superwallkit_flutter/src/public/PaywallPresentationHandler.dart';
-import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
 import 'package:superwallkit_flutter/src/public/PaywallResult.dart';
+import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
 
-class PaywallPresentationHandlerProxy extends BridgeIdInstantiable {
-  static const BridgeClass bridgeClass =
-      'PaywallPresentationHandlerProxyBridge';
-  PaywallPresentationHandlerProxy({required this.handler, super.bridgeId})
-      : super(bridgeClass: bridgeClass);
+/// A proxy class that bridges between the Flutter PaywallPresentationHandler
+/// and the generated PPaywallPresentationHandlerGenerated interface.
+class PaywallPresentationHandlerProxy
+    implements PPaywallPresentationHandlerGenerated {
+  final PaywallPresentationHandler handler;
 
-  PaywallPresentationHandler handler;
+  PaywallPresentationHandlerProxy(this.handler);
 
-  // Handle method calls from native
+  static void register(PaywallPresentationHandler handler, {String? hostId}) {
+    final proxy = PaywallPresentationHandlerProxy(handler);
+    PPaywallPresentationHandlerGenerated.setUp(proxy,
+        messageChannelSuffix: hostId ?? '');
+  }
+
   @override
-  Future<dynamic> handleMethodCall(MethodCall call) async {
-    switch (call.method) {
-      case 'onPresent':
-        final bridgeId = call.bridgeId('paywallInfoBridgeId');
-        final paywallInfo = PaywallInfo(bridgeId: bridgeId);
+  void onPresent(PPaywallInfo paywallInfo) {
+    if (handler.onPresentHandler != null) {
+      handler.onPresentHandler!(PaywallInfo.fromPigeon(paywallInfo)!!);
+    }
+  }
 
-        handler.onPresentHandler?.call(paywallInfo);
-      case 'onDismiss':
-        final bridgeId = call.bridgeId('paywallInfoBridgeId');
-        final paywallInfo = PaywallInfo(bridgeId: bridgeId);
-        final paywallResult = PaywallResult.fromJson(
-            Map<String, dynamic>.from(call.argument('paywallResult')));
-        handler.onDismissHandler?.call(paywallInfo, paywallResult);
-      case 'onError':
-        final errorString = call.argument('errorString');
-        handler.onErrorHandler?.call(errorString);
-      case 'onSkip':
-        final bridgeId = call.bridgeId('paywallSkippedReasonBridgeId');
-        final paywallSkipReason =
-            PaywallSkippedReason.createReasonFromBridgeId(bridgeId);
-        if (paywallSkipReason == null) {
-          return;
-        }
+  @override
+  void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult) {
+    if (handler.onDismissHandler != null) {
+      handler.onDismissHandler!(PaywallInfo.fromPigeon(paywallInfo)!!,
+          PaywallResult.fromPigeon(paywallResult)!!);
+    }
+  }
 
-        handler.onSkipHandler?.call(paywallSkipReason);
-      default:
-        throw UnimplementedError('Method ${call.method} not implemented.');
+  @override
+  void onError(String error) {
+    if (handler.onErrorHandler != null) {
+      handler.onErrorHandler!(error);
+    }
+  }
+
+  @override
+  void onSkip(PPaywallSkippedReason reason) {
+    if (handler.onSkipHandler != null) {
+      handler.onSkipHandler!(PaywallSkippedReason.fromPigeon(reason)!!);
     }
   }
 }

@@ -2,6 +2,17 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+
+## 2.1.0-beta.1
+
+### Enhancements
+- Reworks the SDK's beneath the surface to rely on Pigeon codegen
+- Improves stability
+- Improved correctness of the SDK
+
+### Note:
+- This could include some potentially breaking changes. If you find some, please open an issue or reach out to the team.
+
 ## 2.0.8
 
 ### Enhancements
