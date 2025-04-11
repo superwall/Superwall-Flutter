@@ -5,7 +5,9 @@ object BreadCrumbs {
     private val logBuilder = StringBuilder()
 
     fun append(debugString: String) {
-        logBuilder.append(debugString).append("\n")
+        synchronized(logBuilder) {
+            logBuilder.append(debugString).append("\n")
+        }
     }
 
     fun logs(): String {
