@@ -47,7 +47,7 @@ class FlutterError (
   override val message: String? = null,
   val details: Any? = null
 ) : Throwable()
-private fun deepEqualsHost(a: Any?, b: Any?): Boolean {
+private fun deepEqualsSuperwallHostGenerated(a: Any?, b: Any?): Boolean {
   if (a is ByteArray && b is ByteArray) {
       return a.contentEquals(b)
   }
@@ -62,12 +62,12 @@ private fun deepEqualsHost(a: Any?, b: Any?): Boolean {
   }
   if (a is Array<*> && b is Array<*>) {
     return a.size == b.size &&
-        a.indices.all{ deepEqualsHost(a[it], b[it]) }
+        a.indices.all{ deepEqualsSuperwallHostGenerated(a[it], b[it]) }
   }
   if (a is Map<*, *> && b is Map<*, *>) {
     return a.size == b.size && a.keys.all {
         (b as Map<Any?, Any?>).containsKey(it) &&
-        deepEqualsHost(a[it], b[it])
+        deepEqualsSuperwallHostGenerated(a[it], b[it])
     }
   }
   return a == b;
@@ -529,8 +529,8 @@ data class PPaywallInfo (
     return identifier == other.identifier
     && name == other.name
     && experiment == other.experiment
-    && deepEqualsHost(productIds, other.productIds)
-    && deepEqualsHost(products, other.products)
+    && deepEqualsSuperwallHostGenerated(productIds, other.productIds)
+    && deepEqualsSuperwallHostGenerated(products, other.products)
     && url == other.url
     && presentedByPlacementWithName == other.presentedByPlacementWithName
     && presentedByPlacementWithId == other.presentedByPlacementWithId
@@ -553,9 +553,9 @@ data class PPaywallInfo (
     && isFreeTrialAvailable == other.isFreeTrialAvailable
     && featureGatingBehavior == other.featureGatingBehavior
     && closeReason == other.closeReason
-    && deepEqualsHost(localNotifications, other.localNotifications)
-    && deepEqualsHost(computedPropertyRequests, other.computedPropertyRequests)
-    && deepEqualsHost(surveys, other.surveys)
+    && deepEqualsSuperwallHostGenerated(localNotifications, other.localNotifications)
+    && deepEqualsSuperwallHostGenerated(computedPropertyRequests, other.computedPropertyRequests)
+    && deepEqualsSuperwallHostGenerated(surveys, other.surveys)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -592,7 +592,7 @@ data class PProduct (
     }
     return id == other.id
     && name == other.name
-    && deepEqualsHost(entitlements, other.entitlements)
+    && deepEqualsSuperwallHostGenerated(entitlements, other.entitlements)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -731,7 +731,7 @@ data class PSurvey (
     && assignmentKey == other.assignmentKey
     && title == other.title
     && message == other.message
-    && deepEqualsHost(options, other.options)
+    && deepEqualsSuperwallHostGenerated(options, other.options)
     && presentationCondition == other.presentationCondition
     && presentationProbability == other.presentationProbability
     && includeOtherOption == other.includeOtherOption
@@ -1022,7 +1022,7 @@ data class PLogging (
       return true
     }
     return level == other.level
-    && deepEqualsHost(scopes, other.scopes)
+    && deepEqualsSuperwallHostGenerated(scopes, other.scopes)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1251,9 +1251,9 @@ data class PEntitlements (
     if (this === other) {
       return true
     }
-    return deepEqualsHost(active, other.active)
-    && deepEqualsHost(inactive, other.inactive)
-    && deepEqualsHost(all, other.all)
+    return deepEqualsSuperwallHostGenerated(active, other.active)
+    && deepEqualsSuperwallHostGenerated(inactive, other.inactive)
+    && deepEqualsSuperwallHostGenerated(all, other.all)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1287,7 +1287,7 @@ data class PActive (
     if (this === other) {
       return true
     }
-    return deepEqualsHost(entitlements, other.entitlements)
+    return deepEqualsSuperwallHostGenerated(entitlements, other.entitlements)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -1381,7 +1381,7 @@ data class PSuperwallEventInfo (
       return true
     }
     return eventType == other.eventType
-    && deepEqualsHost(params, other.params)
+    && deepEqualsSuperwallHostGenerated(params, other.params)
     && paywallInfo == other.paywallInfo
   }
 
@@ -1765,7 +1765,7 @@ data class PRestoredPaywallResult (
 
   override fun hashCode(): Int = toList().hashCode()
 }
-private open class HostPigeonCodec : StandardMessageCodec() {
+private open class SuperwallHostGeneratedPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
@@ -2264,6 +2264,8 @@ private open class HostPigeonCodec : StandardMessageCodec() {
   }
 }
 
+val SuperwallHostGeneratedPigeonMethodCodec = StandardMethodCodec(SuperwallHostGeneratedPigeonCodec())
+
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface PSuperwallHostApi {
@@ -2298,7 +2300,7 @@ interface PSuperwallHostApi {
   companion object {
     /** The codec used by PSuperwallHostApi. */
     val codec: MessageCodec<Any?> by lazy {
-      HostPigeonCodec()
+      SuperwallHostGeneratedPigeonCodec()
     }
     /** Sets up an instance of `PSuperwallHostApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
@@ -2764,7 +2766,7 @@ class PSuperwallDelegateGenerated(private val binaryMessenger: BinaryMessenger, 
   companion object {
     /** The codec used by PSuperwallDelegateGenerated. */
     val codec: MessageCodec<Any?> by lazy {
-      HostPigeonCodec()
+      SuperwallHostGeneratedPigeonCodec()
     }
   }
   fun subscriptionStatusDidChange(fromArg: PSubscriptionStatus, toArg: PSubscriptionStatus, callback: (Result<Unit>) -> Unit)
@@ -2943,7 +2945,7 @@ class PPurchaseControllerGenerated(private val binaryMessenger: BinaryMessenger,
   companion object {
     /** The codec used by PPurchaseControllerGenerated. */
     val codec: MessageCodec<Any?> by lazy {
-      HostPigeonCodec()
+      SuperwallHostGeneratedPigeonCodec()
     }
   }
   fun purchaseFromAppStore(productIdArg: String, callback: (Result<PPurchaseResult>) -> Unit)
@@ -3012,7 +3014,7 @@ class PConfigureCompletionGenerated(private val binaryMessenger: BinaryMessenger
   companion object {
     /** The codec used by PConfigureCompletionGenerated. */
     val codec: MessageCodec<Any?> by lazy {
-      HostPigeonCodec()
+      SuperwallHostGeneratedPigeonCodec()
     }
   }
   fun onConfigureCompleted(successArg: Boolean, callback: (Result<Unit>) -> Unit)
@@ -3038,7 +3040,7 @@ class PPaywallPresentationHandlerGenerated(private val binaryMessenger: BinaryMe
   companion object {
     /** The codec used by PPaywallPresentationHandlerGenerated. */
     val codec: MessageCodec<Any?> by lazy {
-      HostPigeonCodec()
+      SuperwallHostGeneratedPigeonCodec()
     }
   }
   fun onPresent(paywallInfoArg: PPaywallInfo, callback: (Result<Unit>) -> Unit)
@@ -3115,7 +3117,7 @@ class PFeatureHandlerGenerated(private val binaryMessenger: BinaryMessenger, pri
   companion object {
     /** The codec used by PFeatureHandlerGenerated. */
     val codec: MessageCodec<Any?> by lazy {
-      HostPigeonCodec()
+      SuperwallHostGeneratedPigeonCodec()
     }
   }
   fun onFeature(idArg: String, callback: (Result<Unit>) -> Unit)
@@ -3136,3 +3138,53 @@ class PFeatureHandlerGenerated(private val binaryMessenger: BinaryMessenger, pri
     }
   }
 }
+
+private class SuperwallHostGeneratedPigeonStreamHandler<T>(
+    val wrapper: SuperwallHostGeneratedPigeonEventChannelWrapper<T>
+) : EventChannel.StreamHandler {
+  var pigeonSink: PigeonEventSink<T>? = null
+
+  override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
+    pigeonSink = PigeonEventSink<T>(sink)
+    wrapper.onListen(p0, pigeonSink!!)
+  }
+
+  override fun onCancel(p0: Any?) {
+    pigeonSink = null
+    wrapper.onCancel(p0)
+  }
+}
+
+interface SuperwallHostGeneratedPigeonEventChannelWrapper<T> {
+  open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
+
+  open fun onCancel(p0: Any?) {}
+}
+
+class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
+  fun success(value: T) {
+    sink.success(value)
+  }
+
+  fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
+    sink.error(errorCode, errorMessage, errorDetails)
+  }
+
+  fun endOfStream() {
+    sink.endOfStream()
+  }
+}
+      
+abstract class StreamSubscriptionStatusStreamHandler : SuperwallHostGeneratedPigeonEventChannelWrapper<PSubscriptionStatus> {
+  companion object {
+    fun register(messenger: BinaryMessenger, streamHandler: StreamSubscriptionStatusStreamHandler, instanceName: String = "") {
+      var channelName: String = "dev.flutter.pigeon.superwallkit_flutter.SubscriptionStatusStream.streamSubscriptionStatus"
+      if (instanceName.isNotEmpty()) {
+        channelName += ".$instanceName"
+      }
+      val internalStreamHandler = SuperwallHostGeneratedPigeonStreamHandler<PSubscriptionStatus>(streamHandler)
+      EventChannel(messenger, channelName, SuperwallHostGeneratedPigeonMethodCodec).setStreamHandler(internalStreamHandler)
+    }
+  }
+}
+      

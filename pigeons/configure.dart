@@ -4,10 +4,10 @@ import 'package:pigeon/pigeon.dart';
   dartOut: 'lib/src/generated/superwallhost.g.dart',
   dartOptions: DartOptions(),
   kotlinOut:
-      'android/src/main/kotlin/com/superwall/superwallkit_flutter/Host.g.kt',
+      'android/src/main/kotlin/com/superwall/superwallkit_flutter/SuperwallHostGenerated.g.kt',
   kotlinOptions: KotlinOptions(),
   dartPackageName: 'superwallkit_flutter',
-  swiftOut: 'ios/Classes/SuperwallHost.swift',
+  swiftOut: 'ios/Classes/SuperwallHostGenerated.swift',
   swiftOptions: SwiftOptions(),
 ))
 
@@ -690,4 +690,9 @@ abstract class PPaywallPresentationHandlerGenerated {
 @FlutterApi()
 abstract class PFeatureHandlerGenerated {
   void onFeature(String id);
+}
+
+@EventChannelApi()
+abstract class SubscriptionStatusStream {
+  PSubscriptionStatus streamSubscriptionStatus();
 }

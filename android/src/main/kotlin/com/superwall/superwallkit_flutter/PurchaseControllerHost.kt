@@ -28,14 +28,11 @@ class PurchaseControllerHost(val setup: () -> PPurchaseControllerGenerated) : Pu
         offerId: String?
     ): PurchaseResult {
         val result = suspendCoroutine<PPurchaseResult> { coroutine ->
-            Log.e("PurchaseControllerHost", "purchase: $productDetails, $basePlanId, $offerId")
             host.purchaseFromGooglePlay(productDetails.productId, basePlanId, offerId, {
-                Log.e("PurchaseControllerHost", "purchase result: $it")
                 coroutine.resumeWith(it)
             })
         }
-        Log.e("PurchaseControllerHost", "purchase result: $result")
-        return when (result) {
+        val res = when (result) {
             is PPurchasePurchased -> PurchaseResult.Purchased()
             is PPurchaseFailed -> PurchaseResult.Failed(
                 result.error ?: "Unknown purchase error occured"
@@ -47,6 +44,7 @@ class PurchaseControllerHost(val setup: () -> PPurchaseControllerGenerated) : Pu
                 PurchaseResult.Failed("Never occurs - Received $result")
             }
         }
+        return res
     }
 
     override suspend fun restorePurchases(): RestorationResult {

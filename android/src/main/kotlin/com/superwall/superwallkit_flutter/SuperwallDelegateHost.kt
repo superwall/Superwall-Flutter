@@ -7,21 +7,27 @@ import PPaywallInfo
 import PSubscriptionStatus
 import PSuperwallDelegateGenerated
 import PUnknown
+import PigeonEventSink
+import StreamSubscriptionStatusStreamHandler
 import android.net.Uri
+import com.superwall.sdk.Superwall
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.paywall.presentation.PaywallInfo
 import com.superwall.superwallkit_flutter.utils.EventMapper
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
+import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.toPigeon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.URI
 
 class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : SuperwallDelegate {
     private val backingDelegate = setup()
     private val mainScope = CoroutineScope(Dispatchers.Main)
+    private val ioScope = CoroutineScope(Dispatchers.IO)
     private fun onMain(unit: () -> Unit) {
         mainScope.launch {
             unit()
@@ -73,17 +79,23 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
     ) {
         super.handleLog(level, scope, message, info, error)
         onMain {
-            backingDelegate.handleLog(level, scope, message, info?.mapValues { it.toString() }, error?.message, {})
+            backingDelegate.handleLog(
+                level,
+                scope,
+                message,
+                info?.mapValues { it.toString() },
+                error?.message,
+                {})
         }
     }
 
     override fun handleSuperwallEvent(eventInfo: SuperwallEventInfo) {
         super.handleSuperwallEvent(eventInfo)
         onMain {
-           /* backingDelegate.handleSuperwallEvent(
-                EventMapper.toPigeonEventInfo(eventInfo), {}
-            )
-*/
+            /* backingDelegate.handleSuperwallEvent(
+                 EventMapper.toPigeonEventInfo(eventInfo), {}
+             )
+ */
         }
     }
 
@@ -103,18 +115,8 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
 
     override fun subscriptionStatusDidChange(from: SubscriptionStatus, to: SubscriptionStatus) {
         super.subscriptionStatusDidChange(from, to)
-        val map = { status: SubscriptionStatus ->
-            when (status) {
-                is SubscriptionStatus.Active -> PActive(status.entitlements.map {
-                    PEntitlement(it.id!!)
-                })
-
-                is SubscriptionStatus.Inactive -> PInactive(false)
-                is SubscriptionStatus.Unknown -> PUnknown(false)
-            }
-        }
         onMain {
-            backingDelegate.subscriptionStatusDidChange(map(from), map(to), {})
+            backingDelegate.subscriptionStatusDidChange(from.toPigeon(), to.toPigeon(), {})
         }
     }
 

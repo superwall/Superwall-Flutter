@@ -32,15 +32,30 @@ else
 fi
 
 echo "Building Flutter app for $PLATFORM..."
-flutter build $PLATFORM
+cd test_app
+if [ "$PLATFORM" = "ios" ]; then
+    flutter build ipa --no-codesign
+    # Install the IPA on the iOS simulator
+    echo "Installing IPA on iOS simulator..."
+    xcrun simctl install booted build/ios/ipa/Advanced.ipa
+else
+    flutter build apk
+    # Install the APK on the connected device
+    echo "Installing APK on connected device..."
+    adb install -r build/app/outputs/flutter-apk/app-release.apk
+fi
+cd ..
 
 echo "Running Maestro tests for $PLATFORM..."
 
 # Run the tests
-maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/purchasecontroller/test_pc_purchases.yaml
-maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/purchasecontroller/no_pc_purchases.yaml
 maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/handler/flow.yaml
 maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/flow.yaml
 maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/delegate/flow.yaml
+if [ "$PLATFORM" = "ios" ]; then
+    maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/purchasecontroller/test_pc_purchases.yaml
+fi
+
+maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/purchasecontroller/no_pc_purchases.yaml
 
 echo "All tests completed successfully!" 

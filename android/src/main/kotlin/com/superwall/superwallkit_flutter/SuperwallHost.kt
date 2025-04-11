@@ -24,6 +24,8 @@ import PSuperwallOptions
 import PUnknown
 import PVariant
 import PVariantType
+import PigeonEventSink
+import StreamSubscriptionStatusStreamHandler
 import android.app.Activity
 import android.app.Application
 import com.superwall.sdk.Superwall
@@ -51,18 +53,24 @@ import android.util.Log
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.logger.LogLevel
 import com.superwall.sdk.misc.ActivityProvider
+import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.fromPigeon
+import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.toPigeon
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 
 class SuperwallHost(
     val context: () -> Application,
     val binaryMessenger: () -> BinaryMessenger
-) : PSuperwallHostApi {
+) : PSuperwallHostApi, StreamSubscriptionStatusStreamHandler() {
 
     init {
         setUp(binaryMessenger = binaryMessenger(), this)
+        register(binaryMessenger(), this)
     }
 
+    private val mainScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
-
+    private var latestStreamJob : Job? = null
     override fun configure(
         apiKey: String,
         purchaseController: PPurchaseControllerHost?,
@@ -184,30 +192,12 @@ class SuperwallHost(
 
 
     override fun getSubscriptionStatus(): PSubscriptionStatus {
-        return Superwall.instance.subscriptionStatus.value.let {
-            when (it) {
-                is SubscriptionStatus.Active -> PActive(it.entitlements.map {
-                    PEntitlement(it.id)
-                })
-
-                is SubscriptionStatus.Inactive -> PInactive(false)
-                is SubscriptionStatus.Unknown -> PUnknown(false)
-            }
-        }
+        return Superwall.instance.subscriptionStatus.value.toPigeon()
     }
 
     override fun setSubscriptionStatus(subscriptionStatus: PSubscriptionStatus) {
         Superwall.instance.setSubscriptionStatus(
-            when (subscriptionStatus) {
-                is PActive -> SubscriptionStatus.Active(
-                    subscriptionStatus.entitlements.map {
-                        Entitlement(it.id!!)
-                    }.toSet()
-                )
-
-                is PInactive -> SubscriptionStatus.Inactive
-                else -> SubscriptionStatus.Unknown
-            }
+            subscriptionStatus.fromPigeon()
         )
     }
 
@@ -222,7 +212,7 @@ class SuperwallHost(
     }
 
     override fun getIsConfigured(): Boolean {
-        return Superwall.instance.configurationState == ConfigurationStatus.Configured
+        return Superwall.instance.configurationState is ConfigurationStatus.Configured
     }
 
     override fun getIsPaywallPresented(): Boolean {
@@ -262,7 +252,6 @@ class SuperwallHost(
             PPaywallPresentationHandlerGenerated(binaryMessenger(), placement)
         }) else null
 
-        Log.e("SuperwallHost", "registerPlacement $placement")
         Superwall.instance.register(
             placement, params, host?.handler, if (feature != null) {
                 {
@@ -278,6 +267,20 @@ class SuperwallHost(
         ioScope.launch {
             Superwall.instance.dismiss()
         }
+    }
+
+    override fun onListen(p0: Any?, sink: PigeonEventSink<PSubscriptionStatus>) {
+        latestStreamJob = ioScope.launch {
+            Superwall.instance.subscriptionStatus.collectLatest {
+                mainScope.launch {
+                    sink.success(it.toPigeon())
+                }
+            }
+        }
+    }
+
+    override fun onCancel(p0: Any?) {
+        latestStreamJob?.cancel()
     }
 
 }

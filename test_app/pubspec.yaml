@@ -31,6 +31,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   purchases_flutter: ^8.4.4
+  android_alarm_manager_plus: ^3.0.4
 
 dev_dependencies:
   integration_test:

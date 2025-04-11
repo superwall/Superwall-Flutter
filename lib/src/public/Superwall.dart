@@ -315,12 +315,11 @@ class Superwall {
 
   // Gets the subscription status of the user
   Future<SubscriptionStatus> getSubscriptionStatus() async {
-    final subscriptionStatusBridgeId = await hostApi.getSubscriptionStatus();
+    final subscriptionStatus = await hostApi.getSubscriptionStatus();
 
     try {
-      return await SubscriptionStatus
-          .createSubscriptionStatusFromPSubscriptionStatus(
-              subscriptionStatusBridgeId);
+      return SubscriptionStatus.createSubscriptionStatusFromPSubscriptionStatus(
+          subscriptionStatus);
     } catch (e) {
       return SubscriptionStatus.unknown;
     }
@@ -418,5 +417,16 @@ class Superwall {
     final middleman = SuperwallDelegateHost(delegate);
     generated.PSuperwallDelegateGenerated.setUp(middleman);
     await hostApi.setDelegate(true);
+  }
+
+  Stream<SubscriptionStatus>? _subscriptionStatusStream;
+
+  Stream<SubscriptionStatus> get subscriptionStatus {
+    // Only initialize the stream if it hasn't been initialized yet
+    _subscriptionStatusStream ??= generated.streamSubscriptionStatus().map(
+        (e) =>
+            SubscriptionStatus.createSubscriptionStatusFromPSubscriptionStatus(
+                e));
+    return _subscriptionStatusStream!.asBroadcastStream();
   }
 }

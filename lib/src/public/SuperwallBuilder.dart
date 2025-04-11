@@ -29,14 +29,14 @@ class _SuperwallBuilderState extends State<SuperwallBuilder> {
 
   Future<void> _initializeStatus() async {
     _status = await Superwall.shared.getSubscriptionStatus();
-    /*_subscription = Superwall.shared.subscriptionStatus.listen((status) {
+    _subscription = Superwall.shared.subscriptionStatus.listen((status) {
       setState(() {
         _status = status;
       });
     });
     if (mounted) {
       setState(() {});
-    }*/
+    }
   }
 
   @override

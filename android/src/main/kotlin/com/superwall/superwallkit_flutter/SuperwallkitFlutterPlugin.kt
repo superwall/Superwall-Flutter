@@ -20,35 +20,28 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 class SuperwallkitFlutterPlugin : FlutterPlugin, ActivityAware {
-    var currentActivity: Activity? = null
     var host: SuperwallHost? = null
 
     companion object {
-        private var instance: SuperwallkitFlutterPlugin? = null
         val reattachementCount = AtomicInteger(0)
         val lock = Object()
-        val currentActivity: Activity?
-            get() = instance?.currentActivity
+        var currentActivity: Activity? = null
     }
 
     init {
         if (BuildConfig.DEBUG && BuildConfig.WAIT_FOR_DEBUGGER) {
             Debug.waitForDebugger()
         }
-
-        // Only allow instance to get set once.
-        if (instance == null) {
-            instance = this
-        }
     }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         synchronized(lock) {
-            if (host == null)
+            if (host == null) {
                 host = SuperwallHost(
-                    binaryMessenger = { flutterPluginBinding.binaryMessenger},
+                    binaryMessenger = { flutterPluginBinding.binaryMessenger },
                     context = { flutterPluginBinding?.applicationContext as Application }
                 )
+            }
         }
     }
 

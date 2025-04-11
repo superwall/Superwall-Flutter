@@ -4,7 +4,7 @@ import SuperwallKit
 
 public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
   private static var alreadyRegistered = false
-  private static var superwallProxy: SuperwallProxy?
+  private static var superwallProxy: SuperwallHost?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     // This should get called on the main thread by default
@@ -13,8 +13,8 @@ public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
     }
     alreadyRegistered = true
 
-    // Initialize the SuperwallProxy
-    superwallProxy = SuperwallProxy(flutterBinaryMessenger: registrar.messenger())
+    // Initialize the SuperwallHost
+    superwallProxy = SuperwallHost(flutterBinaryMessenger: registrar.messenger())
     
   }
 }

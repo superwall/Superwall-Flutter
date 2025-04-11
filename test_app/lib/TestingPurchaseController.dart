@@ -6,14 +6,16 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart' hide LogLevel;
 
 class TestingPurchaseController extends PurchaseController {
-  // State variables
   bool rejectPurchase = true;
   bool restorePurchase = true;
   bool shouldShowDialog = false;
   BuildContext? _context;
 
-  // Constructor with context parameter
   TestingPurchaseController({BuildContext? context}) : _context = context;
+
+  Future<void> configureAndSyncSubscriptionStatus() async {
+    await Superwall.shared.setSubscriptionStatus(SubscriptionStatusInactive());
+  }
 
   // Toggle methods
   void toggleRejectPurchase() {
@@ -28,7 +30,6 @@ class TestingPurchaseController extends PurchaseController {
     shouldShowDialog = !shouldShowDialog;
   }
 
-  // Helper method to show dialog
   Future<void> _showResultDialog(
       BuildContext context, String title, String message) async {
     return showDialog<void>(
@@ -61,9 +62,6 @@ class TestingPurchaseController extends PurchaseController {
     }
   }
 
-  /// Makes a purchase from Google Play with RevenueCat and returns its
-  /// result. This gets called when someone tries to purchase a product on
-  /// one of your paywalls from Android.
   @override
   Future<PurchaseResult> purchaseFromGooglePlay(
       String productId, String? basePlanId, String? offerId) async {
@@ -71,11 +69,12 @@ class TestingPurchaseController extends PurchaseController {
       return PurchaseResult.failed(
           "Purchase was rejected in TestingPurchaseController");
     } else {
-      Superwall.shared.setSubscriptionStatus(SubscriptionStatusActive(
+      await Superwall.shared.setSubscriptionStatus(SubscriptionStatusActive(
           entitlements: [
         Entitlement(id: "test_entitlement"),
       ].toSet()));
-      return PurchaseResult.purchased;
+
+      return Future<PurchaseResult>.value(PurchaseResult.purchased);
     }
   }
 
@@ -91,6 +90,10 @@ class TestingPurchaseController extends PurchaseController {
     }
 
     if (restorePurchase) {
+      await Superwall.shared.setSubscriptionStatus(SubscriptionStatusActive(
+          entitlements: [
+        Entitlement(id: "test_entitlement"),
+      ].toSet()));
       return RestorationResult.restored;
     } else {
       return RestorationResult.failed(

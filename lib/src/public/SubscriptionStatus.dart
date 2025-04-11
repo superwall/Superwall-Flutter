@@ -10,9 +10,8 @@ sealed class SubscriptionStatus {
   static final SubscriptionStatus inactive = SubscriptionStatusInactive();
   static final SubscriptionStatus unknown = SubscriptionStatusUnknown();
 
-  static Future<SubscriptionStatus>
-      createSubscriptionStatusFromPSubscriptionStatus(
-          PSubscriptionStatus pSubscriptionStatus) async {
+  static SubscriptionStatus createSubscriptionStatusFromPSubscriptionStatus(
+      PSubscriptionStatus pSubscriptionStatus) {
     switch (pSubscriptionStatus) {
       case PActive():
         return SubscriptionStatusActive(

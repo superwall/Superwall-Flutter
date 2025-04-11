@@ -2560,6 +2560,8 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+
 class PSuperwallHostApi {
   /// Constructor for [PSuperwallHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -3815,3 +3817,15 @@ abstract class PFeatureHandlerGenerated {
     }
   }
 }
+
+Stream<PSubscriptionStatus> streamSubscriptionStatus( {String instanceName = ''}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
+  final EventChannel streamSubscriptionStatusChannel =
+      EventChannel('dev.flutter.pigeon.superwallkit_flutter.SubscriptionStatusStream.streamSubscriptionStatus$instanceName', pigeonMethodCodec);
+  return streamSubscriptionStatusChannel.receiveBroadcastStream().map((dynamic event) {
+    return event as PSubscriptionStatus;
+  });
+}
+    

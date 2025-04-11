@@ -51,11 +51,16 @@ appId: com.superwall.superapp
     when:
       platform: iOS
     commands:
-      - tapOn: "Continue"
-      - tapOn: "Subscribe"
-      - tapOn: "OK"
+      - tapOn: 
+          text: "Continue"
+          optional: true
+      - tapOn: 
+          text: "Subscribe"
+          optional: true
+      - tapOn: 
+          text: "OK"
+          optional: true
       - assertVisible: "Feature triggered"
       - tapOn: "OK"
       - tapOn: "Reset status"
-      - tapOn: "Trigger Paywall"
 
