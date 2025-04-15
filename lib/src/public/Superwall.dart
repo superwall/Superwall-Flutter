@@ -397,6 +397,11 @@ class Superwall {
         feature: feature != null ? featureBlockHost : null);
   }
 
+  Future<RestorationResult> restorePurchases() async {
+    final result = await hostApi.restorePurchases();
+    return RestorationResult.fromPRestorationResult(result);
+  }
+
   // Identifies a user with the given ID and options
   Future<void> identify(String userId, [IdentityOptions? options]) async {
     generated.PIdentityOptions? generatedOptions;

@@ -6,7 +6,7 @@ The SW Flutter SDK is a wrapper around native SDK's for Android and iOS.
 Under the hood it is based on [Pigeon](https://pub.dev/packages/pigeon), which enables
 us to generate Dart, Kotlin and Swift interfaces and method channels, enabling typesafe communication between the Native Host and Flutter.
 
-Each platform contains implementations of the generated interfaces, allowing it's Flutter counterpart to hook into native calls easily.
+Each platform contains implementations of the generated interfaces, allowing its Flutter counterpart to hook into native calls easily.
 
 ## Pigeon Integration
 
@@ -40,7 +40,7 @@ To add a new method to the API, you have to do the following:
 2. Run codegen commmand:
 
 ```sh
-flutter pub run pigeon --input pigeons/configure.dartcriptionStatus_didChange
+flutter pub run pigeon --input pigeons/configure.dart
 ```
 
 3. Override and implement it in:

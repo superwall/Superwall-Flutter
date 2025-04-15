@@ -1695,6 +1695,7 @@ protocol PSuperwallHostApi {
   func reset() throws
   func setDelegate(hasDelegate: Bool) throws
   func confirmAllAssignments(completion: @escaping (Result<[PConfirmedAssignment], Error>) -> Void)
+  func restorePurchases(completion: @escaping (Result<PRestorationResult, Error>) -> Void)
   func getLogLevel() throws -> String
   func setLogLevel(logLevel: String) throws
   func getUserAttributes() throws -> [String: Any]
@@ -1788,6 +1789,21 @@ class PSuperwallHostApiSetup {
       }
     } else {
       confirmAllAssignmentsChannel.setMessageHandler(nil)
+    }
+    let restorePurchasesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.restorePurchases\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      restorePurchasesChannel.setMessageHandler { _, reply in
+        api.restorePurchases { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      restorePurchasesChannel.setMessageHandler(nil)
     }
     let getLogLevelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLogLevel\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

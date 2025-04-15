@@ -598,6 +598,9 @@ abstract class PSuperwallHostApi {
   @async
   List<PConfirmedAssignment> confirmAllAssignments();
 
+  @async
+  PRestorationResult restorePurchases();
+
   // Logging methods
   String getLogLevel();
   void setLogLevel(String logLevel);

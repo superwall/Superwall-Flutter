@@ -2273,6 +2273,7 @@ interface PSuperwallHostApi {
   fun reset()
   fun setDelegate(hasDelegate: Boolean)
   fun confirmAllAssignments(callback: (Result<List<PConfirmedAssignment>>) -> Unit)
+  fun restorePurchases(callback: (Result<PRestorationResult>) -> Unit)
   fun getLogLevel(): String
   fun setLogLevel(logLevel: String)
   fun getUserAttributes(): Map<String, Any>
@@ -2367,6 +2368,24 @@ interface PSuperwallHostApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             api.confirmAllAssignments{ result: Result<List<PConfirmedAssignment>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.restorePurchases$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.restorePurchases{ result: Result<PRestorationResult> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

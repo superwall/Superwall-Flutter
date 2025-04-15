@@ -9,8 +9,8 @@ sealed class RestorationResult {
   static RestorationResult fromPRestorationResult(dynamic result) {
     if (result is PRestorationRestored) {
       return RestorationResultRestored();
-    } else if (result is PRestoreFailed) {
-      return RestorationResultFailed(error: result.message ?? 'Unknown error');
+    } else if (result is PRestorationFailed) {
+      return RestorationResultFailed(error: result.error ?? 'Unknown error');
     } else {
       throw ArgumentError('Unknown PRestorationResult type');
     }
