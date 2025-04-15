@@ -16,6 +16,9 @@ import PPaywallPresentationHandlerGenerated
 import PPaywallPresentationHandlerHost
 import PPurchaseControllerGenerated
 import PPurchaseControllerHost
+import PRestorationFailed
+import PRestorationRestored
+import PRestorationResult
 import PSubscriptionStatus
 import PSuperwallDelegateGenerated
 import PSuperwallHostApi
@@ -51,6 +54,7 @@ import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
 import android.util.Log
 import com.superwall.sdk.config.options.SuperwallOptions
+import com.superwall.sdk.delegate.RestorationResult
 import com.superwall.sdk.logger.LogLevel
 import com.superwall.sdk.misc.ActivityProvider
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.fromPigeon
@@ -283,4 +287,17 @@ class SuperwallHost(
         latestStreamJob?.cancel()
     }
 
+    override fun restorePurchases(callback: (Result<PRestorationResult>) -> Unit) {
+        ioScope.launch {
+            val res = Superwall.instance.restorePurchases().map {
+                when (it) {
+                    is RestorationResult.Restored -> PRestorationRestored()
+                    is RestorationResult.Failed -> PRestorationFailed(
+                        it.error?.localizedMessage ?: "Unknown error"
+                    )
+                }
+            }
+            callback(res)
+        }
+    }
 }

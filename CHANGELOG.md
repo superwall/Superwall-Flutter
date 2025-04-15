@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.1.0-beta.2
+
+### Enhancements
+- Adds `restorePurchases` function
+- Updates Android SDK to 2.0.6 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.6)  
+- Updates iOS SDK to 4.2.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.2.0)
 
 ## 2.1.0-beta.1
 
