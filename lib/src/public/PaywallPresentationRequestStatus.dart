@@ -1,3 +1,4 @@
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// The status of the paywall request
@@ -38,44 +39,44 @@ class PaywallPresentationRequestStatusReason {
   PaywallPresentationRequestStatusReason._(
       {required this.type, this.experiment});
 
-  factory PaywallPresentationRequestStatusReason.fromJson(
-      Map<dynamic, dynamic> json) {
-    switch (json['reason']) {
-      case 'debuggerPresented':
+  factory PaywallPresentationRequestStatusReason.fromPPaywallPresentationRequestStatusReason(
+      PPaywallPresentationRequestStatusReason reason) {
+    switch (reason) {
+      case PPaywallPresentationRequestStatusReason.debuggerPresented:
         return PaywallPresentationRequestStatusReason._(
             type: PaywallPresentationRequestStatusReasonType.debuggerPresented);
-      case 'paywallAlreadyPresented':
+      case PPaywallPresentationRequestStatusReason.paywallAlreadyPresented:
         return PaywallPresentationRequestStatusReason._(
             type: PaywallPresentationRequestStatusReasonType
                 .paywallAlreadyPresented);
-      case 'holdout':
+      case PPaywallPresentationRequestStatusReason.holdout:
         return PaywallPresentationRequestStatusReason._(
           type: PaywallPresentationRequestStatusReasonType.holdout,
-          experiment: Experiment(bridgeId: json['experimentBridgeId']),
+          //TODO: Add experiment here
         );
-      case 'noAudienceMatch':
+      case PPaywallPresentationRequestStatusReason.noAudienceMatch:
         return PaywallPresentationRequestStatusReason._(
             type: PaywallPresentationRequestStatusReasonType.noAudienceMatch);
-      case 'placementNotFound':
+      case PPaywallPresentationRequestStatusReason.placementNotFound:
         return PaywallPresentationRequestStatusReason._(
             type: PaywallPresentationRequestStatusReasonType.placementNotFound);
-      case 'noPaywallViewController':
+      case PPaywallPresentationRequestStatusReason.noPaywallViewController:
         return PaywallPresentationRequestStatusReason._(
             type: PaywallPresentationRequestStatusReasonType
                 .noPaywallViewController);
-      case 'noPresenter':
+      case PPaywallPresentationRequestStatusReason.noPresenter:
         return PaywallPresentationRequestStatusReason._(
             type: PaywallPresentationRequestStatusReasonType.noPresenter);
-      case 'noConfig':
+      case PPaywallPresentationRequestStatusReason.noConfig:
         return PaywallPresentationRequestStatusReason._(
             type: PaywallPresentationRequestStatusReasonType.noConfig);
-      case 'subscriptionStatusTimeout':
+      case PPaywallPresentationRequestStatusReason.subscriptionStatusTimeout:
         return PaywallPresentationRequestStatusReason._(
             type: PaywallPresentationRequestStatusReasonType
                 .subscriptionStatusTimeout);
       default:
         throw ArgumentError(
-            'Invalid PaywallPresentationRequestStatusReason type');
+            'Invalid PPaywallPresentationRequestStatusReason type');
     }
   }
 }

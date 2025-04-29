@@ -1,3 +1,5 @@
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+
 /// A survey attached to a paywall.
 class Survey {
   /// The id of the survey.
@@ -52,10 +54,43 @@ class Survey {
       options: (json['options'] as List)
           .map((optionJson) => SurveyOption.fromJson(optionJson))
           .toList(),
-      presentationCondition: SurveyShowConditionExtension.fromJson(json['presentationCondition']),
+      presentationCondition:
+          SurveyShowConditionExtension.fromJson(json['presentationCondition']),
       presentationProbability: json['presentationProbability'].toDouble(),
       includeOtherOption: json['includeOtherOption'],
       includeCloseOption: json['includeCloseOption'],
+    );
+  }
+
+  /// Create a Survey from a PSurvey
+  static Survey fromPigeon(PSurvey survey) {
+    return Survey(
+      id: survey.id,
+      assignmentKey: survey.assignmentKey,
+      title: survey.title,
+      message: survey.message,
+      options: survey.options.map((o) => SurveyOption.fromPigeon(o)).toList(),
+      presentationCondition:
+          SurveyShowConditionExtension.fromPigeon(survey.presentationCondition),
+      presentationProbability: survey.presentationProbability,
+      includeOtherOption: survey.includeOtherOption,
+      includeCloseOption: survey.includeCloseOption,
+    );
+  }
+
+  /// Convert this Survey to a PSurvey
+  PSurvey toPigeon() {
+    return PSurvey(
+      id: id,
+      assignmentKey: assignmentKey,
+      title: title,
+      message: message,
+      options: options.map((o) => o.toPigeon()).toList(),
+      presentationCondition:
+          SurveyShowConditionExtension(presentationCondition).toPigeon(),
+      presentationProbability: presentationProbability,
+      includeOtherOption: includeOtherOption,
+      includeCloseOption: includeCloseOption,
     );
   }
 }
@@ -78,6 +113,22 @@ class SurveyOption {
     return SurveyOption(
       id: json['id'],
       title: json['title'],
+    );
+  }
+
+  /// Create a SurveyOption from a PSurveyOption
+  static SurveyOption fromPigeon(PSurveyOption option) {
+    return SurveyOption(
+      id: option.id ?? '',
+      title: option.text ?? '',
+    );
+  }
+
+  /// Convert this SurveyOption to a PSurveyOption
+  PSurveyOption toPigeon() {
+    return PSurveyOption(
+      id: id,
+      text: title,
     );
   }
 }
@@ -111,6 +162,30 @@ extension SurveyShowConditionExtension on SurveyShowCondition {
         return SurveyShowCondition.onPurchase;
       default:
         throw ArgumentError('Invalid SurveyShowCondition value: $json');
+    }
+  }
+
+  /// Convert this SurveyShowCondition to PSurveyShowCondition
+  PSurveyShowCondition toPigeon() {
+    switch (this) {
+      case SurveyShowCondition.onManualClose:
+        return PSurveyShowCondition.onManualClose;
+      case SurveyShowCondition.onPurchase:
+        return PSurveyShowCondition.onPurchase;
+      default:
+        throw ArgumentError('Invalid SurveyShowCondition value');
+    }
+  }
+
+  /// Convert a PSurveyShowCondition to a SurveyShowCondition
+  static SurveyShowCondition fromPigeon(PSurveyShowCondition condition) {
+    switch (condition) {
+      case PSurveyShowCondition.onManualClose:
+        return SurveyShowCondition.onManualClose;
+      case PSurveyShowCondition.onPurchase:
+        return SurveyShowCondition.onPurchase;
+      default:
+        throw ArgumentError('Invalid PSurveyShowCondition value');
     }
   }
 }

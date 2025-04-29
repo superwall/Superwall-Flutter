@@ -1,4 +1,4 @@
-import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 
 /// A campaign experiment that was assigned to a user.
 ///
@@ -9,17 +9,33 @@ import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
 /// they are in a holdout group.
 ///
 /// To learn more, read [our docs](https://docs.superwall.com/docs/home#how-it-work
-class Experiment extends BridgeIdInstantiable {
-  static const BridgeClass bridgeClass = 'ExperimentBridge';
-  Experiment({super.bridgeId}): super(bridgeClass: bridgeClass);
+class Experiment {
+  final String id;
+  final String groupId;
 
-  Future<String> get id async {
-    final id = await bridgeId.communicator.invokeBridgeMethod('getId');
-    return id;
+  Experiment({
+    required this.id,
+    required this.groupId,
+  });
+
+  /// Creates an Experiment from a PExperiment from the pigeon generated code
+  static Experiment? fromPigeon(PExperiment? pExperiment) {
+    if (pExperiment == null) return null;
+    return Experiment(
+      id: pExperiment.id,
+      groupId: pExperiment.groupId,
+    );
   }
 
-  Future<String> get description async {
-    final description = await bridgeId.communicator.invokeBridgeMethod('getDescription');
-    return description;
+  /// Converts this Experiment to a PExperiment for the pigeon generated code
+  PExperiment toPigeon() {
+    return PExperiment(
+      id: id,
+      groupId: groupId,
+      variant: PVariant(
+        id: "", // This is needed for the PExperiment constructor but not used
+        type: PVariantType.treatment, // Default value, not used
+      ),
+    );
   }
 }

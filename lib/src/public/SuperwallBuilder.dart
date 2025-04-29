@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:superwallkit_flutter/src/public/Superwall.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class SuperwallBuilder extends StatefulWidget {

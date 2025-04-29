@@ -1,3 +1,5 @@
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+
 /// A local notification.
 class LocalNotification {
   /// The type of the notification.
@@ -33,6 +35,29 @@ class LocalNotification {
     );
   }
 
+  /// Create a LocalNotification from a PLocalNotification
+  static LocalNotification fromPigeon(PLocalNotification notification) {
+    return LocalNotification(
+      type: LocalNotificationTypeExtension.fromPigeon(notification.type),
+      title: notification.title,
+      subtitle: notification.subtitle,
+      body: notification.body,
+      delay: notification.delay.toDouble(),
+    );
+  }
+
+  /// Convert this LocalNotification to a PLocalNotification
+  PLocalNotification toPigeon() {
+    return PLocalNotification(
+      id: 0, // Default id, this might need adjustment
+      type: LocalNotificationTypeExtension(type).toPigeon(),
+      title: title,
+      subtitle: subtitle,
+      body: body,
+      delay: delay.toInt(),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'type': type.toJson(),
@@ -46,6 +71,7 @@ class LocalNotification {
 
 enum LocalNotificationType {
   trialStarted,
+  unsupported,
 }
 
 // Extension on LocalNotificationType for explicit serialization and deserialization
@@ -55,6 +81,8 @@ extension LocalNotificationTypeExtension on LocalNotificationType {
     switch (this) {
       case LocalNotificationType.trialStarted:
         return 'trialStarted';
+      case LocalNotificationType.unsupported:
+        return 'unsupported';
       default:
         throw ArgumentError('Invalid LocalNotificationType value');
     }
@@ -65,8 +93,34 @@ extension LocalNotificationTypeExtension on LocalNotificationType {
     switch (json) {
       case 'trialStarted':
         return LocalNotificationType.trialStarted;
+      case 'unsupported':
+        return LocalNotificationType.unsupported;
       default:
         throw ArgumentError('Invalid LocalNotificationType value: $json');
+    }
+  }
+
+  /// Convert this LocalNotificationType to PLocalNotificationType
+  PLocalNotificationType toPigeon() {
+    switch (this) {
+      case LocalNotificationType.trialStarted:
+        return PLocalNotificationType.trialStarted;
+      case LocalNotificationType.unsupported:
+        return PLocalNotificationType.unsupported;
+      default:
+        throw ArgumentError('Invalid LocalNotificationType value');
+    }
+  }
+
+  /// Convert a PLocalNotificationType to a LocalNotificationType
+  static LocalNotificationType fromPigeon(PLocalNotificationType type) {
+    switch (type) {
+      case PLocalNotificationType.trialStarted:
+        return LocalNotificationType.trialStarted;
+      case PLocalNotificationType.unsupported:
+        return LocalNotificationType.unsupported;
+      default:
+        throw ArgumentError('Invalid PLocalNotificationType value');
     }
   }
 }

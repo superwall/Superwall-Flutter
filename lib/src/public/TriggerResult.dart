@@ -1,4 +1,5 @@
 import 'package:superwallkit_flutter/src/public/Experiment.dart';
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 
 /// The result of a paywall trigger.
 ///
@@ -21,22 +22,29 @@ class TriggerResult {
   factory TriggerResult.error(String error) =>
       TriggerResult._(type: TriggerResultType.error, error: error);
 
-  factory TriggerResult.fromJson(Map<dynamic, dynamic> json) {
-    switch (json['result']) {
-      case 'placementNotFound':
-        return TriggerResult.placementNotFound();
-      case 'noAudienceMatch':
-        return TriggerResult.noAudienceMatch();
-      case 'paywall':
-        return TriggerResult.paywall(
-            Experiment(bridgeId: json['experimentBridgeId']));
-      case 'holdout':
-        return TriggerResult.holdout(
-            Experiment(bridgeId: json['experimentBridgeId']));
-      case 'error':
-        return TriggerResult.error(json['error']);
-      default:
-        throw ArgumentError('Invalid TriggerResult type');
+  factory TriggerResult.fromPTriggerResult(PTriggerResult result) {
+    if (result is PPlacementNotFoundTriggerResult) {
+      return TriggerResult.placementNotFound();
+    } else if (result is PNoAudienceMatchTriggerResult) {
+      return TriggerResult.noAudienceMatch();
+    } else if (result is PPaywallTriggerResult) {
+      return TriggerResult.paywall(
+        Experiment(
+          id: result.experiment.id,
+          groupId: result.experiment.groupId,
+        ),
+      );
+    } else if (result is PHoldoutTriggerResult) {
+      return TriggerResult.holdout(
+        Experiment(
+          id: result.experiment.id,
+          groupId: result.experiment.groupId,
+        ),
+      );
+    } else if (result is PErrorTriggerResult) {
+      return TriggerResult.error(result.error);
+    } else {
+      throw ArgumentError('Invalid PTriggerResult type');
     }
   }
 }

@@ -31,9 +31,9 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   }
 
   void listenForPurchases() {
-    _subscription = Superwall.shared.subscriptionStatus.listen((status) {
+/*    _subscription = Superwall.shared.subscriptionStatus.listen((status) {
       logging.info('subscriptionStatusDidChange listener: $status');
-    });
+    });*/
   }
 
   @override
@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
           : 'pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85';
 
       final logging = Logging();
-      logging.level = LogLevel.warn;
+      logging.level = LogLevel.none;
       logging.scopes = {LogScope.all};
 
       final options = SuperwallOptions();
@@ -67,8 +67,9 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       Superwall.configure(apiKey,
           purchaseController: useRevenueCat ? purchaseController : null,
           options: options, completion: () {
-        listenForPurchases();
         logging.info('Executing Superwall configure completion block');
+        print('Executing Superwall configure completion block');
+        listenForPurchases();
       });
       Superwall.shared.setDelegate(this);
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
@@ -327,6 +328,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   @override
   void handleLog(String level, String scope, String? message,
       Map<dynamic, dynamic>? info, String? error) {
+    print("handleLog: $level, $scope, $message, $info, $error");
     // logging.info("handleLog: $level, $scope, $message, $info, $error");
   }
 
@@ -378,14 +380,6 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 
   @override
   void willPresentPaywall(PaywallInfo paywallInfo) {
-    printSubscriptionStatus();
     logging.info('willPresentPaywall: $paywallInfo');
-  }
-
-  Future<void> printSubscriptionStatus() async {
-    final status = await Superwall.shared.getSubscriptionStatus();
-    final description = await status.description;
-
-    logging.info('Status: $description');
   }
 }

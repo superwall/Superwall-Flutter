@@ -27,3 +27,4 @@ export 'src/public/PaywallPresentationRequestStatus.dart';
 export 'src/public/PaywallSkippedReason.dart';
 export 'src/public/RestoreType.dart';
 export 'src/public/SuperwallBuilder.dart';
+export 'src/public/PaywallResult.dart';

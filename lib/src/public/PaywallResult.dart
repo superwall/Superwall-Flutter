@@ -1,19 +1,20 @@
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+
 sealed class PaywallResult {
   const PaywallResult();
 
-  static PaywallResult fromJson(Map<String, dynamic> json) {
-    final type = json['type'] as String;
-    switch (type) {
-      case 'purchased':
-        final product = Map<String, dynamic>.from(json['product']);
-        final productId = product['productId'] as String;
-        return PurchasedPaywallResult(productId: productId);
-      case 'declined':
-        return const DeclinedPaywallResult();
-      case 'restored':
-        return const RestoredPaywallResult();
-      default:
-        throw ArgumentError('Unknown PaywallResult type: $type');
+  static PaywallResult? fromPigeon(PPaywallResult? pigeonResult) {
+    if (pigeonResult == null) return null;
+
+    if (pigeonResult is PPurchasedPaywallResult) {
+      return PurchasedPaywallResult(productId: pigeonResult.productId);
+    } else if (pigeonResult is PDeclinedPaywallResult) {
+      return const DeclinedPaywallResult();
+    } else if (pigeonResult is PRestoredPaywallResult) {
+      return const RestoredPaywallResult();
+    } else {
+      throw ArgumentError(
+          'Unknown PaywallResult type: ${pigeonResult.runtimeType}');
     }
   }
 }

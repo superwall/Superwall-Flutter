@@ -2,18 +2,18 @@ PODS:
   - Flutter (1.0.0)
   - integration_test (0.0.1):
     - Flutter
-  - purchases_flutter (6.29.4):
+  - purchases_flutter (8.6.0):
     - Flutter
-    - PurchasesHybridCommon (= 10.9.0)
-  - PurchasesHybridCommon (10.9.0):
-    - RevenueCat (= 4.43.0)
-  - RevenueCat (4.43.0)
-  - Superscript (0.1.18)
-  - SuperwallKit (4.0.6):
-    - Superscript (= 0.1.18)
+    - PurchasesHybridCommon (= 13.21.0)
+  - PurchasesHybridCommon (13.21.0):
+    - RevenueCat (= 5.18.0)
+  - RevenueCat (5.18.0)
+  - Superscript (0.2.4)
+  - SuperwallKit (4.3.0):
+    - Superscript (= 0.2.4)
   - superwallkit_flutter (0.0.1):
     - Flutter
-    - SuperwallKit (= 4.0.6)
+    - SuperwallKit (= 4.3.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -40,14 +40,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  purchases_flutter: f1d1c2646ca4a2c63ac144bd36a66279642b8666
-  PurchasesHybridCommon: 0e157d11d04fdfdd434b5c6d05acb58fd1cc9db8
-  RevenueCat: f7b90c52f4b7e322bc9e7adaf734030523534b06
-  Superscript: 88a0e5e467fc986289f99e20e383232513c41ea9
-  SuperwallKit: 18a4588702d5369880563d5a17cb967423f94c89
-  superwallkit_flutter: cae8834f81dbbad3e1ab27c53af72859c29bc05a
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  purchases_flutter: 12a5fd3a702db1d0da86f12c0cf1fe462688cfff
+  PurchasesHybridCommon: 9691d74a051f30858360d78936d59dc14575014e
+  RevenueCat: e825836f5d6baa870c53d7281be25a5fd91abd91
+  Superscript: ede1cf73124c02ba1e120fbe5e15d3c4b12020a0
+  SuperwallKit: 953b1a572c6fec762727d610926c9b518e553176
+  superwallkit_flutter: 2cc329529ba466fd236284107c519568ce0ef877
 
 PODFILE CHECKSUM: 1959d098c91d8a792531a723c4a9d7e9f6a01e38
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2

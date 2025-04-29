@@ -1,4 +1,4 @@
-import 'package:superwallkit_flutter/src/private/BridgingCreator.dart';
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/src/public/ComputedPropertyRequest.dart';
 import 'package:superwallkit_flutter/src/public/Experiment.dart';
 import 'package:superwallkit_flutter/src/public/FeatureGatingBehavior.dart';
@@ -8,197 +8,213 @@ import 'package:superwallkit_flutter/src/public/Product.dart';
 import 'package:superwallkit_flutter/src/public/Survey.dart';
 
 /// Contains information about a paywall.
-class PaywallInfo extends BridgeIdInstantiable {
-  static const BridgeClass bridgeClass = 'PaywallInfoBridge';
-  PaywallInfo({super.bridgeId}) : super(bridgeClass: bridgeClass);
+class PaywallInfo {
+  /// Static factory method to create a PaywallInfo from a PPaywallInfo
+  static PaywallInfo? fromPigeon(PPaywallInfo? pigeonInfo) {
+    if (pigeonInfo == null) return null;
+
+    return PaywallInfo(
+      identifier: pigeonInfo.identifier,
+      name: pigeonInfo.name,
+      experiment: Experiment.fromPigeon(pigeonInfo.experiment),
+      productIds: pigeonInfo.productIds,
+      products:
+          pigeonInfo.products?.map((p) => Product.fromPigeon(p)!!).toList(),
+      url: pigeonInfo.url,
+      presentedByPlacementWithName: pigeonInfo.presentedByPlacementWithName,
+      presentedByPlacementWithId: pigeonInfo.presentedByPlacementWithId,
+      presentedByPlacementAt: pigeonInfo.presentedByPlacementAt,
+      presentedBy: pigeonInfo.presentedBy,
+      presentationSourceType: pigeonInfo.presentationSourceType,
+      responseLoadStartTime: pigeonInfo.responseLoadStartTime,
+      responseLoadCompleteTime: pigeonInfo.responseLoadCompleteTime,
+      responseLoadFailTime: pigeonInfo.responseLoadFailTime,
+      responseLoadDuration: pigeonInfo.responseLoadDuration,
+      webViewLoadStartTime: pigeonInfo.webViewLoadStartTime,
+      webViewLoadCompleteTime: pigeonInfo.webViewLoadCompleteTime,
+      webViewLoadFailTime: pigeonInfo.webViewLoadFailTime,
+      webViewLoadDuration: pigeonInfo.webViewLoadDuration,
+      productsLoadStartTime: pigeonInfo.productsLoadStartTime,
+      productsLoadCompleteTime: pigeonInfo.productsLoadCompleteTime,
+      productsLoadFailTime: pigeonInfo.productsLoadFailTime,
+      productsLoadDuration: pigeonInfo.productsLoadDuration,
+      paywalljsVersion: pigeonInfo.paywalljsVersion,
+      isFreeTrialAvailable: pigeonInfo.isFreeTrialAvailable,
+      featureGatingBehavior: pigeonInfo.featureGatingBehavior != null
+          ? FeatureGatingBehaviorExtension.fromPigeon(
+              pigeonInfo.featureGatingBehavior!)
+          : null,
+      closeReason: pigeonInfo.closeReason != null
+          ? PaywallCloseReasonExtension.fromPigeon(pigeonInfo.closeReason!)
+          : null,
+      localNotifications: pigeonInfo.localNotifications
+          ?.map((ln) => LocalNotification.fromPigeon(ln))
+          .toList(),
+      computedPropertyRequests: pigeonInfo.computedPropertyRequests
+          ?.map((cpr) => ComputedPropertyRequest.fromPigeon(cpr))
+          .toList(),
+      surveys: pigeonInfo.surveys?.map((s) => Survey.fromPigeon(s)).toList(),
+    );
+  }
+
+  /// Convert this PaywallInfo to a PPaywallInfo
+  PPaywallInfo toPigeon() {
+    return PPaywallInfo(
+      identifier: identifier,
+      name: name,
+      experiment: experiment?.toPigeon(),
+      productIds: productIds,
+      products: products?.map((p) => p.toPigeon()).toList(),
+      url: url,
+      presentedByPlacementWithName: presentedByPlacementWithName,
+      presentedByPlacementWithId: presentedByPlacementWithId,
+      presentedByPlacementAt: presentedByPlacementAt,
+      presentedBy: presentedBy,
+      presentationSourceType: presentationSourceType,
+      responseLoadStartTime: responseLoadStartTime,
+      responseLoadCompleteTime: responseLoadCompleteTime,
+      responseLoadFailTime: responseLoadFailTime,
+      responseLoadDuration: responseLoadDuration,
+      webViewLoadStartTime: webViewLoadStartTime,
+      webViewLoadCompleteTime: webViewLoadCompleteTime,
+      webViewLoadFailTime: webViewLoadFailTime,
+      webViewLoadDuration: webViewLoadDuration,
+      productsLoadStartTime: productsLoadStartTime,
+      productsLoadCompleteTime: productsLoadCompleteTime,
+      productsLoadFailTime: productsLoadFailTime,
+      productsLoadDuration: productsLoadDuration,
+      paywalljsVersion: paywalljsVersion,
+      isFreeTrialAvailable: isFreeTrialAvailable,
+      featureGatingBehavior: featureGatingBehavior?.toPigeon(),
+      closeReason: closeReason?.toPigeon(),
+      localNotifications:
+          localNotifications?.map((ln) => ln.toPigeon()).toList(),
+      computedPropertyRequests:
+          computedPropertyRequests?.map((cpr) => cpr.toPigeon()).toList(),
+      surveys: surveys?.map((s) => s.toPigeon()).toList(),
+    );
+  }
 
   /// The identifier set for this paywall in the Superwall dashboard.
-  Future<String> get identifier async {
-    return await bridgeId.communicator.invokeBridgeMethod('getIdentifier');
-  }
-
-  /// The trigger experiment that caused the paywall to present.
-  Future<Experiment?> get experiment async {
-    final experimentBridgeId =
-        await bridgeId.communicator.invokeBridgeMethod('getExperimentBridgeId');
-    return Experiment(bridgeId: experimentBridgeId);
-  }
-
-  /// The products associated with the paywall.
-  Future<List<Product>> get products async {
-    List<dynamic> products =
-        await bridgeId.communicator.invokeBridgeMethod('getProducts');
-    return products
-        .map((json) => Product.fromJson(Map<String, dynamic>.from(json)))
-        .toList();
-  }
-
-  /// An array of product IDs that this paywall is displaying in `[Primary, Secondary, Tertiary]` order.
-  Future<List<String>> get productIds async {
-    List<dynamic> productIds =
-        await bridgeId.communicator.invokeBridgeMethod('getProductIds');
-    return productIds.map((value) => value.toString()).toList();
-  }
+  final String? identifier;
 
   /// The name set for this paywall in Superwall's web dashboard.
-  Future<String> get name async {
-    return await bridgeId.communicator.invokeBridgeMethod('getName');
-  }
+  final String? name;
+
+  /// The trigger experiment that caused the paywall to present.
+  final Experiment? experiment;
+
+  /// An array of product IDs that this paywall is displaying in `[Primary, Secondary, Tertiary]` order.
+  final List<String>? productIds;
+
+  /// The products associated with the paywall.
+  final List<Product>? products;
 
   /// The URL where this paywall is hosted.
-  Future<String> get url async {
-    return await bridgeId.communicator.invokeBridgeMethod('getUrl');
-  }
+  final String? url;
 
   /// The name of the placement that triggered this Paywall. Defaults to `nil` if `triggeredByPlacement` is false.
-  Future<String?> get presentedByPlacementWithName async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getPresentedByPlacementWithName');
-  }
+  final String? presentedByPlacementWithName;
 
   /// The Superwall internal id (for debugging) of the placement that triggered this Paywall. Defaults to `nil` if `triggeredByPlacement` is false.
-  Future<String?> get presentedByPlacementWithId async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getPresentedByPlacementWithId');
-  }
+  final String? presentedByPlacementWithId;
 
   /// The ISO date string describing when the placement triggered this paywall. Defaults to `nil` if `triggeredByPlacement` is false.
-  Future<String?> get presentedByPlacementAt async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getPresentedByPlacementAt');
-  }
+  final String? presentedByPlacementAt;
 
   /// How the paywall was presented, either 'programmatically', 'identifier', or 'placement'
-  Future<String> get presentedBy async {
-    return await bridgeId.communicator.invokeBridgeMethod('getPresentedBy');
-  }
+  final String? presentedBy;
 
   /// The source function that retrieved the paywall. Either `implicit`, `getPaywall`, or `register`. `nil` only when preloading.
-  Future<String?> get presentationSourceType async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getPresentationSourceType');
-  }
+  final String? presentationSourceType;
 
   /// An ISO date string indicating when the paywall response began loading.
-  Future<String?> get responseLoadStartTime async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getResponseLoadStartTime');
-  }
+  final String? responseLoadStartTime;
 
   /// An ISO date string indicating when the paywall response finished loading.
-  Future<String?> get responseLoadCompleteTime async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getResponseLoadCompleteTime');
-  }
+  final String? responseLoadCompleteTime;
 
   /// An ISO date string indicating when the paywall response failed to load.
-  Future<String?> get responseLoadFailTime async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getResponseLoadFailTime');
-  }
+  final String? responseLoadFailTime;
 
   /// The time it took to load the paywall response.
-  Future<double?> get responseLoadDuration async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getResponseLoadDuration');
-  }
+  final double? responseLoadDuration;
 
   /// An ISO date string indicating when the paywall webview began loading.
-  Future<String?> get webViewLoadStartTime async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getWebViewLoadStartTime');
-  }
+  final String? webViewLoadStartTime;
 
   /// An ISO date string indicating when the paywall webview finished loading.
-  Future<String?> get webViewLoadCompleteTime async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getWebViewLoadCompleteTime');
-  }
+  final String? webViewLoadCompleteTime;
 
   /// An ISO date string indicating when the paywall webview failed to load.
-  Future<String?> get webViewLoadFailTime async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getWebViewLoadFailTime');
-  }
+  final String? webViewLoadFailTime;
 
   /// The time it took to load the paywall website.
-  Future<double?> get webViewLoadDuration async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getWebViewLoadDuration');
-  }
+  final double? webViewLoadDuration;
 
   /// An ISO date string indicating when the paywall products began loading.
-  Future<String?> get productsLoadStartTime async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getProductsLoadStartTime');
-  }
+  final String? productsLoadStartTime;
 
   /// An ISO date string indicating when the paywall products finished loading.
-  Future<String?> get productsLoadCompleteTime async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getProductsLoadCompleteTime');
-  }
+  final String? productsLoadCompleteTime;
 
   /// An ISO date string indicating when the paywall products failed to load.
-  Future<String?> get productsLoadFailTime async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getProductsLoadFailTime');
-  }
+  final String? productsLoadFailTime;
 
   /// The time it took to load the paywall products.
-  Future<double?> get productsLoadDuration async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getProductsLoadDuration');
-  }
+  final double? productsLoadDuration;
 
   /// The paywall.js version installed on the paywall website.
-  Future<String?> get paywalljsVersion async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getPaywalljsVersion');
-  }
+  final String? paywalljsVersion;
 
   /// Indicates whether the paywall is showing free trial content.
-  Future<bool> get isFreeTrialAvailable async {
-    return await bridgeId.communicator
-        .invokeBridgeMethod('getIsFreeTrialAvailable');
-  }
+  final bool? isFreeTrialAvailable;
 
   /// A `FeatureGatingBehavior` case that indicates whether the `Superwall/register(placement:params:handler:feature:)` `feature` block executes or not.
-  Future<FeatureGatingBehavior> get featureGatingBehavior async {
-    final featureGatingBehavior = await bridgeId.communicator
-        .invokeBridgeMethod('getFeatureGatingBehavior');
-    return FeatureGatingBehaviorExtension.fromJson(featureGatingBehavior);
-  }
+  final FeatureGatingBehavior? featureGatingBehavior;
 
   /// An enum describing why this paywall was last closed. `none` if not yet closed.
-  Future<PaywallCloseReason> get closeReason async {
-    final closeReason =
-        await bridgeId.communicator.invokeBridgeMethod('getCloseReason');
-    return PaywallCloseReasonExtension.fromJson(closeReason);
-  }
+  final PaywallCloseReason? closeReason;
 
   /// The local notifications associated with the paywall.
-  Future<List<LocalNotification>> get localNotifications async {
-    List<dynamic> localNotifications =
-        await bridgeId.communicator.invokeBridgeMethod('getLocalNotifications');
-    return localNotifications
-        .map((json) => LocalNotification.fromJson(json))
-        .toList();
-  }
+  final List<LocalNotification>? localNotifications;
 
   /// An array of requests to compute a device property associated with an placement at runtime.
-  Future<List<ComputedPropertyRequest>> get computedPropertyRequests async {
-    List<dynamic> computedPropertyRequests = await bridgeId.communicator
-        .invokeBridgeMethod('getComputedPropertyRequests');
-    return computedPropertyRequests
-        .map((json) => ComputedPropertyRequest.fromJson(json))
-        .toList();
-  }
+  final List<ComputedPropertyRequest>? computedPropertyRequests;
 
   /// Surveys attached to a paywall.
-  Future<List<Survey>> get surveys async {
-    List<dynamic> surveys =
-        await bridgeId.communicator.invokeBridgeMethod('getSurveys');
-    return surveys.map((json) => Survey.fromJson(json)).toList();
-  }
+  final List<Survey>? surveys;
+
+  PaywallInfo({
+    this.identifier,
+    this.name,
+    this.experiment,
+    this.productIds,
+    this.products,
+    this.url,
+    this.presentedByPlacementWithName,
+    this.presentedByPlacementWithId,
+    this.presentedByPlacementAt,
+    this.presentedBy,
+    this.presentationSourceType,
+    this.responseLoadStartTime,
+    this.responseLoadCompleteTime,
+    this.responseLoadFailTime,
+    this.responseLoadDuration,
+    this.webViewLoadStartTime,
+    this.webViewLoadCompleteTime,
+    this.webViewLoadFailTime,
+    this.webViewLoadDuration,
+    this.productsLoadStartTime,
+    this.productsLoadCompleteTime,
+    this.productsLoadFailTime,
+    this.productsLoadDuration,
+    this.paywalljsVersion,
+    this.isFreeTrialAvailable,
+    this.featureGatingBehavior,
+    this.closeReason,
+    this.localNotifications,
+    this.computedPropertyRequests,
+    this.surveys,
+  });
 }
