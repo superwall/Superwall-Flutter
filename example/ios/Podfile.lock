@@ -9,11 +9,11 @@ PODS:
     - RevenueCat (= 5.18.0)
   - RevenueCat (5.18.0)
   - Superscript (0.2.4)
-  - SuperwallKit (4.2.0):
+  - SuperwallKit (4.3.0):
     - Superscript (= 0.2.4)
   - superwallkit_flutter (0.0.1):
     - Flutter
-    - SuperwallKit (= 4.2.0)
+    - SuperwallKit (= 4.3.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -40,14 +40,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  purchases_flutter: cbcf97969b7bf0f1db71d802f4e682bb851f0576
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  purchases_flutter: 12a5fd3a702db1d0da86f12c0cf1fe462688cfff
   PurchasesHybridCommon: 9691d74a051f30858360d78936d59dc14575014e
   RevenueCat: e825836f5d6baa870c53d7281be25a5fd91abd91
   Superscript: ede1cf73124c02ba1e120fbe5e15d3c4b12020a0
-  SuperwallKit: 251deebb67abfea37c21f8439571658ae63cf3e4
-  superwallkit_flutter: 6d0a4b1c5fa9e58fa0b1de80b946e82fc45e5389
+  SuperwallKit: 953b1a572c6fec762727d610926c9b518e553176
+  superwallkit_flutter: 2cc329529ba466fd236284107c519568ce0ef877
 
 PODFILE CHECKSUM: 1959d098c91d8a792531a723c4a9d7e9f6a01e38
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2
