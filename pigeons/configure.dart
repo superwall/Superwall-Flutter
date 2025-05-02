@@ -13,6 +13,179 @@ import 'package:pigeon/pigeon.dart';
 
 // ============= CLASSES, ENUMS, DATA MODELS =============
 
+sealed class PRedemptionResult {
+  PRedemptionResult();
+}
+
+class PSuccessRedemptionResult extends PRedemptionResult {
+  String code;
+  PRedemptionInfo redemptionInfo;
+
+  PSuccessRedemptionResult({
+    required this.code,
+    required this.redemptionInfo,
+  });
+}
+
+class PErrorRedemptionResult extends PRedemptionResult {
+  String code;
+  PErrorInfo error;
+
+  PErrorRedemptionResult({
+    required this.code,
+    required this.error,
+  });
+}
+
+class PErrorInfo {
+  String message;
+  PErrorInfo(this.message);
+}
+
+class PExpiredCodeRedemptionResult extends PRedemptionResult {
+  String code;
+  PExpiredCodeInfo info;
+
+  PExpiredCodeRedemptionResult({
+    required this.code,
+    required this.info,
+  });
+}
+
+/// Info about the expired code.
+class PExpiredCodeInfo {
+  /// A boolean indicating whether the redemption email has been resent.
+  bool resent;
+
+  /// An optional String indicating the obfuscated email address that the
+  /// redemption email was sent to.
+  String? obfuscatedEmail;
+
+  PExpiredCodeInfo({
+    required this.resent,
+    this.obfuscatedEmail,
+  });
+}
+
+class PInvalidCodeRedemptionResult extends PRedemptionResult {
+  String code;
+  PInvalidCodeRedemptionResult(this.code);
+}
+
+class PExpiredSubscriptionCode extends PRedemptionResult {
+  String code;
+  PRedemptionInfo redemptionInfo;
+  PExpiredSubscriptionCode(this.code, this.redemptionInfo);
+}
+
+/// Information about the redemption.
+class PRedemptionInfo {
+  /// The ownership of the code.
+  final POwnership ownership;
+
+  /// Info about the purchaser.
+  final PPurchaserInfo purchaserInfo;
+
+  /// Info about the paywall the purchase was made from.
+  final PRedemptionPaywallInfo? paywallInfo;
+
+  /// The entitlements array.
+  final List<PEntitlement> entitlements;
+
+  PRedemptionInfo({
+    required this.ownership,
+    required this.purchaserInfo,
+    this.paywallInfo,
+    required this.entitlements,
+  });
+}
+
+/// Enum specifying code ownership.
+sealed class POwnership {
+  const POwnership();
+}
+
+class PAppUserOwnership extends POwnership {
+  final String appUserId;
+  const PAppUserOwnership(this.appUserId);
+}
+
+class PDeviceOwnership extends POwnership {
+  final String deviceId;
+  const PDeviceOwnership(this.deviceId);
+}
+
+/// Info about the purchaser.
+class PPurchaserInfo {
+  /// The app user ID of the purchaser.
+  final String appUserId;
+
+  /// The email address of the purchaser.
+  final String? email;
+
+  /// The identifiers of the store that was purchased from.
+  final PStoreIdentifiers storeIdentifiers;
+
+  PPurchaserInfo({
+    required this.appUserId,
+    this.email,
+    required this.storeIdentifiers,
+  });
+}
+
+/// Identifiers of the store that was purchased from.
+sealed class PStoreIdentifiers {
+  const PStoreIdentifiers();
+}
+
+/// Stripe purchase store identifiers.
+class PStripeStoreIdentifiers extends PStoreIdentifiers {
+  final String customerId;
+  final List<String> subscriptionIds;
+
+  const PStripeStoreIdentifiers({
+    required this.customerId,
+    required this.subscriptionIds,
+  });
+}
+
+/// Unknown purchase store identifiers.
+class PUnknownStoreIdentifiers extends PStoreIdentifiers {
+  final String store;
+  final Map<String, Object> additionalInfo;
+
+  const PUnknownStoreIdentifiers({
+    required this.store,
+    required this.additionalInfo,
+  });
+}
+
+/// Info about the paywall the purchase was made from.
+class PRedemptionPaywallInfo {
+  /// The identifier of the paywall.
+  final String identifier;
+
+  /// The name of the placement.
+  final String placementName;
+
+  /// The params of the placement.
+  final Map<String, Object> placementParams;
+
+  /// The ID of the paywall variant.
+  final String variantId;
+
+  /// The ID of the experiment that the paywall belongs to.
+  final String experimentId;
+
+  PRedemptionPaywallInfo({
+    required this.identifier,
+    required this.placementName,
+    required this.placementParams,
+    required this.variantId,
+    required this.experimentId,
+  });
+}
+
 // Options for configuring Superwall
 class PSuperwallOptions {
   PPaywallOptions? paywalls;
@@ -20,6 +193,7 @@ class PSuperwallOptions {
   bool? isExternalDataCollectionEnabled;
   String? localeIdentifier;
   bool? isGameControllerEnabled;
+  bool? enableExperimentalDeviceVariables;
   PLogging? logging;
   bool? passIdentifiersToPlayStore;
 }
@@ -281,6 +455,7 @@ class PPaywallOptions {
   bool? shouldShowPurchaseFailureAlert;
   bool? shouldPreload;
   bool? automaticallyDismiss;
+  bool? shouldShowWebRestorationAlert;
   PTransactionBackgroundView? transactionBackgroundView;
 }
 
@@ -660,6 +835,8 @@ abstract class PSuperwallDelegateGenerated {
   void paywallWillOpenDeepLink(String url);
   void handleLog(String level, String scope, String? message,
       Map<String, Object>? info, String? error);
+  void willRedeemLink();
+  void didRedeemLink(PRedemptionResult result);
 }
 
 // ============= FLUTTER APIs =============

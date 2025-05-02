@@ -28,3 +28,4 @@ export 'src/public/PaywallSkippedReason.dart';
 export 'src/public/RestoreType.dart';
 export 'src/public/SuperwallBuilder.dart';
 export 'src/public/PaywallResult.dart';
+export 'src/public/RedemptionResult.dart';

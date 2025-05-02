@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
+import 'package:uni_links/uni_links.dart';
 import 'RCPurchaseController.dart';
 import 'home.dart';
 import 'launchedFeature.dart';
@@ -34,6 +35,16 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
 /*    _subscription = Superwall.shared.subscriptionStatus.listen((status) {
       logging.info('subscriptionStatusDidChange listener: $status');
     });*/
+  }
+
+  void _handleIncomingLinks() {
+    uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        Superwall.shared.handleDeepLink(uri);
+      }
+    }, onError: (Object err) {
+      print('Error receiving incoming link: $err');
+    });
   }
 
   @override
@@ -71,6 +82,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         print('Executing Superwall configure completion block');
         listenForPurchases();
       });
+      _handleIncomingLinks();
       Superwall.shared.setDelegate(this);
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
       /// Always configure RevenueCat after Superwall and keep Superwall's
@@ -381,5 +393,15 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
   @override
   void willPresentPaywall(PaywallInfo paywallInfo) {
     logging.info('willPresentPaywall: $paywallInfo');
+  }
+
+  @override
+  void willRedeemLink() {
+    logging.info('willRedeemLink');
+  }
+
+  @override
+  void didRedeemLink(RedemptionResult result) {
+    logging.info('didRedeemLink: $result');
   }
 }

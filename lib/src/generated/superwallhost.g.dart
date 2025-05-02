@@ -227,6 +227,722 @@ enum PPaywallSkippedReason {
   placementNotFound,
 }
 
+sealed class PRedemptionResult {
+}
+
+class PSuccessRedemptionResult extends PRedemptionResult {
+  PSuccessRedemptionResult({
+    required this.code,
+    required this.redemptionInfo,
+  });
+
+  String code;
+
+  PRedemptionInfo redemptionInfo;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      code,
+      redemptionInfo,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PSuccessRedemptionResult decode(Object result) {
+    result as List<Object?>;
+    return PSuccessRedemptionResult(
+      code: result[0]! as String,
+      redemptionInfo: result[1]! as PRedemptionInfo,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PSuccessRedemptionResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      code == other.code
+      && redemptionInfo == other.redemptionInfo;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PErrorRedemptionResult extends PRedemptionResult {
+  PErrorRedemptionResult({
+    required this.code,
+    required this.error,
+  });
+
+  String code;
+
+  PErrorInfo error;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      code,
+      error,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PErrorRedemptionResult decode(Object result) {
+    result as List<Object?>;
+    return PErrorRedemptionResult(
+      code: result[0]! as String,
+      error: result[1]! as PErrorInfo,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PErrorRedemptionResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      code == other.code
+      && error == other.error;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PErrorInfo {
+  PErrorInfo({
+    required this.message,
+  });
+
+  String message;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      message,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PErrorInfo decode(Object result) {
+    result as List<Object?>;
+    return PErrorInfo(
+      message: result[0]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PErrorInfo || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      message == other.message;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PExpiredCodeRedemptionResult extends PRedemptionResult {
+  PExpiredCodeRedemptionResult({
+    required this.code,
+    required this.info,
+  });
+
+  String code;
+
+  PExpiredCodeInfo info;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      code,
+      info,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PExpiredCodeRedemptionResult decode(Object result) {
+    result as List<Object?>;
+    return PExpiredCodeRedemptionResult(
+      code: result[0]! as String,
+      info: result[1]! as PExpiredCodeInfo,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PExpiredCodeRedemptionResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      code == other.code
+      && info == other.info;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Info about the expired code.
+class PExpiredCodeInfo {
+  PExpiredCodeInfo({
+    required this.resent,
+    this.obfuscatedEmail,
+  });
+
+  /// A boolean indicating whether the redemption email has been resent.
+  bool resent;
+
+  /// An optional String indicating the obfuscated email address that the
+  /// redemption email was sent to.
+  String? obfuscatedEmail;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      resent,
+      obfuscatedEmail,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PExpiredCodeInfo decode(Object result) {
+    result as List<Object?>;
+    return PExpiredCodeInfo(
+      resent: result[0]! as bool,
+      obfuscatedEmail: result[1] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PExpiredCodeInfo || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      resent == other.resent
+      && obfuscatedEmail == other.obfuscatedEmail;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PInvalidCodeRedemptionResult extends PRedemptionResult {
+  PInvalidCodeRedemptionResult({
+    required this.code,
+  });
+
+  String code;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      code,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PInvalidCodeRedemptionResult decode(Object result) {
+    result as List<Object?>;
+    return PInvalidCodeRedemptionResult(
+      code: result[0]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PInvalidCodeRedemptionResult || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      code == other.code;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PExpiredSubscriptionCode extends PRedemptionResult {
+  PExpiredSubscriptionCode({
+    required this.code,
+    required this.redemptionInfo,
+  });
+
+  String code;
+
+  PRedemptionInfo redemptionInfo;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      code,
+      redemptionInfo,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PExpiredSubscriptionCode decode(Object result) {
+    result as List<Object?>;
+    return PExpiredSubscriptionCode(
+      code: result[0]! as String,
+      redemptionInfo: result[1]! as PRedemptionInfo,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PExpiredSubscriptionCode || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      code == other.code
+      && redemptionInfo == other.redemptionInfo;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Information about the redemption.
+class PRedemptionInfo {
+  PRedemptionInfo({
+    required this.ownership,
+    required this.purchaserInfo,
+    this.paywallInfo,
+    required this.entitlements,
+  });
+
+  /// The ownership of the code.
+  POwnership ownership;
+
+  /// Info about the purchaser.
+  PPurchaserInfo purchaserInfo;
+
+  /// Info about the paywall the purchase was made from.
+  PRedemptionPaywallInfo? paywallInfo;
+
+  /// The entitlements array.
+  List<PEntitlement> entitlements;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      ownership,
+      purchaserInfo,
+      paywallInfo,
+      entitlements,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PRedemptionInfo decode(Object result) {
+    result as List<Object?>;
+    return PRedemptionInfo(
+      ownership: result[0]! as POwnership,
+      purchaserInfo: result[1]! as PPurchaserInfo,
+      paywallInfo: result[2] as PRedemptionPaywallInfo?,
+      entitlements: (result[3] as List<Object?>?)!.cast<PEntitlement>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PRedemptionInfo || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      ownership == other.ownership
+      && purchaserInfo == other.purchaserInfo
+      && paywallInfo == other.paywallInfo
+      && _deepEquals(entitlements, other.entitlements);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Enum specifying code ownership.
+sealed class POwnership {
+}
+
+class PAppUserOwnership extends POwnership {
+  PAppUserOwnership({
+    required this.appUserId,
+  });
+
+  String appUserId;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      appUserId,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PAppUserOwnership decode(Object result) {
+    result as List<Object?>;
+    return PAppUserOwnership(
+      appUserId: result[0]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PAppUserOwnership || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      appUserId == other.appUserId;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PDeviceOwnership extends POwnership {
+  PDeviceOwnership({
+    required this.deviceId,
+  });
+
+  String deviceId;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      deviceId,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PDeviceOwnership decode(Object result) {
+    result as List<Object?>;
+    return PDeviceOwnership(
+      deviceId: result[0]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PDeviceOwnership || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      deviceId == other.deviceId;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Info about the purchaser.
+class PPurchaserInfo {
+  PPurchaserInfo({
+    required this.appUserId,
+    this.email,
+    required this.storeIdentifiers,
+  });
+
+  /// The app user ID of the purchaser.
+  String appUserId;
+
+  /// The email address of the purchaser.
+  String? email;
+
+  /// The identifiers of the store that was purchased from.
+  PStoreIdentifiers storeIdentifiers;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      appUserId,
+      email,
+      storeIdentifiers,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PPurchaserInfo decode(Object result) {
+    result as List<Object?>;
+    return PPurchaserInfo(
+      appUserId: result[0]! as String,
+      email: result[1] as String?,
+      storeIdentifiers: result[2]! as PStoreIdentifiers,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PPurchaserInfo || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      appUserId == other.appUserId
+      && email == other.email
+      && storeIdentifiers == other.storeIdentifiers;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Identifiers of the store that was purchased from.
+sealed class PStoreIdentifiers {
+}
+
+/// Stripe purchase store identifiers.
+class PStripeStoreIdentifiers extends PStoreIdentifiers {
+  PStripeStoreIdentifiers({
+    required this.customerId,
+    required this.subscriptionIds,
+  });
+
+  String customerId;
+
+  List<String> subscriptionIds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      customerId,
+      subscriptionIds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PStripeStoreIdentifiers decode(Object result) {
+    result as List<Object?>;
+    return PStripeStoreIdentifiers(
+      customerId: result[0]! as String,
+      subscriptionIds: (result[1] as List<Object?>?)!.cast<String>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PStripeStoreIdentifiers || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      customerId == other.customerId
+      && _deepEquals(subscriptionIds, other.subscriptionIds);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Unknown purchase store identifiers.
+class PUnknownStoreIdentifiers extends PStoreIdentifiers {
+  PUnknownStoreIdentifiers({
+    required this.store,
+    required this.additionalInfo,
+  });
+
+  String store;
+
+  Map<String, Object> additionalInfo;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      store,
+      additionalInfo,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PUnknownStoreIdentifiers decode(Object result) {
+    result as List<Object?>;
+    return PUnknownStoreIdentifiers(
+      store: result[0]! as String,
+      additionalInfo: (result[1] as Map<Object?, Object?>?)!.cast<String, Object>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PUnknownStoreIdentifiers || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      store == other.store
+      && _deepEquals(additionalInfo, other.additionalInfo);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// Info about the paywall the purchase was made from.
+class PRedemptionPaywallInfo {
+  PRedemptionPaywallInfo({
+    required this.identifier,
+    required this.placementName,
+    required this.placementParams,
+    required this.variantId,
+    required this.experimentId,
+  });
+
+  /// The identifier of the paywall.
+  String identifier;
+
+  /// The name of the placement.
+  String placementName;
+
+  /// The params of the placement.
+  Map<String, Object> placementParams;
+
+  /// The ID of the paywall variant.
+  String variantId;
+
+  /// The ID of the experiment that the paywall belongs to.
+  String experimentId;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      identifier,
+      placementName,
+      placementParams,
+      variantId,
+      experimentId,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PRedemptionPaywallInfo decode(Object result) {
+    result as List<Object?>;
+    return PRedemptionPaywallInfo(
+      identifier: result[0]! as String,
+      placementName: result[1]! as String,
+      placementParams: (result[2] as Map<Object?, Object?>?)!.cast<String, Object>(),
+      variantId: result[3]! as String,
+      experimentId: result[4]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PRedemptionPaywallInfo || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return 
+      identifier == other.identifier
+      && placementName == other.placementName
+      && _deepEquals(placementParams, other.placementParams)
+      && variantId == other.variantId
+      && experimentId == other.experimentId;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
 class PSuperwallOptions {
   PSuperwallOptions({
     this.paywalls,
@@ -234,6 +950,7 @@ class PSuperwallOptions {
     this.isExternalDataCollectionEnabled,
     this.localeIdentifier,
     this.isGameControllerEnabled,
+    this.enableExperimentalDeviceVariables,
     this.logging,
     this.passIdentifiersToPlayStore,
   });
@@ -248,6 +965,8 @@ class PSuperwallOptions {
 
   bool? isGameControllerEnabled;
 
+  bool? enableExperimentalDeviceVariables;
+
   PLogging? logging;
 
   bool? passIdentifiersToPlayStore;
@@ -259,6 +978,7 @@ class PSuperwallOptions {
       isExternalDataCollectionEnabled,
       localeIdentifier,
       isGameControllerEnabled,
+      enableExperimentalDeviceVariables,
       logging,
       passIdentifiersToPlayStore,
     ];
@@ -275,8 +995,9 @@ class PSuperwallOptions {
       isExternalDataCollectionEnabled: result[2] as bool?,
       localeIdentifier: result[3] as String?,
       isGameControllerEnabled: result[4] as bool?,
-      logging: result[5] as PLogging?,
-      passIdentifiersToPlayStore: result[6] as bool?,
+      enableExperimentalDeviceVariables: result[5] as bool?,
+      logging: result[6] as PLogging?,
+      passIdentifiersToPlayStore: result[7] as bool?,
     );
   }
 
@@ -295,6 +1016,7 @@ class PSuperwallOptions {
       && isExternalDataCollectionEnabled == other.isExternalDataCollectionEnabled
       && localeIdentifier == other.localeIdentifier
       && isGameControllerEnabled == other.isGameControllerEnabled
+      && enableExperimentalDeviceVariables == other.enableExperimentalDeviceVariables
       && logging == other.logging
       && passIdentifiersToPlayStore == other.passIdentifiersToPlayStore;
   }
@@ -1200,6 +1922,7 @@ class PPaywallOptions {
     this.shouldShowPurchaseFailureAlert,
     this.shouldPreload,
     this.automaticallyDismiss,
+    this.shouldShowWebRestorationAlert,
     this.transactionBackgroundView,
   });
 
@@ -1213,6 +1936,8 @@ class PPaywallOptions {
 
   bool? automaticallyDismiss;
 
+  bool? shouldShowWebRestorationAlert;
+
   PTransactionBackgroundView? transactionBackgroundView;
 
   List<Object?> _toList() {
@@ -1222,6 +1947,7 @@ class PPaywallOptions {
       shouldShowPurchaseFailureAlert,
       shouldPreload,
       automaticallyDismiss,
+      shouldShowWebRestorationAlert,
       transactionBackgroundView,
     ];
   }
@@ -1237,7 +1963,8 @@ class PPaywallOptions {
       shouldShowPurchaseFailureAlert: result[2] as bool?,
       shouldPreload: result[3] as bool?,
       automaticallyDismiss: result[4] as bool?,
-      transactionBackgroundView: result[5] as PTransactionBackgroundView?,
+      shouldShowWebRestorationAlert: result[5] as bool?,
+      transactionBackgroundView: result[6] as PTransactionBackgroundView?,
     );
   }
 
@@ -1256,6 +1983,7 @@ class PPaywallOptions {
       && shouldShowPurchaseFailureAlert == other.shouldShowPurchaseFailureAlert
       && shouldPreload == other.shouldPreload
       && automaticallyDismiss == other.automaticallyDismiss
+      && shouldShowWebRestorationAlert == other.shouldShowWebRestorationAlert
       && transactionBackgroundView == other.transactionBackgroundView;
   }
 
@@ -2308,119 +3036,161 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PPaywallSkippedReason) {
       buffer.putUint8(144);
       writeValue(buffer, value.index);
-    }    else if (value is PSuperwallOptions) {
+    }    else if (value is PSuccessRedemptionResult) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallInfo) {
+    }    else if (value is PErrorRedemptionResult) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    }    else if (value is PProduct) {
+    }    else if (value is PErrorInfo) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    }    else if (value is PLocalNotification) {
+    }    else if (value is PExpiredCodeRedemptionResult) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    }    else if (value is PComputedPropertyRequest) {
+    }    else if (value is PExpiredCodeInfo) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurvey) {
+    }    else if (value is PInvalidCodeRedemptionResult) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurveyOption) {
+    }    else if (value is PExpiredSubscriptionCode) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseCancelled) {
+    }    else if (value is PRedemptionInfo) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePurchased) {
+    }    else if (value is PAppUserOwnership) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePending) {
+    }    else if (value is PDeviceOwnership) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseFailed) {
+    }    else if (value is PPurchaserInfo) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationRestored) {
+    }    else if (value is PStripeStoreIdentifiers) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationFailed) {
+    }    else if (value is PUnknownStoreIdentifiers) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoreFailed) {
+    }    else if (value is PRedemptionPaywallInfo) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    }    else if (value is PLogging) {
+    }    else if (value is PSuperwallOptions) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallOptions) {
+    }    else if (value is PPaywallInfo) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseControllerHost) {
+    }    else if (value is PProduct) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfigureCompletionHost) {
+    }    else if (value is PLocalNotification) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallPresentationHandlerHost) {
+    }    else if (value is PComputedPropertyRequest) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    }    else if (value is PFeatureHandlerHost) {
+    }    else if (value is PSurvey) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlement) {
+    }    else if (value is PSurveyOption) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlements) {
+    }    else if (value is PPurchaseCancelled) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    }    else if (value is PActive) {
+    }    else if (value is PPurchasePurchased) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    }    else if (value is PInactive) {
+    }    else if (value is PPurchasePending) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknown) {
+    }    else if (value is PPurchaseFailed) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallEventInfo) {
+    }    else if (value is PRestorationRestored) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    }    else if (value is PIdentityOptions) {
+    }    else if (value is PRestorationFailed) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    }    else if (value is PExperiment) {
+    }    else if (value is PRestoreFailed) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    }    else if (value is PPlacementNotFoundTriggerResult) {
+    }    else if (value is PLogging) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    }    else if (value is PNoAudienceMatchTriggerResult) {
+    }    else if (value is PPaywallOptions) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallTriggerResult) {
+    }    else if (value is PPurchaseControllerHost) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    }    else if (value is PHoldoutTriggerResult) {
+    }    else if (value is PConfigureCompletionHost) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    }    else if (value is PErrorTriggerResult) {
+    }    else if (value is PPaywallPresentationHandlerHost) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    }    else if (value is PVariant) {
+    }    else if (value is PFeatureHandlerHost) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfirmedAssignment) {
+    }    else if (value is PEntitlement) {
       buffer.putUint8(179);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasedPaywallResult) {
+    }    else if (value is PEntitlements) {
       buffer.putUint8(180);
       writeValue(buffer, value.encode());
-    }    else if (value is PDeclinedPaywallResult) {
+    }    else if (value is PActive) {
       buffer.putUint8(181);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoredPaywallResult) {
+    }    else if (value is PInactive) {
       buffer.putUint8(182);
+      writeValue(buffer, value.encode());
+    }    else if (value is PUnknown) {
+      buffer.putUint8(183);
+      writeValue(buffer, value.encode());
+    }    else if (value is PSuperwallEventInfo) {
+      buffer.putUint8(184);
+      writeValue(buffer, value.encode());
+    }    else if (value is PIdentityOptions) {
+      buffer.putUint8(185);
+      writeValue(buffer, value.encode());
+    }    else if (value is PExperiment) {
+      buffer.putUint8(186);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPlacementNotFoundTriggerResult) {
+      buffer.putUint8(187);
+      writeValue(buffer, value.encode());
+    }    else if (value is PNoAudienceMatchTriggerResult) {
+      buffer.putUint8(188);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPaywallTriggerResult) {
+      buffer.putUint8(189);
+      writeValue(buffer, value.encode());
+    }    else if (value is PHoldoutTriggerResult) {
+      buffer.putUint8(190);
+      writeValue(buffer, value.encode());
+    }    else if (value is PErrorTriggerResult) {
+      buffer.putUint8(191);
+      writeValue(buffer, value.encode());
+    }    else if (value is PVariant) {
+      buffer.putUint8(192);
+      writeValue(buffer, value.encode());
+    }    else if (value is PConfirmedAssignment) {
+      buffer.putUint8(193);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPurchasedPaywallResult) {
+      buffer.putUint8(194);
+      writeValue(buffer, value.encode());
+    }    else if (value is PDeclinedPaywallResult) {
+      buffer.putUint8(195);
+      writeValue(buffer, value.encode());
+    }    else if (value is PRestoredPaywallResult) {
+      buffer.putUint8(196);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2479,80 +3249,108 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PPaywallSkippedReason.values[value];
       case 145: 
-        return PSuperwallOptions.decode(readValue(buffer)!);
+        return PSuccessRedemptionResult.decode(readValue(buffer)!);
       case 146: 
-        return PPaywallInfo.decode(readValue(buffer)!);
+        return PErrorRedemptionResult.decode(readValue(buffer)!);
       case 147: 
-        return PProduct.decode(readValue(buffer)!);
+        return PErrorInfo.decode(readValue(buffer)!);
       case 148: 
-        return PLocalNotification.decode(readValue(buffer)!);
+        return PExpiredCodeRedemptionResult.decode(readValue(buffer)!);
       case 149: 
-        return PComputedPropertyRequest.decode(readValue(buffer)!);
+        return PExpiredCodeInfo.decode(readValue(buffer)!);
       case 150: 
-        return PSurvey.decode(readValue(buffer)!);
+        return PInvalidCodeRedemptionResult.decode(readValue(buffer)!);
       case 151: 
-        return PSurveyOption.decode(readValue(buffer)!);
+        return PExpiredSubscriptionCode.decode(readValue(buffer)!);
       case 152: 
-        return PPurchaseCancelled.decode(readValue(buffer)!);
+        return PRedemptionInfo.decode(readValue(buffer)!);
       case 153: 
-        return PPurchasePurchased.decode(readValue(buffer)!);
+        return PAppUserOwnership.decode(readValue(buffer)!);
       case 154: 
-        return PPurchasePending.decode(readValue(buffer)!);
+        return PDeviceOwnership.decode(readValue(buffer)!);
       case 155: 
-        return PPurchaseFailed.decode(readValue(buffer)!);
+        return PPurchaserInfo.decode(readValue(buffer)!);
       case 156: 
-        return PRestorationRestored.decode(readValue(buffer)!);
+        return PStripeStoreIdentifiers.decode(readValue(buffer)!);
       case 157: 
-        return PRestorationFailed.decode(readValue(buffer)!);
+        return PUnknownStoreIdentifiers.decode(readValue(buffer)!);
       case 158: 
-        return PRestoreFailed.decode(readValue(buffer)!);
+        return PRedemptionPaywallInfo.decode(readValue(buffer)!);
       case 159: 
-        return PLogging.decode(readValue(buffer)!);
+        return PSuperwallOptions.decode(readValue(buffer)!);
       case 160: 
-        return PPaywallOptions.decode(readValue(buffer)!);
+        return PPaywallInfo.decode(readValue(buffer)!);
       case 161: 
-        return PPurchaseControllerHost.decode(readValue(buffer)!);
+        return PProduct.decode(readValue(buffer)!);
       case 162: 
-        return PConfigureCompletionHost.decode(readValue(buffer)!);
+        return PLocalNotification.decode(readValue(buffer)!);
       case 163: 
-        return PPaywallPresentationHandlerHost.decode(readValue(buffer)!);
+        return PComputedPropertyRequest.decode(readValue(buffer)!);
       case 164: 
-        return PFeatureHandlerHost.decode(readValue(buffer)!);
+        return PSurvey.decode(readValue(buffer)!);
       case 165: 
-        return PEntitlement.decode(readValue(buffer)!);
+        return PSurveyOption.decode(readValue(buffer)!);
       case 166: 
-        return PEntitlements.decode(readValue(buffer)!);
+        return PPurchaseCancelled.decode(readValue(buffer)!);
       case 167: 
-        return PActive.decode(readValue(buffer)!);
+        return PPurchasePurchased.decode(readValue(buffer)!);
       case 168: 
-        return PInactive.decode(readValue(buffer)!);
+        return PPurchasePending.decode(readValue(buffer)!);
       case 169: 
-        return PUnknown.decode(readValue(buffer)!);
+        return PPurchaseFailed.decode(readValue(buffer)!);
       case 170: 
-        return PSuperwallEventInfo.decode(readValue(buffer)!);
+        return PRestorationRestored.decode(readValue(buffer)!);
       case 171: 
-        return PIdentityOptions.decode(readValue(buffer)!);
+        return PRestorationFailed.decode(readValue(buffer)!);
       case 172: 
-        return PExperiment.decode(readValue(buffer)!);
+        return PRestoreFailed.decode(readValue(buffer)!);
       case 173: 
-        return PPlacementNotFoundTriggerResult.decode(readValue(buffer)!);
+        return PLogging.decode(readValue(buffer)!);
       case 174: 
-        return PNoAudienceMatchTriggerResult.decode(readValue(buffer)!);
+        return PPaywallOptions.decode(readValue(buffer)!);
       case 175: 
-        return PPaywallTriggerResult.decode(readValue(buffer)!);
+        return PPurchaseControllerHost.decode(readValue(buffer)!);
       case 176: 
-        return PHoldoutTriggerResult.decode(readValue(buffer)!);
+        return PConfigureCompletionHost.decode(readValue(buffer)!);
       case 177: 
-        return PErrorTriggerResult.decode(readValue(buffer)!);
+        return PPaywallPresentationHandlerHost.decode(readValue(buffer)!);
       case 178: 
-        return PVariant.decode(readValue(buffer)!);
+        return PFeatureHandlerHost.decode(readValue(buffer)!);
       case 179: 
-        return PConfirmedAssignment.decode(readValue(buffer)!);
+        return PEntitlement.decode(readValue(buffer)!);
       case 180: 
-        return PPurchasedPaywallResult.decode(readValue(buffer)!);
+        return PEntitlements.decode(readValue(buffer)!);
       case 181: 
-        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+        return PActive.decode(readValue(buffer)!);
       case 182: 
+        return PInactive.decode(readValue(buffer)!);
+      case 183: 
+        return PUnknown.decode(readValue(buffer)!);
+      case 184: 
+        return PSuperwallEventInfo.decode(readValue(buffer)!);
+      case 185: 
+        return PIdentityOptions.decode(readValue(buffer)!);
+      case 186: 
+        return PExperiment.decode(readValue(buffer)!);
+      case 187: 
+        return PPlacementNotFoundTriggerResult.decode(readValue(buffer)!);
+      case 188: 
+        return PNoAudienceMatchTriggerResult.decode(readValue(buffer)!);
+      case 189: 
+        return PPaywallTriggerResult.decode(readValue(buffer)!);
+      case 190: 
+        return PHoldoutTriggerResult.decode(readValue(buffer)!);
+      case 191: 
+        return PErrorTriggerResult.decode(readValue(buffer)!);
+      case 192: 
+        return PVariant.decode(readValue(buffer)!);
+      case 193: 
+        return PConfirmedAssignment.decode(readValue(buffer)!);
+      case 194: 
+        return PPurchasedPaywallResult.decode(readValue(buffer)!);
+      case 195: 
+        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+      case 196: 
         return PRestoredPaywallResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -3308,6 +4106,10 @@ abstract class PSuperwallDelegateGenerated {
 
   void handleLog(String level, String scope, String? message, Map<String, Object>? info, String? error);
 
+  void willRedeemLink();
+
+  void didRedeemLink(PRedemptionResult result);
+
   static void setUp(PSuperwallDelegateGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
@@ -3560,6 +4362,50 @@ abstract class PSuperwallDelegateGenerated {
           final String? arg_error = (args[4] as String?);
           try {
             api.handleLog(arg_level!, arg_scope!, arg_message, arg_info, arg_error);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willRedeemLink$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            api.willRedeemLink();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didRedeemLink$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didRedeemLink was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PRedemptionResult? arg_result = (args[0] as PRedemptionResult?);
+          assert(arg_result != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didRedeemLink was null, expected non-null PRedemptionResult.');
+          try {
+            api.didRedeemLink(arg_result!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

@@ -363,6 +363,536 @@ enum class PPaywallSkippedReason(val raw: Int) {
   }
 }
 
+/**
+ * Generated class from Pigeon that represents data sent in messages.
+ * This class should not be extended by any user class outside of the generated file.
+ */
+sealed class PRedemptionResult 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PSuccessRedemptionResult (
+  val code: String,
+  val redemptionInfo: PRedemptionInfo
+) : PRedemptionResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PSuccessRedemptionResult {
+      val code = pigeonVar_list[0] as String
+      val redemptionInfo = pigeonVar_list[1] as PRedemptionInfo
+      return PSuccessRedemptionResult(code, redemptionInfo)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      code,
+      redemptionInfo,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PSuccessRedemptionResult) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return code == other.code
+    && redemptionInfo == other.redemptionInfo
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PErrorRedemptionResult (
+  val code: String,
+  val error: PErrorInfo
+) : PRedemptionResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PErrorRedemptionResult {
+      val code = pigeonVar_list[0] as String
+      val error = pigeonVar_list[1] as PErrorInfo
+      return PErrorRedemptionResult(code, error)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      code,
+      error,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PErrorRedemptionResult) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return code == other.code
+    && error == other.error
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PErrorInfo (
+  val message: String
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PErrorInfo {
+      val message = pigeonVar_list[0] as String
+      return PErrorInfo(message)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      message,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PErrorInfo) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return message == other.message
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PExpiredCodeRedemptionResult (
+  val code: String,
+  val info: PExpiredCodeInfo
+) : PRedemptionResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PExpiredCodeRedemptionResult {
+      val code = pigeonVar_list[0] as String
+      val info = pigeonVar_list[1] as PExpiredCodeInfo
+      return PExpiredCodeRedemptionResult(code, info)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      code,
+      info,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PExpiredCodeRedemptionResult) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return code == other.code
+    && info == other.info
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Info about the expired code.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PExpiredCodeInfo (
+  /** A boolean indicating whether the redemption email has been resent. */
+  val resent: Boolean,
+  /**
+   * An optional String indicating the obfuscated email address that the
+   * redemption email was sent to.
+   */
+  val obfuscatedEmail: String? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PExpiredCodeInfo {
+      val resent = pigeonVar_list[0] as Boolean
+      val obfuscatedEmail = pigeonVar_list[1] as String?
+      return PExpiredCodeInfo(resent, obfuscatedEmail)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      resent,
+      obfuscatedEmail,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PExpiredCodeInfo) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return resent == other.resent
+    && obfuscatedEmail == other.obfuscatedEmail
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PInvalidCodeRedemptionResult (
+  val code: String
+) : PRedemptionResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PInvalidCodeRedemptionResult {
+      val code = pigeonVar_list[0] as String
+      return PInvalidCodeRedemptionResult(code)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      code,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PInvalidCodeRedemptionResult) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return code == other.code
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PExpiredSubscriptionCode (
+  val code: String,
+  val redemptionInfo: PRedemptionInfo
+) : PRedemptionResult()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PExpiredSubscriptionCode {
+      val code = pigeonVar_list[0] as String
+      val redemptionInfo = pigeonVar_list[1] as PRedemptionInfo
+      return PExpiredSubscriptionCode(code, redemptionInfo)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      code,
+      redemptionInfo,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PExpiredSubscriptionCode) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return code == other.code
+    && redemptionInfo == other.redemptionInfo
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Information about the redemption.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PRedemptionInfo (
+  /** The ownership of the code. */
+  val ownership: POwnership,
+  /** Info about the purchaser. */
+  val purchaserInfo: PPurchaserInfo,
+  /** Info about the paywall the purchase was made from. */
+  val paywallInfo: PRedemptionPaywallInfo? = null,
+  /** The entitlements array. */
+  val entitlements: List<PEntitlement>
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PRedemptionInfo {
+      val ownership = pigeonVar_list[0] as POwnership
+      val purchaserInfo = pigeonVar_list[1] as PPurchaserInfo
+      val paywallInfo = pigeonVar_list[2] as PRedemptionPaywallInfo?
+      val entitlements = pigeonVar_list[3] as List<PEntitlement>
+      return PRedemptionInfo(ownership, purchaserInfo, paywallInfo, entitlements)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      ownership,
+      purchaserInfo,
+      paywallInfo,
+      entitlements,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PRedemptionInfo) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return ownership == other.ownership
+    && purchaserInfo == other.purchaserInfo
+    && paywallInfo == other.paywallInfo
+    && deepEqualsSuperwallHostGenerated(entitlements, other.entitlements)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Enum specifying code ownership.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ * This class should not be extended by any user class outside of the generated file.
+ */
+sealed class POwnership 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PAppUserOwnership (
+  val appUserId: String
+) : POwnership()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PAppUserOwnership {
+      val appUserId = pigeonVar_list[0] as String
+      return PAppUserOwnership(appUserId)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      appUserId,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PAppUserOwnership) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return appUserId == other.appUserId
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PDeviceOwnership (
+  val deviceId: String
+) : POwnership()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PDeviceOwnership {
+      val deviceId = pigeonVar_list[0] as String
+      return PDeviceOwnership(deviceId)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      deviceId,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PDeviceOwnership) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return deviceId == other.deviceId
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Info about the purchaser.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PPurchaserInfo (
+  /** The app user ID of the purchaser. */
+  val appUserId: String,
+  /** The email address of the purchaser. */
+  val email: String? = null,
+  /** The identifiers of the store that was purchased from. */
+  val storeIdentifiers: PStoreIdentifiers
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PPurchaserInfo {
+      val appUserId = pigeonVar_list[0] as String
+      val email = pigeonVar_list[1] as String?
+      val storeIdentifiers = pigeonVar_list[2] as PStoreIdentifiers
+      return PPurchaserInfo(appUserId, email, storeIdentifiers)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      appUserId,
+      email,
+      storeIdentifiers,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PPurchaserInfo) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return appUserId == other.appUserId
+    && email == other.email
+    && storeIdentifiers == other.storeIdentifiers
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Identifiers of the store that was purchased from.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ * This class should not be extended by any user class outside of the generated file.
+ */
+sealed class PStoreIdentifiers 
+/**
+ * Stripe purchase store identifiers.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PStripeStoreIdentifiers (
+  val customerId: String,
+  val subscriptionIds: List<String>
+) : PStoreIdentifiers()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PStripeStoreIdentifiers {
+      val customerId = pigeonVar_list[0] as String
+      val subscriptionIds = pigeonVar_list[1] as List<String>
+      return PStripeStoreIdentifiers(customerId, subscriptionIds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      customerId,
+      subscriptionIds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PStripeStoreIdentifiers) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return customerId == other.customerId
+    && deepEqualsSuperwallHostGenerated(subscriptionIds, other.subscriptionIds)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Unknown purchase store identifiers.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PUnknownStoreIdentifiers (
+  val store: String,
+  val additionalInfo: Map<String, Any>
+) : PStoreIdentifiers()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PUnknownStoreIdentifiers {
+      val store = pigeonVar_list[0] as String
+      val additionalInfo = pigeonVar_list[1] as Map<String, Any>
+      return PUnknownStoreIdentifiers(store, additionalInfo)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      store,
+      additionalInfo,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PUnknownStoreIdentifiers) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return store == other.store
+    && deepEqualsSuperwallHostGenerated(additionalInfo, other.additionalInfo)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Info about the paywall the purchase was made from.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PRedemptionPaywallInfo (
+  /** The identifier of the paywall. */
+  val identifier: String,
+  /** The name of the placement. */
+  val placementName: String,
+  /** The params of the placement. */
+  val placementParams: Map<String, Any>,
+  /** The ID of the paywall variant. */
+  val variantId: String,
+  /** The ID of the experiment that the paywall belongs to. */
+  val experimentId: String
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PRedemptionPaywallInfo {
+      val identifier = pigeonVar_list[0] as String
+      val placementName = pigeonVar_list[1] as String
+      val placementParams = pigeonVar_list[2] as Map<String, Any>
+      val variantId = pigeonVar_list[3] as String
+      val experimentId = pigeonVar_list[4] as String
+      return PRedemptionPaywallInfo(identifier, placementName, placementParams, variantId, experimentId)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      identifier,
+      placementName,
+      placementParams,
+      variantId,
+      experimentId,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PRedemptionPaywallInfo) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return identifier == other.identifier
+    && placementName == other.placementName
+    && deepEqualsSuperwallHostGenerated(placementParams, other.placementParams)
+    && variantId == other.variantId
+    && experimentId == other.experimentId
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PSuperwallOptions (
   val paywalls: PPaywallOptions? = null,
@@ -370,6 +900,7 @@ data class PSuperwallOptions (
   val isExternalDataCollectionEnabled: Boolean? = null,
   val localeIdentifier: String? = null,
   val isGameControllerEnabled: Boolean? = null,
+  val enableExperimentalDeviceVariables: Boolean? = null,
   val logging: PLogging? = null,
   val passIdentifiersToPlayStore: Boolean? = null
 )
@@ -381,9 +912,10 @@ data class PSuperwallOptions (
       val isExternalDataCollectionEnabled = pigeonVar_list[2] as Boolean?
       val localeIdentifier = pigeonVar_list[3] as String?
       val isGameControllerEnabled = pigeonVar_list[4] as Boolean?
-      val logging = pigeonVar_list[5] as PLogging?
-      val passIdentifiersToPlayStore = pigeonVar_list[6] as Boolean?
-      return PSuperwallOptions(paywalls, networkEnvironment, isExternalDataCollectionEnabled, localeIdentifier, isGameControllerEnabled, logging, passIdentifiersToPlayStore)
+      val enableExperimentalDeviceVariables = pigeonVar_list[5] as Boolean?
+      val logging = pigeonVar_list[6] as PLogging?
+      val passIdentifiersToPlayStore = pigeonVar_list[7] as Boolean?
+      return PSuperwallOptions(paywalls, networkEnvironment, isExternalDataCollectionEnabled, localeIdentifier, isGameControllerEnabled, enableExperimentalDeviceVariables, logging, passIdentifiersToPlayStore)
     }
   }
   fun toList(): List<Any?> {
@@ -393,6 +925,7 @@ data class PSuperwallOptions (
       isExternalDataCollectionEnabled,
       localeIdentifier,
       isGameControllerEnabled,
+      enableExperimentalDeviceVariables,
       logging,
       passIdentifiersToPlayStore,
     )
@@ -409,6 +942,7 @@ data class PSuperwallOptions (
     && isExternalDataCollectionEnabled == other.isExternalDataCollectionEnabled
     && localeIdentifier == other.localeIdentifier
     && isGameControllerEnabled == other.isGameControllerEnabled
+    && enableExperimentalDeviceVariables == other.enableExperimentalDeviceVariables
     && logging == other.logging
     && passIdentifiersToPlayStore == other.passIdentifiersToPlayStore
   }
@@ -1035,6 +1569,7 @@ data class PPaywallOptions (
   val shouldShowPurchaseFailureAlert: Boolean? = null,
   val shouldPreload: Boolean? = null,
   val automaticallyDismiss: Boolean? = null,
+  val shouldShowWebRestorationAlert: Boolean? = null,
   val transactionBackgroundView: PTransactionBackgroundView? = null
 )
  {
@@ -1045,8 +1580,9 @@ data class PPaywallOptions (
       val shouldShowPurchaseFailureAlert = pigeonVar_list[2] as Boolean?
       val shouldPreload = pigeonVar_list[3] as Boolean?
       val automaticallyDismiss = pigeonVar_list[4] as Boolean?
-      val transactionBackgroundView = pigeonVar_list[5] as PTransactionBackgroundView?
-      return PPaywallOptions(isHapticFeedbackEnabled, restoreFailed, shouldShowPurchaseFailureAlert, shouldPreload, automaticallyDismiss, transactionBackgroundView)
+      val shouldShowWebRestorationAlert = pigeonVar_list[5] as Boolean?
+      val transactionBackgroundView = pigeonVar_list[6] as PTransactionBackgroundView?
+      return PPaywallOptions(isHapticFeedbackEnabled, restoreFailed, shouldShowPurchaseFailureAlert, shouldPreload, automaticallyDismiss, shouldShowWebRestorationAlert, transactionBackgroundView)
     }
   }
   fun toList(): List<Any?> {
@@ -1056,6 +1592,7 @@ data class PPaywallOptions (
       shouldShowPurchaseFailureAlert,
       shouldPreload,
       automaticallyDismiss,
+      shouldShowWebRestorationAlert,
       transactionBackgroundView,
     )
   }
@@ -1071,6 +1608,7 @@ data class PPaywallOptions (
     && shouldShowPurchaseFailureAlert == other.shouldShowPurchaseFailureAlert
     && shouldPreload == other.shouldPreload
     && automaticallyDismiss == other.automaticallyDismiss
+    && shouldShowWebRestorationAlert == other.shouldShowWebRestorationAlert
     && transactionBackgroundView == other.transactionBackgroundView
   }
 
@@ -1850,190 +2388,260 @@ private open class SuperwallHostGeneratedPigeonCodec : StandardMessageCodec() {
       }
       145.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallOptions.fromList(it)
+          PSuccessRedemptionResult.fromList(it)
         }
       }
       146.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallInfo.fromList(it)
+          PErrorRedemptionResult.fromList(it)
         }
       }
       147.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PProduct.fromList(it)
+          PErrorInfo.fromList(it)
         }
       }
       148.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PLocalNotification.fromList(it)
+          PExpiredCodeRedemptionResult.fromList(it)
         }
       }
       149.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PComputedPropertyRequest.fromList(it)
+          PExpiredCodeInfo.fromList(it)
         }
       }
       150.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSurvey.fromList(it)
+          PInvalidCodeRedemptionResult.fromList(it)
         }
       }
       151.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSurveyOption.fromList(it)
+          PExpiredSubscriptionCode.fromList(it)
         }
       }
       152.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseCancelled.fromList(it)
+          PRedemptionInfo.fromList(it)
         }
       }
       153.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasePurchased.fromList(it)
+          PAppUserOwnership.fromList(it)
         }
       }
       154.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasePending.fromList(it)
+          PDeviceOwnership.fromList(it)
         }
       }
       155.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseFailed.fromList(it)
+          PPurchaserInfo.fromList(it)
         }
       }
       156.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestorationRestored.fromList(it)
+          PStripeStoreIdentifiers.fromList(it)
         }
       }
       157.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestorationFailed.fromList(it)
+          PUnknownStoreIdentifiers.fromList(it)
         }
       }
       158.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestoreFailed.fromList(it)
+          PRedemptionPaywallInfo.fromList(it)
         }
       }
       159.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PLogging.fromList(it)
+          PSuperwallOptions.fromList(it)
         }
       }
       160.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallOptions.fromList(it)
+          PPaywallInfo.fromList(it)
         }
       }
       161.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseControllerHost.fromList(it)
+          PProduct.fromList(it)
         }
       }
       162.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfigureCompletionHost.fromList(it)
+          PLocalNotification.fromList(it)
         }
       }
       163.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallPresentationHandlerHost.fromList(it)
+          PComputedPropertyRequest.fromList(it)
         }
       }
       164.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PFeatureHandlerHost.fromList(it)
+          PSurvey.fromList(it)
         }
       }
       165.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PEntitlement.fromList(it)
+          PSurveyOption.fromList(it)
         }
       }
       166.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PEntitlements.fromList(it)
+          PPurchaseCancelled.fromList(it)
         }
       }
       167.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PActive.fromList(it)
+          PPurchasePurchased.fromList(it)
         }
       }
       168.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PInactive.fromList(it)
+          PPurchasePending.fromList(it)
         }
       }
       169.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PUnknown.fromList(it)
+          PPurchaseFailed.fromList(it)
         }
       }
       170.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallEventInfo.fromList(it)
+          PRestorationRestored.fromList(it)
         }
       }
       171.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PIdentityOptions.fromList(it)
+          PRestorationFailed.fromList(it)
         }
       }
       172.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExperiment.fromList(it)
+          PRestoreFailed.fromList(it)
         }
       }
       173.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPlacementNotFoundTriggerResult.fromList(it)
+          PLogging.fromList(it)
         }
       }
       174.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PNoAudienceMatchTriggerResult.fromList(it)
+          PPaywallOptions.fromList(it)
         }
       }
       175.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallTriggerResult.fromList(it)
+          PPurchaseControllerHost.fromList(it)
         }
       }
       176.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PHoldoutTriggerResult.fromList(it)
+          PConfigureCompletionHost.fromList(it)
         }
       }
       177.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PErrorTriggerResult.fromList(it)
+          PPaywallPresentationHandlerHost.fromList(it)
         }
       }
       178.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PVariant.fromList(it)
+          PFeatureHandlerHost.fromList(it)
         }
       }
       179.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfirmedAssignment.fromList(it)
+          PEntitlement.fromList(it)
         }
       }
       180.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasedPaywallResult.fromList(it)
+          PEntitlements.fromList(it)
         }
       }
       181.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PDeclinedPaywallResult.fromList(it)
+          PActive.fromList(it)
         }
       }
       182.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PInactive.fromList(it)
+        }
+      }
+      183.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PUnknown.fromList(it)
+        }
+      }
+      184.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PSuperwallEventInfo.fromList(it)
+        }
+      }
+      185.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PIdentityOptions.fromList(it)
+        }
+      }
+      186.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PExperiment.fromList(it)
+        }
+      }
+      187.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PPlacementNotFoundTriggerResult.fromList(it)
+        }
+      }
+      188.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PNoAudienceMatchTriggerResult.fromList(it)
+        }
+      }
+      189.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PPaywallTriggerResult.fromList(it)
+        }
+      }
+      190.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PHoldoutTriggerResult.fromList(it)
+        }
+      }
+      191.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PErrorTriggerResult.fromList(it)
+        }
+      }
+      192.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PVariant.fromList(it)
+        }
+      }
+      193.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PConfirmedAssignment.fromList(it)
+        }
+      }
+      194.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PPurchasedPaywallResult.fromList(it)
+        }
+      }
+      195.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PDeclinedPaywallResult.fromList(it)
+        }
+      }
+      196.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           PRestoredPaywallResult.fromList(it)
         }
@@ -2107,156 +2715,212 @@ private open class SuperwallHostGeneratedPigeonCodec : StandardMessageCodec() {
         stream.write(144)
         writeValue(stream, value.raw)
       }
-      is PSuperwallOptions -> {
+      is PSuccessRedemptionResult -> {
         stream.write(145)
         writeValue(stream, value.toList())
       }
-      is PPaywallInfo -> {
+      is PErrorRedemptionResult -> {
         stream.write(146)
         writeValue(stream, value.toList())
       }
-      is PProduct -> {
+      is PErrorInfo -> {
         stream.write(147)
         writeValue(stream, value.toList())
       }
-      is PLocalNotification -> {
+      is PExpiredCodeRedemptionResult -> {
         stream.write(148)
         writeValue(stream, value.toList())
       }
-      is PComputedPropertyRequest -> {
+      is PExpiredCodeInfo -> {
         stream.write(149)
         writeValue(stream, value.toList())
       }
-      is PSurvey -> {
+      is PInvalidCodeRedemptionResult -> {
         stream.write(150)
         writeValue(stream, value.toList())
       }
-      is PSurveyOption -> {
+      is PExpiredSubscriptionCode -> {
         stream.write(151)
         writeValue(stream, value.toList())
       }
-      is PPurchaseCancelled -> {
+      is PRedemptionInfo -> {
         stream.write(152)
         writeValue(stream, value.toList())
       }
-      is PPurchasePurchased -> {
+      is PAppUserOwnership -> {
         stream.write(153)
         writeValue(stream, value.toList())
       }
-      is PPurchasePending -> {
+      is PDeviceOwnership -> {
         stream.write(154)
         writeValue(stream, value.toList())
       }
-      is PPurchaseFailed -> {
+      is PPurchaserInfo -> {
         stream.write(155)
         writeValue(stream, value.toList())
       }
-      is PRestorationRestored -> {
+      is PStripeStoreIdentifiers -> {
         stream.write(156)
         writeValue(stream, value.toList())
       }
-      is PRestorationFailed -> {
+      is PUnknownStoreIdentifiers -> {
         stream.write(157)
         writeValue(stream, value.toList())
       }
-      is PRestoreFailed -> {
+      is PRedemptionPaywallInfo -> {
         stream.write(158)
         writeValue(stream, value.toList())
       }
-      is PLogging -> {
+      is PSuperwallOptions -> {
         stream.write(159)
         writeValue(stream, value.toList())
       }
-      is PPaywallOptions -> {
+      is PPaywallInfo -> {
         stream.write(160)
         writeValue(stream, value.toList())
       }
-      is PPurchaseControllerHost -> {
+      is PProduct -> {
         stream.write(161)
         writeValue(stream, value.toList())
       }
-      is PConfigureCompletionHost -> {
+      is PLocalNotification -> {
         stream.write(162)
         writeValue(stream, value.toList())
       }
-      is PPaywallPresentationHandlerHost -> {
+      is PComputedPropertyRequest -> {
         stream.write(163)
         writeValue(stream, value.toList())
       }
-      is PFeatureHandlerHost -> {
+      is PSurvey -> {
         stream.write(164)
         writeValue(stream, value.toList())
       }
-      is PEntitlement -> {
+      is PSurveyOption -> {
         stream.write(165)
         writeValue(stream, value.toList())
       }
-      is PEntitlements -> {
+      is PPurchaseCancelled -> {
         stream.write(166)
         writeValue(stream, value.toList())
       }
-      is PActive -> {
+      is PPurchasePurchased -> {
         stream.write(167)
         writeValue(stream, value.toList())
       }
-      is PInactive -> {
+      is PPurchasePending -> {
         stream.write(168)
         writeValue(stream, value.toList())
       }
-      is PUnknown -> {
+      is PPurchaseFailed -> {
         stream.write(169)
         writeValue(stream, value.toList())
       }
-      is PSuperwallEventInfo -> {
+      is PRestorationRestored -> {
         stream.write(170)
         writeValue(stream, value.toList())
       }
-      is PIdentityOptions -> {
+      is PRestorationFailed -> {
         stream.write(171)
         writeValue(stream, value.toList())
       }
-      is PExperiment -> {
+      is PRestoreFailed -> {
         stream.write(172)
         writeValue(stream, value.toList())
       }
-      is PPlacementNotFoundTriggerResult -> {
+      is PLogging -> {
         stream.write(173)
         writeValue(stream, value.toList())
       }
-      is PNoAudienceMatchTriggerResult -> {
+      is PPaywallOptions -> {
         stream.write(174)
         writeValue(stream, value.toList())
       }
-      is PPaywallTriggerResult -> {
+      is PPurchaseControllerHost -> {
         stream.write(175)
         writeValue(stream, value.toList())
       }
-      is PHoldoutTriggerResult -> {
+      is PConfigureCompletionHost -> {
         stream.write(176)
         writeValue(stream, value.toList())
       }
-      is PErrorTriggerResult -> {
+      is PPaywallPresentationHandlerHost -> {
         stream.write(177)
         writeValue(stream, value.toList())
       }
-      is PVariant -> {
+      is PFeatureHandlerHost -> {
         stream.write(178)
         writeValue(stream, value.toList())
       }
-      is PConfirmedAssignment -> {
+      is PEntitlement -> {
         stream.write(179)
         writeValue(stream, value.toList())
       }
-      is PPurchasedPaywallResult -> {
+      is PEntitlements -> {
         stream.write(180)
         writeValue(stream, value.toList())
       }
-      is PDeclinedPaywallResult -> {
+      is PActive -> {
         stream.write(181)
         writeValue(stream, value.toList())
       }
-      is PRestoredPaywallResult -> {
+      is PInactive -> {
         stream.write(182)
+        writeValue(stream, value.toList())
+      }
+      is PUnknown -> {
+        stream.write(183)
+        writeValue(stream, value.toList())
+      }
+      is PSuperwallEventInfo -> {
+        stream.write(184)
+        writeValue(stream, value.toList())
+      }
+      is PIdentityOptions -> {
+        stream.write(185)
+        writeValue(stream, value.toList())
+      }
+      is PExperiment -> {
+        stream.write(186)
+        writeValue(stream, value.toList())
+      }
+      is PPlacementNotFoundTriggerResult -> {
+        stream.write(187)
+        writeValue(stream, value.toList())
+      }
+      is PNoAudienceMatchTriggerResult -> {
+        stream.write(188)
+        writeValue(stream, value.toList())
+      }
+      is PPaywallTriggerResult -> {
+        stream.write(189)
+        writeValue(stream, value.toList())
+      }
+      is PHoldoutTriggerResult -> {
+        stream.write(190)
+        writeValue(stream, value.toList())
+      }
+      is PErrorTriggerResult -> {
+        stream.write(191)
+        writeValue(stream, value.toList())
+      }
+      is PVariant -> {
+        stream.write(192)
+        writeValue(stream, value.toList())
+      }
+      is PConfirmedAssignment -> {
+        stream.write(193)
+        writeValue(stream, value.toList())
+      }
+      is PPurchasedPaywallResult -> {
+        stream.write(194)
+        writeValue(stream, value.toList())
+      }
+      is PDeclinedPaywallResult -> {
+        stream.write(195)
+        writeValue(stream, value.toList())
+      }
+      is PRestoredPaywallResult -> {
+        stream.write(196)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -2947,6 +3611,40 @@ class PSuperwallDelegateGenerated(private val binaryMessenger: BinaryMessenger, 
     val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(levelArg, scopeArg, messageArg, infoArg, errorArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun willRedeemLink(callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willRedeemLink$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(null) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun didRedeemLink(resultArg: PRedemptionResult, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didRedeemLink$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(resultArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))

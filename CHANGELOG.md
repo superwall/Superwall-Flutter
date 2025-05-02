@@ -2,27 +2,38 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.2.0
+
+### Enhancements
+
+- Adds support for web checkout.
+- Updates iOS SDK to 4.3.5 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.3.5)
 
 ## 2.1.0
 
-- Updates Android SDK to 2.0.8 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.8)  
+### Enhancements
+
+- Updates Android SDK to 2.0.8 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.8)
 - Updates iOS SDK to 4.3.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.3.0)
 
 ## 2.1.0-beta.2
 
 ### Enhancements
+
 - Adds `restorePurchases` function
-- Updates Android SDK to 2.0.6 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.6)  
+- Updates Android SDK to 2.0.6 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.0.6)
 - Updates iOS SDK to 4.2.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.2.0)
 
 ## 2.1.0-beta.1
 
 ### Enhancements
+
 - Reworks the SDK's beneath the surface to rely on Pigeon codegen
 - Improves stability
 - Improved correctness of the SDK
 
 ### Note:
+
 - This could include some potentially breaking changes. If you find some, please open an issue or reach out to the team.
 
 ## 2.0.8

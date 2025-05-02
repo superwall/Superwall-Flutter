@@ -256,12 +256,406 @@ enum PPaywallSkippedReason: Int {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
+/// This protocol should not be extended by any user class outside of the generated file.
+protocol PRedemptionResult {
+
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct PSuccessRedemptionResult: PRedemptionResult {
+  var code: String
+  var redemptionInfo: PRedemptionInfo
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PSuccessRedemptionResult? {
+    let code = pigeonVar_list[0] as! String
+    let redemptionInfo = pigeonVar_list[1] as! PRedemptionInfo
+
+    return PSuccessRedemptionResult(
+      code: code,
+      redemptionInfo: redemptionInfo
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      code,
+      redemptionInfo,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct PErrorRedemptionResult: PRedemptionResult {
+  var code: String
+  var error: PErrorInfo
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PErrorRedemptionResult? {
+    let code = pigeonVar_list[0] as! String
+    let error = pigeonVar_list[1] as! PErrorInfo
+
+    return PErrorRedemptionResult(
+      code: code,
+      error: error
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      code,
+      error,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct PErrorInfo {
+  var message: String
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PErrorInfo? {
+    let message = pigeonVar_list[0] as! String
+
+    return PErrorInfo(
+      message: message
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      message
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct PExpiredCodeRedemptionResult: PRedemptionResult {
+  var code: String
+  var info: PExpiredCodeInfo
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PExpiredCodeRedemptionResult? {
+    let code = pigeonVar_list[0] as! String
+    let info = pigeonVar_list[1] as! PExpiredCodeInfo
+
+    return PExpiredCodeRedemptionResult(
+      code: code,
+      info: info
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      code,
+      info,
+    ]
+  }
+}
+
+/// Info about the expired code.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PExpiredCodeInfo {
+  /// A boolean indicating whether the redemption email has been resent.
+  var resent: Bool
+  /// An optional String indicating the obfuscated email address that the
+  /// redemption email was sent to.
+  var obfuscatedEmail: String? = nil
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PExpiredCodeInfo? {
+    let resent = pigeonVar_list[0] as! Bool
+    let obfuscatedEmail: String? = nilOrValue(pigeonVar_list[1])
+
+    return PExpiredCodeInfo(
+      resent: resent,
+      obfuscatedEmail: obfuscatedEmail
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      resent,
+      obfuscatedEmail,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct PInvalidCodeRedemptionResult: PRedemptionResult {
+  var code: String
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PInvalidCodeRedemptionResult? {
+    let code = pigeonVar_list[0] as! String
+
+    return PInvalidCodeRedemptionResult(
+      code: code
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      code
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct PExpiredSubscriptionCode: PRedemptionResult {
+  var code: String
+  var redemptionInfo: PRedemptionInfo
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PExpiredSubscriptionCode? {
+    let code = pigeonVar_list[0] as! String
+    let redemptionInfo = pigeonVar_list[1] as! PRedemptionInfo
+
+    return PExpiredSubscriptionCode(
+      code: code,
+      redemptionInfo: redemptionInfo
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      code,
+      redemptionInfo,
+    ]
+  }
+}
+
+/// Information about the redemption.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PRedemptionInfo {
+  /// The ownership of the code.
+  var ownership: POwnership
+  /// Info about the purchaser.
+  var purchaserInfo: PPurchaserInfo
+  /// Info about the paywall the purchase was made from.
+  var paywallInfo: PRedemptionPaywallInfo? = nil
+  /// The entitlements array.
+  var entitlements: [PEntitlement]
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PRedemptionInfo? {
+    let ownership = pigeonVar_list[0] as! POwnership
+    let purchaserInfo = pigeonVar_list[1] as! PPurchaserInfo
+    let paywallInfo: PRedemptionPaywallInfo? = nilOrValue(pigeonVar_list[2])
+    let entitlements = pigeonVar_list[3] as! [PEntitlement]
+
+    return PRedemptionInfo(
+      ownership: ownership,
+      purchaserInfo: purchaserInfo,
+      paywallInfo: paywallInfo,
+      entitlements: entitlements
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      ownership,
+      purchaserInfo,
+      paywallInfo,
+      entitlements,
+    ]
+  }
+}
+
+/// Enum specifying code ownership.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+/// This protocol should not be extended by any user class outside of the generated file.
+protocol POwnership {
+
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct PAppUserOwnership: POwnership {
+  var appUserId: String
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PAppUserOwnership? {
+    let appUserId = pigeonVar_list[0] as! String
+
+    return PAppUserOwnership(
+      appUserId: appUserId
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      appUserId
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct PDeviceOwnership: POwnership {
+  var deviceId: String
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PDeviceOwnership? {
+    let deviceId = pigeonVar_list[0] as! String
+
+    return PDeviceOwnership(
+      deviceId: deviceId
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      deviceId
+    ]
+  }
+}
+
+/// Info about the purchaser.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PPurchaserInfo {
+  /// The app user ID of the purchaser.
+  var appUserId: String
+  /// The email address of the purchaser.
+  var email: String? = nil
+  /// The identifiers of the store that was purchased from.
+  var storeIdentifiers: PStoreIdentifiers
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PPurchaserInfo? {
+    let appUserId = pigeonVar_list[0] as! String
+    let email: String? = nilOrValue(pigeonVar_list[1])
+    let storeIdentifiers = pigeonVar_list[2] as! PStoreIdentifiers
+
+    return PPurchaserInfo(
+      appUserId: appUserId,
+      email: email,
+      storeIdentifiers: storeIdentifiers
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      appUserId,
+      email,
+      storeIdentifiers,
+    ]
+  }
+}
+
+/// Identifiers of the store that was purchased from.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+/// This protocol should not be extended by any user class outside of the generated file.
+protocol PStoreIdentifiers {
+
+}
+
+/// Stripe purchase store identifiers.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PStripeStoreIdentifiers: PStoreIdentifiers {
+  var customerId: String
+  var subscriptionIds: [String]
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PStripeStoreIdentifiers? {
+    let customerId = pigeonVar_list[0] as! String
+    let subscriptionIds = pigeonVar_list[1] as! [String]
+
+    return PStripeStoreIdentifiers(
+      customerId: customerId,
+      subscriptionIds: subscriptionIds
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      customerId,
+      subscriptionIds,
+    ]
+  }
+}
+
+/// Unknown purchase store identifiers.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PUnknownStoreIdentifiers: PStoreIdentifiers {
+  var store: String
+  var additionalInfo: [String: Any]
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PUnknownStoreIdentifiers? {
+    let store = pigeonVar_list[0] as! String
+    let additionalInfo = pigeonVar_list[1] as! [String: Any]
+
+    return PUnknownStoreIdentifiers(
+      store: store,
+      additionalInfo: additionalInfo
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      store,
+      additionalInfo,
+    ]
+  }
+}
+
+/// Info about the paywall the purchase was made from.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PRedemptionPaywallInfo {
+  /// The identifier of the paywall.
+  var identifier: String
+  /// The name of the placement.
+  var placementName: String
+  /// The params of the placement.
+  var placementParams: [String: Any]
+  /// The ID of the paywall variant.
+  var variantId: String
+  /// The ID of the experiment that the paywall belongs to.
+  var experimentId: String
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PRedemptionPaywallInfo? {
+    let identifier = pigeonVar_list[0] as! String
+    let placementName = pigeonVar_list[1] as! String
+    let placementParams = pigeonVar_list[2] as! [String: Any]
+    let variantId = pigeonVar_list[3] as! String
+    let experimentId = pigeonVar_list[4] as! String
+
+    return PRedemptionPaywallInfo(
+      identifier: identifier,
+      placementName: placementName,
+      placementParams: placementParams,
+      variantId: variantId,
+      experimentId: experimentId
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      identifier,
+      placementName,
+      placementParams,
+      variantId,
+      experimentId,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
 struct PSuperwallOptions {
   var paywalls: PPaywallOptions? = nil
   var networkEnvironment: PNetworkEnvironment? = nil
   var isExternalDataCollectionEnabled: Bool? = nil
   var localeIdentifier: String? = nil
   var isGameControllerEnabled: Bool? = nil
+  var enableExperimentalDeviceVariables: Bool? = nil
   var logging: PLogging? = nil
   var passIdentifiersToPlayStore: Bool? = nil
 
@@ -273,8 +667,9 @@ struct PSuperwallOptions {
     let isExternalDataCollectionEnabled: Bool? = nilOrValue(pigeonVar_list[2])
     let localeIdentifier: String? = nilOrValue(pigeonVar_list[3])
     let isGameControllerEnabled: Bool? = nilOrValue(pigeonVar_list[4])
-    let logging: PLogging? = nilOrValue(pigeonVar_list[5])
-    let passIdentifiersToPlayStore: Bool? = nilOrValue(pigeonVar_list[6])
+    let enableExperimentalDeviceVariables: Bool? = nilOrValue(pigeonVar_list[5])
+    let logging: PLogging? = nilOrValue(pigeonVar_list[6])
+    let passIdentifiersToPlayStore: Bool? = nilOrValue(pigeonVar_list[7])
 
     return PSuperwallOptions(
       paywalls: paywalls,
@@ -282,6 +677,7 @@ struct PSuperwallOptions {
       isExternalDataCollectionEnabled: isExternalDataCollectionEnabled,
       localeIdentifier: localeIdentifier,
       isGameControllerEnabled: isGameControllerEnabled,
+      enableExperimentalDeviceVariables: enableExperimentalDeviceVariables,
       logging: logging,
       passIdentifiersToPlayStore: passIdentifiersToPlayStore
     )
@@ -293,6 +689,7 @@ struct PSuperwallOptions {
       isExternalDataCollectionEnabled,
       localeIdentifier,
       isGameControllerEnabled,
+      enableExperimentalDeviceVariables,
       logging,
       passIdentifiersToPlayStore,
     ]
@@ -794,6 +1191,7 @@ struct PPaywallOptions {
   var shouldShowPurchaseFailureAlert: Bool? = nil
   var shouldPreload: Bool? = nil
   var automaticallyDismiss: Bool? = nil
+  var shouldShowWebRestorationAlert: Bool? = nil
   var transactionBackgroundView: PTransactionBackgroundView? = nil
 
 
@@ -804,7 +1202,8 @@ struct PPaywallOptions {
     let shouldShowPurchaseFailureAlert: Bool? = nilOrValue(pigeonVar_list[2])
     let shouldPreload: Bool? = nilOrValue(pigeonVar_list[3])
     let automaticallyDismiss: Bool? = nilOrValue(pigeonVar_list[4])
-    let transactionBackgroundView: PTransactionBackgroundView? = nilOrValue(pigeonVar_list[5])
+    let shouldShowWebRestorationAlert: Bool? = nilOrValue(pigeonVar_list[5])
+    let transactionBackgroundView: PTransactionBackgroundView? = nilOrValue(pigeonVar_list[6])
 
     return PPaywallOptions(
       isHapticFeedbackEnabled: isHapticFeedbackEnabled,
@@ -812,6 +1211,7 @@ struct PPaywallOptions {
       shouldShowPurchaseFailureAlert: shouldShowPurchaseFailureAlert,
       shouldPreload: shouldPreload,
       automaticallyDismiss: automaticallyDismiss,
+      shouldShowWebRestorationAlert: shouldShowWebRestorationAlert,
       transactionBackgroundView: transactionBackgroundView
     )
   }
@@ -822,6 +1222,7 @@ struct PPaywallOptions {
       shouldShowPurchaseFailureAlert,
       shouldPreload,
       automaticallyDismiss,
+      shouldShowWebRestorationAlert,
       transactionBackgroundView,
     ]
   }
@@ -1421,80 +1822,108 @@ private class SuperwallHostGeneratedPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 145:
-      return PSuperwallOptions.fromList(self.readValue() as! [Any?])
+      return PSuccessRedemptionResult.fromList(self.readValue() as! [Any?])
     case 146:
-      return PPaywallInfo.fromList(self.readValue() as! [Any?])
+      return PErrorRedemptionResult.fromList(self.readValue() as! [Any?])
     case 147:
-      return PProduct.fromList(self.readValue() as! [Any?])
+      return PErrorInfo.fromList(self.readValue() as! [Any?])
     case 148:
-      return PLocalNotification.fromList(self.readValue() as! [Any?])
+      return PExpiredCodeRedemptionResult.fromList(self.readValue() as! [Any?])
     case 149:
-      return PComputedPropertyRequest.fromList(self.readValue() as! [Any?])
+      return PExpiredCodeInfo.fromList(self.readValue() as! [Any?])
     case 150:
-      return PSurvey.fromList(self.readValue() as! [Any?])
+      return PInvalidCodeRedemptionResult.fromList(self.readValue() as! [Any?])
     case 151:
-      return PSurveyOption.fromList(self.readValue() as! [Any?])
+      return PExpiredSubscriptionCode.fromList(self.readValue() as! [Any?])
     case 152:
-      return PPurchaseCancelled.fromList(self.readValue() as! [Any?])
+      return PRedemptionInfo.fromList(self.readValue() as! [Any?])
     case 153:
-      return PPurchasePurchased.fromList(self.readValue() as! [Any?])
+      return PAppUserOwnership.fromList(self.readValue() as! [Any?])
     case 154:
-      return PPurchasePending.fromList(self.readValue() as! [Any?])
+      return PDeviceOwnership.fromList(self.readValue() as! [Any?])
     case 155:
-      return PPurchaseFailed.fromList(self.readValue() as! [Any?])
+      return PPurchaserInfo.fromList(self.readValue() as! [Any?])
     case 156:
-      return PRestorationRestored.fromList(self.readValue() as! [Any?])
+      return PStripeStoreIdentifiers.fromList(self.readValue() as! [Any?])
     case 157:
-      return PRestorationFailed.fromList(self.readValue() as! [Any?])
+      return PUnknownStoreIdentifiers.fromList(self.readValue() as! [Any?])
     case 158:
-      return PRestoreFailed.fromList(self.readValue() as! [Any?])
+      return PRedemptionPaywallInfo.fromList(self.readValue() as! [Any?])
     case 159:
-      return PLogging.fromList(self.readValue() as! [Any?])
+      return PSuperwallOptions.fromList(self.readValue() as! [Any?])
     case 160:
-      return PPaywallOptions.fromList(self.readValue() as! [Any?])
+      return PPaywallInfo.fromList(self.readValue() as! [Any?])
     case 161:
-      return PPurchaseControllerHost.fromList(self.readValue() as! [Any?])
+      return PProduct.fromList(self.readValue() as! [Any?])
     case 162:
-      return PConfigureCompletionHost.fromList(self.readValue() as! [Any?])
+      return PLocalNotification.fromList(self.readValue() as! [Any?])
     case 163:
-      return PPaywallPresentationHandlerHost.fromList(self.readValue() as! [Any?])
+      return PComputedPropertyRequest.fromList(self.readValue() as! [Any?])
     case 164:
-      return PFeatureHandlerHost.fromList(self.readValue() as! [Any?])
+      return PSurvey.fromList(self.readValue() as! [Any?])
     case 165:
-      return PEntitlement.fromList(self.readValue() as! [Any?])
+      return PSurveyOption.fromList(self.readValue() as! [Any?])
     case 166:
-      return PEntitlements.fromList(self.readValue() as! [Any?])
+      return PPurchaseCancelled.fromList(self.readValue() as! [Any?])
     case 167:
-      return PActive.fromList(self.readValue() as! [Any?])
+      return PPurchasePurchased.fromList(self.readValue() as! [Any?])
     case 168:
-      return PInactive.fromList(self.readValue() as! [Any?])
+      return PPurchasePending.fromList(self.readValue() as! [Any?])
     case 169:
-      return PUnknown.fromList(self.readValue() as! [Any?])
+      return PPurchaseFailed.fromList(self.readValue() as! [Any?])
     case 170:
-      return PSuperwallEventInfo.fromList(self.readValue() as! [Any?])
+      return PRestorationRestored.fromList(self.readValue() as! [Any?])
     case 171:
-      return PIdentityOptions.fromList(self.readValue() as! [Any?])
+      return PRestorationFailed.fromList(self.readValue() as! [Any?])
     case 172:
-      return PExperiment.fromList(self.readValue() as! [Any?])
+      return PRestoreFailed.fromList(self.readValue() as! [Any?])
     case 173:
-      return PPlacementNotFoundTriggerResult.fromList(self.readValue() as! [Any?])
+      return PLogging.fromList(self.readValue() as! [Any?])
     case 174:
-      return PNoAudienceMatchTriggerResult.fromList(self.readValue() as! [Any?])
+      return PPaywallOptions.fromList(self.readValue() as! [Any?])
     case 175:
-      return PPaywallTriggerResult.fromList(self.readValue() as! [Any?])
+      return PPurchaseControllerHost.fromList(self.readValue() as! [Any?])
     case 176:
-      return PHoldoutTriggerResult.fromList(self.readValue() as! [Any?])
+      return PConfigureCompletionHost.fromList(self.readValue() as! [Any?])
     case 177:
-      return PErrorTriggerResult.fromList(self.readValue() as! [Any?])
+      return PPaywallPresentationHandlerHost.fromList(self.readValue() as! [Any?])
     case 178:
-      return PVariant.fromList(self.readValue() as! [Any?])
+      return PFeatureHandlerHost.fromList(self.readValue() as! [Any?])
     case 179:
-      return PConfirmedAssignment.fromList(self.readValue() as! [Any?])
+      return PEntitlement.fromList(self.readValue() as! [Any?])
     case 180:
-      return PPurchasedPaywallResult.fromList(self.readValue() as! [Any?])
+      return PEntitlements.fromList(self.readValue() as! [Any?])
     case 181:
-      return PDeclinedPaywallResult.fromList(self.readValue() as! [Any?])
+      return PActive.fromList(self.readValue() as! [Any?])
     case 182:
+      return PInactive.fromList(self.readValue() as! [Any?])
+    case 183:
+      return PUnknown.fromList(self.readValue() as! [Any?])
+    case 184:
+      return PSuperwallEventInfo.fromList(self.readValue() as! [Any?])
+    case 185:
+      return PIdentityOptions.fromList(self.readValue() as! [Any?])
+    case 186:
+      return PExperiment.fromList(self.readValue() as! [Any?])
+    case 187:
+      return PPlacementNotFoundTriggerResult.fromList(self.readValue() as! [Any?])
+    case 188:
+      return PNoAudienceMatchTriggerResult.fromList(self.readValue() as! [Any?])
+    case 189:
+      return PPaywallTriggerResult.fromList(self.readValue() as! [Any?])
+    case 190:
+      return PHoldoutTriggerResult.fromList(self.readValue() as! [Any?])
+    case 191:
+      return PErrorTriggerResult.fromList(self.readValue() as! [Any?])
+    case 192:
+      return PVariant.fromList(self.readValue() as! [Any?])
+    case 193:
+      return PConfirmedAssignment.fromList(self.readValue() as! [Any?])
+    case 194:
+      return PPurchasedPaywallResult.fromList(self.readValue() as! [Any?])
+    case 195:
+      return PDeclinedPaywallResult.fromList(self.readValue() as! [Any?])
+    case 196:
       return PRestoredPaywallResult.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -1552,119 +1981,161 @@ private class SuperwallHostGeneratedPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PPaywallSkippedReason {
       super.writeByte(144)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PSuperwallOptions {
+    } else if let value = value as? PSuccessRedemptionResult {
       super.writeByte(145)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallInfo {
+    } else if let value = value as? PErrorRedemptionResult {
       super.writeByte(146)
       super.writeValue(value.toList())
-    } else if let value = value as? PProduct {
+    } else if let value = value as? PErrorInfo {
       super.writeByte(147)
       super.writeValue(value.toList())
-    } else if let value = value as? PLocalNotification {
+    } else if let value = value as? PExpiredCodeRedemptionResult {
       super.writeByte(148)
       super.writeValue(value.toList())
-    } else if let value = value as? PComputedPropertyRequest {
+    } else if let value = value as? PExpiredCodeInfo {
       super.writeByte(149)
       super.writeValue(value.toList())
-    } else if let value = value as? PSurvey {
+    } else if let value = value as? PInvalidCodeRedemptionResult {
       super.writeByte(150)
       super.writeValue(value.toList())
-    } else if let value = value as? PSurveyOption {
+    } else if let value = value as? PExpiredSubscriptionCode {
       super.writeByte(151)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchaseCancelled {
+    } else if let value = value as? PRedemptionInfo {
       super.writeByte(152)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchasePurchased {
+    } else if let value = value as? PAppUserOwnership {
       super.writeByte(153)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchasePending {
+    } else if let value = value as? PDeviceOwnership {
       super.writeByte(154)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchaseFailed {
+    } else if let value = value as? PPurchaserInfo {
       super.writeByte(155)
       super.writeValue(value.toList())
-    } else if let value = value as? PRestorationRestored {
+    } else if let value = value as? PStripeStoreIdentifiers {
       super.writeByte(156)
       super.writeValue(value.toList())
-    } else if let value = value as? PRestorationFailed {
+    } else if let value = value as? PUnknownStoreIdentifiers {
       super.writeByte(157)
       super.writeValue(value.toList())
-    } else if let value = value as? PRestoreFailed {
+    } else if let value = value as? PRedemptionPaywallInfo {
       super.writeByte(158)
       super.writeValue(value.toList())
-    } else if let value = value as? PLogging {
+    } else if let value = value as? PSuperwallOptions {
       super.writeByte(159)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallOptions {
+    } else if let value = value as? PPaywallInfo {
       super.writeByte(160)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchaseControllerHost {
+    } else if let value = value as? PProduct {
       super.writeByte(161)
       super.writeValue(value.toList())
-    } else if let value = value as? PConfigureCompletionHost {
+    } else if let value = value as? PLocalNotification {
       super.writeByte(162)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallPresentationHandlerHost {
+    } else if let value = value as? PComputedPropertyRequest {
       super.writeByte(163)
       super.writeValue(value.toList())
-    } else if let value = value as? PFeatureHandlerHost {
+    } else if let value = value as? PSurvey {
       super.writeByte(164)
       super.writeValue(value.toList())
-    } else if let value = value as? PEntitlement {
+    } else if let value = value as? PSurveyOption {
       super.writeByte(165)
       super.writeValue(value.toList())
-    } else if let value = value as? PEntitlements {
+    } else if let value = value as? PPurchaseCancelled {
       super.writeByte(166)
       super.writeValue(value.toList())
-    } else if let value = value as? PActive {
+    } else if let value = value as? PPurchasePurchased {
       super.writeByte(167)
       super.writeValue(value.toList())
-    } else if let value = value as? PInactive {
+    } else if let value = value as? PPurchasePending {
       super.writeByte(168)
       super.writeValue(value.toList())
-    } else if let value = value as? PUnknown {
+    } else if let value = value as? PPurchaseFailed {
       super.writeByte(169)
       super.writeValue(value.toList())
-    } else if let value = value as? PSuperwallEventInfo {
+    } else if let value = value as? PRestorationRestored {
       super.writeByte(170)
       super.writeValue(value.toList())
-    } else if let value = value as? PIdentityOptions {
+    } else if let value = value as? PRestorationFailed {
       super.writeByte(171)
       super.writeValue(value.toList())
-    } else if let value = value as? PExperiment {
+    } else if let value = value as? PRestoreFailed {
       super.writeByte(172)
       super.writeValue(value.toList())
-    } else if let value = value as? PPlacementNotFoundTriggerResult {
+    } else if let value = value as? PLogging {
       super.writeByte(173)
       super.writeValue(value.toList())
-    } else if let value = value as? PNoAudienceMatchTriggerResult {
+    } else if let value = value as? PPaywallOptions {
       super.writeByte(174)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallTriggerResult {
+    } else if let value = value as? PPurchaseControllerHost {
       super.writeByte(175)
       super.writeValue(value.toList())
-    } else if let value = value as? PHoldoutTriggerResult {
+    } else if let value = value as? PConfigureCompletionHost {
       super.writeByte(176)
       super.writeValue(value.toList())
-    } else if let value = value as? PErrorTriggerResult {
+    } else if let value = value as? PPaywallPresentationHandlerHost {
       super.writeByte(177)
       super.writeValue(value.toList())
-    } else if let value = value as? PVariant {
+    } else if let value = value as? PFeatureHandlerHost {
       super.writeByte(178)
       super.writeValue(value.toList())
-    } else if let value = value as? PConfirmedAssignment {
+    } else if let value = value as? PEntitlement {
       super.writeByte(179)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchasedPaywallResult {
+    } else if let value = value as? PEntitlements {
       super.writeByte(180)
       super.writeValue(value.toList())
-    } else if let value = value as? PDeclinedPaywallResult {
+    } else if let value = value as? PActive {
       super.writeByte(181)
       super.writeValue(value.toList())
-    } else if let value = value as? PRestoredPaywallResult {
+    } else if let value = value as? PInactive {
       super.writeByte(182)
+      super.writeValue(value.toList())
+    } else if let value = value as? PUnknown {
+      super.writeByte(183)
+      super.writeValue(value.toList())
+    } else if let value = value as? PSuperwallEventInfo {
+      super.writeByte(184)
+      super.writeValue(value.toList())
+    } else if let value = value as? PIdentityOptions {
+      super.writeByte(185)
+      super.writeValue(value.toList())
+    } else if let value = value as? PExperiment {
+      super.writeByte(186)
+      super.writeValue(value.toList())
+    } else if let value = value as? PPlacementNotFoundTriggerResult {
+      super.writeByte(187)
+      super.writeValue(value.toList())
+    } else if let value = value as? PNoAudienceMatchTriggerResult {
+      super.writeByte(188)
+      super.writeValue(value.toList())
+    } else if let value = value as? PPaywallTriggerResult {
+      super.writeByte(189)
+      super.writeValue(value.toList())
+    } else if let value = value as? PHoldoutTriggerResult {
+      super.writeByte(190)
+      super.writeValue(value.toList())
+    } else if let value = value as? PErrorTriggerResult {
+      super.writeByte(191)
+      super.writeValue(value.toList())
+    } else if let value = value as? PVariant {
+      super.writeByte(192)
+      super.writeValue(value.toList())
+    } else if let value = value as? PConfirmedAssignment {
+      super.writeByte(193)
+      super.writeValue(value.toList())
+    } else if let value = value as? PPurchasedPaywallResult {
+      super.writeByte(194)
+      super.writeValue(value.toList())
+    } else if let value = value as? PDeclinedPaywallResult {
+      super.writeByte(195)
+      super.writeValue(value.toList())
+    } else if let value = value as? PRestoredPaywallResult {
+      super.writeByte(196)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -2142,6 +2613,8 @@ protocol PSuperwallDelegateGeneratedProtocol {
   func paywallWillOpenURL(url urlArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func paywallWillOpenDeepLink(url urlArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func handleLog(level levelArg: String, scope scopeArg: String, message messageArg: String?, info infoArg: [String: Any]?, error errorArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func willRedeemLink(completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didRedeemLink(result resultArg: PRedemptionResult, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class PSuperwallDelegateGenerated: PSuperwallDelegateGeneratedProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -2319,6 +2792,42 @@ class PSuperwallDelegateGenerated: PSuperwallDelegateGeneratedProtocol {
     let channelName: String = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([levelArg, scopeArg, messageArg, infoArg, errorArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
+      }
+    }
+  }
+  func willRedeemLink(completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willRedeemLink\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
+      }
+    }
+  }
+  func didRedeemLink(result resultArg: PRedemptionResult, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didRedeemLink\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([resultArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
