@@ -17,7 +17,8 @@ class Home extends StatelessWidget {
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                            Text('Subscription Status: ${status}'),
+                            Text('Subscription Status: ${status}',
+                                textAlign: TextAlign.center),
                           ]))),
               ElevatedButton(
                 // Launch Non-Gated Feature.

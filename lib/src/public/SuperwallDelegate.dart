@@ -47,10 +47,10 @@ abstract class SuperwallDelegate {
       Map<dynamic, dynamic>? info, String? error);
 
   /// Called before the redemption of a code from a web paywall.
-  void willRedeemLink();
+  void willRedeemLink() => {};
 
   /// A code was redeemed from a web paywall.
-  void didRedeemLink(RedemptionResult result);
+  void didRedeemLink(RedemptionResult result) => {};
 }
 
 class SuperwallDelegateHost implements PSuperwallDelegateGenerated {

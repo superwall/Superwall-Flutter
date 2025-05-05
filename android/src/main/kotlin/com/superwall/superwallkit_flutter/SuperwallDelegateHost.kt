@@ -14,9 +14,11 @@ import com.superwall.sdk.Superwall
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.models.entitlements.SubscriptionStatus
+import com.superwall.sdk.models.internal.RedemptionResult
 import com.superwall.sdk.paywall.presentation.PaywallInfo
 import com.superwall.superwallkit_flutter.utils.EventMapper
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
+import com.superwall.superwallkit_flutter.utils.RedemptionResultMapper
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.toPigeon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -119,5 +121,20 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
             backingDelegate.subscriptionStatusDidChange(from.toPigeon(), to.toPigeon(), {})
         }
     }
+
+    override fun willRedeemLink() {
+        super.willRedeemLink()
+        onMain {
+            backingDelegate.willRedeemLink({})
+        }
+    }
+
+    override fun didRedeemLink(result: RedemptionResult) {
+        super.didRedeemLink(result)
+        onMain {
+            backingDelegate.didRedeemLink(RedemptionResultMapper.toPRedemptionResult(result), {})
+        }
+    }
+
 
 }
