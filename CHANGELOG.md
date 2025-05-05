@@ -2,12 +2,15 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
-## 2.2.0
+## 2.2.0-beta.1
 
 ### Enhancements
 
 - Adds support for web checkout.
+- Updates kotlin version of the underlying Android SDK to 2.0.21
+
 - Updates iOS SDK to 4.3.5 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.3.5)
+- Updates iOS SDK to 2.1.0-beta.2 [View iOS SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.1.0-beta.2)
 
 ## 2.1.0
 
