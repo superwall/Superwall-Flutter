@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.2.0-beta.2
+
+### Enhancements
+
+- Updates iOS SDK to 4.3.8 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.3.8)
+
 ## 2.2.0-beta.1
 
 ### Enhancements
