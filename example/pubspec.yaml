@@ -32,6 +32,8 @@ dependencies:
 
   purchases_flutter: ^8.4.4
 
+  app_links: ^6.4.0
+
 dev_dependencies:
   integration_test:
     sdk: flutter

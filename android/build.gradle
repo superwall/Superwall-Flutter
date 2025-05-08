@@ -1,6 +1,13 @@
 group 'com.superwall.superwallkit_flutter'
 version '1.0-SNAPSHOT'
 
+buildscript {
+    repositories { mavenCentral() }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-serialization:1.6.0"
+    }
+}
 
 allprojects {
     repositories {
@@ -12,6 +19,7 @@ allprojects {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
 
 android {
     if (project.android.hasProperty("namespace")) {
@@ -74,8 +82,9 @@ android.buildFeatures.buildConfig true
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.mockito:mockito-core:5.0.0'
-
-    implementation "com.superwall.sdk:superwall-android:2.0.8"
+    
+    implementation "com.superwall.sdk:superwall-android:2.1.0-beta.2"
     implementation 'com.android.billingclient:billing:6.1.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2'
 }

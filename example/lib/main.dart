@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
+import 'MySuperwallDelegate.dart';
 import 'RCPurchaseController.dart';
 import 'home.dart';
 import 'launchedFeature.dart';
@@ -18,10 +20,10 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> implements SuperwallDelegate {
+class _MyAppState extends State<MyApp> {
   final logging = Logging();
   StreamSubscription<SubscriptionStatus>? _subscription;
-
+  final appLinks = AppLinks();
   @override
   void initState() {
     const useRevenueCat = true;
@@ -36,6 +38,15 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
     });*/
   }
 
+  void _handleIncomingLinks() {
+    appLinks.uriLinkStream.listen((Uri uri) {
+      debugPrint('uri: $uri');
+      Superwall.shared.handleDeepLink(uri);
+    }, onError: (Object err) {
+      print('Error receiving incoming link: $err');
+    });
+  }
+
   @override
   void dispose() {
     _subscription?.cancel();
@@ -48,6 +59,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
       // MARK: Step 1 - Create your Purchase Controller
       /// Create an `RCPurchaseController()` wherever Superwall and RevenueCat are being initialized.
       final purchaseController = RCPurchaseController();
+      final delegate = MySuperwallDelegate();
 
       // Get Superwall API Key
       final apiKey = Platform.isIOS
@@ -55,7 +67,7 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
           : 'pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85';
 
       final logging = Logging();
-      logging.level = LogLevel.none;
+      logging.level = LogLevel.info;
       logging.scopes = {LogScope.all};
 
       final options = SuperwallOptions();
@@ -71,7 +83,8 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
         print('Executing Superwall configure completion block');
         listenForPurchases();
       });
-      Superwall.shared.setDelegate(this);
+      _handleIncomingLinks();
+      Superwall.shared.setDelegate(delegate);
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
       /// Always configure RevenueCat after Superwall and keep Superwall's
       /// subscription status up-to-date with RevenueCat's.
@@ -309,77 +322,4 @@ class _MyAppState extends State<MyApp> implements SuperwallDelegate {
           '/launchedFeature': (context) => LaunchedFeature(),
         },
       );
-
-  @override
-  void didDismissPaywall(PaywallInfo paywallInfo) {
-    logging.info('didDismissPaywall: $paywallInfo');
-  }
-
-  @override
-  void didPresentPaywall(PaywallInfo paywallInfo) {
-    logging.info('didPresentPaywall: $paywallInfo');
-  }
-
-  @override
-  void handleCustomPaywallAction(String name) {
-    logging.info('handleCustomPaywallAction: $name');
-  }
-
-  @override
-  void handleLog(String level, String scope, String? message,
-      Map<dynamic, dynamic>? info, String? error) {
-    print("handleLog: $level, $scope, $message, $info, $error");
-    // logging.info("handleLog: $level, $scope, $message, $info, $error");
-  }
-
-  @override
-  Future<void> handleSuperwallEvent(SuperwallEventInfo eventInfo) async {
-    //TODO: Change this
-    // This delegate function is noisy. Uncomment to debug.
-    //logging.info('handleSuperwallEvent: $eventInfo');
-    //switch (eventInfo.event.type) {
-    //  case EventType.appOpen:
-    //    logging.info('appOpen event');
-    //  case EventType.deviceAttributes:
-    //    logging.info('deviceAttributes event: ${eventInfo.event.deviceAttributes} ');
-    //  case EventType.paywallOpen:
-    //    final paywallInfo = eventInfo.event.paywallInfo;
-    //    logging.info('paywallOpen event: $paywallInfo ');
-    //
-    //    if (paywallInfo != null) {
-    //      final identifier = await paywallInfo.identifier;
-    //      logging.info('paywallInfo.identifier: $identifier ');
-    //
-    //      final productIds = await paywallInfo.productIds;
-    //      logging.info('paywallInfo.productIds: $productIds ');
-    //    }
-    //  default:
-    //    break;
-    //}
-  }
-
-  @override
-  void paywallWillOpenDeepLink(Uri url) {
-    logging.info('paywallWillOpenDeepLink: $url');
-  }
-
-  @override
-  void paywallWillOpenURL(Uri url) {
-    logging.info('paywallWillOpenURL: $url');
-  }
-
-  @override
-  void subscriptionStatusDidChange(SubscriptionStatus newValue) {
-    logging.info('subscriptionStatusDidChange: $newValue');
-  }
-
-  @override
-  void willDismissPaywall(PaywallInfo paywallInfo) {
-    logging.info('willDismissPaywall: $paywallInfo');
-  }
-
-  @override
-  void willPresentPaywall(PaywallInfo paywallInfo) {
-    logging.info('willPresentPaywall: $paywallInfo');
-  }
 }

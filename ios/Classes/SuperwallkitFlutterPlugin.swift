@@ -15,7 +15,6 @@ public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
 
     // Initialize the SuperwallHost
     superwallProxy = SuperwallHost(flutterBinaryMessenger: registrar.messenger())
-    
   }
 }
 
@@ -25,4 +24,3 @@ extension Dictionary where Key == String {
     return self[key] as? T
   }
 }
-

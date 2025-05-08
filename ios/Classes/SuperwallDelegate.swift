@@ -1,5 +1,5 @@
-import SuperwallKit
 import Foundation
+import SuperwallKit
 
 final class SuperwallDelegateHost: SuperwallDelegate {
   private let flutterDelegate: () -> PSuperwallDelegateGenerated
@@ -8,7 +8,9 @@ final class SuperwallDelegateHost: SuperwallDelegate {
     self.flutterDelegate = flutterDelegate
   }
 
-  func subscriptionStatusDidChange(from oldValue: SubscriptionStatus, to newValue: SubscriptionStatus) {
+  func subscriptionStatusDidChange(
+    from oldValue: SubscriptionStatus, to newValue: SubscriptionStatus
+  ) {
     let oldStatus: PSubscriptionStatus
     switch oldValue {
     case .active(let entitlements):
@@ -98,16 +100,16 @@ final class SuperwallDelegateHost: SuperwallDelegate {
     var params: [String: Any]? = nil
     var paywallInfo: PPaywallInfo? = nil
 
-    if case let .paywallOpen(paywallInfo: info) = eventInfo.event {
-      paywallInfo = PaywallInfoMapper.toPPaywallInfo(info)
-    } else if case let .paywallClose(paywallInfo: info) = eventInfo.event {
-      paywallInfo = PaywallInfoMapper.toPPaywallInfo(info)
-    } else if case let .paywallDecline(paywallInfo: info) = eventInfo.event {
-      paywallInfo = PaywallInfoMapper.toPPaywallInfo(info)
+    if case let .paywallOpen(info) = eventInfo.event {
+      paywallInfo = info.pigeonify()
+    } else if case let .paywallClose(info) = eventInfo.event {
+      paywallInfo = info.pigeonify()
+    } else if case let .paywallDecline(info) = eventInfo.event {
+      paywallInfo = info.pigeonify()
     }
 
-    if case let .customPlacement(name: name, params: parameters, paywallInfo: info) = eventInfo.event {
-      paywallInfo = PaywallInfoMapper.toPPaywallInfo(info)
+    if case let .customPlacement(_, parameters, info) = eventInfo.event {
+      paywallInfo = info.pigeonify()
       params = parameters
     }
 
@@ -129,26 +131,29 @@ final class SuperwallDelegateHost: SuperwallDelegate {
   }
 
   func willDismissPaywall(withInfo paywallInfo: PaywallInfo) {
-    flutterDelegate().willDismissPaywall(paywallInfo: PaywallInfoMapper.toPPaywallInfo(paywallInfo)) { result in
+    flutterDelegate().willDismissPaywall(paywallInfo: paywallInfo.pigeonify())
+    { result in
       // NO-OP
     }
   }
 
   func willPresentPaywall(withInfo paywallInfo: PaywallInfo) {
-    flutterDelegate().willPresentPaywall(paywallInfo: PaywallInfoMapper.toPPaywallInfo(paywallInfo)) { result in
+    flutterDelegate().willPresentPaywall(paywallInfo: paywallInfo.pigeonify())
+    { result in
       // NO-OP
     }
   }
 
   func didDismissPaywall(withInfo paywallInfo: PaywallInfo) {
-    flutterDelegate().didDismissPaywall(paywallInfo: PaywallInfoMapper.toPPaywallInfo(paywallInfo)) { result in
+    flutterDelegate().didDismissPaywall(paywallInfo: paywallInfo.pigeonify())
+    { result in
       // NO-OP
     }
   }
 
-
   func didPresentPaywall(withInfo paywallInfo: PaywallInfo) {
-    flutterDelegate().didPresentPaywall(paywallInfo: PaywallInfoMapper.toPPaywallInfo(paywallInfo)) { result in
+    flutterDelegate().didPresentPaywall(paywallInfo: paywallInfo.pigeonify())
+    { result in
       // NO-OP
     }
   }
@@ -165,36 +170,50 @@ final class SuperwallDelegateHost: SuperwallDelegate {
     }
   }
 
-private func transformValue(_ value: Any) -> Any? {
-  switch value {
-  case let stringValue as String:
-    return stringValue
-  case let intValue as Int:
-    return intValue
-  case let boolValue as Bool:
-    return boolValue
-  case let dictValue as [String: Any]:
-    return dictValue.compactMapValues { transformValue($0) }
-  case let arrayValue as [Any]:
-    return arrayValue.compactMap { transformValue($0) }
-  case let setValue as Set<AnyHashable>:
-    return Array(setValue).compactMap { transformValue($0) }
-  default:
-    return nil
+  private func transformValue(_ value: Any) -> Any? {
+    switch value {
+    case let stringValue as String:
+      return stringValue
+    case let intValue as Int:
+      return intValue
+    case let boolValue as Bool:
+      return boolValue
+    case let dictValue as [String: Any]:
+      return dictValue.compactMapValues { transformValue($0) }
+    case let arrayValue as [Any]:
+      return arrayValue.compactMap { transformValue($0) }
+    case let setValue as Set<AnyHashable>:
+      return Array(setValue).compactMap { transformValue($0) }
+    default:
+      return nil
+    }
   }
-}
 
-func handleLog(level: String, scope: String, message: String?, info: [String : Any]?, error: (any Error)?) {
-  let transformedInfo = info?.compactMapValues { transformValue($0) }
-  
-  flutterDelegate().handleLog(
-    level: level,
-    scope: scope,
-    message: message,
-    info: transformedInfo,
-    error: error?.localizedDescription
-  ) { result in
-    // NO-OP
+  func handleLog(
+    level: String, scope: String, message: String?, info: [String: Any]?, error: (any Error)?
+  ) {
+    let transformedInfo = info?.compactMapValues { transformValue($0) }
+
+    flutterDelegate().handleLog(
+      level: level,
+      scope: scope,
+      message: message,
+      info: transformedInfo,
+      error: error?.localizedDescription
+    ) { result in
+      // NO-OP
+    }
   }
-} 
+
+  func willRedeemLink() {
+    flutterDelegate().willRedeemLink { result in
+      // NO-OP
+    }
+  }
+
+  func didRedeemLink(result: RedemptionResult) {
+    flutterDelegate().didRedeemLink(result: result.pigeonify()) { result in
+      // NO-OP
+    }
+  }
 }

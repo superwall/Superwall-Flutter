@@ -3,7 +3,7 @@ import SuperwallKit
 import Foundation
 import Combine
 
-class SuperwallHost : NSObject, PSuperwallHostApi {
+final class SuperwallHost : NSObject, PSuperwallHostApi {
   private let flutterBinaryMessenger: FlutterBinaryMessenger
   private var streamHandler: SubscriptionStatusStreamHandlerImpl?
 
@@ -50,7 +50,7 @@ class SuperwallHost : NSObject, PSuperwallHostApi {
     if hasDelegate {
       let delegate = PSuperwallDelegateGenerated(binaryMessenger: self.flutterBinaryMessenger)
       let flutterDelegate = { [weak self] () -> PSuperwallDelegateGenerated in
-        guard let self = self else {
+        guard self != nil else {
           fatalError("Binary messenger is nil")
         }
         return delegate
@@ -63,22 +63,18 @@ class SuperwallHost : NSObject, PSuperwallHostApi {
 
   func confirmAllAssignments(completion: @escaping (Result<[PConfirmedAssignment], Error>) -> Void) {
     Task {
-      do {
-        let result = try await Superwall.shared.confirmAllAssignments()
-        let mappedResult = result.map { assignment in
-          PConfirmedAssignment(
-            experimentId: assignment.experimentId,
-            variant: PVariant(
-              id: assignment.variant.id,
-              type: assignment.variant.type == .treatment ? .treatment : .holdout,
-              paywallId: assignment.variant.paywallId
-            )
+      let result = await Superwall.shared.confirmAllAssignments()
+      let mappedResult = result.map { assignment in
+        PConfirmedAssignment(
+          experimentId: assignment.experimentId,
+          variant: PVariant(
+            id: assignment.variant.id,
+            type: assignment.variant.type == .treatment ? .treatment : .holdout,
+            paywallId: assignment.variant.paywallId
           )
-        }
-        completion(.success(mappedResult))
-      } catch {
-        completion(.failure(error))
+        )
       }
+      completion(.success(mappedResult))
     }
   }
 
@@ -233,7 +229,7 @@ class SuperwallHost : NSObject, PSuperwallHostApi {
 
   func handleDeepLink(url: String) -> Bool {
     guard let url = URL(string: url) else { return false }
-    return (try? Superwall.shared.handleDeepLink(url)) ?? false
+    return Superwall.handleDeepLink(url)
   }
 
   func togglePaywallSpinner(isHidden: Bool) {
@@ -241,30 +237,42 @@ class SuperwallHost : NSObject, PSuperwallHostApi {
   }
 
   func getLatestPaywallInfo() -> PPaywallInfo? {
-    return Superwall.shared.latestPaywallInfo.map { PaywallInfoMapper.toPPaywallInfo($0) }
+    return Superwall.shared.latestPaywallInfo.map { $0.pigeonify() }
   }
 
-  func registerPlacement(placement: String, params: [String : Any]?, handler: PPaywallPresentationHandlerHost?, feature: PFeatureHandlerHost?, completion: @escaping (Result<Void, Error>) -> Void) {
+  func registerPlacement(
+    placement: String,
+    params: [String : Any]?,
+    handler: PPaywallPresentationHandlerHost?,
+    feature: PFeatureHandlerHost?,
+    completion: @escaping (Result<Void, Error>) -> Void
+  ) {
     let presentationHandler: PaywallPresentationHandler?
 
     if handler != nil {
-      let flutterHandler = PPaywallPresentationHandlerGenerated(binaryMessenger: self.flutterBinaryMessenger, messageChannelSuffix: placement)
+      let flutterHandler = PPaywallPresentationHandlerGenerated(
+        binaryMessenger: self.flutterBinaryMessenger,
+        messageChannelSuffix: placement
+      )
       presentationHandler = PaywallPresentationHandlerHost(flutterHandler: flutterHandler).handler
     } else {
       presentationHandler = nil
     }
 
-    let featureHandler: (() -> Void)? = feature != nil ? { [self] in
-      let flutterHandler = PFeatureHandlerGenerated(binaryMessenger: self.flutterBinaryMessenger, messageChannelSuffix: placement)
+    let featureHandler = feature != nil ? { [self] in
+      let flutterHandler = PFeatureHandlerGenerated(
+        binaryMessenger: self.flutterBinaryMessenger,
+        messageChannelSuffix: placement
+      )
       flutterHandler.onFeature(id: placement, completion: { _ in })
     } : nil
 
-    if let castedFeatureHandler = featureHandler {
+    if let featureHandler = featureHandler {
       Superwall.shared.register(
         placement: placement,
         params: params,
         handler: presentationHandler,
-        feature: castedFeatureHandler
+        feature: featureHandler
       )
     } else {
       Superwall.shared.register(
@@ -295,7 +303,7 @@ class SuperwallHost : NSObject, PSuperwallHostApi {
   }
 }
 
-class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamHandler {
+final class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamHandler {
   private var eventSink: PigeonEventSink<PSubscriptionStatus>?
   private var cancellable: AnyCancellable?
 
