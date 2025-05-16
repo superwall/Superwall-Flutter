@@ -2,6 +2,17 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.2.0
+
+### Fixes
+- Fixes missing Event info
+
+### Enhancements
+
+- Updates iOS SDK to 4.3.11 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.3.11)
+- Updates Android SDK to 2.1.0 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.1.0)
+
+
 ## 2.2.0-beta.2
 
 ### Enhancements
