@@ -94,10 +94,9 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
     override fun handleSuperwallEvent(eventInfo: SuperwallEventInfo) {
         super.handleSuperwallEvent(eventInfo)
         onMain {
-            /* backingDelegate.handleSuperwallEvent(
+            backingDelegate.handleSuperwallEvent(
                  EventMapper.toPigeonEventInfo(eventInfo), {}
              )
- */
         }
     }
 

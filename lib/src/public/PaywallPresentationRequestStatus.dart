@@ -7,20 +7,18 @@ class PaywallPresentationRequestStatus {
 
   PaywallPresentationRequestStatus._(this.type);
 
-  factory PaywallPresentationRequestStatus.fromJson(
-      Map<dynamic, dynamic> json) {
-    switch (json['status']) {
-      case 'presentation':
-        return PaywallPresentationRequestStatus._(
-            PaywallPresentationRequestStatusType.presentation);
-      case 'noPresentation':
-        return PaywallPresentationRequestStatus._(
-            PaywallPresentationRequestStatusType.noPresentation);
-      case 'timeout':
+  factory PaywallPresentationRequestStatus.fromPigeon(
+      PPaywallPresentationRequestStatusType status) {
+    switch (status) {
+      case PPaywallPresentationRequestStatusType.timeout:
         return PaywallPresentationRequestStatus._(
             PaywallPresentationRequestStatusType.timeout);
-      default:
-        throw ArgumentError('Invalid PaywallPresentationRequestStatus type');
+      case PPaywallPresentationRequestStatusType.presentation:
+        return PaywallPresentationRequestStatus._(
+            PaywallPresentationRequestStatusType.presentation);
+      case PPaywallPresentationRequestStatusType.noPresentation:
+        return PaywallPresentationRequestStatus._(
+            PaywallPresentationRequestStatusType.noPresentation);
     }
   }
 }
@@ -28,7 +26,7 @@ class PaywallPresentationRequestStatus {
 enum PaywallPresentationRequestStatusType {
   presentation,
   noPresentation,
-  timeout
+  timeout,
 }
 
 /// The reason to why the paywall couldn't present.
@@ -39,44 +37,42 @@ class PaywallPresentationRequestStatusReason {
   PaywallPresentationRequestStatusReason._(
       {required this.type, this.experiment});
 
-  factory PaywallPresentationRequestStatusReason.fromPPaywallPresentationRequestStatusReason(
+  factory PaywallPresentationRequestStatusReason.fromPigeon(
       PPaywallPresentationRequestStatusReason reason) {
-    switch (reason) {
-      case PPaywallPresentationRequestStatusReason.debuggerPresented:
-        return PaywallPresentationRequestStatusReason._(
-            type: PaywallPresentationRequestStatusReasonType.debuggerPresented);
-      case PPaywallPresentationRequestStatusReason.paywallAlreadyPresented:
-        return PaywallPresentationRequestStatusReason._(
-            type: PaywallPresentationRequestStatusReasonType
-                .paywallAlreadyPresented);
-      case PPaywallPresentationRequestStatusReason.holdout:
-        return PaywallPresentationRequestStatusReason._(
+    if (reason is PStatusReasonDebuggerPresented) {
+      return PaywallPresentationRequestStatusReason._(
+          type: PaywallPresentationRequestStatusReasonType.debuggerPresented);
+    } else if (reason is PStatusReasonPaywallAlreadyPresented) {
+      return PaywallPresentationRequestStatusReason._(
+          type: PaywallPresentationRequestStatusReasonType
+              .paywallAlreadyPresented);
+    } else if (reason is PStatusReasonHoldout) {
+      return PaywallPresentationRequestStatusReason._(
           type: PaywallPresentationRequestStatusReasonType.holdout,
-          //TODO: Add experiment here
-        );
-      case PPaywallPresentationRequestStatusReason.noAudienceMatch:
-        return PaywallPresentationRequestStatusReason._(
-            type: PaywallPresentationRequestStatusReasonType.noAudienceMatch);
-      case PPaywallPresentationRequestStatusReason.placementNotFound:
-        return PaywallPresentationRequestStatusReason._(
-            type: PaywallPresentationRequestStatusReasonType.placementNotFound);
-      case PPaywallPresentationRequestStatusReason.noPaywallViewController:
-        return PaywallPresentationRequestStatusReason._(
-            type: PaywallPresentationRequestStatusReasonType
-                .noPaywallViewController);
-      case PPaywallPresentationRequestStatusReason.noPresenter:
-        return PaywallPresentationRequestStatusReason._(
-            type: PaywallPresentationRequestStatusReasonType.noPresenter);
-      case PPaywallPresentationRequestStatusReason.noConfig:
-        return PaywallPresentationRequestStatusReason._(
-            type: PaywallPresentationRequestStatusReasonType.noConfig);
-      case PPaywallPresentationRequestStatusReason.subscriptionStatusTimeout:
-        return PaywallPresentationRequestStatusReason._(
-            type: PaywallPresentationRequestStatusReasonType
-                .subscriptionStatusTimeout);
-      default:
-        throw ArgumentError(
-            'Invalid PPaywallPresentationRequestStatusReason type');
+          experiment: Experiment.fromPigeon(reason.experiment));
+    } else if (reason is PStatusReasonNoAudienceMatch) {
+      return PaywallPresentationRequestStatusReason._(
+          type: PaywallPresentationRequestStatusReasonType.noAudienceMatch);
+    } else if (reason is PStatusReasonPlacementNotFound) {
+      return PaywallPresentationRequestStatusReason._(
+          type: PaywallPresentationRequestStatusReasonType.placementNotFound);
+    } else if (reason is PStatusReasonNoPaywallVc) {
+      return PaywallPresentationRequestStatusReason._(
+          type: PaywallPresentationRequestStatusReasonType
+              .noPaywallViewController);
+    } else if (reason is PStatusReasonNoPresenter) {
+      return PaywallPresentationRequestStatusReason._(
+          type: PaywallPresentationRequestStatusReasonType.noPresenter);
+    } else if (reason is PStatusReasonNoConfig) {
+      return PaywallPresentationRequestStatusReason._(
+          type: PaywallPresentationRequestStatusReasonType.noConfig);
+    } else if (reason is PStatusReasonSubsStatusTimeout) {
+      return PaywallPresentationRequestStatusReason._(
+          type: PaywallPresentationRequestStatusReasonType
+              .subscriptionStatusTimeout);
+    } else {
+      throw ArgumentError(
+          'Invalid PPaywallPresentationRequestStatusReason type');
     }
   }
 }
