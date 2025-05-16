@@ -1,11 +1,10 @@
 import com.superwall.sdk.store.transactions.RestoreType
 
-fun RestoreType.toJson(): Map<String, Any?> {
+fun RestoreType.pigeonify(): PRestoreType {
     return when (this) {
-        is RestoreType.ViaPurchase -> mapOf(
-            "type" to "viaPurchase",
-            "storeTransaction" to transaction?.toJson()
+        is RestoreType.ViaPurchase -> PViaPurchase(
+            storeTransaction = transaction?.pigeonify()
         )
-        is RestoreType.ViaRestore -> mapOf("type" to "viaRestore")
+        is RestoreType.ViaRestore -> PViaRestore()
     }
 }

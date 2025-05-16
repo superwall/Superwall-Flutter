@@ -1,3 +1,5 @@
+import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+
 /// A wrapper around a store transaction.
 class StoreTransaction {
   final String configRequestId;
@@ -30,21 +32,29 @@ class StoreTransaction {
     this.revocationDate,
   });
 
-  factory StoreTransaction.fromJson(Map<dynamic, dynamic> json) {
+  factory StoreTransaction.fromPigeon(PStoreTransaction transaction) {
+    final txnDate = transaction.transactionDate;
+    final originalTxnDate = transaction.originalTransactionDate;
+    final expirationDate = transaction.expirationDate;
+    final revocationDate = transaction.revocationDate;
+
     return StoreTransaction(
-      configRequestId: json['configRequestId'],
-      appSessionId: json['appSessionId'],
-      transactionDate: json['transactionDate'] != null ? DateTime.parse(json['transactionDate']) : null,
-      originalTransactionIdentifier: json['originalTransactionIdentifier'],
-      storeTransactionId: json['storeTransactionId'],
-      originalTransactionDate: json['originalTransactionDate'] != null ? DateTime.parse(json['originalTransactionDate']) : null,
-      webOrderLineItemID: json['webOrderLineItemID'],
-      appBundleId: json['appBundleId'],
-      subscriptionGroupId: json['subscriptionGroupId'],
-      isUpgraded: json['isUpgraded'],
-      expirationDate: json['expirationDate'] != null ? DateTime.parse(json['expirationDate']) : null,
-      offerId: json['offerId'],
-      revocationDate: json['revocationDate'] != null ? DateTime.parse(json['revocationDate']) : null,
+      configRequestId: transaction.configRequestId,
+      appSessionId: transaction.appSessionId,
+      transactionDate: txnDate != null ? DateTime.parse(txnDate) : null,
+      originalTransactionIdentifier: transaction.originalTransactionIdentifier,
+      storeTransactionId: transaction.storeTransactionId,
+      originalTransactionDate:
+          originalTxnDate != null ? DateTime.parse(originalTxnDate) : null,
+      webOrderLineItemID: transaction.webOrderLineItemID,
+      appBundleId: transaction.appBundleId,
+      subscriptionGroupId: transaction.subscriptionGroupId,
+      isUpgraded: transaction.isUpgraded,
+      expirationDate:
+          expirationDate != null ? DateTime.parse(expirationDate) : null,
+      offerId: transaction.offerId,
+      revocationDate:
+          revocationDate != null ? DateTime.parse(revocationDate) : null,
     );
   }
 }

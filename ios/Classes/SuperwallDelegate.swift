@@ -37,87 +37,261 @@ final class SuperwallDelegateHost: SuperwallDelegate {
   }
 
   func handleSuperwallEvent(withInfo eventInfo: SuperwallEventInfo) {
-    let pEventType: PEventType
+    let pEventInfo: PSuperwallEventInfo
 
     switch eventInfo.event {
-    case .firstSeen: pEventType = .firstSeen
-    case .appOpen: pEventType = .appOpen
-    case .appLaunch: pEventType = .appLaunch
-    case .identityAlias: pEventType = .identityAlias
-    case .appInstall: pEventType = .appInstall
-    case .restoreStart: pEventType = .restoreStart
-    case .restoreComplete: pEventType = .restoreComplete
-    case .restoreFail: pEventType = .restoreFail
-    case .sessionStart: pEventType = .sessionStart
-    case .deviceAttributes: pEventType = .deviceAttributes
-    case .subscriptionStatusDidChange: pEventType = .subscriptionStatusDidChange
-    case .appClose: pEventType = .appClose
-    case .deepLink: pEventType = .deepLink
-    case .triggerFire: pEventType = .triggerFire
-    case .paywallOpen: pEventType = .paywallOpen
-    case .paywallClose: pEventType = .paywallClose
-    case .paywallDecline: pEventType = .paywallDecline
-    case .transactionStart: pEventType = .transactionStart
-    case .transactionFail: pEventType = .transactionFail
-    case .transactionAbandon: pEventType = .transactionAbandon
-    case .transactionComplete: pEventType = .transactionComplete
-    case .subscriptionStart: pEventType = .subscriptionStart
-    case .freeTrialStart: pEventType = .freeTrialStart
-    case .transactionRestore: pEventType = .transactionRestore
-    case .transactionTimeout: pEventType = .transactionTimeout
-    case .userAttributes: pEventType = .userAttributes
-    case .nonRecurringProductPurchase: pEventType = .nonRecurringProductPurchase
-    case .paywallResponseLoadStart: pEventType = .paywallResponseLoadStart
-    case .paywallResponseLoadNotFound: pEventType = .paywallResponseLoadNotFound
-    case .paywallResponseLoadFail: pEventType = .paywallResponseLoadFail
-    case .paywallResponseLoadComplete: pEventType = .paywallResponseLoadComplete
-    case .paywallWebviewLoadStart: pEventType = .paywallWebviewLoadStart
-    case .paywallWebviewLoadFail: pEventType = .paywallWebviewLoadFail
-    case .paywallWebviewLoadComplete: pEventType = .paywallWebviewLoadComplete
-    case .paywallWebviewLoadTimeout: pEventType = .paywallWebviewLoadTimeout
-    case .paywallWebviewLoadFallback: pEventType = .paywallWebviewLoadFallback
-    case .paywallProductsLoadRetry: pEventType = .paywallProductsLoadRetry
-    case .paywallProductsLoadStart: pEventType = .paywallProductsLoadStart
-    case .paywallProductsLoadFail: pEventType = .paywallProductsLoadFail
-    case .surveyResponse: pEventType = .surveyResponse
-    case .paywallPresentationRequest: pEventType = .paywallPresentationRequest
-    case .touchesBegan: pEventType = .touchesBegan
-    case .surveyClose: pEventType = .surveyClose
-    case .reset: pEventType = .reset
-    case .configRefresh: pEventType = .configRefresh
-    case .customPlacement: pEventType = .customPlacement
-    case .configAttributes: pEventType = .configAttributes
-    case .confirmAllAssignments: pEventType = .confirmAllAssignments
-    case .configFail: pEventType = .configFail
-    case .adServicesTokenRequestStart: pEventType = .adServicesTokenRequestStart
-    case .adServicesTokenRequestFail: pEventType = .adServicesTokenRequestFail
-    case .adServicesTokenRequestComplete: pEventType = .adServicesTokenRequestComplete
-    case .shimmerViewStart: pEventType = .shimmerViewStart
-    case .shimmerViewComplete: pEventType = .shimmerViewComplete
-    default: pEventType = .appOpen
+    case .firstSeen:
+      pEventInfo = PSuperwallEventInfo(eventType: .firstSeen)
+    case .appOpen:
+      pEventInfo = PSuperwallEventInfo(eventType: .appOpen)
+    case .appLaunch:
+      pEventInfo = PSuperwallEventInfo(eventType: .appLaunch)
+    case .identityAlias:
+      pEventInfo = PSuperwallEventInfo(eventType: .identityAlias)
+    case .appInstall:
+      pEventInfo = PSuperwallEventInfo(eventType: .appInstall)
+    case .sessionStart:
+      pEventInfo = PSuperwallEventInfo(eventType: .sessionStart)
+    case .deviceAttributes(let attributes):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .deviceAttributes,
+        deviceAttributes: attributes
+      )
+    case .subscriptionStatusDidChange:
+      pEventInfo = PSuperwallEventInfo(eventType: .subscriptionStatusDidChange)
+    case .appClose:
+      pEventInfo = PSuperwallEventInfo(eventType: .appClose)
+    case .deepLink(let url):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .deepLink,
+        deepLinkUrl: url.absoluteString
+      )
+    case .triggerFire(let placementName, let result):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .triggerFire,
+        placementName: placementName,
+        result: result.pigeonify()
+      )
+    case .paywallOpen(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallOpen,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .paywallClose(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallClose,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .paywallDecline(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallDecline,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .transactionStart(let product, let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .transactionStart,
+        paywallInfo: paywallInfo.pigeonify(),
+        product: product.pigeonify()
+      )
+    case .transactionFail(let error, let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .transactionFail,
+        paywallInfo: paywallInfo.pigeonify(),
+        error: error.localizedDescription
+      )
+    case .transactionAbandon(let product, let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .transactionAbandon,
+        paywallInfo: paywallInfo.pigeonify(),
+        product: product.pigeonify()
+      )
+    case let .transactionComplete(transaction, product, type, paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .transactionComplete,
+        paywallInfo: paywallInfo.pigeonify(),
+        transaction: transaction?.pigeonify(),
+        product: product.pigeonify()
+      )
+      // TODO: Add type
+    case .subscriptionStart(let product, let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .subscriptionStart,
+        paywallInfo: paywallInfo.pigeonify(),
+        product: product.pigeonify()
+      )
+    case .freeTrialStart(let product, let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .freeTrialStart,
+        paywallInfo: paywallInfo.pigeonify(),
+        product: product.pigeonify()
+      )
+    case .transactionRestore(let restoreType, let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .transactionComplete,
+        paywallInfo: paywallInfo.pigeonify(),
+        restoreType: restoreType.pigeonify()
+      )
+    case .transactionTimeout(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .transactionTimeout,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .userAttributes(let attributes):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .userAttributes,
+        userAttributes: attributes
+      )
+    case .nonRecurringProductPurchase(let product, let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .nonRecurringProductPurchase,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+      // TODO: Add product
+    case .paywallResponseLoadStart(let triggeredPlacementName):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallResponseLoadStart,
+        triggeredPlacementName: triggeredPlacementName
+      )
+    case .paywallResponseLoadNotFound(let triggeredPlacementName):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallResponseLoadNotFound,
+        triggeredPlacementName: triggeredPlacementName
+      )
+    case .paywallResponseLoadFail(let triggeredPlacementName):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallResponseLoadFail,
+        triggeredPlacementName: triggeredPlacementName
+      )
+    case .paywallResponseLoadComplete(let triggeredPlacementName, let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallResponseLoadComplete,
+        paywallInfo: paywallInfo.pigeonify(),
+        triggeredPlacementName: triggeredPlacementName
+      )
+    case .paywallWebviewLoadStart(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallWebviewLoadStart,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .paywallWebviewLoadFail(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallWebviewLoadFail,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .paywallWebviewLoadComplete(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallWebviewLoadComplete,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .paywallWebviewLoadTimeout(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallWebviewLoadTimeout,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .paywallWebviewLoadFallback(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallWebviewLoadFallback,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case let .paywallProductsLoadStart(triggeredPlacementName, paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallProductsLoadStart,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case let .paywallProductsLoadFail(triggeredPlacementName, paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallProductsLoadFail,
+        paywallInfo: paywallInfo.pigeonify(),
+        triggeredPlacementName: triggeredPlacementName
+      )
+    case .paywallProductsLoadComplete(let triggeredPlacementName):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallProductsLoadComplete,
+        triggeredPlacementName: triggeredPlacementName
+      )
+    case let .paywallProductsLoadRetry(triggeredPlacementName, paywallInfo, attempt):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallProductsLoadRetry,
+        paywallInfo: paywallInfo.pigeonify(),
+        triggeredPlacementName: triggeredPlacementName,
+        attempt: Int64(attempt)
+      )
+    case let .surveyResponse(survey, selectedOption, customResponse, paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .surveyResponse,
+        paywallInfo: paywallInfo.pigeonify(),
+        selectedOption: selectedOption.pigeonify(),
+        customResponse: customResponse
+      )
+    case .paywallPresentationRequest(let status, let reason):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallPresentationRequest,
+        status: status.pigeonify(),
+        reason: reason?.pigeonify()
+      )
+    case .touchesBegan:
+      pEventInfo = PSuperwallEventInfo(eventType: .touchesBegan)
+    case .surveyClose:
+      pEventInfo = PSuperwallEventInfo(eventType: .surveyClose)
+    case .reset:
+      pEventInfo = PSuperwallEventInfo(eventType: .reset)
+    case .restoreStart:
+      pEventInfo = PSuperwallEventInfo(eventType: .restoreStart)
+    case .restoreFail(let message):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .restoreFail,
+        message: message
+      )
+    case .restoreComplete:
+      pEventInfo = PSuperwallEventInfo(eventType: .restoreComplete)
+    case .configRefresh:
+      pEventInfo = PSuperwallEventInfo(eventType: .configRefresh)
+    case let .customPlacement(name, params, paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .customPlacement,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify(),
+        name: name,
+      )
+    case .configAttributes:
+      pEventInfo = PSuperwallEventInfo(eventType: .configAttributes)
+    case .confirmAllAssignments:
+      pEventInfo = PSuperwallEventInfo(eventType: .confirmAllAssignments)
+    case .configFail:
+      pEventInfo = PSuperwallEventInfo(eventType: .configFail)
+    case .adServicesTokenRequestStart:
+      pEventInfo = PSuperwallEventInfo(eventType: .adServicesTokenRequestStart)
+    case .adServicesTokenRequestFail(let error):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .adServicesTokenRequestFail,
+        error: error.localizedDescription
+      )
+    case .adServicesTokenRequestComplete(let token):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .adServicesTokenRequestComplete,
+        token: token
+      )
+    case .shimmerViewStart:
+      pEventInfo = PSuperwallEventInfo(eventType: .shimmerViewStart)
+    case .shimmerViewComplete:
+      pEventInfo = PSuperwallEventInfo(eventType: .shimmerViewComplete)
+    case .redemptionStart:
+      pEventInfo = PSuperwallEventInfo(eventType: .redemptionStart)
+    case .redemptionComplete:
+      pEventInfo = PSuperwallEventInfo(eventType: .redemptionComplete)
+    case .redemptionFail:
+      pEventInfo = PSuperwallEventInfo(eventType: .redemptionFail)
+    case .enrichmentStart:
+      pEventInfo = PSuperwallEventInfo(eventType: .enrichmentStart)
+    case let .enrichmentComplete(userEnrichment, deviceEnrichment):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .enrichmentComplete,
+        userEnrichment: userEnrichment,
+        deviceEnrichment: deviceEnrichment
+      )
+    case .enrichmentFail:
+      pEventInfo = PSuperwallEventInfo(eventType: .enrichmentFail)
     }
-
-    var params: [String: Any]? = nil
-    var paywallInfo: PPaywallInfo? = nil
-
-    if case let .paywallOpen(info) = eventInfo.event {
-      paywallInfo = info.pigeonify()
-    } else if case let .paywallClose(info) = eventInfo.event {
-      paywallInfo = info.pigeonify()
-    } else if case let .paywallDecline(info) = eventInfo.event {
-      paywallInfo = info.pigeonify()
-    }
-
-    if case let .customPlacement(_, parameters, info) = eventInfo.event {
-      paywallInfo = info.pigeonify()
-      params = parameters
-    }
-
-    let pEventInfo = PSuperwallEventInfo(
-      eventType: pEventType,
-      params: params,
-      paywallInfo: paywallInfo
-    )
 
     flutterDelegate().handleSuperwallEvent(eventInfo: pEventInfo) { result in
       // NO-OP

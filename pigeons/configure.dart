@@ -431,6 +431,20 @@ class PRestorationFailed extends PRestorationResult {
   PRestorationFailed(this.error);
 }
 
+sealed class PRestoreType {
+  PRestoreType();
+}
+
+class PViaPurchase extends PRestoreType {
+  PStoreTransaction? storeTransaction;
+  PViaPurchase(this.storeTransaction);
+}
+
+class PViaRestore extends PRestoreType {
+  bool? ignore;
+  PViaRestore(this.ignore);
+}
+
 class PRestoreFailed {
   // The title of the alert presented to the user when restoring a transaction
   // fails.
@@ -447,6 +461,124 @@ class PRestoreFailed {
 class PLogging {
   PLogLevel? level;
   List<PLogScope>? scopes;
+}
+
+class PStoreTransaction {
+  String configRequestId;
+  String appSessionId;
+  String? transactionDate;
+  String originalTransactionIdentifier;
+  String? storeTransactionId;
+  String? originalTransactionDate;
+  String? webOrderLineItemID;
+  String? appBundleId;
+  String? subscriptionGroupId;
+  bool? isUpgraded;
+  String? expirationDate;
+  String? offerId;
+  String? revocationDate;
+
+  PStoreTransaction(
+      this.configRequestId,
+      this.appSessionId,
+      this.transactionDate,
+      this.originalTransactionIdentifier,
+      this.storeTransactionId,
+      this.originalTransactionDate,
+      this.webOrderLineItemID,
+      this.appBundleId,
+      this.subscriptionGroupId,
+      this.isUpgraded,
+      this.expirationDate,
+      this.offerId,
+      this.revocationDate);
+}
+
+class PStoreProduct {
+  List<PEntitlement> entitlements;
+  String productIdentifier;
+  String? subscriptionGroupIdentifier;
+  Map<String, String> attributes;
+  String localizedPrice;
+  String localizedSubscriptionPeriod;
+  String period;
+  String periodly;
+  int periodWeeks;
+  String periodWeeksString;
+  int periodMonths;
+  String periodMonthsString;
+  int periodYears;
+  String periodYearsString;
+  int periodDays;
+  String periodDaysString;
+  String dailyPrice;
+  String weeklyPrice;
+  String monthlyPrice;
+  String yearlyPrice;
+  bool hasFreeTrial;
+  String? trialPeriodEndDate;
+  String trialPeriodEndDateString;
+  String localizedTrialPeriodPrice;
+  double trialPeriodPrice;
+  int trialPeriodDays;
+  String trialPeriodDaysString;
+  int trialPeriodWeeks;
+  String trialPeriodWeeksString;
+  int trialPeriodMonths;
+  String trialPeriodMonthsString;
+  int trialPeriodYears;
+  String trialPeriodYearsString;
+  String trialPeriodText;
+  String locale;
+  String? languageCode;
+  String? currencySymbol;
+  String? currencyCode;
+  bool isFamilyShareable;
+  String? regionCode;
+  double price;
+
+  PStoreProduct(
+      this.entitlements,
+      this.productIdentifier,
+      this.subscriptionGroupIdentifier,
+      this.attributes,
+      this.localizedPrice,
+      this.localizedSubscriptionPeriod,
+      this.period,
+      this.periodly,
+      this.periodWeeks,
+      this.periodWeeksString,
+      this.periodMonths,
+      this.periodMonthsString,
+      this.periodYears,
+      this.periodYearsString,
+      this.periodDays,
+      this.periodDaysString,
+      this.dailyPrice,
+      this.weeklyPrice,
+      this.monthlyPrice,
+      this.yearlyPrice,
+      this.hasFreeTrial,
+      this.trialPeriodEndDate,
+      this.trialPeriodEndDateString,
+      this.localizedTrialPeriodPrice,
+      this.trialPeriodPrice,
+      this.trialPeriodDays,
+      this.trialPeriodDaysString,
+      this.trialPeriodWeeks,
+      this.trialPeriodWeeksString,
+      this.trialPeriodMonths,
+      this.trialPeriodMonthsString,
+      this.trialPeriodYears,
+      this.trialPeriodYearsString,
+      this.trialPeriodText,
+      this.locale,
+      this.languageCode,
+      this.currencyCode,
+      this.currencySymbol,
+      this.isFamilyShareable,
+      this.regionCode,
+      this.price);
 }
 
 class PPaywallOptions {
@@ -514,15 +646,56 @@ class PUnknown extends PSubscriptionStatus {
 
 // SuperwallEventInfo class for event handling
 class PSuperwallEventInfo {
-  PSuperwallEventInfo({
-    required this.eventType,
-    this.params,
-    this.paywallInfo,
-  });
-
   PEventType eventType;
   Map<String, Object>? params;
+  String? placementName;
+  Map<String, Object>? deviceAttributes;
+  String? deepLinkUrl;
+  PTriggerResult? result;
   PPaywallInfo? paywallInfo;
+  PStoreTransaction? transaction;
+  PStoreProduct? product;
+  String? error;
+  String? triggeredPlacementName;
+  int? attempt;
+  String? name;
+  PSurvey? survey;
+  PSurveyOption? selectedOption;
+  String? customResponse;
+  PPaywallPresentationRequestStatusType? status;
+  PPaywallPresentationRequestStatusReason? reason;
+  PRestoreType? restoreType;
+  Map<String, Object>? userAttributes;
+  String? token;
+  Map<String, Object>? userEnrichment;
+  Map<String, Object>? deviceEnrichment;
+  String? message;
+
+  PSuperwallEventInfo(
+      {required this.eventType,
+      this.params,
+      this.placementName,
+      this.deviceAttributes,
+      this.deepLinkUrl,
+      this.result,
+      this.paywallInfo,
+      this.transaction,
+      this.product,
+      this.error,
+      this.triggeredPlacementName,
+      this.attempt,
+      this.name,
+      this.survey,
+      this.selectedOption,
+      this.customResponse,
+      this.status,
+      this.reason,
+      this.restoreType,
+      this.userAttributes,
+      this.token,
+      this.userEnrichment,
+      this.deviceEnrichment,
+      this.message});
 }
 
 // Enums
@@ -630,7 +803,13 @@ enum PEventType {
   adServicesTokenRequestFail,
   adServicesTokenRequestComplete,
   shimmerViewStart,
-  shimmerViewComplete
+  shimmerViewComplete,
+  redemptionStart,
+  redemptionComplete,
+  redemptionFail,
+  enrichmentStart,
+  enrichmentComplete,
+  enrichmentFail
 }
 
 // SubscriptionStatus enum
@@ -643,17 +822,58 @@ enum PPaywallPresentationRequestStatusType {
   timeout
 }
 
-// PaywallPresentationRequestStatusReason
-enum PPaywallPresentationRequestStatusReason {
-  debuggerPresented,
-  paywallAlreadyPresented,
-  holdout,
-  noAudienceMatch,
-  placementNotFound,
-  noPaywallViewController,
-  noPresenter,
-  noConfig,
-  subscriptionStatusTimeout
+sealed class PPaywallPresentationRequestStatusReason {
+  PPaywallPresentationRequestStatusReason();
+}
+
+class PStatusReasonDebuggerPresented
+    extends PPaywallPresentationRequestStatusReason {
+  bool? ignore;
+  PStatusReasonDebuggerPresented(this.ignore);
+}
+
+class PStatusReasonPaywallAlreadyPresented
+    extends PPaywallPresentationRequestStatusReason {
+  bool? ignore;
+  PStatusReasonPaywallAlreadyPresented(this.ignore);
+}
+
+class PStatusReasonHoldout extends PPaywallPresentationRequestStatusReason {
+  PExperiment experiment;
+  PStatusReasonHoldout(this.experiment);
+}
+
+class PStatusReasonNoAudienceMatch
+    extends PPaywallPresentationRequestStatusReason {
+  bool? ignore;
+  PStatusReasonNoAudienceMatch(this.ignore);
+}
+
+class PStatusReasonPlacementNotFound
+    extends PPaywallPresentationRequestStatusReason {
+  bool? ignore;
+  PStatusReasonPlacementNotFound(this.ignore);
+}
+
+class PStatusReasonNoPaywallVc extends PPaywallPresentationRequestStatusReason {
+  bool? ignore;
+  PStatusReasonNoPaywallVc(this.ignore);
+}
+
+class PStatusReasonNoPresenter extends PPaywallPresentationRequestStatusReason {
+  bool? ignore;
+  PStatusReasonNoPresenter(this.ignore);
+}
+
+class PStatusReasonNoConfig extends PPaywallPresentationRequestStatusReason {
+  bool? ignore;
+  PStatusReasonNoConfig(this.ignore);
+}
+
+class PStatusReasonSubsStatusTimeout
+    extends PPaywallPresentationRequestStatusReason {
+  bool? ignore;
+  PStatusReasonSubsStatusTimeout(this.ignore);
 }
 
 class PIdentityOptions {

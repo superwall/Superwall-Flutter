@@ -13,7 +13,7 @@ class SuperwallEventInfo {
   factory SuperwallEventInfo.fromPEventInfo(PSuperwallEventInfo eventInfo) {
     return SuperwallEventInfo(
       event: SuperwallEvent.fromPEventType(eventInfo.eventType,
-          params: eventInfo.params),
+          paywallInfo: eventInfo.paywallInfo, params: eventInfo.params),
       params: eventInfo.params,
     );
   }
@@ -83,7 +83,13 @@ enum EventType {
   adServicesTokenRequestFail,
   adServicesTokenRequestComplete,
   shimmerViewStart,
-  shimmerViewComplete
+  shimmerViewComplete,
+  redemptionStart,
+  redemptionComplete,
+  redemptionFail,
+  enrichmentStart,
+  enrichmentComplete,
+  enrichmentFail
 }
 
 class SuperwallEvent {
@@ -140,20 +146,20 @@ class SuperwallEvent {
     Map<dynamic, dynamic>? deviceAttributes,
     Map<dynamic, dynamic>? params,
     String? deepLinkUrl,
-    TriggerResult? result,
-    PaywallInfo? paywallInfo,
-    StoreTransaction? transaction,
-    StoreProduct? product,
+    PTriggerResult? result,
+    PPaywallInfo? paywallInfo,
+    PStoreTransaction? transaction,
+    PStoreProduct? product,
     String? error,
     String? triggeredPlacementName,
     String? attempt,
     String? name,
-    Survey? survey,
-    SurveyOption? selectedOption,
+    PSurvey? survey,
+    PSurveyOption? selectedOption,
     String? customResponse,
-    PaywallPresentationRequestStatus? status,
-    PaywallPresentationRequestStatusReason? reason,
-    RestoreType? restoreType,
+    PPaywallPresentationRequestStatusType? status,
+    PPaywallPresentationRequestStatusReason? reason,
+    PRestoreType? restoreType,
     Map<dynamic, dynamic>? userAttributes,
     String? token,
   }) {
@@ -330,6 +336,24 @@ class SuperwallEvent {
       case PEventType.shimmerViewComplete:
         type = EventType.shimmerViewComplete;
         break;
+      case PEventType.redemptionStart:
+        type = EventType.redemptionStart;
+        break;
+      case PEventType.redemptionComplete:
+        type = EventType.redemptionComplete;
+        break;
+      case PEventType.redemptionFail:
+        type = EventType.redemptionFail;
+        break;
+      case PEventType.enrichmentStart:
+        type = EventType.enrichmentStart;
+        break;
+      case PEventType.enrichmentFail:
+        type = EventType.enrichmentFail;
+        break;
+      case PEventType.enrichmentComplete:
+        type = EventType.enrichmentComplete;
+        break;
     }
 
     return SuperwallEvent._(
@@ -338,20 +362,28 @@ class SuperwallEvent {
       deviceAttributes: deviceAttributes,
       params: params,
       deepLinkUrl: deepLinkUrl,
-      result: result,
-      paywallInfo: paywallInfo,
-      transaction: transaction,
-      product: product,
+      result: result != null ? TriggerResult.fromPTriggerResult(result) : null,
+      paywallInfo: PaywallInfo.fromPigeon(paywallInfo),
+      transaction:
+          transaction != null ? StoreTransaction.fromPigeon(transaction) : null,
+      product: product != null ? StoreProduct.fromPigeon(product) : null,
       error: error,
       triggeredPlacementName: triggeredPlacementName,
       attempt: attempt,
       name: name,
-      survey: survey,
-      selectedOption: selectedOption,
+      survey: survey != null ? Survey.fromPigeon(survey) : null,
+      selectedOption: selectedOption != null
+          ? SurveyOption.fromPigeon(selectedOption)
+          : null,
       customResponse: customResponse,
-      status: status,
-      reason: reason,
-      restoreType: restoreType,
+      status: status != null
+          ? PaywallPresentationRequestStatus.fromPigeon(status)
+          : null,
+      reason: reason != null
+          ? PaywallPresentationRequestStatusReason.fromPigeon(reason)
+          : null,
+      restoreType:
+          restoreType != null ? RestoreType.fromPigeon(restoreType) : null,
       userAttributes: userAttributes,
       token: token,
     );
