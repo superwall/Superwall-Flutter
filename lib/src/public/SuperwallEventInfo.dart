@@ -89,7 +89,8 @@ enum EventType {
   redemptionFail,
   enrichmentStart,
   enrichmentComplete,
-  enrichmentFail
+  enrichmentFail,
+  networkDecodingFail
 }
 
 class SuperwallEvent {
@@ -354,6 +355,8 @@ class SuperwallEvent {
       case PEventType.enrichmentComplete:
         type = EventType.enrichmentComplete;
         break;
+      case PEventType.networkDecodingFail:
+        type = EventType.networkDecodingFail;
     }
 
     return SuperwallEvent._(

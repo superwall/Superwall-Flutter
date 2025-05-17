@@ -196,7 +196,8 @@ final class SuperwallDelegateHost: SuperwallDelegate {
     case let .paywallProductsLoadStart(triggeredPlacementName, paywallInfo):
       pEventInfo = PSuperwallEventInfo(
         eventType: .paywallProductsLoadStart,
-        paywallInfo: paywallInfo.pigeonify()
+        paywallInfo: paywallInfo.pigeonify(),
+        triggeredPlacementName: triggeredPlacementName
       )
     case let .paywallProductsLoadFail(triggeredPlacementName, paywallInfo):
       pEventInfo = PSuperwallEventInfo(
@@ -220,6 +221,7 @@ final class SuperwallDelegateHost: SuperwallDelegate {
       pEventInfo = PSuperwallEventInfo(
         eventType: .surveyResponse,
         paywallInfo: paywallInfo.pigeonify(),
+        survey: survey.pigeonify(),
         selectedOption: selectedOption.pigeonify(),
         customResponse: customResponse
       )
@@ -251,7 +253,7 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         eventType: .customPlacement,
         params: params,
         paywallInfo: paywallInfo.pigeonify(),
-        name: name,
+        name: name
       )
     case .configAttributes:
       pEventInfo = PSuperwallEventInfo(eventType: .configAttributes)
@@ -291,6 +293,8 @@ final class SuperwallDelegateHost: SuperwallDelegate {
       )
     case .enrichmentFail:
       pEventInfo = PSuperwallEventInfo(eventType: .enrichmentFail)
+    case .networkDecodingFail:
+      pEventInfo = PSuperwallEventInfo(eventType: .networkDecodingFail)
     }
 
     flutterDelegate().handleSuperwallEvent(eventInfo: pEventInfo) { result in

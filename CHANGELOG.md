@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.2.1
+
+### Fixes
+
+- Fixes issue with iOS side of project not building.
+
 ## 2.2.0
 
 ### Fixes
