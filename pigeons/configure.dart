@@ -809,7 +809,8 @@ enum PEventType {
   redemptionFail,
   enrichmentStart,
   enrichmentComplete,
-  enrichmentFail
+  enrichmentFail,
+  networkDecodingFail
 }
 
 // SubscriptionStatus enum
