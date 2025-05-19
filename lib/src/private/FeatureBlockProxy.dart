@@ -1,6 +1,3 @@
-import 'package:superwallkit_flutter/superwallkit_flutter.dart';
-
-import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 
 /// A proxy class that bridges between the Flutter FeatureHandler

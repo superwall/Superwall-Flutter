@@ -61,8 +61,8 @@ class SuperwallDelegateHost implements PSuperwallDelegateGenerated {
   @override
   void subscriptionStatusDidChange(
       PSubscriptionStatus from, PSubscriptionStatus to) async {
-    final status = await SubscriptionStatus
-        .createSubscriptionStatusFromPSubscriptionStatus(to);
+    final status =
+        SubscriptionStatus.createSubscriptionStatusFromPSubscriptionStatus(to);
     _delegate.subscriptionStatusDidChange(status);
   }
 
