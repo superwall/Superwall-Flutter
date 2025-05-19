@@ -12,7 +12,6 @@ jobs:
       - name: Tag
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
-      - name: Tag
         run: |
           git config --global user.name 'Jake'
           git config --global user.email 'jakemor@users.noreply.github.com'
