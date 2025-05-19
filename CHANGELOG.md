@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.2.2
+
+### Fixes
+
+- Fixes issue with paywall presentation handlers not working.
+
 ## 2.2.1
 
 ### Fixes
