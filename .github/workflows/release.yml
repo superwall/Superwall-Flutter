@@ -47,7 +47,7 @@ jobs:
       - name: Determine prerelease status
         id: prerelease
         run: |
-                    VERSION=${{ steps.version.outputs.prop }}
+          VERSION=${{ steps.version.outputs.prop }}
           if [[ "$VERSION" == *"-alpha"* || "$VERSION" == *"-beta"* || "$VERSION" == *"-rc"* ]]; then
             echo "::set-output name=status::true"
           else
