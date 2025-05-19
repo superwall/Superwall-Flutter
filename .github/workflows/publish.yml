@@ -2,11 +2,8 @@ name: Release
 
 on:
   push:
-    branches: [main]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    tags:
+      - '*'
 
 jobs:
   publish:
@@ -20,27 +17,9 @@ jobs:
         run: flutter pub get
       - name: Publish
         run: flutter pub publish --force
-  tag:
-    needs: publish
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Tag
-        run: |
-          sudo git config --global user.name 'Jake'
-          sudo git config --global user.email 'jakemor@users.noreply.github.com'
-          sudo git pull
-          echo "\n\n\n- - - - - VERSION - - - - -\n\n\n"
-          VERSION=$(grep '^version:' pubspec.yaml | awk '{ print $2 }')
-          echo $VERSION
-          echo "\n\n\n- - - - - END VERSION - - - - -\n\n\n"
-          sudo git tag -a "$VERSION" -m "tags with latest version"
-          sudo git push --tags || true
-          sudo git checkout -b "release/$VERSION"
-          sudo git push -u origin "release/$VERSION"
 
   slack:
-    needs: tag
+    needs: publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
