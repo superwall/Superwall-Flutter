@@ -24,9 +24,10 @@ jobs:
           sudo git config --global user.name 'Jake'
           sudo git config --global user.email 'jakemor@users.noreply.github.com'
           sudo git pull
-          VERSION=$(grep '^version:' pubspec.yaml | awk '{ print $2 }')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "\n\n\n- - - - - VERSION - - - - -\n\n\n"
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{ print $2 }')
+          echo $VERSION
+          echo "\n\n\n- - - - - END VERSION - - - - -\n\n\n"
           sudo git tag -a "$VERSION" -m "tags with latest version"
           sudo git push --tags || true
           sudo git checkout -b "release/$VERSION"
