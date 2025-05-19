@@ -10,15 +10,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Tag
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Tag
         run: |
-          sudo git config --global user.name 'Jake'
-          sudo git config --global user.email 'jakemor@users.noreply.github.com'
-          sudo git pull
+          git config --global user.name 'Jake'
+          git config --global user.email 'jakemor@users.noreply.github.com'
+          
           echo "\n\n\n- - - - - VERSION - - - - -\n\n\n"
           VERSION=$(grep '^version:' pubspec.yaml | awk '{ print $2 }')
           echo $VERSION
           echo "\n\n\n- - - - - END VERSION - - - - -\n\n\n"
-          sudo git tag -a "$VERSION" -m "tags with latest version"
-          sudo git push --tags || true
-          sudo git checkout -b "release/$VERSION"
-          sudo git push -u origin "release/$VERSION"
+          
+          git tag -a "$VERSION" -m "tags with latest version"
+          
+          git remote set-url origin https://x-access-token:$GH_PAT@github.com/${{ github.repository }}
+          git push origin "$VERSION"
+          
+          git checkout -b "release/$VERSION"
+          git push -u origin "release/$VERSION"
