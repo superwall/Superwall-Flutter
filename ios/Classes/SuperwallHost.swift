@@ -6,6 +6,7 @@ import Combine
 final class SuperwallHost : NSObject, PSuperwallHostApi {
   private let flutterBinaryMessenger: FlutterBinaryMessenger
   private var streamHandler: SubscriptionStatusStreamHandlerImpl?
+  private var presentationHandlers: [String: PaywallPresentationHandlerHost] = [:]
 
   init(flutterBinaryMessenger: FlutterBinaryMessenger) {
     self.flutterBinaryMessenger = flutterBinaryMessenger
@@ -254,7 +255,15 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
         binaryMessenger: self.flutterBinaryMessenger,
         messageChannelSuffix: placement
       )
-      presentationHandler = PaywallPresentationHandlerHost(flutterHandler: flutterHandler).handler
+      let handlerHost = PaywallPresentationHandlerHost(
+        flutterHandler: flutterHandler,
+        placement: placement,
+        cleanupCallback: { [weak self] placement in
+          self?.presentationHandlers.removeValue(forKey: placement)
+        }
+      )
+      presentationHandlers[placement] = handlerHost
+      presentationHandler = handlerHost.handler
     } else {
       presentationHandler = nil
     }

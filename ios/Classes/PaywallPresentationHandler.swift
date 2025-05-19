@@ -4,10 +4,13 @@ import Foundation
 final class PaywallPresentationHandlerHost {
   private let flutterHandler: PPaywallPresentationHandlerGenerated
   let handler: PaywallPresentationHandler
+  private let placement: String
+  private let cleanupCallback: (String) -> Void
 
-  init(flutterHandler: PPaywallPresentationHandlerGenerated) {
+  init(flutterHandler: PPaywallPresentationHandlerGenerated, placement: String, cleanupCallback: @escaping (String) -> Void) {
     self.flutterHandler = flutterHandler
-
+    self.placement = placement
+    self.cleanupCallback = cleanupCallback
     handler = PaywallPresentationHandler()
 
     handler.onPresent { [weak self] paywallInfo in
@@ -34,8 +37,12 @@ final class PaywallPresentationHandlerHost {
       self?.flutterHandler.onDismiss(
         paywallInfo: paywallInfo.pigeonify(),
         paywallResult: pResult,
-        completion: { result in
-          // NO-OP
+        completion: { [weak self] result in
+          if paywallInfo.closeReason != .none {
+            if let self = self {
+              self.cleanupCallback(self.placement)
+            }
+          }
         }
       )
     }
@@ -65,6 +72,9 @@ final class PaywallPresentationHandlerHost {
         reason: pReason,
         completion: { result in
           // NO-OP
+          if let self = self {
+            self.cleanupCallback(self.placement)
+          }
         }
       )
     }
