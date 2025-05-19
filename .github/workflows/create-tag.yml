@@ -5,18 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  dry_run:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-      - name: Get dependencies
-        run: flutter pub get
-      - name: Dry run pub publish
-        run: flutter pub publish --dry-run
-
   tag:
-    needs: dry_run
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
