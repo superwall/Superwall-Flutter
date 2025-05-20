@@ -47,8 +47,11 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
     Superwall.shared.reset()
   }
 
-  func getDeviceAttributes() throws -> [String: Any] {
-    return await Superwall.shared.getDeviceAttributes()
+  func getDeviceAttributes(completion: @escaping (Result<[String : Any], any Error>) -> Void) {
+    Task {
+      let deviceAttributes = await Superwall.shared.getDeviceAttributes()
+      completion(.success(deviceAttributes))
+    }
   }
 
   func setDelegate(hasDelegate: Bool) {

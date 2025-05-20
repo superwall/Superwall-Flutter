@@ -3718,7 +3718,7 @@ interface PSuperwallHostApi {
   fun setLogLevel(logLevel: String)
   fun getUserAttributes(): Map<String, Any>
   fun setUserAttributes(userAttributes: Map<String, Any>)
-  fun getDeviceAttributes(): Map<String, Any>
+  fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit)
   fun getLocaleIdentifier(): String?
   fun setLocaleIdentifier(localeIdentifier: String?)
   fun getUserId(): String
@@ -3910,12 +3910,15 @@ interface PSuperwallHostApi {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getDeviceAttributes$separatedMessageChannelSuffix", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getDeviceAttributes())
-            } catch (exception: Throwable) {
-              wrapError(exception)
+            api.getDeviceAttributes{ result: Result<Map<String, Any>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
             }
-            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)
