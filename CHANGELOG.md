@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.2.3
+
+### Enhancements
+
+- Exposes `ConfirmedAssignments` and `StoreProduct` to `superwallkit_flutter`
+
 ## 2.2.2
 
 ### Fixes
