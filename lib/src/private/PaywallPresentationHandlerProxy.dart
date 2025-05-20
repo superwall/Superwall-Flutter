@@ -1,6 +1,5 @@
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
-import 'package:flutter/services.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 import 'package:superwallkit_flutter/src/public/PaywallResult.dart';

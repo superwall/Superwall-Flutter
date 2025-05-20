@@ -16,7 +16,7 @@ sealed class SubscriptionStatus {
       case PActive():
         return SubscriptionStatusActive(
             entitlements: pSubscriptionStatus.entitlements
-                .map((e) => Entitlement(id: e.id!!))
+                .map((e) => Entitlement(id: e.id!))
                 .toSet());
       case PInactive():
         return SubscriptionStatusInactive();
