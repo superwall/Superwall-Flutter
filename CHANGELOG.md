@@ -2,11 +2,13 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
-## 2.2.3
+## 2.3.0
 
 ### Enhancements
 
-- Exposes `ConfirmedAssignments` and `StoreProduct` to `superwallkit_flutter`
+- Exposes `ConfirmedAssignments` and `StoreProduct` to `superwallkit_flutter`.
+- Adds `Superwall.shared.getDeviceAttributes()`, which returns the device attributes that are used when evaluating audience filters.
+- Updates iOS SDK to 4.4.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.4.0).
 
 ## 2.2.2
 

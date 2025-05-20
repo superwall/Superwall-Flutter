@@ -2786,6 +2786,7 @@ protocol PSuperwallHostApi {
   func setLogLevel(logLevel: String) throws
   func getUserAttributes() throws -> [String: Any]
   func setUserAttributes(userAttributes: [String: Any]) throws
+  func getDeviceAttributes() throws -> [String: Any]
   func getLocaleIdentifier() throws -> String?
   func setLocaleIdentifier(localeIdentifier: String?) throws
   func getUserId() throws -> String
@@ -2946,6 +2947,19 @@ class PSuperwallHostApiSetup {
       }
     } else {
       setUserAttributesChannel.setMessageHandler(nil)
+    }
+    let getDeviceAttributesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getDeviceAttributes\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getDeviceAttributesChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.getDeviceAttributes()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getDeviceAttributesChannel.setMessageHandler(nil)
     }
     let getLocaleIdentifierChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLocaleIdentifier\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

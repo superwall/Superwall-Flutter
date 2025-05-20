@@ -47,6 +47,10 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
     Superwall.shared.reset()
   }
 
+  func getDeviceAttributes() throws -> [String: Any] {
+    return await Superwall.shared.getDeviceAttributes()
+  }
+
   func setDelegate(hasDelegate: Bool) {
     if hasDelegate {
       let delegate = PSuperwallDelegateGenerated(binaryMessenger: self.flutterBinaryMessenger)
