@@ -6,6 +6,7 @@ extension StoreProduct {
     return PStoreProduct(
       entitlements: entitlements.map { $0.pigeonify() },
       productIdentifier: productIdentifier,
+      subscriptionGroupIdentifier: subscriptionGroupIdentifier,
       attributes: attributes,
       localizedPrice: localizedPrice,
       localizedSubscriptionPeriod: localizedSubscriptionPeriod,
@@ -24,6 +25,7 @@ extension StoreProduct {
       monthlyPrice: monthlyPrice,
       yearlyPrice: yearlyPrice,
       hasFreeTrial: hasFreeTrial,
+      trialPeriodEndDate: trialPeriodEndDate?.isoString,
       trialPeriodEndDateString: trialPeriodEndDateString,
       localizedTrialPeriodPrice: localizedTrialPeriodPrice,
       trialPeriodPrice: Double(truncating: trialPeriodPrice as NSNumber),
@@ -37,8 +39,13 @@ extension StoreProduct {
       trialPeriodYearsString: trialPeriodYearsString,
       trialPeriodText: trialPeriodText,
       locale: locale,
+      languageCode: languageCode,
+      currencySymbol: currencySymbol,
+      currencyCode: currencyCode,
       isFamilyShareable: isFamilyShareable,
-      price: Double(truncating: price as NSNumber)
+      regionCode: regionCode,
+      price: Double(truncating: price as NSNumber),
+      
     )
   }
 }
