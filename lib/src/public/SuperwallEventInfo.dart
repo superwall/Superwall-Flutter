@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:superwallkit_flutter/src/public/StoreProduct.dart';
 import 'package:superwallkit_flutter/src/public/StoreTransaction.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
@@ -143,9 +141,6 @@ class SuperwallEvent {
 
   factory SuperwallEvent.fromPEventType(PSuperwallEventInfo eventInfo) {
     EventType type;
-    debugPrint("EventType: ${eventInfo.eventType}");
-    debugPrint("EventType: trans ${eventInfo.transaction}");
-    debugPrint("EventType: prod ${eventInfo.product}");
 
     // Map the PEventType to EventType
     switch (eventInfo.eventType) {

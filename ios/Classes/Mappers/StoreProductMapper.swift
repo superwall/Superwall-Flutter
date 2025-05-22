@@ -3,6 +3,14 @@ import SuperwallKit
 
 extension StoreProduct {
   func pigeonify() -> PStoreProduct {
+
+    let familyShareable: Bool
+    if #available(iOS 14.0, *) {
+      familyShareable = isFamilyShareable
+    } else {
+      familyShareable = false
+    }
+
     return PStoreProduct(
       entitlements: entitlements.map { $0.pigeonify() },
       productIdentifier: productIdentifier,
@@ -42,9 +50,9 @@ extension StoreProduct {
       languageCode: languageCode,
       currencySymbol: currencySymbol,
       currencyCode: currencyCode,
-      isFamilyShareable: isFamilyShareable,
+      isFamilyShareable: familyShareable,
       regionCode: regionCode,
-      price: Double(truncating: price as NSNumber),
+      price: Double(truncating: price as NSNumber)
       
     )
   }
