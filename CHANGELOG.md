@@ -2,21 +2,19 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
-## 2.3.1
-
-### Enhancements
-
-- Updates iOS SDK to 4.4.1 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.4.1).
-- Updates Android SDK to 2.1.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.1.1).
-
-
 ## 2.3.0
 
 ### Enhancements
 
 - Exposes `ConfirmedAssignments` and `StoreProduct` to `superwallkit_flutter`.
 - Adds `Superwall.shared.getDeviceAttributes()`, which returns the device attributes that are used when evaluating audience filters.
-- Updates iOS SDK to 4.4.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.4.0).
+- Updates iOS SDK to 4.4.1 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.4.1).
+- Updates Android SDK to 2.1.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.1.1).
+
+### Fixes
+
+- Fixes issue where `SuperwallEventInfo` didn't contain all expected variables.
+- Fixes issue when building for app that deploys with a minimum version of iOS 13.
 
 ## 2.2.2
 
@@ -33,13 +31,13 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 ## 2.2.0
 
 ### Fixes
+
 - Fixes missing Event info
 
 ### Enhancements
 
 - Updates iOS SDK to 4.3.11 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.3.11)
 - Updates Android SDK to 2.1.0 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.1.0)
-
 
 ## 2.2.0-beta.2
 
