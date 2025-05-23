@@ -74,7 +74,7 @@ class SuperwallHost(
 
     private val mainScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
-    private var latestStreamJob : Job? = null
+    private var latestStreamJob: Job? = null
     override fun configure(
         apiKey: String,
         purchaseController: PPurchaseControllerHost?,
@@ -153,6 +153,16 @@ class SuperwallHost(
 
     override fun setUserAttributes(userAttributes: Map<String, Any>) {
         Superwall.instance.setUserAttributes(userAttributes)
+    }
+
+    override fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit) {
+        ioScope.launch {
+            val unfiltered : Map<String, Any?> = Superwall.instance.deviceAttributes()
+            val attributes: Map<String, Any> = unfiltered.filterNot {
+                it.value == null
+            }.toMap() as Map<String, Any>
+            callback(Result.success(attributes))
+        }
     }
 
     override fun getLocaleIdentifier(): String? {

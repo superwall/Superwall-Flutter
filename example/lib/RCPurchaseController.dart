@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:superwallkit_flutter/superwallkit_flutter.dart' hide LogLevel;
+import 'package:superwallkit_flutter/superwallkit_flutter.dart'
+    hide LogLevel, StoreProduct;
 
 class RCPurchaseController extends PurchaseController {
   // MARK: Configure and sync subscription Status

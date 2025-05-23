@@ -3,9 +3,18 @@ import SuperwallKit
 
 extension StoreProduct {
   func pigeonify() -> PStoreProduct {
+
+    let familyShareable: Bool
+    if #available(iOS 14.0, *) {
+      familyShareable = isFamilyShareable
+    } else {
+      familyShareable = false
+    }
+
     return PStoreProduct(
       entitlements: entitlements.map { $0.pigeonify() },
       productIdentifier: productIdentifier,
+      subscriptionGroupIdentifier: subscriptionGroupIdentifier,
       attributes: attributes,
       localizedPrice: localizedPrice,
       localizedSubscriptionPeriod: localizedSubscriptionPeriod,
@@ -24,6 +33,7 @@ extension StoreProduct {
       monthlyPrice: monthlyPrice,
       yearlyPrice: yearlyPrice,
       hasFreeTrial: hasFreeTrial,
+      trialPeriodEndDate: trialPeriodEndDate?.isoString,
       trialPeriodEndDateString: trialPeriodEndDateString,
       localizedTrialPeriodPrice: localizedTrialPeriodPrice,
       trialPeriodPrice: Double(truncating: trialPeriodPrice as NSNumber),
@@ -37,8 +47,13 @@ extension StoreProduct {
       trialPeriodYearsString: trialPeriodYearsString,
       trialPeriodText: trialPeriodText,
       locale: locale,
-      isFamilyShareable: isFamilyShareable,
+      languageCode: languageCode,
+      currencySymbol: currencySymbol,
+      currencyCode: currencyCode,
+      isFamilyShareable: familyShareable,
+      regionCode: regionCode,
       price: Double(truncating: price as NSNumber)
+      
     )
   }
 }

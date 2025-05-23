@@ -1,6 +1,8 @@
 library superwallkit_flutter;
 
 export 'src/public/ComputedPropertyRequest.dart';
+export 'src/public/ConfirmedAssignments.dart';
+export 'src/public/ConfigurationStatus.dart';
 export 'src/public/Experiment.dart';
 export 'src/public/FeatureGatingBehavior.dart';
 export 'src/public/IdentityOptions.dart';
@@ -20,6 +22,7 @@ export 'src/public/SuperwallDelegate.dart';
 export 'src/public/SuperwallEventInfo.dart';
 export 'src/public/SuperwallOptions.dart';
 export 'src/public/Survey.dart';
+export 'src/public/StoreProduct.dart';
 export 'src/public/TriggerResult.dart';
 export 'src/public/PaywallOptions.dart';
 export 'src/public/PaywallPresentationHandler.dart';

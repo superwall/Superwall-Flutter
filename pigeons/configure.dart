@@ -1005,6 +1005,9 @@ abstract class PSuperwallHostApi {
   Map<String, Object> getUserAttributes();
   void setUserAttributes(Map<String, Object> userAttributes);
 
+  @async
+  Map<String, Object> getDeviceAttributes();
+
   // Locale methods
   String? getLocaleIdentifier();
   void setLocaleIdentifier(String? localeIdentifier);

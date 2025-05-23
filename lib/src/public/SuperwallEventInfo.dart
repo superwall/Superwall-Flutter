@@ -1,4 +1,3 @@
-import 'package:superwallkit_flutter/src/public/StoreProduct.dart';
 import 'package:superwallkit_flutter/src/public/StoreTransaction.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
@@ -12,8 +11,7 @@ class SuperwallEventInfo {
 
   factory SuperwallEventInfo.fromPEventInfo(PSuperwallEventInfo eventInfo) {
     return SuperwallEventInfo(
-      event: SuperwallEvent.fromPEventType(eventInfo.eventType,
-          paywallInfo: eventInfo.paywallInfo, params: eventInfo.params),
+      event: SuperwallEvent.fromPEventType(eventInfo),
       params: eventInfo.params,
     );
   }
@@ -141,33 +139,11 @@ class SuperwallEvent {
       this.userAttributes,
       this.token});
 
-  factory SuperwallEvent.fromPEventType(
-    PEventType eventType, {
-    String? placementName,
-    Map<dynamic, dynamic>? deviceAttributes,
-    Map<dynamic, dynamic>? params,
-    String? deepLinkUrl,
-    PTriggerResult? result,
-    PPaywallInfo? paywallInfo,
-    PStoreTransaction? transaction,
-    PStoreProduct? product,
-    String? error,
-    String? triggeredPlacementName,
-    String? attempt,
-    String? name,
-    PSurvey? survey,
-    PSurveyOption? selectedOption,
-    String? customResponse,
-    PPaywallPresentationRequestStatusType? status,
-    PPaywallPresentationRequestStatusReason? reason,
-    PRestoreType? restoreType,
-    Map<dynamic, dynamic>? userAttributes,
-    String? token,
-  }) {
+  factory SuperwallEvent.fromPEventType(PSuperwallEventInfo eventInfo) {
     EventType type;
 
     // Map the PEventType to EventType
-    switch (eventType) {
+    switch (eventInfo.eventType) {
       case PEventType.firstSeen:
         type = EventType.firstSeen;
         break;
@@ -361,34 +337,44 @@ class SuperwallEvent {
 
     return SuperwallEvent._(
       type: type,
-      placementName: placementName,
-      deviceAttributes: deviceAttributes,
-      params: params,
-      deepLinkUrl: deepLinkUrl,
-      result: result != null ? TriggerResult.fromPTriggerResult(result) : null,
-      paywallInfo: PaywallInfo.fromPigeon(paywallInfo),
-      transaction:
-          transaction != null ? StoreTransaction.fromPigeon(transaction) : null,
-      product: product != null ? StoreProduct.fromPigeon(product) : null,
-      error: error,
-      triggeredPlacementName: triggeredPlacementName,
-      attempt: attempt,
-      name: name,
-      survey: survey != null ? Survey.fromPigeon(survey) : null,
-      selectedOption: selectedOption != null
-          ? SurveyOption.fromPigeon(selectedOption)
+      placementName: eventInfo.placementName,
+      deviceAttributes: eventInfo.deviceAttributes,
+      params: eventInfo.params,
+      deepLinkUrl: eventInfo.deepLinkUrl,
+      result: eventInfo.result != null
+          ? TriggerResult.fromPTriggerResult(eventInfo.result!)
           : null,
-      customResponse: customResponse,
-      status: status != null
-          ? PaywallPresentationRequestStatus.fromPigeon(status)
+      paywallInfo: eventInfo.paywallInfo != null
+          ? PaywallInfo.fromPigeon(eventInfo.paywallInfo!)
           : null,
-      reason: reason != null
-          ? PaywallPresentationRequestStatusReason.fromPigeon(reason)
+      transaction: eventInfo.transaction != null
+          ? StoreTransaction.fromPigeon(eventInfo.transaction!)
           : null,
-      restoreType:
-          restoreType != null ? RestoreType.fromPigeon(restoreType) : null,
-      userAttributes: userAttributes,
-      token: token,
+      product: eventInfo.product != null
+          ? StoreProduct.fromPigeon(eventInfo.product!)
+          : null,
+      error: eventInfo.error,
+      triggeredPlacementName: eventInfo.triggeredPlacementName,
+      attempt: eventInfo.attempt?.toString(),
+      name: eventInfo.name,
+      survey: eventInfo.survey != null
+          ? Survey.fromPigeon(eventInfo.survey!)
+          : null,
+      selectedOption: eventInfo.selectedOption != null
+          ? SurveyOption.fromPigeon(eventInfo.selectedOption!)
+          : null,
+      customResponse: eventInfo.customResponse,
+      status: eventInfo.status != null
+          ? PaywallPresentationRequestStatus.fromPigeon(eventInfo.status!)
+          : null,
+      reason: eventInfo.reason != null
+          ? PaywallPresentationRequestStatusReason.fromPigeon(eventInfo.reason!)
+          : null,
+      restoreType: eventInfo.restoreType != null
+          ? RestoreType.fromPigeon(eventInfo.restoreType!)
+          : null,
+      userAttributes: eventInfo.userAttributes,
+      token: eventInfo.token,
     );
   }
 }
