@@ -414,6 +414,10 @@ class Superwall {
     await hostApi.identify(userId, generatedOptions);
   }
 
+  Future<Map<String, Object>> getDeviceAttributes() async {
+    return await hostApi.getDeviceAttributes();
+  }
+
   void setDelegate(SuperwallDelegate? delegate) async {
     if (delegate == null) {
       await hostApi.setDelegate(false);
