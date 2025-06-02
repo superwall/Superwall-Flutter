@@ -2,6 +2,16 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+
+## 2.3.1
+
+### Enhancements
+
+- Updates Android SDK to 2.1.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.1.2).
+
+### Fixes
+- Fixes issue with `registerPlacement` blocking
+  
 ## 2.3.0
 
 ### Enhancements

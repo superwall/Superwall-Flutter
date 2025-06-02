@@ -275,6 +275,7 @@ class SuperwallHost(
                 }
             } else null
         )
+        callback(Result.success(Unit))
     }
 
     override fun dismiss() {
