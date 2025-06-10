@@ -12,8 +12,8 @@ import PSurvey
 import PSurveyOption
 import PVariant
 import com.superwall.sdk.billing.DecomposedProductIds
-import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.config.options.PaywallOptions
+import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.logger.LogLevel
 import com.superwall.sdk.logger.LogScope
 import com.superwall.sdk.models.entitlements.Entitlement
@@ -35,12 +35,13 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
     }
 
     this.networkEnvironment?.let { hostNetworkEnvironment ->
-        sdkOptions.networkEnvironment = when (hostNetworkEnvironment) {
-            PNetworkEnvironment.RELEASE -> SuperwallOptions.NetworkEnvironment.Release()
-            PNetworkEnvironment.RELEASE_CANDIDATE -> SuperwallOptions.NetworkEnvironment.ReleaseCandidate()
-            PNetworkEnvironment.DEVELOPER -> SuperwallOptions.NetworkEnvironment.Developer()
-            else -> SuperwallOptions.NetworkEnvironment.Release()
-        }
+        sdkOptions.networkEnvironment =
+            when (hostNetworkEnvironment) {
+                PNetworkEnvironment.RELEASE -> SuperwallOptions.NetworkEnvironment.Release()
+                PNetworkEnvironment.RELEASE_CANDIDATE -> SuperwallOptions.NetworkEnvironment.ReleaseCandidate()
+                PNetworkEnvironment.DEVELOPER -> SuperwallOptions.NetworkEnvironment.Developer()
+                else -> SuperwallOptions.NetworkEnvironment.Release()
+            }
     }
 
     this.isExternalDataCollectionEnabled?.let { sdkOptions.isExternalDataCollectionEnabled = it }
@@ -50,14 +51,15 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
 
     this.logging?.let { hostLogging ->
         hostLogging.level?.let { hostLevel ->
-            sdkOptions.logging.level = when (hostLevel) {
-                PLogLevel.DEBUG -> LogLevel.debug
-                PLogLevel.INFO -> LogLevel.info
-                PLogLevel.WARN -> LogLevel.warn
-                PLogLevel.ERROR -> LogLevel.error
-                PLogLevel.NONE -> LogLevel.none
-                else -> LogLevel.warn
-            }
+            sdkOptions.logging.level =
+                when (hostLevel) {
+                    PLogLevel.DEBUG -> LogLevel.debug
+                    PLogLevel.INFO -> LogLevel.info
+                    PLogLevel.WARN -> LogLevel.warn
+                    PLogLevel.ERROR -> LogLevel.error
+                    PLogLevel.NONE -> LogLevel.none
+                    else -> LogLevel.warn
+                }
         }
 
         hostLogging.scopes?.let { hostScopes ->
@@ -124,10 +126,11 @@ fun PPaywallOptions.toSdkPaywallOptions(): PaywallOptions {
     }
 
     this.transactionBackgroundView?.let { hostTransactionBgView ->
-        sdkPaywallOptions.transactionBackgroundView = when (hostTransactionBgView) {
-            PTransactionBackgroundView.SPINNER -> PaywallOptions.TransactionBackgroundView.SPINNER
-            else -> PaywallOptions.TransactionBackgroundView.SPINNER
-        }
+        sdkPaywallOptions.transactionBackgroundView =
+            when (hostTransactionBgView) {
+                PTransactionBackgroundView.SPINNER -> PaywallOptions.TransactionBackgroundView.SPINNER
+                else -> PaywallOptions.TransactionBackgroundView.SPINNER
+            }
     }
 
     return sdkPaywallOptions
@@ -142,115 +145,138 @@ class PaywallInfoMapper {
          * Converts a PPaywallInfo (generated from Pigeon) to SDK's PaywallInfo
          */
         fun fromPPaywallInfo(pPaywallInfo: PPaywallInfo): com.superwall.sdk.paywall.presentation.PaywallInfo {
-            val products = pPaywallInfo.products?.map { product ->
-                val decomposedProductIds = DecomposedProductIds.from(product.id ?: "")
-                val offer = decomposedProductIds.offerType
-                ProductItem(
-                    name = product.name ?: "",
-                    entitlements = product.entitlements?.map {
-                        Entitlement(it.id!!)
-                    }?.toSet() ?: emptySet(),
-                    type = ProductItem.StoreProductType.PlayStore(
-                        PlayStoreProduct(
-                            productIdentifier = decomposedProductIds.subscriptionId,
-                            basePlanIdentifier = decomposedProductIds.basePlanId,
-                            offer = when {
-                                offer is OfferType.Offer -> Offer.Specified(offerIdentifier = decomposedProductIds.offerType.id!!)
-                                else -> Offer.Automatic()
-                            }
-                        )
+            val products =
+                pPaywallInfo.products?.map { product ->
+                    val decomposedProductIds = DecomposedProductIds.from(product.id ?: "")
+                    val offer = decomposedProductIds.offerType
+                    ProductItem(
+                        name = product.name ?: "",
+                        entitlements =
+                            product.entitlements
+                                ?.map {
+                                    Entitlement(it.id!!)
+                                }?.toSet() ?: emptySet(),
+                        type =
+                            ProductItem.StoreProductType.PlayStore(
+                                PlayStoreProduct(
+                                    productIdentifier = decomposedProductIds.subscriptionId,
+                                    basePlanIdentifier = decomposedProductIds.basePlanId,
+                                    offer =
+                                        when {
+                                            offer is OfferType.Offer ->
+                                                Offer.Specified(
+                                                    offerIdentifier = decomposedProductIds.offerType.id!!,
+                                                )
+                                            else -> Offer.Automatic()
+                                        },
+                                ),
+                            ),
                     )
-                )
-            } ?: emptyList()
+                } ?: emptyList()
 
-            val paywallUrl = com.superwall.sdk.models.paywall.PaywallURL(pPaywallInfo.url ?: "")
+            val paywallUrl =
+                com.superwall.sdk.models.paywall
+                    .PaywallURL(pPaywallInfo.url ?: "")
 
-            val experiment = pPaywallInfo.experiment?.let {
-                Experiment(
-                    id = it.id,
-                    groupId = it.groupId,
-                    variant = Experiment.Variant(
-                        id = it.variant.id,
-                        type = when (it.variant.type) {
-                            PVariantType.TREATMENT -> Experiment.Variant.VariantType.TREATMENT
-                            PVariantType.HOLDOUT -> Experiment.Variant.VariantType.HOLDOUT
-                        },
-                        paywallId = it.variant.paywallId
+            val experiment =
+                pPaywallInfo.experiment?.let {
+                    Experiment(
+                        id = it.id,
+                        groupId = it.groupId,
+                        variant =
+                            Experiment.Variant(
+                                id = it.variant.id,
+                                type =
+                                    when (it.variant.type) {
+                                        PVariantType.TREATMENT -> Experiment.Variant.VariantType.TREATMENT
+                                        PVariantType.HOLDOUT -> Experiment.Variant.VariantType.HOLDOUT
+                                    },
+                                paywallId = it.variant.paywallId,
+                            ),
                     )
+                }
+
+            val featureGatingBehavior =
+                when (pPaywallInfo.featureGatingBehavior) {
+                    PFeatureGatingBehavior.GATED -> com.superwall.sdk.models.config.FeatureGatingBehavior.Gated
+                    PFeatureGatingBehavior.NON_GATED -> com.superwall.sdk.models.config.FeatureGatingBehavior.NonGated
+                    else -> com.superwall.sdk.models.config.FeatureGatingBehavior.NonGated
+                }
+
+            val closeReason =
+                when (pPaywallInfo.closeReason) {
+                    PPaywallCloseReason.SYSTEM_LOGIC -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.SystemLogic
+                    PPaywallCloseReason.FOR_NEXT_PAYWALL -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.ForNextPaywall
+                    PPaywallCloseReason.WEB_VIEW_FAILED_TO_LOAD -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.WebViewFailedToLoad
+                    PPaywallCloseReason.MANUAL_CLOSE -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.ManualClose
+                    PPaywallCloseReason.NONE -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.None
+                    else -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.None
+                }
+
+            val localNotifications =
+                pPaywallInfo.localNotifications?.map { notification ->
+                    com.superwall.sdk.models.paywall.LocalNotification(
+                        id = notification.id.toInt(),
+                        type =
+                            when (notification.type) {
+                                PLocalNotificationType.TRIAL_STARTED -> com.superwall.sdk.models.paywall.LocalNotificationType.TrialStarted
+                                PLocalNotificationType.UNSUPPORTED -> com.superwall.sdk.models.paywall.LocalNotificationType.Unsupported
+                                else -> com.superwall.sdk.models.paywall.LocalNotificationType.Unsupported
+                            },
+                        title = notification.title,
+                        subtitle = notification.subtitle,
+                        body = notification.body,
+                        delay = notification.delay.toLong(),
+                    )
+                } ?: emptyList()
+
+            val computedPropertyRequests =
+                pPaywallInfo.computedPropertyRequests?.map { request ->
+                    com.superwall.sdk.models.config.ComputedPropertyRequest(
+                        type =
+                            when (request.type) {
+                                PComputedPropertyRequestType.MINUTES_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MINUTES_SINCE
+                                PComputedPropertyRequestType.HOURS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.HOURS_SINCE
+                                PComputedPropertyRequestType.DAYS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.DAYS_SINCE
+                                PComputedPropertyRequestType.MONTHS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MONTHS_SINCE
+                                PComputedPropertyRequestType.YEARS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.YEARS_SINCE
+                                else -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.DAYS_SINCE
+                            },
+                        eventName = request.eventName,
+                    )
+                } ?: emptyList()
+
+            val surveys =
+                pPaywallInfo.surveys?.map { survey ->
+                    com.superwall.sdk.config.models.Survey(
+                        id = survey.id,
+                        assignmentKey = survey.assignmentKey,
+                        title = survey.title,
+                        message = survey.message,
+                        options =
+                            survey.options.map { option ->
+                                com.superwall.sdk.config.models.SurveyOption(
+                                    id = option.id ?: "",
+                                    title = option.text ?: "",
+                                )
+                            },
+                        presentationCondition =
+                            when (survey.presentationCondition) {
+                                PSurveyShowCondition.ON_MANUAL_CLOSE -> com.superwall.sdk.config.models.SurveyShowCondition.ON_MANUAL_CLOSE
+                                PSurveyShowCondition.ON_PURCHASE -> com.superwall.sdk.config.models.SurveyShowCondition.ON_PURCHASE
+                                else -> com.superwall.sdk.config.models.SurveyShowCondition.ON_MANUAL_CLOSE
+                            },
+                        presentationProbability = survey.presentationProbability,
+                        includeOtherOption = survey.includeOtherOption,
+                        includeCloseOption = survey.includeCloseOption,
+                    )
+                } ?: emptyList()
+
+            val presentation =
+                com.superwall.sdk.models.paywall.PaywallPresentationInfo(
+                    com.superwall.sdk.models.paywall.PaywallPresentationStyle.NONE,
+                    0,
                 )
-            }
-
-            val featureGatingBehavior = when (pPaywallInfo.featureGatingBehavior) {
-                PFeatureGatingBehavior.GATED -> com.superwall.sdk.models.config.FeatureGatingBehavior.Gated
-                PFeatureGatingBehavior.NON_GATED -> com.superwall.sdk.models.config.FeatureGatingBehavior.NonGated
-                else -> com.superwall.sdk.models.config.FeatureGatingBehavior.NonGated
-            }
-
-            val closeReason = when (pPaywallInfo.closeReason) {
-                PPaywallCloseReason.SYSTEM_LOGIC -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.SystemLogic
-                PPaywallCloseReason.FOR_NEXT_PAYWALL -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.ForNextPaywall
-                PPaywallCloseReason.WEB_VIEW_FAILED_TO_LOAD -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.WebViewFailedToLoad
-                PPaywallCloseReason.MANUAL_CLOSE -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.ManualClose
-                PPaywallCloseReason.NONE -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.None
-                else -> com.superwall.sdk.paywall.presentation.PaywallCloseReason.None
-            }
-
-            val localNotifications = pPaywallInfo.localNotifications?.map { notification ->
-                com.superwall.sdk.models.paywall.LocalNotification(
-                    id = notification.id.toInt(),
-                    type = when (notification.type) {
-                        PLocalNotificationType.TRIAL_STARTED -> com.superwall.sdk.models.paywall.LocalNotificationType.TrialStarted
-                        PLocalNotificationType.UNSUPPORTED -> com.superwall.sdk.models.paywall.LocalNotificationType.Unsupported
-                        else -> com.superwall.sdk.models.paywall.LocalNotificationType.Unsupported
-                    },
-                    title = notification.title,
-                    subtitle = notification.subtitle,
-                    body = notification.body,
-                    delay = notification.delay.toLong()
-                )
-            } ?: emptyList()
-
-            val computedPropertyRequests = pPaywallInfo.computedPropertyRequests?.map { request ->
-                com.superwall.sdk.models.config.ComputedPropertyRequest(
-                    type = when (request.type) {
-                        PComputedPropertyRequestType.MINUTES_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MINUTES_SINCE
-                        PComputedPropertyRequestType.HOURS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.HOURS_SINCE
-                        PComputedPropertyRequestType.DAYS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.DAYS_SINCE
-                        PComputedPropertyRequestType.MONTHS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MONTHS_SINCE
-                        PComputedPropertyRequestType.YEARS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.YEARS_SINCE
-                        else -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.DAYS_SINCE
-                    },
-                    eventName = request.eventName
-                )
-            } ?: emptyList()
-
-            val surveys = pPaywallInfo.surveys?.map { survey ->
-                com.superwall.sdk.config.models.Survey(
-                    id = survey.id,
-                    assignmentKey = survey.assignmentKey,
-                    title = survey.title,
-                    message = survey.message,
-                    options = survey.options.map { option ->
-                        com.superwall.sdk.config.models.SurveyOption(
-                            id = option.id ?: "",
-                            title = option.text ?: ""
-                        )
-                    },
-                    presentationCondition = when (survey.presentationCondition) {
-                        PSurveyShowCondition.ON_MANUAL_CLOSE -> com.superwall.sdk.config.models.SurveyShowCondition.ON_MANUAL_CLOSE
-                        PSurveyShowCondition.ON_PURCHASE -> com.superwall.sdk.config.models.SurveyShowCondition.ON_PURCHASE
-                        else -> com.superwall.sdk.config.models.SurveyShowCondition.ON_MANUAL_CLOSE
-                    },
-                    presentationProbability = survey.presentationProbability,
-                    includeOtherOption = survey.includeOtherOption,
-                    includeCloseOption = survey.includeCloseOption
-                )
-            } ?: emptyList()
-
-            val presentation = com.superwall.sdk.models.paywall.PaywallPresentationInfo(
-                com.superwall.sdk.models.paywall.PaywallPresentationStyle.NONE,
-                0
-            )
 
             return com.superwall.sdk.paywall.presentation.PaywallInfo(
                 databaseId = pPaywallInfo.identifier ?: "",
@@ -289,7 +315,7 @@ class PaywallInfoMapper {
                 presentation = presentation,
                 buildId = "",
                 cacheKey = "",
-                isScrollEnabled = true
+                isScrollEnabled = true,
             )
         }
 
@@ -297,96 +323,110 @@ class PaywallInfoMapper {
          * Converts SDK's PaywallInfo to PPaywallInfo
          */
         fun toPPaywallInfo(paywallInfo: com.superwall.sdk.paywall.presentation.PaywallInfo): PPaywallInfo {
-            val experiment = paywallInfo.experiment?.let {
-                PExperiment(
-                    id = it.id,
-                    groupId = it.groupId,
-                    variant = PVariant(
-                        id = it.variant.id,
-                        type = when (it.variant.type) {
-                            Experiment.Variant.VariantType.TREATMENT -> PVariantType.TREATMENT
-                            Experiment.Variant.VariantType.HOLDOUT -> PVariantType.HOLDOUT
-                        },
-                        paywallId = it.variant.paywallId
-                    )
-                )
-            }
-
-            val products = paywallInfo.products.map { product ->
-                PProduct(
-                    id = product.fullProductId,
-                    name = product.name,
-                    entitlements = product.entitlements.map {
-                        PEntitlement(it.id)
-                    }
-                )
-            }
-
-            val featureGatingBehavior = when (paywallInfo.featureGatingBehavior) {
-                is com.superwall.sdk.models.config.FeatureGatingBehavior.Gated -> PFeatureGatingBehavior.GATED
-                else -> PFeatureGatingBehavior.NON_GATED
-            }
-
-            val closeReason = when (paywallInfo.closeReason) {
-                is com.superwall.sdk.paywall.presentation.PaywallCloseReason.SystemLogic -> PPaywallCloseReason.SYSTEM_LOGIC
-                is com.superwall.sdk.paywall.presentation.PaywallCloseReason.ForNextPaywall -> PPaywallCloseReason.FOR_NEXT_PAYWALL
-                is com.superwall.sdk.paywall.presentation.PaywallCloseReason.WebViewFailedToLoad -> PPaywallCloseReason.WEB_VIEW_FAILED_TO_LOAD
-                is com.superwall.sdk.paywall.presentation.PaywallCloseReason.ManualClose -> PPaywallCloseReason.MANUAL_CLOSE
-                else -> PPaywallCloseReason.NONE
-            }
-
-            val localNotifications = paywallInfo.localNotifications.map { notification ->
-                PLocalNotification(
-                    id = notification.id.toLong(),
-                    type = when (notification.type) {
-                        is com.superwall.sdk.models.paywall.LocalNotificationType.TrialStarted -> PLocalNotificationType.TRIAL_STARTED
-                        else -> PLocalNotificationType.UNSUPPORTED
-                    },
-                    title = notification.title,
-                    subtitle = notification.subtitle,
-                    body = notification.body,
-                    delay = notification.delay
-                )
-            }
-
-            val computedPropertyRequests = paywallInfo.computedPropertyRequests.map { request ->
-                val pType = when (request.type) {
-                    com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MINUTES_SINCE -> PComputedPropertyRequestType.MINUTES_SINCE
-                    com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.HOURS_SINCE -> PComputedPropertyRequestType.HOURS_SINCE
-                    com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.DAYS_SINCE -> PComputedPropertyRequestType.DAYS_SINCE
-                    com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MONTHS_SINCE -> PComputedPropertyRequestType.MONTHS_SINCE
-                    com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.YEARS_SINCE -> PComputedPropertyRequestType.YEARS_SINCE
-                    else -> PComputedPropertyRequestType.DAYS_SINCE
-                }
-                PComputedPropertyRequest(
-                    type = pType,
-                    eventName = request.eventName
-                )
-            }
-
-            val surveys = paywallInfo.surveys.map { survey ->
-                val pSurveyOptions = survey.options.map { option ->
-                    PSurveyOption(
-                        id = option.id,
-                        text = option.title
+            val experiment =
+                paywallInfo.experiment?.let {
+                    PExperiment(
+                        id = it.id,
+                        groupId = it.groupId,
+                        variant =
+                            PVariant(
+                                id = it.variant.id,
+                                type =
+                                    when (it.variant.type) {
+                                        Experiment.Variant.VariantType.TREATMENT -> PVariantType.TREATMENT
+                                        Experiment.Variant.VariantType.HOLDOUT -> PVariantType.HOLDOUT
+                                    },
+                                paywallId = it.variant.paywallId,
+                            ),
                     )
                 }
-                PSurvey(
-                    id = survey.id,
-                    assignmentKey = survey.assignmentKey,
-                    title = survey.title,
-                    message = survey.message,
-                    options = pSurveyOptions,
-                    presentationCondition = when (survey.presentationCondition) {
-                        com.superwall.sdk.config.models.SurveyShowCondition.ON_MANUAL_CLOSE -> PSurveyShowCondition.ON_MANUAL_CLOSE
-                        com.superwall.sdk.config.models.SurveyShowCondition.ON_PURCHASE -> PSurveyShowCondition.ON_PURCHASE
-                        else -> PSurveyShowCondition.ON_MANUAL_CLOSE
-                    },
-                    presentationProbability = survey.presentationProbability,
-                    includeOtherOption = survey.includeOtherOption,
-                    includeCloseOption = survey.includeCloseOption
-                )
-            }
+
+            val products =
+                paywallInfo.products.map { product ->
+                    PProduct(
+                        id = product.fullProductId,
+                        name = product.name,
+                        entitlements =
+                            product.entitlements.map {
+                                PEntitlement(it.id)
+                            },
+                    )
+                }
+
+            val featureGatingBehavior =
+                when (paywallInfo.featureGatingBehavior) {
+                    is com.superwall.sdk.models.config.FeatureGatingBehavior.Gated -> PFeatureGatingBehavior.GATED
+                    else -> PFeatureGatingBehavior.NON_GATED
+                }
+
+            val closeReason =
+                when (paywallInfo.closeReason) {
+                    is com.superwall.sdk.paywall.presentation.PaywallCloseReason.SystemLogic -> PPaywallCloseReason.SYSTEM_LOGIC
+                    is com.superwall.sdk.paywall.presentation.PaywallCloseReason.ForNextPaywall -> PPaywallCloseReason.FOR_NEXT_PAYWALL
+                    is com.superwall.sdk.paywall.presentation.PaywallCloseReason.WebViewFailedToLoad -> PPaywallCloseReason.WEB_VIEW_FAILED_TO_LOAD
+                    is com.superwall.sdk.paywall.presentation.PaywallCloseReason.ManualClose -> PPaywallCloseReason.MANUAL_CLOSE
+                    else -> PPaywallCloseReason.NONE
+                }
+
+            val localNotifications =
+                paywallInfo.localNotifications.map { notification ->
+                    PLocalNotification(
+                        id = notification.id.toLong(),
+                        type =
+                            when (notification.type) {
+                                is com.superwall.sdk.models.paywall.LocalNotificationType.TrialStarted -> PLocalNotificationType.TRIAL_STARTED
+                                else -> PLocalNotificationType.UNSUPPORTED
+                            },
+                        title = notification.title,
+                        subtitle = notification.subtitle,
+                        body = notification.body,
+                        delay = notification.delay,
+                    )
+                }
+
+            val computedPropertyRequests =
+                paywallInfo.computedPropertyRequests.map { request ->
+                    val pType =
+                        when (request.type) {
+                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MINUTES_SINCE -> PComputedPropertyRequestType.MINUTES_SINCE
+                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.HOURS_SINCE -> PComputedPropertyRequestType.HOURS_SINCE
+                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.DAYS_SINCE -> PComputedPropertyRequestType.DAYS_SINCE
+                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MONTHS_SINCE -> PComputedPropertyRequestType.MONTHS_SINCE
+                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.YEARS_SINCE -> PComputedPropertyRequestType.YEARS_SINCE
+                            else -> PComputedPropertyRequestType.DAYS_SINCE
+                        }
+                    PComputedPropertyRequest(
+                        type = pType,
+                        eventName = request.eventName,
+                    )
+                }
+
+            val surveys =
+                paywallInfo.surveys.map { survey ->
+                    val pSurveyOptions =
+                        survey.options.map { option ->
+                            PSurveyOption(
+                                id = option.id,
+                                text = option.title,
+                            )
+                        }
+                    PSurvey(
+                        id = survey.id,
+                        assignmentKey = survey.assignmentKey,
+                        title = survey.title,
+                        message = survey.message,
+                        options = pSurveyOptions,
+                        presentationCondition =
+                            when (survey.presentationCondition) {
+                                com.superwall.sdk.config.models.SurveyShowCondition.ON_MANUAL_CLOSE -> PSurveyShowCondition.ON_MANUAL_CLOSE
+                                com.superwall.sdk.config.models.SurveyShowCondition.ON_PURCHASE -> PSurveyShowCondition.ON_PURCHASE
+                                else -> PSurveyShowCondition.ON_MANUAL_CLOSE
+                            },
+                        presentationProbability = survey.presentationProbability,
+                        includeOtherOption = survey.includeOtherOption,
+                        includeCloseOption = survey.includeCloseOption,
+                    )
+                }
 
             return PPaywallInfo(
                 identifier = paywallInfo.identifier,
@@ -418,7 +458,7 @@ class PaywallInfoMapper {
                 closeReason = closeReason,
                 localNotifications = localNotifications,
                 computedPropertyRequests = computedPropertyRequests,
-                surveys = surveys
+                surveys = surveys,
             )
         }
     }

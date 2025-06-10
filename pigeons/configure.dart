@@ -976,6 +976,34 @@ class PRestoredPaywallResult extends PPaywallResult {
   PRestoredPaywallResult(this.ignore);
 }
 
+sealed class PPresentationResult {
+  PPresentationResult();
+}
+
+class PPlacementNotFoundPresentationResult extends PPresentationResult {
+  bool? ignore;
+  PPlacementNotFoundPresentationResult(this.ignore);
+}
+
+class PNoAudienceMatchPresentationResult extends PPresentationResult {
+  bool? ignore;
+  PNoAudienceMatchPresentationResult(this.ignore);
+}
+
+class PPaywallPresentationResult extends PPresentationResult {
+  PExperiment experiment;
+  PPaywallPresentationResult(this.experiment);
+}
+
+class PHoldoutPresentationResult extends PPresentationResult {
+  PExperiment experiment;
+  PHoldoutPresentationResult(this.experiment);
+}
+
+class PPaywallNotAvailablePresentationResult extends PPresentationResult {
+  bool? ignore;
+  PPaywallNotAvailablePresentationResult(this.ignore);
+}
 // ============= HOST APIs =============
 
 @HostApi()
@@ -1028,6 +1056,11 @@ abstract class PSuperwallHostApi {
   // Configuration methods
   PConfigurationStatus getConfigurationStatus();
   bool getIsConfigured();
+
+  // Presentation methods
+  @async
+  PPresentationResult getPresentationResult(
+      String placement, Map<String, Object>? params);
 
   // Paywall methods
   bool getIsPaywallPresented();

@@ -1,8 +1,8 @@
 import com.superwall.sdk.logger.LogLevel
 import com.superwall.superwallkit_flutter.json.JsonExtensions
 
-fun JsonExtensions.Companion.logLevelFromJson(json: String): LogLevel? {
-    return when (json.lowercase()) {
+fun JsonExtensions.Companion.logLevelFromJson(json: String): LogLevel? =
+    when (json.lowercase()) {
         "debug" -> LogLevel.debug
         "info" -> LogLevel.info
         "warn" -> LogLevel.warn
@@ -10,10 +10,9 @@ fun JsonExtensions.Companion.logLevelFromJson(json: String): LogLevel? {
         "none" -> LogLevel.none
         else -> null
     }
-}
 
-fun LogLevel.toJson(): String {
-    return when (this) {
+fun LogLevel.toJson(): String =
+    when (this) {
         LogLevel.debug -> "debug"
         LogLevel.info -> "info"
         LogLevel.warn -> "warn"
@@ -21,4 +20,3 @@ fun LogLevel.toJson(): String {
         LogLevel.none -> "none"
         else -> "unknown"
     }
-}

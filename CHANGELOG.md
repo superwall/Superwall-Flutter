@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.3.2
+
+### Enhancements
+
+- Expose `getPresentationResult` method
+- Updates Android SDK to 2.2.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.2.2).
 
 ## 2.3.1
 

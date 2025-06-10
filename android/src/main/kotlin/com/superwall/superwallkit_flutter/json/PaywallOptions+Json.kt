@@ -34,11 +34,10 @@ fun JsonExtensions.Companion.restoreFailedFromJson(dictionary: Map<String, Any?>
     }
 }
 
-fun JsonExtensions.Companion.transactionBackgroundViewFromJson(json: String): PaywallOptions.TransactionBackgroundView? {
-    return when (json) {
+fun JsonExtensions.Companion.transactionBackgroundViewFromJson(json: String): PaywallOptions.TransactionBackgroundView? =
+    when (json) {
         "spinner" -> PaywallOptions.TransactionBackgroundView.SPINNER
         // TODO: Add None case to Android SDK
         "none" -> null
         else -> null
     }
-}

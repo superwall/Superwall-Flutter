@@ -27,14 +27,13 @@ fun JsonExtensions.Companion.superwallOptionsFromJson(dictionary: Map<String, An
     }
 }
 
-fun JsonExtensions.Companion.networkEnvironmentFromJson(json: String): SuperwallOptions.NetworkEnvironment? {
-    return when (json) {
+fun JsonExtensions.Companion.networkEnvironmentFromJson(json: String): SuperwallOptions.NetworkEnvironment? =
+    when (json) {
         "release" -> SuperwallOptions.NetworkEnvironment.Release()
         "releaseCandidate" -> SuperwallOptions.NetworkEnvironment.ReleaseCandidate()
         "developer" -> SuperwallOptions.NetworkEnvironment.Developer()
         else -> null
     }
-}
 
 fun JsonExtensions.Companion.loggingFromJson(dictionary: Map<String, Any?>): SuperwallOptions.Logging? {
     val levelString = dictionary["level"] as? String ?: return null
