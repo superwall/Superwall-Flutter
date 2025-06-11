@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
@@ -440,8 +441,8 @@ class Superwall {
     return _subscriptionStatusStream!.asBroadcastStream();
   }
 
-  Future<PresentationResult> getPresentationResult(
-      String placement, Map<String, Object>? params) async {
+  Future<PresentationResult> getPresentationResult(String placement,
+      {Map<String, Object>? params}) async {
     final result = await hostApi.getPresentationResult(placement, params);
     return PresentationResult.fromPigeon(result);
   }
