@@ -1,16 +1,7 @@
 package com.superwall.superwallkit_flutter
 
-import PActive
-import PEntitlement
-import PInactive
-import PPaywallInfo
-import PSubscriptionStatus
 import PSuperwallDelegateGenerated
-import PUnknown
-import PigeonEventSink
-import StreamSubscriptionStatusStreamHandler
 import android.net.Uri
-import com.superwall.sdk.Superwall
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.sdk.delegate.SuperwallDelegate
 import com.superwall.sdk.models.entitlements.SubscriptionStatus
@@ -22,14 +13,16 @@ import com.superwall.superwallkit_flutter.utils.RedemptionResultMapper
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.toPigeon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.URI
 
-class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : SuperwallDelegate {
+class SuperwallDelegateHost(
+    val setup: () -> PSuperwallDelegateGenerated,
+) : SuperwallDelegate {
     private val backingDelegate = setup()
     private val mainScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
+
     private fun onMain(unit: () -> Unit) {
         mainScope.launch {
             unit()
@@ -61,7 +54,6 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
         super.willPresentPaywall(withInfo)
         onMain {
             backingDelegate.willPresentPaywall(PaywallInfoMapper.toPPaywallInfo(withInfo), {})
-
         }
     }
 
@@ -77,7 +69,7 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
         scope: String,
         message: String?,
         info: Map<String, Any>?,
-        error: Throwable?
+        error: Throwable?,
     ) {
         super.handleLog(level, scope, message, info, error)
         onMain {
@@ -87,7 +79,8 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
                 message,
                 info?.mapValues { it.toString() },
                 error?.message,
-                {})
+                {},
+            )
         }
     }
 
@@ -95,8 +88,9 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
         super.handleSuperwallEvent(eventInfo)
         onMain {
             backingDelegate.handleSuperwallEvent(
-                 EventMapper.toPigeonEventInfo(eventInfo), {}
-             )
+                EventMapper.toPigeonEventInfo(eventInfo),
+                {},
+            )
         }
     }
 
@@ -114,7 +108,10 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
         }
     }
 
-    override fun subscriptionStatusDidChange(from: SubscriptionStatus, to: SubscriptionStatus) {
+    override fun subscriptionStatusDidChange(
+        from: SubscriptionStatus,
+        to: SubscriptionStatus,
+    ) {
         super.subscriptionStatusDidChange(from, to)
         onMain {
             backingDelegate.subscriptionStatusDidChange(from.toPigeon(), to.toPigeon(), {})
@@ -134,6 +131,4 @@ class SuperwallDelegateHost(val setup: () -> PSuperwallDelegateGenerated) : Supe
             backingDelegate.didRedeemLink(RedemptionResultMapper.toPRedemptionResult(result), {})
         }
     }
-
-
 }

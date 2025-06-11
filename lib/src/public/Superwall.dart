@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
@@ -8,6 +9,7 @@ import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy
 import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
 import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
 import 'package:superwallkit_flutter/src/public/ConfirmedAssignments.dart';
+import 'package:superwallkit_flutter/src/public/PresentationResult.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 // The primary class for integrating Superwall into your application.
@@ -437,5 +439,11 @@ class Superwall {
             SubscriptionStatus.createSubscriptionStatusFromPSubscriptionStatus(
                 e));
     return _subscriptionStatusStream!.asBroadcastStream();
+  }
+
+  Future<PresentationResult> getPresentationResult(String placement,
+      {Map<String, Object>? params}) async {
+    final result = await hostApi.getPresentationResult(placement, params);
+    return PresentationResult.fromPigeon(result);
   }
 }

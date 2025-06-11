@@ -4,19 +4,20 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 
-
 fun StoreTransaction.pigeonify(): PStoreTransaction {
     val dateFormatter = DateTimeFormatter.ISO_INSTANT
 
-    fun Date.toIsoString(): String? = this.toInstant()
-        .atZone(ZoneId.systemDefault())
-        .format(dateFormatter)
+    fun Date.toIsoString(): String? =
+        this
+            .toInstant()
+            .atZone(ZoneId.systemDefault())
+            .format(dateFormatter)
 
     return PStoreTransaction(
         configRequestId = configRequestId,
         appSessionId = appSessionId,
         transactionDate = transactionDate?.toIsoString(),
-        originalTransactionIdentifier = originalTransactionIdentifier?:"",
+        originalTransactionIdentifier = originalTransactionIdentifier ?: "",
         storeTransactionId = storeTransactionId,
         originalTransactionDate = originalTransactionDate?.toIsoString(),
         webOrderLineItemID = webOrderLineItemID,
@@ -25,22 +26,24 @@ fun StoreTransaction.pigeonify(): PStoreTransaction {
         isUpgraded = isUpgraded,
         expirationDate = expirationDate?.toIsoString(),
         offerId = offerId,
-        revocationDate = revocationDate?.toIsoString()
+        revocationDate = revocationDate?.toIsoString(),
     )
 }
 
 fun StoreTransactionType.pigeonify(): PStoreTransaction {
     val dateFormatter = DateTimeFormatter.ISO_INSTANT
 
-    fun Date.toIsoString(): String? = this.toInstant()
-        .atZone(ZoneId.systemDefault())
-        .format(dateFormatter)
+    fun Date.toIsoString(): String? =
+        this
+            .toInstant()
+            .atZone(ZoneId.systemDefault())
+            .format(dateFormatter)
 
     return PStoreTransaction(
         configRequestId = "",
         appSessionId = "",
         transactionDate = transactionDate?.toIsoString(),
-        originalTransactionIdentifier = originalTransactionIdentifier?:"",
+        originalTransactionIdentifier = originalTransactionIdentifier ?: "",
         storeTransactionId = storeTransactionId,
         originalTransactionDate = originalTransactionDate?.toIsoString(),
         webOrderLineItemID = webOrderLineItemID,
@@ -49,6 +52,6 @@ fun StoreTransactionType.pigeonify(): PStoreTransaction {
         isUpgraded = isUpgraded,
         expirationDate = expirationDate?.toIsoString(),
         offerId = offerId,
-        revocationDate = revocationDate?.toIsoString()
+        revocationDate = revocationDate?.toIsoString(),
     )
 }

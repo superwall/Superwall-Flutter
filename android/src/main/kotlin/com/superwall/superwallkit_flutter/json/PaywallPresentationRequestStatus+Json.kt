@@ -15,29 +15,31 @@ import com.superwall.sdk.paywall.presentation.internal.PaywallPresentationReques
 import com.superwall.sdk.paywall.presentation.internal.PaywallPresentationRequestStatusReason
 import pigeonify
 
-fun PaywallPresentationRequestStatus.pigeonify(): PPaywallPresentationRequestStatusType = when (this) {
-    PaywallPresentationRequestStatus.Presentation -> PPaywallPresentationRequestStatusType.PRESENTATION
-    PaywallPresentationRequestStatus.NoPresentation -> PPaywallPresentationRequestStatusType.NO_PRESENTATION
-    PaywallPresentationRequestStatus.Timeout -> PPaywallPresentationRequestStatusType.TIMEOUT
-}
+fun PaywallPresentationRequestStatus.pigeonify(): PPaywallPresentationRequestStatusType =
+    when (this) {
+        PaywallPresentationRequestStatus.Presentation -> PPaywallPresentationRequestStatusType.PRESENTATION
+        PaywallPresentationRequestStatus.NoPresentation -> PPaywallPresentationRequestStatusType.NO_PRESENTATION
+        PaywallPresentationRequestStatus.Timeout -> PPaywallPresentationRequestStatusType.TIMEOUT
+    }
 
-fun PaywallPresentationRequestStatusReason.pigeonify(): PPaywallPresentationRequestStatusReason = when (this) {
-    is PaywallPresentationRequestStatusReason.DebuggerPresented ->
-        PStatusReasonDebuggerPresented()
-    is PaywallPresentationRequestStatusReason.Holdout -> 
-        PStatusReasonHoldout(experiment.pigeonify())
-    is PaywallPresentationRequestStatusReason.NoAudienceMatch -> 
-        PStatusReasonNoAudienceMatch()
-    is PaywallPresentationRequestStatusReason.PlacementNotFound -> 
-        PStatusReasonPlacementNotFound()
-    is PaywallPresentationRequestStatusReason.NoPaywallView -> 
-        PStatusReasonNoPaywallVc()
-    is PaywallPresentationRequestStatusReason.NoPresenter -> 
-        PStatusReasonNoPresenter()
-    is PaywallPresentationRequestStatusReason.NoConfig -> 
-        PStatusReasonNoConfig()
-    is PaywallPresentationRequestStatusReason.PaywallAlreadyPresented -> 
-        PStatusReasonPaywallAlreadyPresented()
-    else -> 
-        PStatusReasonSubsStatusTimeout()
-}
+fun PaywallPresentationRequestStatusReason.pigeonify(): PPaywallPresentationRequestStatusReason =
+    when (this) {
+        is PaywallPresentationRequestStatusReason.DebuggerPresented ->
+            PStatusReasonDebuggerPresented()
+        is PaywallPresentationRequestStatusReason.Holdout ->
+            PStatusReasonHoldout(experiment.pigeonify())
+        is PaywallPresentationRequestStatusReason.NoAudienceMatch ->
+            PStatusReasonNoAudienceMatch()
+        is PaywallPresentationRequestStatusReason.PlacementNotFound ->
+            PStatusReasonPlacementNotFound()
+        is PaywallPresentationRequestStatusReason.NoPaywallView ->
+            PStatusReasonNoPaywallVc()
+        is PaywallPresentationRequestStatusReason.NoPresenter ->
+            PStatusReasonNoPresenter()
+        is PaywallPresentationRequestStatusReason.NoConfig ->
+            PStatusReasonNoConfig()
+        is PaywallPresentationRequestStatusReason.PaywallAlreadyPresented ->
+            PStatusReasonPaywallAlreadyPresented()
+        else ->
+            PStatusReasonSubsStatusTimeout()
+    }

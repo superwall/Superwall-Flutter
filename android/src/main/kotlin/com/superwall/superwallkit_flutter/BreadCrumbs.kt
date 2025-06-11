@@ -1,6 +1,5 @@
 package com.superwall.superwallkit_flutter
 
-
 object BreadCrumbs {
     private val logBuilder = StringBuilder()
 

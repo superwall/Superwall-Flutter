@@ -6,6 +6,7 @@ import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
 import PEntitlement
+import PExperiment
 import PEntitlements
 import PFeatureHandlerGenerated
 import PFeatureHandlerHost
@@ -14,6 +15,12 @@ import PInactive
 import PPaywallInfo
 import PPaywallPresentationHandlerGenerated
 import PPaywallPresentationHandlerHost
+import PPresentationResult
+import PPlacementNotFoundPresentationResult
+import PNoAudienceMatchPresentationResult
+import PPaywallPresentationResult
+import PHoldoutPresentationResult
+import PPaywallNotAvailablePresentationResult
 import PPurchaseControllerGenerated
 import PPurchaseControllerHost
 import PRestorationFailed
@@ -57,6 +64,8 @@ import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.delegate.RestorationResult
 import com.superwall.sdk.logger.LogLevel
 import com.superwall.sdk.misc.ActivityProvider
+import com.superwall.sdk.paywall.presentation.get_presentation_result.getPresentationResult
+import com.superwall.sdk.paywall.presentation.result.PresentationResult
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.fromPigeon
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.toPigeon
 import kotlinx.coroutines.Job
@@ -157,7 +166,7 @@ class SuperwallHost(
 
     override fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit) {
         ioScope.launch {
-            val unfiltered : Map<String, Any?> = Superwall.instance.deviceAttributes()
+            val unfiltered: Map<String, Any?> = Superwall.instance.deviceAttributes()
             val attributes: Map<String, Any> = unfiltered.filterNot {
                 it.value == null
             }.toMap() as Map<String, Any>
@@ -252,6 +261,57 @@ class SuperwallHost(
     override fun getLatestPaywallInfo(): PPaywallInfo? {
         return Superwall.instance.latestPaywallInfo?.let {
             PaywallInfoMapper.toPPaywallInfo(it)
+        }
+    }
+
+    override fun getPresentationResult(
+        placement: String,
+        params: Map<String, Any>?,
+        callback: (Result<PPresentationResult>) -> Unit
+    ) {
+        fun toPExperiment(experiment: Experiment) =
+            PExperiment(
+                id = experiment.id,
+                groupId = experiment.groupId,
+                variant = PVariant(
+                    id = experiment.variant.id,
+                    type = when (experiment.variant.type) {
+                        Experiment.Variant.VariantType.TREATMENT -> PVariantType.TREATMENT
+                        else -> PVariantType.HOLDOUT
+                    },
+                    paywallId = experiment.variant.paywallId
+                )
+            )
+
+        ioScope.launch {
+            Superwall.instance.getPresentationResult(placement, params).fold({
+                when (it) {
+                    is PresentationResult.PlacementNotFound -> PPlacementNotFoundPresentationResult(
+                        false
+                    )
+
+                    is PresentationResult.NoAudienceMatch -> PNoAudienceMatchPresentationResult(
+                        false
+                    )
+
+                    is PresentationResult.Paywall -> PPaywallPresentationResult(
+                        toPExperiment(it.experiment)
+                    )
+
+                    is PresentationResult.Holdout -> PHoldoutPresentationResult(
+                        toPExperiment(it.experiment)
+                    )
+
+                    is PresentationResult.PaywallNotAvailable -> PPaywallNotAvailablePresentationResult(
+                        false
+                    )
+
+                }.let {
+                    callback(Result.success(it))
+                }
+            }, {
+                callback(Result.failure(it))
+            })
         }
     }
 

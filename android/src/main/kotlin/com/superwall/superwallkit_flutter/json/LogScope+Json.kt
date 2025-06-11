@@ -1,8 +1,8 @@
 import com.superwall.sdk.logger.LogScope
 import com.superwall.superwallkit_flutter.json.JsonExtensions
 
-fun JsonExtensions.Companion.logScopeFromJson(json: String): LogScope? {
-    return when (json) {
+fun JsonExtensions.Companion.logScopeFromJson(json: String): LogScope? =
+    when (json) {
         "localizationmanager" -> LogScope.localizationManager
         "bouncebutton" -> LogScope.bounceButton
         "coredata" -> LogScope.coreData
@@ -28,4 +28,3 @@ fun JsonExtensions.Companion.logScopeFromJson(json: String): LogScope? {
         "all" -> LogScope.all
         else -> null
     }
-}
