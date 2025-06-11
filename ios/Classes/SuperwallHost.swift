@@ -317,6 +317,19 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
       }
     }
   }
+
+  func getPresentationResult(
+    placement: String,
+    params: [String : Any]?,
+    completion: @escaping (Result<any PPresentationResult, any Error>) -> Void
+  ) {
+    Superwall.shared.getPresentationResult(
+      forPlacement: placement,
+      params: params
+    ) { result in
+      completion(.success(result.pigeonify()))
+    }
+  }
 }
 
 final class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamHandler {
