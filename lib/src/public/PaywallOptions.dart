@@ -24,6 +24,10 @@ class PaywallOptions {
   /// Defaults to `.spinner`.
   TransactionBackgroundView transactionBackgroundView =
       TransactionBackgroundView.spinner;
+
+  /// Shows an alert asking the user if they'd like to try to restore on the web, if you have added web checkout on the
+  /// Superwall dashboard. Defaults to `true`.
+  bool shouldShowWebRestorationAlert = true;
 }
 
 extension PaywallOptionsJson on PaywallOptions {
@@ -34,7 +38,8 @@ extension PaywallOptionsJson on PaywallOptions {
       'shouldShowPurchaseFailureAlert': shouldShowPurchaseFailureAlert,
       'shouldPreload': shouldPreload,
       'automaticallyDismiss': automaticallyDismiss,
-      'transactionBackgroundView': transactionBackgroundView.toJson()
+      'transactionBackgroundView': transactionBackgroundView.toJson(),
+      'shouldShowWebRestorationAlert': shouldShowWebRestorationAlert,
     };
   }
 }
