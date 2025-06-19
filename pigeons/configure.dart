@@ -1094,6 +1094,8 @@ abstract class PSuperwallDelegateGenerated {
       Map<String, Object>? info, String? error);
   void willRedeemLink();
   void didRedeemLink(PRedemptionResult result);
+  void handleSuperwallDeepLink(String fullURL, List<String> pathComponents,
+      Map<String, String> queryParameters);
 }
 
 // ============= FLUTTER APIs =============

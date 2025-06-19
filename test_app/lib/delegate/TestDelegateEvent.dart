@@ -56,3 +56,12 @@ class WillPresentPaywallEvent extends TestDelegateEvent {
   final PaywallInfo paywallInfo;
   WillPresentPaywallEvent(this.paywallInfo);
 }
+
+class HandleSuperwallDeepLinkEvent extends TestDelegateEvent {
+  final Uri fullURL;
+  List<String> pathComponents;
+  Map<String, String> queryParameters;
+
+  HandleSuperwallDeepLinkEvent(
+      this.fullURL, this.pathComponents, this.queryParameters);
+}

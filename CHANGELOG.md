@@ -2,6 +2,16 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.3.4
+
+### Enhancements
+
+- Updates iOS SDK to 4.5.2 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.5.2).
+
+### Fixes
+
+- Fixes issue where `shouldShowWebRestorationAlert` wasn't getting through to the iOS `PaywallOptions`.
+
 ## 2.3.3
 
 ### Enhancements

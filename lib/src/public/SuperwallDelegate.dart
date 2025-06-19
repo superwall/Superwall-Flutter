@@ -51,6 +51,11 @@ abstract class SuperwallDelegate {
 
   /// A code was redeemed from a web paywall.
   void didRedeemLink(RedemptionResult result) => {};
+
+  /// Called after handling a Superwall deep link with the format
+  /// `yoursubdomain.superwall.app/app-link/...`.
+  void handleSuperwallDeepLink(Uri fullURL, List<String> pathComponents,
+      Map<String, String> queryParameters);
 }
 
 class SuperwallDelegateHost implements PSuperwallDelegateGenerated {
@@ -147,6 +152,17 @@ class SuperwallDelegateHost implements PSuperwallDelegateGenerated {
       _delegate.didRedeemLink(type);
     } catch (e) {
       // Error parsing RedemptionResult
+    }
+  }
+
+  @override
+  void handleSuperwallDeepLink(String fullURL, List<String> pathComponents,
+      Map<String, String> queryParameters) {
+    try {
+      final uri = Uri.parse(fullURL);
+      _delegate.handleSuperwallDeepLink(uri, pathComponents, queryParameters);
+    } catch (e) {
+      // Error parsing URL
     }
   }
 }

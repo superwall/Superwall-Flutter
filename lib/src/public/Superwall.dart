@@ -63,16 +63,10 @@ class Superwall {
       SuperwallOptions options) {
     final generatedOptions = generated.PSuperwallOptions();
 
-    // Convert the PaywallOptions if available
-    if (options.paywalls != null) {
-      generatedOptions.paywalls = _convertPaywallOptions(options.paywalls!);
-    }
+    generatedOptions.paywalls = _convertPaywallOptions(options.paywalls);
 
-    // Convert NetworkEnvironment if available
-    if (options.networkEnvironment != null) {
-      generatedOptions.networkEnvironment =
-          _convertNetworkEnvironment(options.networkEnvironment!);
-    }
+    generatedOptions.networkEnvironment =
+        _convertNetworkEnvironment(options.networkEnvironment);
 
     // Copy primitive values
     generatedOptions.isExternalDataCollectionEnabled =
@@ -83,9 +77,7 @@ class Superwall {
         options.passIdentifiersToPlayStore;
 
     // Convert Logging if available
-    if (options.logging != null) {
-      generatedOptions.logging = _convertLogging(options.logging!);
-    }
+    generatedOptions.logging = _convertLogging(options.logging);
 
     return generatedOptions;
   }
@@ -100,18 +92,16 @@ class Superwall {
         options.shouldShowPurchaseFailureAlert;
     generatedOptions.shouldPreload = options.shouldPreload;
     generatedOptions.automaticallyDismiss = options.automaticallyDismiss;
+    generatedOptions.shouldShowWebRestorationAlert =
+        options.shouldShowWebRestorationAlert;
 
-    if (options.restoreFailed != null) {
-      generatedOptions.restoreFailed = generated.PRestoreFailed()
-        ..title = options.restoreFailed!.title
-        ..message = options.restoreFailed!.message
-        ..closeButtonTitle = options.restoreFailed!.closeButtonTitle;
-    }
+    generatedOptions.restoreFailed = generated.PRestoreFailed()
+      ..title = options.restoreFailed.title
+      ..message = options.restoreFailed.message
+      ..closeButtonTitle = options.restoreFailed.closeButtonTitle;
 
-    if (options.transactionBackgroundView != null) {
-      generatedOptions.transactionBackgroundView =
-          _convertTransactionBackgroundView(options.transactionBackgroundView!);
-    }
+    generatedOptions.transactionBackgroundView =
+        _convertTransactionBackgroundView(options.transactionBackgroundView);
 
     return generatedOptions;
   }

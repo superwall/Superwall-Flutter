@@ -72,6 +72,7 @@ class _MyAppState extends State<MyApp> {
 
       final options = SuperwallOptions();
       options.paywalls.shouldPreload = false;
+      options.paywalls.shouldShowWebRestorationAlert = false;
       // options.logging = logging;
 
       // MARK: Step 2 - Configure Superwall
