@@ -60,4 +60,11 @@ class TestDelegate extends SuperwallDelegate {
   void willPresentPaywall(PaywallInfo paywallInfo) {
     events.add(WillPresentPaywallEvent(paywallInfo));
   }
+
+  @override
+  void handleSuperwallDeepLink(Uri fullURL, List<String> pathComponents,
+      Map<String, String> queryParameters) {
+    events.add(
+        HandleSuperwallDeepLinkEvent(fullURL, pathComponents, queryParameters));
+  }
 }

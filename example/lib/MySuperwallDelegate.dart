@@ -87,4 +87,10 @@ class MySuperwallDelegate extends SuperwallDelegate {
   void willPresentPaywall(PaywallInfo paywallInfo) {
     logging.info('willPresentPaywall: $paywallInfo');
   }
+
+  @override
+  void handleSuperwallDeepLink(Uri fullURL, List<String> pathComponents,
+      Map<String, String> queryParameters) {
+    logging.info('handleSuperwallDeepLink: $fullURL');
+  }
 }

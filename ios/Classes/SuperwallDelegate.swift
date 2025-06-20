@@ -394,4 +394,17 @@ final class SuperwallDelegateHost: SuperwallDelegate {
       // NO-OP
     }
   }
+
+  func handleSuperwallDeepLink(
+    _ fullURL: URL,
+    pathComponents: [String],
+    queryParameters: [String : String]
+  ) {
+    flutterDelegate().handleSuperwallDeepLink(
+      fullURL: fullURL.absoluteString,
+      pathComponents: pathComponents,
+      queryParameters: queryParameters) { _ in
+        // NO-OP
+      }
+  }
 }
