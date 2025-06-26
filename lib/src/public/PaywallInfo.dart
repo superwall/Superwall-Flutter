@@ -19,7 +19,7 @@ class PaywallInfo {
       experiment: Experiment.fromPigeon(pigeonInfo.experiment),
       productIds: pigeonInfo.productIds,
       products:
-          pigeonInfo.products?.map((p) => Product.fromPigeon(p)!!).toList(),
+          pigeonInfo.products?.map((p) => Product.fromPigeon(p)!).toList(),
       url: pigeonInfo.url,
       presentedByPlacementWithName: pigeonInfo.presentedByPlacementWithName,
       presentedByPlacementWithId: pigeonInfo.presentedByPlacementWithId,

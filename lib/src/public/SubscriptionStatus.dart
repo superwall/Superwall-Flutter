@@ -1,8 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
-import 'package:superwallkit_flutter/src/public/Entitlement.dart';
-
-import '../../superwallkit_flutter.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// An enum representing the subscription status of the user.
 sealed class SubscriptionStatus {

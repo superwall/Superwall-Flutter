@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class Home extends StatelessWidget {
+  const Home({super.key});
+
 // Home screen with buttons to trigger Superwall events and navigation.
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Home'),
+          title: const Text('Home'),
         ),
         body: Center(
           child: Column(
@@ -17,12 +19,12 @@ class Home extends StatelessWidget {
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                            Text('Subscription Status: ${status}',
+                            Text('Subscription Status: $status',
                                 textAlign: TextAlign.center),
                           ]))),
               ElevatedButton(
                 // Launch Non-Gated Feature.
-                child: Text('Launch Non-Gated Feature'),
+                child: const Text('Launch Non-Gated Feature'),
                 onPressed: () async {
                   await Superwall.shared.registerPlacement('non_gated',
                       feature: () {
@@ -36,7 +38,7 @@ class Home extends StatelessWidget {
               ),
               ElevatedButton(
                 // Launch Pro Feature.
-                child: Text('Launch Pro Feature'),
+                child: const Text('Launch Pro Feature'),
                 onPressed: () async {
                   await Superwall.shared.registerPlacement('pro', feature: () {
                     Navigator.pushNamed(
@@ -49,7 +51,7 @@ class Home extends StatelessWidget {
               ),
               ElevatedButton(
                 // Launch Diamond Feature.
-                child: Text('Launch Diamond Feature'),
+                child: const Text('Launch Diamond Feature'),
                 onPressed: () async {
                   await Superwall.shared.registerPlacement('diamond',
                       feature: () {
@@ -63,14 +65,14 @@ class Home extends StatelessWidget {
               ),
               ElevatedButton(
                 // Identify action.
-                child: Text('Identify'),
+                child: const Text('Identify'),
                 onPressed: () {
                   Superwall.shared.identify('abc');
                 },
               ),
               ElevatedButton(
                 // Reset action.
-                child: Text('Reset'),
+                child: const Text('Reset'),
                 onPressed: () {
                   Superwall.shared.reset();
                 },

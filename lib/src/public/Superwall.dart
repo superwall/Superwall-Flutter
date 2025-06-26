@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/widgets.dart';
+
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
@@ -7,8 +7,6 @@ import 'package:superwallkit_flutter/src/private/ConfigureCompletionProxy.dart';
 import 'package:superwallkit_flutter/src/private/FeatureBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
 import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
-import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
-import 'package:superwallkit_flutter/src/public/ConfirmedAssignments.dart';
 import 'package:superwallkit_flutter/src/public/PresentationResult.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
@@ -36,9 +34,9 @@ class Superwall {
     final purchaseControllerHost =
         purchaseController != null ? generated.PPurchaseControllerHost() : null;
 
-    final proxy = purchaseController != null
-        ? PurchaseControllerProxy.register(purchaseController)
-        : null;
+    if (purchaseController != null) {
+      PurchaseControllerProxy.register(purchaseController);
+    }
     // Convert SuperwallOptions to generated.PSuperwallOptions if needed
     final generatedOptions =
         options != null ? _convertToGeneratedOptions(options) : null;
@@ -46,9 +44,9 @@ class Superwall {
     final completionHost =
         completion != null ? generated.PConfigureCompletionHost() : null;
 
-    final completionProxy = completion != null
-        ? ConfigureCompletionProxy.register(completion)
-        : null;
+    if (completion != null) {
+      ConfigureCompletionProxy.register(completion);
+    }
 
     hostApi.configure(apiKey,
         purchaseController: purchaseControllerHost,
@@ -134,13 +132,11 @@ class Superwall {
   static generated.PLogging _convertLogging(Logging logging) {
     final generatedLogging = generated.PLogging();
 
-    if (logging.level != null) {
-      generatedLogging.level = _convertLogLevel(logging.level!);
-    }
+    generatedLogging.level = _convertLogLevel(logging.level);
 
-    if (logging.scopes != null && logging.scopes!.isNotEmpty) {
+    if (logging.scopes.isNotEmpty) {
       generatedLogging.scopes =
-          logging.scopes!.map((scope) => _convertLogScope(scope)).toList();
+          logging.scopes.map((scope) => _convertLogScope(scope)).toList();
     }
 
     return generatedLogging;
@@ -212,22 +208,6 @@ class Superwall {
     }
   }
 
-  // Helper method to convert from generated.PLogLevel to LogLevel
-  static LogLevel _convertFromGeneratedLogLevel(generated.PLogLevel level) {
-    switch (level) {
-      case generated.PLogLevel.debug:
-        return LogLevel.debug;
-      case generated.PLogLevel.info:
-        return LogLevel.info;
-      case generated.PLogLevel.warn:
-        return LogLevel.warn;
-      case generated.PLogLevel.error:
-        return LogLevel.error;
-      case generated.PLogLevel.none:
-        return LogLevel.none;
-    }
-  }
-
   // Resets the user ID, on-device paywall assignments, and stored data
   Future<void> reset() async {
     await hostApi.reset();
@@ -292,7 +272,7 @@ class Superwall {
   Future<Entitlements> getEntitlements() async {
     final entitlements = await hostApi.getEntitlements();
     map(List<PEntitlement> entitlements) =>
-        entitlements.map((e) => Entitlement(id: e.id!!)).toSet();
+        entitlements.map((e) => Entitlement(id: e.id!)).toSet();
 
     return Entitlements(
         active: map(entitlements.active),
@@ -302,7 +282,8 @@ class Superwall {
 
   // Gets the latest PaywallInfo object
   Future<PaywallInfo?> getLatestPaywallInfo() async {
-    final paywallInfoBridgeId = await hostApi.getLatestPaywallInfo();
+    await hostApi.getLatestPaywallInfo();
+    return null;
   }
 
   // Gets the subscription status of the user
@@ -369,19 +350,18 @@ class Superwall {
       {Map<String, Object>? params,
       PaywallPresentationHandler? handler,
       Function? feature}) async {
-    final handlerProxy = handler != null
-        ? PaywallPresentationHandlerProxy.register(handler, hostId: placement)
-        : null;
-
+    if (handler != null) {
+      PaywallPresentationHandlerProxy.register(handler, hostId: placement);
+    }
     final handlerHost = handler != null
         ? generated.PPaywallPresentationHandlerHost(hostId: placement)
         : null;
     final featureBlockHost = feature != null
         ? generated.PFeatureHandlerHost(hostId: "${placement}handler")
         : null;
-    final featureBlock = feature != null
-        ? FeatureBlockProxy.register(feature, hostId: placement)
-        : null;
+    if (feature != null) {
+      FeatureBlockProxy.register(feature, hostId: placement);
+    }
 
     await hostApi.registerPlacement(placement,
         params: params,
@@ -399,7 +379,7 @@ class Superwall {
     generated.PIdentityOptions? generatedOptions;
 
     if (options != null) {
-      generated.PIdentityOptions generatedOptions = generated.PIdentityOptions(
+      generatedOptions = generated.PIdentityOptions(
           restorePaywallAssignments: options.restorePaywallAssignments);
     }
 

@@ -8,7 +8,7 @@ sealed class RestorationResult {
 
   static RestorationResult fromPRestorationResult(dynamic result) {
     if (result is PRestorationRestored) {
-      return RestorationResultRestored();
+      return const RestorationResultRestored();
     } else if (result is PRestorationFailed) {
       return RestorationResultFailed(error: result.error ?? 'Unknown error');
     } else {

@@ -8,11 +8,11 @@ class LaunchedFeature extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Retrieve the navigation arguments (expected to be a String)
-    final String value = ModalRoute.of(context)?.settings.arguments as String;
+    final value = ModalRoute.of(context)?.settings.arguments as String;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Launched Feature'),
+        title: const Text('Launched Feature'),
       ),
       body: Center(
         child: Padding(
@@ -22,8 +22,8 @@ class LaunchedFeature extends StatelessWidget {
             controller: TextEditingController(text: value),
             readOnly: true,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
-            decoration: InputDecoration(
+            style: const TextStyle(fontSize: 16),
+            decoration: const InputDecoration(
               border: OutlineInputBorder(),
             ),
           ),

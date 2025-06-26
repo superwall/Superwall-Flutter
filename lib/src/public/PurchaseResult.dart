@@ -35,7 +35,7 @@ sealed class PurchaseResult {
     } else if (result is PurchaseResultPending) {
       return PPurchasePending();
     } else if (result is PurchaseResultFailed) {
-      return PPurchaseFailed(error: (result as PurchaseResultFailed).error);
+      return PPurchaseFailed(error: (result).error);
     } else {
       throw ArgumentError('Unknown PurchaseResult type');
     }

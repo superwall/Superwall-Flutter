@@ -1,9 +1,5 @@
-import 'package:superwallkit_flutter/superwallkit_flutter.dart';
-
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
-import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
-import 'package:superwallkit_flutter/src/public/PaywallResult.dart';
-import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// A proxy class that bridges between the Flutter PaywallPresentationHandler
 /// and the generated PPaywallPresentationHandlerGenerated interface.
@@ -22,15 +18,15 @@ class PaywallPresentationHandlerProxy
   @override
   void onPresent(PPaywallInfo paywallInfo) {
     if (handler.onPresentHandler != null) {
-      handler.onPresentHandler!(PaywallInfo.fromPigeon(paywallInfo)!!);
+      handler.onPresentHandler!(PaywallInfo.fromPigeon(paywallInfo)!);
     }
   }
 
   @override
   void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult) {
     if (handler.onDismissHandler != null) {
-      handler.onDismissHandler!(PaywallInfo.fromPigeon(paywallInfo)!!,
-          PaywallResult.fromPigeon(paywallResult)!!);
+      handler.onDismissHandler!(PaywallInfo.fromPigeon(paywallInfo)!,
+          PaywallResult.fromPigeon(paywallResult)!);
     }
   }
 
@@ -44,7 +40,7 @@ class PaywallPresentationHandlerProxy
   @override
   void onSkip(PPaywallSkippedReason reason) {
     if (handler.onSkipHandler != null) {
-      handler.onSkipHandler!(PaywallSkippedReason.fromPigeon(reason)!!);
+      handler.onSkipHandler!(PaywallSkippedReason.fromPigeon(reason)!);
     }
   }
 }

@@ -33,13 +33,12 @@ class MySuperwallDelegate extends SuperwallDelegate {
   @override
   void handleLog(String level, String scope, String? message,
       Map<dynamic, dynamic>? info, String? error) {
-    print("handleLog: $level, $scope, $message, $info, $error");
+    print('handleLog: $level, $scope, $message, $info, $error');
     // logging.info("handleLog: $level, $scope, $message, $info, $error");
   }
 
   @override
   Future<void> handleSuperwallEvent(SuperwallEventInfo eventInfo) async {
-    //TODO: Change this
     // This delegate function is noisy. Uncomment to debug.
     //logging.info('handleSuperwallEvent: $eventInfo');
     //switch (eventInfo.event.type) {

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
+
 import 'MySuperwallDelegate.dart';
 import 'RCPurchaseController.dart';
 import 'home.dart';
@@ -318,9 +319,9 @@ class _MyAppState extends State<MyApp> {
         initialRoute: '/',
         routes: {
           // Home screen is the default route.
-          '/': (context) => Home(),
+          '/': (context) => const Home(),
           // LaunchedFeature route receives a string argument.
-          '/launchedFeature': (context) => LaunchedFeature(),
+          '/launchedFeature': (context) => const LaunchedFeature(),
         },
       );
 }

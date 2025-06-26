@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:superwallkit_flutter/src/public/Superwall.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class SuperwallBuilder extends StatefulWidget {
@@ -9,9 +8,9 @@ class SuperwallBuilder extends StatefulWidget {
       builder;
 
   const SuperwallBuilder({
-    Key? key,
+    super.key,
     required this.builder,
-  }) : super(key: key);
+  });
 
   @override
   State<SuperwallBuilder> createState() => _SuperwallBuilderState();

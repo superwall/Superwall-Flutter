@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart'
@@ -65,12 +66,11 @@ class RCPurchaseController extends PurchaseController {
   Future<PurchaseResult> purchaseFromGooglePlay(
       String productId, String? basePlanId, String? offerId) async {
     // Find products matching productId from RevenueCat
-    List<StoreProduct> products =
-        await PurchasesAdditions.getAllProducts([productId]);
+    final products = await PurchasesAdditions.getAllProducts([productId]);
 
     // Choose the product which matches the given base plan.
     // If no base plan set, select first product or fail.
-    String storeProductId = "$productId:$basePlanId";
+    final storeProductId = '$productId:$basePlanId';
 
     // Try to find the first product where the googleProduct's basePlanId matches the given basePlanId.
     StoreProduct? matchingProduct;
@@ -87,28 +87,27 @@ class RCPurchaseController extends PurchaseController {
     }
 
     // If a matching product is not found, then try to get the first product from the list.
-    StoreProduct? storeProduct =
+    final storeProduct =
         matchingProduct ?? (products.isNotEmpty ? products.first : null);
 
     // If no product is found (either matching or the first one), return a failed purchase result.
     if (storeProduct == null) {
-      return PurchaseResult.failed("Product not found");
+      return PurchaseResult.failed('Product not found');
     }
 
     switch (storeProduct.productCategory) {
       case ProductCategory.subscription:
-        SubscriptionOption? subscriptionOption =
-            await _fetchGooglePlaySubscriptionOption(
-                storeProduct, basePlanId, offerId);
+        final subscriptionOption = await _fetchGooglePlaySubscriptionOption(
+            storeProduct, basePlanId, offerId);
         if (subscriptionOption == null) {
           return PurchaseResult.failed(
-              "Valid subscription option not found for product.");
+              'Valid subscription option not found for product.');
         }
         return await _purchaseSubscriptionOption(subscriptionOption);
       case ProductCategory.nonSubscription:
         return await _purchaseStoreProduct(storeProduct);
       case null:
-        return PurchaseResult.failed("Unable to determine product category");
+        return PurchaseResult.failed('Unable to determine product category');
     }
   }
 
@@ -150,13 +149,12 @@ class RCPurchaseController extends PurchaseController {
     // Define the async perform purchase function
     Future<CustomerInfo> performPurchase() async {
       // Attempt to purchase product
-      CustomerInfo customerInfo =
+      final customerInfo =
           await Purchases.purchaseSubscriptionOption(subscriptionOption);
       return customerInfo;
     }
 
-    PurchaseResult purchaseResult =
-        await _handleSharedPurchase(performPurchase);
+    final purchaseResult = await _handleSharedPurchase(performPurchase);
     return purchaseResult;
   }
 
@@ -165,13 +163,11 @@ class RCPurchaseController extends PurchaseController {
     // Define the async perform purchase function
     Future<CustomerInfo> performPurchase() async {
       // Attempt to purchase product
-      CustomerInfo customerInfo =
-          await Purchases.purchaseStoreProduct(storeProduct);
+      final customerInfo = await Purchases.purchaseStoreProduct(storeProduct);
       return customerInfo;
     }
 
-    PurchaseResult purchaseResult =
-        await _handleSharedPurchase(performPurchase);
+    final purchaseResult = await _handleSharedPurchase(performPurchase);
     return purchaseResult;
   }
 
@@ -180,23 +176,23 @@ class RCPurchaseController extends PurchaseController {
       Future<CustomerInfo> Function() performPurchase) async {
     try {
       // Perform the purchase using the function provided
-      CustomerInfo customerInfo = await performPurchase();
+      final customerInfo = await performPurchase();
 
       // Handle the results
       if (customerInfo.hasActiveEntitlementOrSubscription()) {
         return PurchaseResult.purchased;
       } else {
-        return PurchaseResult.failed("No active subscriptions found.");
+        return PurchaseResult.failed('No active subscriptions found.');
       }
     } on PlatformException catch (e) {
-      var errorCode = PurchasesErrorHelper.getErrorCode(e);
+      final errorCode = PurchasesErrorHelper.getErrorCode(e);
       if (errorCode == PurchasesErrorCode.paymentPendingError) {
         return PurchaseResult.pending;
       } else if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
         return PurchaseResult.cancelled;
       } else {
         return PurchaseResult.failed(
-            e.message ?? "Purchase failed in RCPurchaseController");
+            e.message ?? 'Purchase failed in RCPurchaseController');
       }
     }
   }
@@ -213,7 +209,7 @@ class RCPurchaseController extends PurchaseController {
     } on PlatformException catch (e) {
       // Error restoring purchases
       return RestorationResult.failed(
-          e.message ?? "Restore failed in RCPurchaseController");
+          e.message ?? 'Restore failed in RCPurchaseController');
     }
   }
 }
@@ -221,7 +217,7 @@ class RCPurchaseController extends PurchaseController {
 // MARK: Helpers
 
 String _buildSubscriptionOptionId(String? basePlanId, String? offerId) {
-  String result = '';
+  var result = '';
 
   if (basePlanId != null) {
     result += basePlanId;
@@ -238,12 +234,11 @@ String _buildSubscriptionOptionId(String? basePlanId, String? offerId) {
 }
 
 extension CustomerInfoAdditions on CustomerInfo {
-  bool hasActiveEntitlementOrSubscription() {
-    return (activeSubscriptions.isNotEmpty || entitlements.active.isNotEmpty);
-  }
+  bool hasActiveEntitlementOrSubscription() =>
+      activeSubscriptions.isNotEmpty || entitlements.active.isNotEmpty;
 
   DateTime? getLatestTransactionPurchaseDate() {
-    Map<String, String?> allPurchaseDates = this.allPurchaseDates;
+    final allPurchaseDates = this.allPurchaseDates;
 
     // Return null if there are no purchase dates
     if (allPurchaseDates.entries.isEmpty) {
@@ -251,14 +246,14 @@ extension CustomerInfoAdditions on CustomerInfo {
     }
 
     // Initialise the latestDate with the earliest possible date
-    DateTime latestDate = DateTime.fromMillisecondsSinceEpoch(0);
+    var latestDate = DateTime.fromMillisecondsSinceEpoch(0);
 
     // Iterate over each entry in the map
     allPurchaseDates.forEach((key, value) {
       // Check if the value is not null
       if (value != null) {
         // Parse the date from the string value
-        DateTime date = DateTime.parse(value);
+        final date = DateTime.parse(value);
         // Update the latestDate if the current date is after the latestDate
         if (date.isAfter(latestDate)) {
           latestDate = date;
@@ -274,8 +269,8 @@ extension CustomerInfoAdditions on CustomerInfo {
 extension PurchasesAdditions on Purchases {
   static Future<List<StoreProduct>> getAllProducts(
       List<String> productIdentifiers) async {
-    final subscriptionProducts = await Purchases.getProducts(productIdentifiers,
-        productCategory: ProductCategory.subscription);
+    final subscriptionProducts =
+        await Purchases.getProducts(productIdentifiers);
     final nonSubscriptionProducts = await Purchases.getProducts(
         productIdentifiers,
         productCategory: ProductCategory.nonSubscription);

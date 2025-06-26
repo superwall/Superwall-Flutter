@@ -352,10 +352,10 @@ packages:
     dependency: transitive
     description:
       name: pigeon
-      sha256: "2ee1eb70b16456a539d9a6ac0c79786e2751b7ff6ed3b47b5549140ac96ff26d"
+      sha256: a093af76026160bb5ff6eb98e3e678a301ffd1001ac0d90be558bc133a0c73f5
       url: "https://pub.dev"
     source: hosted
-    version: "25.2.0"
+    version: "25.3.2"
   platform:
     dependency: transitive
     description:
@@ -447,7 +447,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "2.2.0-beta.2"
+    version: "2.3.4"
   sync_http:
     dependency: transitive
     description:

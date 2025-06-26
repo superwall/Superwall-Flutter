@@ -1,10 +1,7 @@
-import 'package:superwallkit_flutter/superwallkit_flutter.dart';
-
-import 'package:flutter/services.dart';
 import 'dart:async';
+
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
-import 'package:superwallkit_flutter/src/public/PurchaseResult.dart';
-import 'package:superwallkit_flutter/src/public/RestorationResult.dart';
+import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// A proxy class that bridges between the Flutter PurchaseController
 /// and the generated PPurchaseControllerGenerated interface.

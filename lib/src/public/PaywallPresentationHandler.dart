@@ -1,6 +1,3 @@
-import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
-import 'package:superwallkit_flutter/src/public/PaywallResult.dart';
-import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 /// The handler for ``Superwall/register(placement:params:handler:feature:)`` whose
