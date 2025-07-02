@@ -350,9 +350,10 @@ class Superwall {
     await hostApi.preloadPaywallsForPlacements(placementNames.toList());
   }
 
-  // Handles deep links for paywall previews
-  // Safe to call before configure() - iOS uses static method that queues links, Android attempts immediate processing
-  Future<bool> handleDeepLink(Uri url) async {
+  // Static method safe to call before configure() - bypasses shared instance
+  // iOS: Uses static Superwall.handleDeepLink() that queues links before configuration
+  // Android: Attempts immediate processing with instance method
+  static Future<bool> handleDeepLink(Uri url) async {
     return await hostApi.handleDeepLink(url.toString());
   }
 

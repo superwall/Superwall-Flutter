@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
   void _handleIncomingLinks() {
     appLinks.uriLinkStream.listen((Uri uri) {
       debugPrint('Incoming deep link: $uri');
-      Superwall.shared.handleDeepLink(uri);
+      Superwall.handleDeepLink(uri);
     }, onError: (Object err) {
       print('Error receiving incoming link: $err');
     });
@@ -53,8 +53,8 @@ class _MyAppState extends State<MyApp> {
     appLinks.getInitialLink().then((Uri? initialUri) {
       if (initialUri != null) {
         debugPrint('Initial deep link (cold start): $initialUri');
-        // Safe to call before configure() - iOS uses static method that queues links
-        Superwall.shared.handleDeepLink(initialUri);
+        // Safe to call before configure() - static method bypasses shared instance
+        Superwall.handleDeepLink(initialUri);
       }
     }).catchError((Object err) {
       print('Error getting initial link: $err');
