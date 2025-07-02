@@ -29,6 +29,8 @@ class _MyAppState extends State<MyApp> {
     const useRevenueCat = true;
 
     super.initState();
+    _handleIncomingLinks(); // Set up deep link handling before configuration
+    _handleInitialLink(); // Handle cold start deep links
     configureSuperwall(useRevenueCat);
   }
 
@@ -40,10 +42,21 @@ class _MyAppState extends State<MyApp> {
 
   void _handleIncomingLinks() {
     appLinks.uriLinkStream.listen((Uri uri) {
-      debugPrint('uri: $uri');
+      debugPrint('Incoming deep link: $uri');
       Superwall.shared.handleDeepLink(uri);
     }, onError: (Object err) {
       print('Error receiving incoming link: $err');
+    });
+  }
+
+  void _handleInitialLink() {
+    appLinks.getInitialLink().then((Uri? initialUri) {
+      if (initialUri != null) {
+        debugPrint('Initial deep link (cold start): $initialUri');
+        Superwall.handleInitialDeepLink(initialUri);
+      }
+    }).catchError((Object err) {
+      print('Error getting initial link: $err');
     });
   }
 
@@ -84,7 +97,6 @@ class _MyAppState extends State<MyApp> {
         print('Executing Superwall configure completion block');
         listenForPurchases();
       });
-      _handleIncomingLinks();
       Superwall.shared.setDelegate(delegate);
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
       /// Always configure RevenueCat after Superwall and keep Superwall's
