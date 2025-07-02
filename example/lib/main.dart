@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
     appLinks.getInitialLink().then((Uri? initialUri) {
       if (initialUri != null) {
         debugPrint('Initial deep link (cold start): $initialUri');
-        // Safe to call before configure() - iOS SDK queues the link automatically
+        // Safe to call before configure() - iOS uses static method that queues links
         Superwall.shared.handleDeepLink(initialUri);
       }
     }).catchError((Object err) {

@@ -350,8 +350,8 @@ class Superwall {
     await hostApi.preloadPaywallsForPlacements(placementNames.toList());
   }
 
-  // Instance method - handles deep links for paywall previews  
-  // Safe to call before configure() - iOS SDK will queue links, Android will attempt immediate processing
+  // Handles deep links for paywall previews
+  // Safe to call before configure() - iOS uses static method that queues links, Android attempts immediate processing
   Future<bool> handleDeepLink(Uri url) async {
     return await hostApi.handleDeepLink(url.toString());
   }
