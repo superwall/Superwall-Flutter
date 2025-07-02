@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
       if (initialUri != null) {
         debugPrint('Initial deep link (cold start): $initialUri');
         // Safe to call before configure() - static method bypasses shared instance
-        Superwall.handleDeepLink(initialUri);
+        Superwall.handleDeepLinkStatic(initialUri);
       }
     }).catchError((Object err) {
       print('Error getting initial link: $err');

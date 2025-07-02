@@ -350,10 +350,15 @@ class Superwall {
     await hostApi.preloadPaywallsForPlacements(placementNames.toList());
   }
 
+  // Instance method for backward compatibility
+  Future<bool> handleDeepLink(Uri url) async {
+    return await hostApi.handleDeepLink(url.toString());
+  }
+
   // Static method safe to call before configure() - bypasses shared instance
   // iOS: Uses static Superwall.handleDeepLink() that queues links before configuration
   // Android: Attempts immediate processing with instance method
-  static Future<bool> handleDeepLink(Uri url) async {
+  static Future<bool> handleDeepLinkStatic(Uri url) async {
     return await hostApi.handleDeepLink(url.toString());
   }
 
