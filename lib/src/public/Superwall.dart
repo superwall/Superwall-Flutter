@@ -20,9 +20,6 @@ class Superwall {
   static final generated.PSuperwallHostApi hostApi =
       generated.PSuperwallHostApi();
 
-  // Deep link caching for cold start scenarios
-  static Uri? _pendingDeepLink;
-  static bool _isConfigured = false;
 
   // Private constructor
   Superwall._();
@@ -50,17 +47,8 @@ class Superwall {
     final completionHost =
         completion != null ? generated.PConfigureCompletionHost() : null;
 
-    // Wrap the original completion to handle pending deep links
-    final wrappedCompletion = () {
-      _isConfigured = true;
-      _processPendingDeepLink();
-      if (completion != null) {
-        completion();
-      }
-    };
-
-    final completionProxy = generated.PConfigureCompletionHost() != null
-        ? ConfigureCompletionProxy.register(wrappedCompletion)
+    final completionProxy = completion != null
+        ? ConfigureCompletionProxy.register(completion)
         : null;
 
     hostApi.configure(apiKey,
@@ -362,29 +350,10 @@ class Superwall {
     await hostApi.preloadPaywallsForPlacements(placementNames.toList());
   }
 
-  // Handles deep links for paywall previews
+  // Instance method - handles deep links for paywall previews  
+  // Safe to call before configure() - iOS SDK will queue links, Android will attempt immediate processing
   Future<bool> handleDeepLink(Uri url) async {
-    if (!_isConfigured) {
-      // Cache the deep link if SDK is not yet configured
-      _pendingDeepLink = url;
-      return false;
-    }
     return await hostApi.handleDeepLink(url.toString());
-  }
-
-  // Process any pending deep link after configuration completes
-  static void _processPendingDeepLink() {
-    if (_pendingDeepLink != null) {
-      shared.handleDeepLink(_pendingDeepLink!);
-      _pendingDeepLink = null;
-    }
-  }
-
-  // Helper method for apps to handle initial deep links on cold start
-  static Future<void> handleInitialDeepLink(Uri? initialUri) async {
-    if (initialUri != null) {
-      await shared.handleDeepLink(initialUri);
-    }
   }
 
   // Toggles the paywall loading spinner
