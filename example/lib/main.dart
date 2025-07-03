@@ -48,18 +48,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _handleInitialLink() {
-    appLinks.getInitialLink().then((Uri? initialUri) {
-      if (initialUri != null) {
-        debugPrint('Initial deep link (cold start): $initialUri');
-        // Handle after configure completes - iOS SDK will queue it automatically
-        Superwall.shared.handleDeepLink(initialUri);
-      }
-    }).catchError((Object err) {
-      print('Error getting initial link: $err');
-    });
-  }
-
   @override
   void dispose() {
     _subscription?.cancel();
@@ -96,7 +84,6 @@ class _MyAppState extends State<MyApp> {
         logging.info('Executing Superwall configure completion block');
         print('Executing Superwall configure completion block');
         listenForPurchases();
-        _handleInitialLink(); // Handle cold start deep links after configure
       });
       Superwall.shared.setDelegate(delegate);
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
