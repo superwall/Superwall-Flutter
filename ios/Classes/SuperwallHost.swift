@@ -237,6 +237,7 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
 
   func handleDeepLink(url: String) -> Bool {
     guard let url = URL(string: url) else { return false }
+    // Use static method that safely queues deep links before configuration
     return Superwall.handleDeepLink(url)
   }
 
