@@ -44,16 +44,16 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/superwallkit_flutter/ios"
 
 SPEC CHECKSUMS:
-  app_links: 76b66b60cc809390ca1ad69bfd66b998d2387ac7
+  app_links: f3e17e4ee5e357b39d8b95290a9b2c299fca71c6
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  purchases_flutter: cbcf97969b7bf0f1db71d802f4e682bb851f0576
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  purchases_flutter: 12a5fd3a702db1d0da86f12c0cf1fe462688cfff
   PurchasesHybridCommon: 9691d74a051f30858360d78936d59dc14575014e
   RevenueCat: e825836f5d6baa870c53d7281be25a5fd91abd91
   Superscript: 82dbb40f502823160e75503ebc1b6bac756a503d
   SuperwallKit: 520fd9dff39358c9708d88cc69c1f4fbd32b3008
-  superwallkit_flutter: 24189eddf53053b67bb8a909556fca71140665c4
+  superwallkit_flutter: 950d7b000be5d350db3fbc0db492d27238e69796
 
 PODFILE CHECKSUM: 1959d098c91d8a792531a723c4a9d7e9f6a01e38
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2

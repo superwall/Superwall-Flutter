@@ -39,30 +39,28 @@ class MySuperwallDelegate extends SuperwallDelegate {
 
   @override
   Future<void> handleSuperwallEvent(SuperwallEventInfo eventInfo) async {
-    logging.info('handleSuperwallEvent: $eventInfo');
-    switch (eventInfo.event.type) {
-      case EventType.triggerFire:
-        logging.info('triggerFire event: ${eventInfo.event.placementName}');
-        logging.info('triggerFire event: ${eventInfo.event.result}');
-      case EventType.appOpen:
-        logging.info('appOpen event');
-      case EventType.deviceAttributes:
-        logging.info(
-            'deviceAttributes event: ${eventInfo.event.deviceAttributes} ');
-      case EventType.paywallOpen:
-        final paywallInfo = eventInfo.event.paywallInfo;
-        logging.info('paywallOpen event: $paywallInfo ');
-
-        if (paywallInfo != null) {
-          final identifier = await paywallInfo.identifier;
-          logging.info('paywallInfo.identifier: $identifier ');
-
-          final productIds = await paywallInfo.productIds;
-          logging.info('paywallInfo.productIds: $productIds ');
-        }
-      default:
-        break;
-    }
+    //TODO: Change this
+    // This delegate function is noisy. Uncomment to debug.
+    //logging.info('handleSuperwallEvent: $eventInfo');
+    //switch (eventInfo.event.type) {
+    //  case EventType.appOpen:
+    //    logging.info('appOpen event');
+    //  case EventType.deviceAttributes:
+    //    logging.info('deviceAttributes event: ${eventInfo.event.deviceAttributes} ');
+    //  case EventType.paywallOpen:
+    //    final paywallInfo = eventInfo.event.paywallInfo;
+    //    logging.info('paywallOpen event: $paywallInfo ');
+    //
+    //    if (paywallInfo != null) {
+    //      final identifier = await paywallInfo.identifier;
+    //      logging.info('paywallInfo.identifier: $identifier ');
+    //
+    //      final productIds = await paywallInfo.productIds;
+    //      logging.info('paywallInfo.productIds: $productIds ');
+    //    }
+    //  default:
+    //    break;
+    //}
   }
 
   @override
