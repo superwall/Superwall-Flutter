@@ -2,6 +2,11 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.3.5
+
+### Fixes
+- Adds `params` mapping back to `EventInfo` for easier forwarding to analytics
+
 ## 2.3.4
 
 ### Enhancements
