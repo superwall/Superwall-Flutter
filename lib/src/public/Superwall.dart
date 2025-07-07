@@ -20,6 +20,7 @@ class Superwall {
   static final generated.PSuperwallHostApi hostApi =
       generated.PSuperwallHostApi();
 
+
   // Private constructor
   Superwall._();
 
@@ -350,6 +351,8 @@ class Superwall {
   }
 
   // Handles deep links for paywall previews
+  // iOS: Uses static Superwall.handleDeepLink() that safely queues links before configuration
+  // Android: Uses instance method, works after configuration
   Future<bool> handleDeepLink(Uri url) async {
     return await hostApi.handleDeepLink(url.toString());
   }
