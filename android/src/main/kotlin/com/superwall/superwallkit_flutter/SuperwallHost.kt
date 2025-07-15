@@ -251,7 +251,7 @@ class SuperwallHost(
     }
 
     override fun handleDeepLink(url: String): Boolean {
-        return Superwall.instance.handleDeepLink(url.toUri()).getOrNull() ?: false
+        return Superwall.handleDeepLink(url.toUri()).getOrNull() ?: false
     }
 
     override fun togglePaywallSpinner(isHidden: Boolean) {
