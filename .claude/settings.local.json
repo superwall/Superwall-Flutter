@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:superwall.com)",
+      "Bash(gh pr edit:*)",
+      "Bash(flutter pub run pigeon:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter build:*)",
+      "Bash(dart run pigeon:*)"
+    ],
+    "deny": []
+  }
+}
