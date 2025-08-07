@@ -1888,7 +1888,9 @@ data class PPaywallOptions (
   val shouldPreload: Boolean? = null,
   val automaticallyDismiss: Boolean? = null,
   val shouldShowWebRestorationAlert: Boolean? = null,
-  val transactionBackgroundView: PTransactionBackgroundView? = null
+  val transactionBackgroundView: PTransactionBackgroundView? = null,
+  val overrideProductsByName: Map<String, String>? = null,
+  val shouldShowWebPurchaseConfirmationAlert: Boolean? = null
 )
  {
   companion object {
@@ -1900,7 +1902,9 @@ data class PPaywallOptions (
       val automaticallyDismiss = pigeonVar_list[4] as Boolean?
       val shouldShowWebRestorationAlert = pigeonVar_list[5] as Boolean?
       val transactionBackgroundView = pigeonVar_list[6] as PTransactionBackgroundView?
-      return PPaywallOptions(isHapticFeedbackEnabled, restoreFailed, shouldShowPurchaseFailureAlert, shouldPreload, automaticallyDismiss, shouldShowWebRestorationAlert, transactionBackgroundView)
+      val overrideProductsByName = pigeonVar_list[7] as Map<String, String>?
+      val shouldShowWebPurchaseConfirmationAlert = pigeonVar_list[8] as Boolean?
+      return PPaywallOptions(isHapticFeedbackEnabled, restoreFailed, shouldShowPurchaseFailureAlert, shouldPreload, automaticallyDismiss, shouldShowWebRestorationAlert, transactionBackgroundView, overrideProductsByName, shouldShowWebPurchaseConfirmationAlert)
     }
   }
   fun toList(): List<Any?> {
@@ -1912,6 +1916,8 @@ data class PPaywallOptions (
       automaticallyDismiss,
       shouldShowWebRestorationAlert,
       transactionBackgroundView,
+      overrideProductsByName,
+      shouldShowWebPurchaseConfirmationAlert,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -1928,6 +1934,8 @@ data class PPaywallOptions (
     && automaticallyDismiss == other.automaticallyDismiss
     && shouldShowWebRestorationAlert == other.shouldShowWebRestorationAlert
     && transactionBackgroundView == other.transactionBackgroundView
+    && deepEqualsSuperwallHostGenerated(overrideProductsByName, other.overrideProductsByName)
+    && shouldShowWebPurchaseConfirmationAlert == other.shouldShowWebPurchaseConfirmationAlert
   }
 
   override fun hashCode(): Int = toList().hashCode()

@@ -1482,6 +1482,8 @@ struct PPaywallOptions {
   var automaticallyDismiss: Bool? = nil
   var shouldShowWebRestorationAlert: Bool? = nil
   var transactionBackgroundView: PTransactionBackgroundView? = nil
+  var overrideProductsByName: [String: String]? = nil
+  var shouldShowWebPurchaseConfirmationAlert: Bool? = nil
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -1493,6 +1495,8 @@ struct PPaywallOptions {
     let automaticallyDismiss: Bool? = nilOrValue(pigeonVar_list[4])
     let shouldShowWebRestorationAlert: Bool? = nilOrValue(pigeonVar_list[5])
     let transactionBackgroundView: PTransactionBackgroundView? = nilOrValue(pigeonVar_list[6])
+    let overrideProductsByName: [String: String]? = nilOrValue(pigeonVar_list[7])
+    let shouldShowWebPurchaseConfirmationAlert: Bool? = nilOrValue(pigeonVar_list[8])
 
     return PPaywallOptions(
       isHapticFeedbackEnabled: isHapticFeedbackEnabled,
@@ -1501,7 +1505,9 @@ struct PPaywallOptions {
       shouldPreload: shouldPreload,
       automaticallyDismiss: automaticallyDismiss,
       shouldShowWebRestorationAlert: shouldShowWebRestorationAlert,
-      transactionBackgroundView: transactionBackgroundView
+      transactionBackgroundView: transactionBackgroundView,
+      overrideProductsByName: overrideProductsByName,
+      shouldShowWebPurchaseConfirmationAlert: shouldShowWebPurchaseConfirmationAlert
     )
   }
   func toList() -> [Any?] {
@@ -1513,6 +1519,8 @@ struct PPaywallOptions {
       automaticallyDismiss,
       shouldShowWebRestorationAlert,
       transactionBackgroundView,
+      overrideProductsByName,
+      shouldShowWebPurchaseConfirmationAlert,
     ]
   }
 }

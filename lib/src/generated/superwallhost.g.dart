@@ -2402,6 +2402,8 @@ class PPaywallOptions {
     this.automaticallyDismiss,
     this.shouldShowWebRestorationAlert,
     this.transactionBackgroundView,
+    this.overrideProductsByName,
+    this.shouldShowWebPurchaseConfirmationAlert,
   });
 
   bool? isHapticFeedbackEnabled;
@@ -2418,6 +2420,10 @@ class PPaywallOptions {
 
   PTransactionBackgroundView? transactionBackgroundView;
 
+  Map<String, String>? overrideProductsByName;
+
+  bool? shouldShowWebPurchaseConfirmationAlert;
+
   List<Object?> _toList() {
     return <Object?>[
       isHapticFeedbackEnabled,
@@ -2427,6 +2433,8 @@ class PPaywallOptions {
       automaticallyDismiss,
       shouldShowWebRestorationAlert,
       transactionBackgroundView,
+      overrideProductsByName,
+      shouldShowWebPurchaseConfirmationAlert,
     ];
   }
 
@@ -2443,6 +2451,8 @@ class PPaywallOptions {
       automaticallyDismiss: result[4] as bool?,
       shouldShowWebRestorationAlert: result[5] as bool?,
       transactionBackgroundView: result[6] as PTransactionBackgroundView?,
+      overrideProductsByName: (result[7] as Map<Object?, Object?>?)?.cast<String, String>(),
+      shouldShowWebPurchaseConfirmationAlert: result[8] as bool?,
     );
   }
 
@@ -2462,7 +2472,9 @@ class PPaywallOptions {
       && shouldPreload == other.shouldPreload
       && automaticallyDismiss == other.automaticallyDismiss
       && shouldShowWebRestorationAlert == other.shouldShowWebRestorationAlert
-      && transactionBackgroundView == other.transactionBackgroundView;
+      && transactionBackgroundView == other.transactionBackgroundView
+      && _deepEquals(overrideProductsByName, other.overrideProductsByName)
+      && shouldShowWebPurchaseConfirmationAlert == other.shouldShowWebPurchaseConfirmationAlert;
   }
 
   @override

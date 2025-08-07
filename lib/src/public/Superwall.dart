@@ -94,6 +94,9 @@ class Superwall {
     generatedOptions.automaticallyDismiss = options.automaticallyDismiss;
     generatedOptions.shouldShowWebRestorationAlert =
         options.shouldShowWebRestorationAlert;
+    generatedOptions.overrideProductsByName = options.overrideProductsByName;
+    generatedOptions.shouldShowWebPurchaseConfirmationAlert =
+        options.shouldShowWebPurchaseConfirmationAlert;
 
     generatedOptions.restoreFailed = generated.PRestoreFailed()
       ..title = options.restoreFailed.title

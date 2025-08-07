@@ -589,6 +589,8 @@ class PPaywallOptions {
   bool? automaticallyDismiss;
   bool? shouldShowWebRestorationAlert;
   PTransactionBackgroundView? transactionBackgroundView;
+  Map<String, String>? overrideProductsByName;
+  bool? shouldShowWebPurchaseConfirmationAlert;
 }
 
 class PPurchaseControllerHost {
