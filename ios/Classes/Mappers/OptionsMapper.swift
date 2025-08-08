@@ -47,6 +47,14 @@ extension PSuperwallOptions {
           options.paywalls.transactionBackgroundView = .none
         }
       }
+      
+      if let overrideProductsByName = paywalls.overrideProductsByName {
+        options.paywalls.overrideProductsByName = overrideProductsByName
+      }
+      
+      if let shouldShowWebPurchaseConfirmationAlert = paywalls.shouldShowWebPurchaseConfirmationAlert {
+        options.paywalls.shouldShowWebPurchaseConfirmationAlert = shouldShowWebPurchaseConfirmationAlert
+      }
     }
     
     if let enableExperimentalDeviceVariables = self.enableExperimentalDeviceVariables {

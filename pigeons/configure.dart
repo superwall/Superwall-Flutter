@@ -350,6 +350,11 @@ enum PComputedPropertyRequestType {
   daysSince,
   monthsSince,
   yearsSince,
+  placementsInHour,
+  placementsInDay,
+  placementsInWeek,
+  placementsInMonth,
+  placementsSinceInstall,
 }
 
 // Survey class
@@ -589,6 +594,8 @@ class PPaywallOptions {
   bool? automaticallyDismiss;
   bool? shouldShowWebRestorationAlert;
   PTransactionBackgroundView? transactionBackgroundView;
+  Map<String, String>? overrideProductsByName;
+  bool? shouldShowWebPurchaseConfirmationAlert;
 }
 
 class PPurchaseControllerHost {
