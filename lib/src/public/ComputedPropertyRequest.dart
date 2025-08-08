@@ -44,6 +44,11 @@ enum ComputedPropertyRequestType {
   daysSince,
   monthsSince,
   yearsSince,
+  placementsInHour,
+  placementsInDay,
+  placementsInWeek,
+  placementsInMonth,
+  placementsSinceInstall,
 }
 
 // Extension on ComputedPropertyRequestType for explicit serialization and deserialization
@@ -61,6 +66,16 @@ extension ComputedPropertyRequestTypeExtension on ComputedPropertyRequestType {
         return 'monthsSince';
       case ComputedPropertyRequestType.yearsSince:
         return 'yearsSince';
+      case ComputedPropertyRequestType.placementsInHour:
+        return 'placementsInHour';
+      case ComputedPropertyRequestType.placementsInDay:
+        return 'placementsInDay';
+      case ComputedPropertyRequestType.placementsInWeek:
+        return 'placementsInWeek';
+      case ComputedPropertyRequestType.placementsInMonth:
+        return 'placementsInMonth';
+      case ComputedPropertyRequestType.placementsSinceInstall:
+        return 'placementsSinceInstall';
       default:
         throw ArgumentError('Invalid ComputedPropertyRequestType value');
     }
@@ -116,6 +131,16 @@ extension ComputedPropertyRequestTypeExtension on ComputedPropertyRequestType {
         return ComputedPropertyRequestType.monthsSince;
       case PComputedPropertyRequestType.yearsSince:
         return ComputedPropertyRequestType.yearsSince;
+      case PComputedPropertyRequestType.placementsInHour:
+        return ComputedPropertyRequestType.placementsInHour;
+      case PComputedPropertyRequestType.placementsInDay:
+        return ComputedPropertyRequestType.placementsInDay;
+      case PComputedPropertyRequestType.placementsInWeek:
+        return ComputedPropertyRequestType.placementsInWeek;
+      case PComputedPropertyRequestType.placementsInMonth:
+        return ComputedPropertyRequestType.placementsInMonth;
+      case PComputedPropertyRequestType.placementsSinceInstall:
+        return ComputedPropertyRequestType.placementsSinceInstall;
       default:
         throw ArgumentError('Invalid PComputedPropertyRequestType value');
     }

@@ -114,6 +114,16 @@ extension ComputedPropertyRequest {
       type = .monthsSince
     case .yearsSince:
       type = .yearsSince
+    case .placementsInHour:
+      type = .placementsInHour
+    case .placementsInDay:
+      type = .placementsInDay
+    case .placementsInWeek:
+      type = .placementsInWeek
+    case .placementsInMonth:
+      type = .placementsInMonth
+    case .placementsSinceInstall:
+      type = .placementsSinceInstall
     }
 
     return PComputedPropertyRequest(

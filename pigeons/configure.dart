@@ -350,6 +350,11 @@ enum PComputedPropertyRequestType {
   daysSince,
   monthsSince,
   yearsSince,
+  placementsInHour,
+  placementsInDay,
+  placementsInWeek,
+  placementsInMonth,
+  placementsSinceInstall,
 }
 
 // Survey class
