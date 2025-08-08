@@ -10,10 +10,6 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - Adds `overrideProductsByName` to `PaywallOptions` - allows globally overriding products on any paywall by product name.
 - Adds `shouldShowWebPurchaseConfirmationAlert` to `PaywallOptions` - shows localized alert confirming successful web checkout purchases (iOS only).
 
-### Fixes
-
-- Improves type safety for `overrideProductsByName` by using `Map<String, String>?` instead of `Map<String?, String?>?`.
-
 ## 2.4.0
 
 ## Enhancements
