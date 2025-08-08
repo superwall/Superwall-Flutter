@@ -133,6 +133,10 @@ fun PPaywallOptions.toSdkPaywallOptions(): PaywallOptions {
             }
     }
 
+    this.overrideProductsByName?.let { hostOverrides ->
+        sdkPaywallOptions.overrideProductsByName = hostOverrides
+    }
+
     return sdkPaywallOptions
 }
 

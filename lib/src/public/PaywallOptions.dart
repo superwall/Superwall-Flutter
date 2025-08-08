@@ -28,6 +28,14 @@ class PaywallOptions {
   /// Shows an alert asking the user if they'd like to try to restore on the web, if you have added web checkout on the
   /// Superwall dashboard. Defaults to `true`.
   bool shouldShowWebRestorationAlert = true;
+
+  /// Allows you to globally override products on any paywall that have a given name.
+  /// The key is the product name in the paywall, the value is the product identifier to replace it with.
+  Map<String, String>? overrideProductsByName;
+
+  /// Shows a localized alert confirming a successful purchase via web checkout.
+  /// Defaults to `true`.
+  bool shouldShowWebPurchaseConfirmationAlert = true;
 }
 
 extension PaywallOptionsJson on PaywallOptions {
@@ -40,6 +48,8 @@ extension PaywallOptionsJson on PaywallOptions {
       'automaticallyDismiss': automaticallyDismiss,
       'transactionBackgroundView': transactionBackgroundView.toJson(),
       'shouldShowWebRestorationAlert': shouldShowWebRestorationAlert,
+      'overrideProductsByName': overrideProductsByName,
+      'shouldShowWebPurchaseConfirmationAlert': shouldShowWebPurchaseConfirmationAlert,
     };
   }
 }

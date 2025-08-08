@@ -2,15 +2,28 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.1
+
+### Enhancements
+
+- Updates iOS SDK to 4.7.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.7.0).
+- Adds `overrideProductsByName` to `PaywallOptions` - allows globally overriding products on any paywall by product name.
+- Adds `shouldShowWebPurchaseConfirmationAlert` to `PaywallOptions` - shows localized alert confirming successful web checkout purchases (iOS only).
+
+### Fixes
+
+- Improves type safety for `overrideProductsByName` by using `Map<String, String>?` instead of `Map<String?, String?>?`.
 
 ## 2.4.0
 
 ## Enhancements
+
 - Updates Android SDK to 2.3.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.3.1).
 
 ## 2.3.5
 
 ### Fixes
+
 - Adds `params` mapping back to `EventInfo` for easier forwarding to analytics
 
 ## 2.3.4
