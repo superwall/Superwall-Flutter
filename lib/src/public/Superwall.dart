@@ -302,7 +302,8 @@ class Superwall {
 
   // Gets the latest PaywallInfo object
   Future<PaywallInfo?> getLatestPaywallInfo() async {
-    final paywallInfoBridgeId = await hostApi.getLatestPaywallInfo();
+    final paywallInfo = await hostApi.getLatestPaywallInfo();
+    return PaywallInfo.fromPigeon(paywallInfo);
   }
 
   // Gets the subscription status of the user
