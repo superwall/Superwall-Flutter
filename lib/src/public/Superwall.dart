@@ -94,6 +94,9 @@ class Superwall {
     generatedOptions.automaticallyDismiss = options.automaticallyDismiss;
     generatedOptions.shouldShowWebRestorationAlert =
         options.shouldShowWebRestorationAlert;
+    generatedOptions.overrideProductsByName = options.overrideProductsByName;
+    generatedOptions.shouldShowWebPurchaseConfirmationAlert =
+        options.shouldShowWebPurchaseConfirmationAlert;
 
     generatedOptions.restoreFailed = generated.PRestoreFailed()
       ..title = options.restoreFailed.title
@@ -302,7 +305,8 @@ class Superwall {
 
   // Gets the latest PaywallInfo object
   Future<PaywallInfo?> getLatestPaywallInfo() async {
-    final paywallInfoBridgeId = await hostApi.getLatestPaywallInfo();
+    final paywallInfo = await hostApi.getLatestPaywallInfo();
+    return PaywallInfo.fromPigeon(paywallInfo);
   }
 
   // Gets the subscription status of the user
