@@ -2,6 +2,16 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+
+## 2.4.2
+
+### Enhancements
+- Updates Android SDK to 2.5.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.5.1). Note: This contains an update to Play Billing 8.
+
+### Fixes
+- Fixes missing paywall info
+
+
 ## 2.4.1
 
 ### Enhancements
