@@ -3365,6 +3365,8 @@ protocol PSuperwallHostApi {
   func getLatestPaywallInfo() throws -> PPaywallInfo?
   func registerPlacement(placement: String, params: [String: Any]?, handler: PPaywallPresentationHandlerHost?, feature: PFeatureHandlerHost?, completion: @escaping (Result<Void, Error>) -> Void)
   func dismiss() throws
+  func getOverrideProductsByName() throws -> [String: String]?
+  func setOverrideProductsByName(overrideProducts: [String: String]?) throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -3806,6 +3808,34 @@ class PSuperwallHostApiSetup {
       }
     } else {
       dismissChannel.setMessageHandler(nil)
+    }
+    let getOverrideProductsByNameChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getOverrideProductsByName\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getOverrideProductsByNameChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.getOverrideProductsByName()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getOverrideProductsByNameChannel.setMessageHandler(nil)
+    }
+    let setOverrideProductsByNameChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setOverrideProductsByName\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setOverrideProductsByNameChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let overrideProductsArg: [String: String]? = nilOrValue(args[0])
+        do {
+          try api.setOverrideProductsByName(overrideProducts: overrideProductsArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setOverrideProductsByNameChannel.setMessageHandler(nil)
     }
   }
 }

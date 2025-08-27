@@ -307,6 +307,14 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
     }
   }
 
+  func getOverrideProductsByName() -> [String : String]? {
+    return Superwall.shared.overrideProductsByName
+  }
+
+  func setOverrideProductsByName(overrideProducts: [String : String]?) {
+    Superwall.shared.overrideProductsByName = overrideProducts
+  }
+
   func restorePurchases(completion: @escaping (Result<any PRestorationResult, any Error>) -> Void) {
     Superwall.shared.restorePurchases { result in
       switch result {

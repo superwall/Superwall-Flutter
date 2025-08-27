@@ -344,6 +344,14 @@ class SuperwallHost(
         }
     }
 
+    override fun getOverrideProductsByName(): Map<String, String>? {
+        return Superwall.instance.overrideProductsByName
+    }
+
+    override fun setOverrideProductsByName(overrideProducts: Map<String, String>?) {
+        Superwall.instance.overrideProductsByName = overrideProducts
+    }
+
     override fun onListen(p0: Any?, sink: PigeonEventSink<PSubscriptionStatus>) {
         latestStreamJob = ioScope.launch {
             Superwall.instance.subscriptionStatus.collectLatest {

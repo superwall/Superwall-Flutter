@@ -2,10 +2,11 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
-
+## 2.4.2
 
 ### Enhancements
 
+- Exposes `Superwall.shared.overrideProductsByName` variable.
 
 ## 2.4.1
 
@@ -16,8 +17,8 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - Adds `overrideProductsByName` to `PaywallOptions` - allows globally overriding products on any paywall by product name.
 - Adds `shouldShowWebPurchaseConfirmationAlert` to `PaywallOptions` - shows localized alert confirming successful web checkout purchases (iOS only).
 
-
 ### Fixes
+
 - Fixes missing paywall info
 
 ## 2.4.0
