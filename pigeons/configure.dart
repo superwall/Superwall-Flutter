@@ -1083,6 +1083,10 @@ abstract class PSuperwallHostApi {
       PFeatureHandlerHost? feature});
   // Presentation methods
   void dismiss();
+  
+  // Override products by name globally - getter and setter
+  Map<String, String>? getOverrideProductsByName();
+  void setOverrideProductsByName(Map<String, String>? overrideProducts);
 }
 
 @FlutterApi()
