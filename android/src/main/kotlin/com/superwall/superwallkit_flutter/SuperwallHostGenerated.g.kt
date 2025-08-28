@@ -3721,6 +3721,8 @@ interface PSuperwallHostApi {
   fun getLatestPaywallInfo(): PPaywallInfo?
   fun registerPlacement(placement: String, params: Map<String, Any>?, handler: PPaywallPresentationHandlerHost?, feature: PFeatureHandlerHost?, callback: (Result<Unit>) -> Unit)
   fun dismiss()
+  fun getOverrideProductsByName(): Map<String, String>?
+  fun setOverrideProductsByName(overrideProducts: Map<String, String>?)
 
   companion object {
     /** The codec used by PSuperwallHostApi. */
@@ -4230,6 +4232,39 @@ interface PSuperwallHostApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> = try {
               api.dismiss()
+              listOf(null)
+            } catch (exception: Throwable) {
+              SuperwallHostGeneratedPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getOverrideProductsByName$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> = try {
+              listOf(api.getOverrideProductsByName())
+            } catch (exception: Throwable) {
+              SuperwallHostGeneratedPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setOverrideProductsByName$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val overrideProductsArg = args[0] as Map<String, String>?
+            val wrapped: List<Any?> = try {
+              api.setOverrideProductsByName(overrideProductsArg)
               listOf(null)
             } catch (exception: Throwable) {
               SuperwallHostGeneratedPigeonUtils.wrapError(exception)

@@ -440,4 +440,14 @@ class Superwall {
     final result = await hostApi.getPresentationResult(placement, params);
     return PresentationResult.fromPigeon(result);
   }
+
+  // Set override products by name globally across all paywalls
+  set overrideProductsByName(Map<String, String>? overrideProducts) {
+    hostApi.setOverrideProductsByName(overrideProducts);
+  }
+
+  // Get the current override products by name
+  Future<Map<String, String>?> getOverrideProductsByName() async {
+    return await hostApi.getOverrideProductsByName();
+  }
 }

@@ -84,6 +84,7 @@ class _MyAppState extends State<MyApp> {
         print('Executing Superwall configure completion block');
         listenForPurchases();
       });
+
       _handleIncomingLinks();
       Superwall.shared.setDelegate(delegate);
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
