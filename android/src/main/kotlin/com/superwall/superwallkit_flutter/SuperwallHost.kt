@@ -349,7 +349,7 @@ class SuperwallHost(
     }
 
     override fun setOverrideProductsByName(overrideProducts: Map<String, String>?) {
-        Superwall.instance.overrideProductsByName = overrideProducts
+        Superwall.instance.overrideProductsByName = overrideProducts?:emptyMap()
     }
 
     override fun onListen(p0: Any?, sink: PigeonEventSink<PSubscriptionStatus>) {
