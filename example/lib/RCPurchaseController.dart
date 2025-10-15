@@ -175,9 +175,7 @@ class RCPurchaseController extends PurchaseController {
 
   Future<PurchaseResult> _purchaseStoreProduct(
       StoreProduct storeProduct) async {
-    // Define the async perform purchase function
     Future<CustomerInfo> performPurchase() async {
-      // flutter_purchases 9+ API: use purchase(PurchaseParams) instead
       final result = await Purchases.purchase(
         PurchaseParams.storeProduct(storeProduct),
       );
