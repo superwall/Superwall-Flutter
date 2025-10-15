@@ -1,6 +1,19 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_flutter/purchases_flutter.dart'
+    show
+        Purchases,
+        PurchasesConfiguration,
+        LogLevel,
+        CustomerInfo,
+        Entitlement,
+        StoreProduct,
+        ProductCategory,
+        SubscriptionOption,
+        PurchaseParams,
+        PurchasesErrorHelper,
+        PurchasesErrorCode;
+import 'package:purchases_flutter/models/purchase_result.dart' as rc_models;
 import 'package:superwallkit_flutter/superwallkit_flutter.dart'
     hide LogLevel, StoreProduct;
 
@@ -149,10 +162,10 @@ class RCPurchaseController extends PurchaseController {
       SubscriptionOption subscriptionOption) async {
     // Define the async perform purchase function
     Future<CustomerInfo> performPurchase() async {
-      // Attempt to purchase product
-      CustomerInfo customerInfo =
-          await Purchases.purchaseSubscriptionOption(subscriptionOption);
-      return customerInfo;
+      final result = await Purchases.purchase(
+        PurchaseParams.subscriptionOption(subscriptionOption),
+      );
+      return result.customerInfo;
     }
 
     PurchaseResult purchaseResult =
@@ -164,10 +177,11 @@ class RCPurchaseController extends PurchaseController {
       StoreProduct storeProduct) async {
     // Define the async perform purchase function
     Future<CustomerInfo> performPurchase() async {
-      // Attempt to purchase product
-      CustomerInfo customerInfo =
-          await Purchases.purchaseStoreProduct(storeProduct);
-      return customerInfo;
+      // flutter_purchases 9+ API: use purchase(PurchaseParams) instead
+      final result = await Purchases.purchase(
+        PurchaseParams.storeProduct(storeProduct),
+      );
+      return result.customerInfo;
     }
 
     PurchaseResult purchaseResult =
