@@ -154,6 +154,7 @@ class PaywallInfoMapper {
                     val decomposedProductIds = DecomposedProductIds.from(product.id ?: "")
                     val offer = decomposedProductIds.offerType
                     ProductItem(
+                        compositeId = product.id ?: "",
                         name = product.name ?: "",
                         entitlements =
                             product.entitlements

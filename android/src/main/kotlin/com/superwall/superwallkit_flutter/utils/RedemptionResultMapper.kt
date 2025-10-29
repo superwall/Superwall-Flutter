@@ -16,6 +16,7 @@ import PRedemptionPaywallInfo
 import PRedemptionResult
 import PStoreIdentifiers
 import PStripeStoreIdentifiers
+import PPaddleStoreIdentifiers
 import PSuccessRedemptionResult
 import PUnknownStoreIdentifiers
 import com.superwall.sdk.models.entitlements.Entitlement
@@ -93,6 +94,11 @@ object RedemptionResultMapper {
 
     private fun mapStoreIdentifiers(storeIdentifiers: StoreIdentifiers): PStoreIdentifiers =
         when (storeIdentifiers) {
+            is StoreIdentifiers.Paddle ->
+                PPaddleStoreIdentifiers(
+                    customerId = storeIdentifiers.paddleCustomerId,
+                    subscriptionIds = storeIdentifiers.paddleSubscriptionIds,
+                )
             is StoreIdentifiers.Stripe ->
                 PStripeStoreIdentifiers(
                     customerId = storeIdentifiers.stripeCustomerId,

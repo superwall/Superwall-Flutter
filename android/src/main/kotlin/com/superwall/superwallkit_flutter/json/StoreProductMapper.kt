@@ -1,10 +1,10 @@
 import com.superwall.sdk.analytics.superwall.TransactionProduct
-import com.superwall.sdk.store.abstractions.product.StoreProduct
+import com.superwall.sdk.store.abstractions.product.StoreProductType
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-fun StoreProduct.pigeonify(): PStoreProduct {
+fun StoreProductType.pigeonify(): PStoreProduct {
     val trialPeriodEndDateStr =
         trialPeriodEndDate?.let {
             val instant = it.toInstant()
