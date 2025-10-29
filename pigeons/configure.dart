@@ -149,6 +149,17 @@ class PStripeStoreIdentifiers extends PStoreIdentifiers {
   });
 }
 
+/// Stripe purchase store identifiers.
+class PPaddleStoreIdentifiers extends PStoreIdentifiers {
+  final String customerId;
+  final List<String> subscriptionIds;
+
+  const PPaddleStoreIdentifiers({
+    required this.customerId,
+    required this.subscriptionIds,
+  });
+}
+
 /// Unknown purchase store identifiers.
 class PUnknownStoreIdentifiers extends PStoreIdentifiers {
   final String store;
@@ -1083,7 +1094,7 @@ abstract class PSuperwallHostApi {
       PFeatureHandlerHost? feature});
   // Presentation methods
   void dismiss();
-  
+
   // Override products by name globally - getter and setter
   Map<String, String>? getOverrideProductsByName();
   void setOverrideProductsByName(Map<String, String>? overrideProducts);
