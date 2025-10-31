@@ -3743,6 +3743,7 @@ interface PSuperwallHostApi {
   fun getUserAttributes(): Map<String, Any>
   fun setUserAttributes(userAttributes: Map<String, Any>)
   fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit)
+  fun consume(purchaseToken: String, callback: (Result<String>) -> Unit)
   fun getLocaleIdentifier(): String?
   fun setLocaleIdentifier(localeIdentifier: String?)
   fun getUserId(): String
@@ -3938,6 +3939,26 @@ interface PSuperwallHostApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             api.getDeviceAttributes{ result: Result<Map<String, Any>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.consume$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val purchaseTokenArg = args[0] as String
+            api.consume(purchaseTokenArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

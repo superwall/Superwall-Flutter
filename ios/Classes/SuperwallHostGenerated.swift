@@ -3381,6 +3381,7 @@ protocol PSuperwallHostApi {
   func getUserAttributes() throws -> [String: Any]
   func setUserAttributes(userAttributes: [String: Any]) throws
   func getDeviceAttributes(completion: @escaping (Result<[String: Any], Error>) -> Void)
+  func consume(purchaseToken: String, completion: @escaping (Result<String, Error>) -> Void)
   func getLocaleIdentifier() throws -> String?
   func setLocaleIdentifier(localeIdentifier: String?) throws
   func getUserId() throws -> String
@@ -3559,6 +3560,23 @@ class PSuperwallHostApiSetup {
       }
     } else {
       getDeviceAttributesChannel.setMessageHandler(nil)
+    }
+    let consumeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.consume\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      consumeChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let purchaseTokenArg = args[0] as! String
+        api.consume(purchaseToken: purchaseTokenArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      consumeChannel.setMessageHandler(nil)
     }
     let getLocaleIdentifierChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLocaleIdentifier\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

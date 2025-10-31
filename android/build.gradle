@@ -83,7 +83,7 @@ dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.mockito:mockito-core:5.0.0'
     
-    implementation "com.superwall.sdk:superwall-android:2.6.1"
+    implementation "com.superwall.sdk:superwall-android:2.6.2"
     implementation 'com.android.billingclient:billing:6.1.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2'

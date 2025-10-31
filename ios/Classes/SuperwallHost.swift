@@ -338,6 +338,12 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
       completion(.success(result.pigeonify()))
     }
   }
+
+  func consume(purchaseToken: String, completion: @escaping (Result<String, Error>) -> Void) {
+    Task {
+      completion(.success(purchaseToken))
+    }
+  }
 }
 
 final class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamHandler {

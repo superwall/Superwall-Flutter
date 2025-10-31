@@ -441,6 +441,10 @@ class Superwall {
     return PresentationResult.fromPigeon(result);
   }
 
+  Future<String> consume(String purchaseToken) async {
+    return await hostApi.consume(purchaseToken);
+  }
+
   // Set override products by name globally across all paywalls
   set overrideProductsByName(Map<String, String>? overrideProducts) {
     hostApi.setOverrideProductsByName(overrideProducts);

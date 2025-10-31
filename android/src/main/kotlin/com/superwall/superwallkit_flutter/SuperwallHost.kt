@@ -352,6 +352,12 @@ class SuperwallHost(
         Superwall.instance.overrideProductsByName = overrideProducts?:emptyMap()
     }
 
+    override fun consume(purchaseToken: String, callback: (Result<String>) -> Unit) {
+        ioScope.launch {
+            callback(Superwall.instance.consume(purchaseToken))
+        }
+    }
+
     override fun onListen(p0: Any?, sink: PigeonEventSink<PSubscriptionStatus>) {
         latestStreamJob = ioScope.launch {
             Superwall.instance.subscriptionStatus.collectLatest {
