@@ -1054,6 +1054,9 @@ abstract class PSuperwallHostApi {
   @async
   Map<String, Object> getDeviceAttributes();
 
+  @async
+  String consume(String purchaseToken);
+
   // Locale methods
   String? getLocaleIdentifier();
   void setLocaleIdentifier(String? localeIdentifier);
