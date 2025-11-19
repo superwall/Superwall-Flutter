@@ -388,18 +388,35 @@ final class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamH
 
 final class CustomerInfoStreamHandlerImpl: StreamCustomerInfoStreamHandler {
   private var eventSink: PigeonEventSink<PCustomerInfo>?
+  private var streamTask: Task<Void, Never>?
   private var cancellable: AnyCancellable?
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PCustomerInfo>) {
     eventSink = sink
-    cancellable = Superwall.shared.$customerInfo
-      .sink { [weak self] customerInfo in
-        guard let self = self else { return }
-        self.eventSink?.success(customerInfo.pigeonify())
+
+    // Use the SDK's customerInfoStream which already has proper deduplication
+    if #available(iOS 15.0, *) {
+      streamTask = Task { [weak self] in
+        for await customerInfo in Superwall.shared.customerInfoStream {
+          guard let self = self else { return }
+          self.eventSink?.success(customerInfo.pigeonify())
+        }
       }
+    } else {
+      // Fallback for iOS 14 - use Combine with removeDuplicates
+      // CustomerInfo conforms to Equatable, so this will properly deduplicate
+      cancellable = Superwall.shared.$customerInfo
+        .removeDuplicates()
+        .sink { [weak self] customerInfo in
+          guard let self = self else { return }
+          self.eventSink?.success(customerInfo.pigeonify())
+        }
+    }
   }
 
   override func onCancel(withArguments arguments: Any?) {
+    streamTask?.cancel()
+    streamTask = nil
     cancellable?.cancel()
     cancellable = nil
     eventSink = nil
