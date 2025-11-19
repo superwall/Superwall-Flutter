@@ -2,6 +2,7 @@ package com.superwall.superwallkit_flutter.utils
 
 import PActive
 import PEntitlement
+import PEntitlementType
 import PInactive
 import PSubscriptionStatus
 import PUnknown
@@ -14,7 +15,12 @@ object SubscriptionStatusMapper {
             is SubscriptionStatus.Active ->
                 PActive(
                     entitlements.map {
-                        PEntitlement(it.id!!)
+                        PEntitlement(
+                            id = it.id!!,
+                            type = PEntitlementType.SERVICE_LEVEL,
+                            isActive = true,
+                            productIds = emptyList()
+                        )
                     },
                 )
 

@@ -1,50 +1,19 @@
-class Entitlement {
-  final String id;
-  final String type;
+import 'CustomerInfo.dart';
 
-  Entitlement({required this.id, this.type = 'SERVICE_LEVEL'});
+// Re-export Entitlement from CustomerInfo.dart for backwards compatibility
+export 'CustomerInfo.dart' show Entitlement, EntitlementType, ProductStore;
 
-  // Factory constructor for creating an instance from a JSON map
-  factory Entitlement.fromJson(Map<String, dynamic> json) {
-    return Entitlement(
-      id: json['id'],
-      type: json['type'],
-    );
-  }
-
-  // Method to convert an instance to a JSON map
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'type': type,
-    };
-  }
-}
-
+// Wrapper class for entitlement collections
 class Entitlements {
   final Set<Entitlement> active;
   final Set<Entitlement> inactive;
   final Set<Entitlement> all;
+  final Set<Entitlement> web;
 
   Entitlements({
     required this.active,
     required this.inactive,
     required this.all,
+    required this.web,
   });
-
-  factory Entitlements.fromJson(Map<String, dynamic> json) {
-    return Entitlements(
-      active: json['active'],
-      inactive: json['inactive'],
-      all: json['all'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'active': active.map((e) => e.toJson()).toList(),
-      'inactive': inactive.map((e) => e.toJson()).toList(),
-      'all': all.map((e) => e.toJson()).toList(),
-    };
-  }
 }

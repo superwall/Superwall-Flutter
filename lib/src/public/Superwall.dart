@@ -295,12 +295,19 @@ class Superwall {
   Future<Entitlements> getEntitlements() async {
     final entitlements = await hostApi.getEntitlements();
     map(List<PEntitlement> entitlements) =>
-        entitlements.map((e) => Entitlement(id: e.id!!)).toSet();
+        entitlements.map((e) => Entitlement.fromPigeon(e)).toSet();
 
     return Entitlements(
         active: map(entitlements.active),
         inactive: map(entitlements.inactive),
-        all: map(entitlements.all));
+        all: map(entitlements.all),
+        web: map(entitlements.web));
+  }
+
+  // Gets the latest customer info
+  Future<CustomerInfo> getCustomerInfo() async {
+    final customerInfo = await hostApi.getCustomerInfo();
+    return CustomerInfo.fromPigeon(customerInfo);
   }
 
   // Gets the latest PaywallInfo object
@@ -433,6 +440,16 @@ class Superwall {
             SubscriptionStatus.createSubscriptionStatusFromPSubscriptionStatus(
                 e));
     return _subscriptionStatusStream!.asBroadcastStream();
+  }
+
+  Stream<CustomerInfo>? _customerInfoStream;
+
+  Stream<CustomerInfo> get customerInfoStream {
+    // Only initialize the stream if it hasn't been initialized yet
+    _customerInfoStream ??= generated
+        .streamCustomerInfo()
+        .map((e) => CustomerInfo.fromPigeon(e));
+    return _customerInfoStream!.asBroadcastStream();
   }
 
   Future<PresentationResult> getPresentationResult(String placement,

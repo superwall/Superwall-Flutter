@@ -52,7 +52,7 @@ final class SuperwallDelegateHost: SuperwallDelegate {
     let oldStatus: PSubscriptionStatus
     switch oldValue {
     case .active(let entitlements):
-      oldStatus = PActive(entitlements: entitlements.map { PEntitlement(id: $0.id) })
+      oldStatus = PActive(entitlements: entitlements.map { $0.pigeonify() })
     case .inactive:
       oldStatus = PInactive(ignore: false)
     case .unknown:
@@ -62,7 +62,7 @@ final class SuperwallDelegateHost: SuperwallDelegate {
     let newStatus: PSubscriptionStatus
     switch newValue {
     case .active(let entitlements):
-      newStatus = PActive(entitlements: entitlements.map { PEntitlement(id: $0.id) })
+      newStatus = PActive(entitlements: entitlements.map { $0.pigeonify() })
     case .inactive:
       newStatus = PInactive(ignore: false)
     case .unknown:
@@ -369,6 +369,34 @@ final class SuperwallDelegateHost: SuperwallDelegate {
       pEventInfo = PSuperwallEventInfo(eventType: .enrichmentFail, params: params)
     case .networkDecodingFail:
       pEventInfo = PSuperwallEventInfo(eventType: .networkDecodingFail, params: params)
+    case .paywallWebviewProcessTerminated(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallWebviewProcessTerminated,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case let .paywallProductsLoadMissingProducts(triggeredPlacementName, paywallInfo, identifiers):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallProductsLoadMissingProducts,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify(),
+        triggeredPlacementName: triggeredPlacementName,
+        missingProductIdentifiers: Array(identifiers)
+      )
+    case .customerInfoDidChange:
+      pEventInfo = PSuperwallEventInfo(eventType: .customerInfoDidChange, params: params)
+    case .integrationAttributes(let attributes):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .integrationAttributes,
+        params: params,
+        integrationAttributes: attributes
+      )
+    case .reviewRequested(let count):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .reviewRequested,
+        params: params,
+        reviewRequestedCount: Int64(count)
+      )
     }
 
     flutterDelegate().handleSuperwallEvent(eventInfo: pEventInfo) { result in
@@ -480,5 +508,17 @@ final class SuperwallDelegateHost: SuperwallDelegate {
       queryParameters: queryParameters) { _ in
         // NO-OP
       }
+  }
+
+  func customerInfoDidChange(
+    from oldValue: CustomerInfo,
+    to newValue: CustomerInfo
+  ) {
+    flutterDelegate().customerInfoDidChange(
+      from: oldValue.pigeonify(),
+      to: newValue.pigeonify()
+    ) { _ in
+      // NO-OP
+    }
   }
 }

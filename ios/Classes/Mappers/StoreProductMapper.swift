@@ -58,8 +58,4 @@ extension StoreProduct {
   }
 }
 
-extension Entitlement {
-  func pigeonify() -> PEntitlement {
-    return PEntitlement(id: id)
-  }
-}
+// Entitlement.pigeonify() is now defined in CustomerInfo+Pigeonify.swift

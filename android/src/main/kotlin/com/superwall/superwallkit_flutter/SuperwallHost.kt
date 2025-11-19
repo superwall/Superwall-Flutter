@@ -5,6 +5,7 @@ import PConfigurationStatus
 import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
+import PCustomerInfo
 import PEntitlement
 import PExperiment
 import PEntitlements
@@ -203,16 +204,34 @@ class SuperwallHost(
     }
 
     override fun getEntitlements(): PEntitlements {
+        fun mapEntitlement(entitlement: Entitlement): PEntitlement {
+            return PEntitlement(
+                id = entitlement.id,
+                type = PEntitlementType.SERVICE_LEVEL,
+                isActive = true,
+                productIds = emptyList()
+            )
+        }
+
         return PEntitlements(
-            active = Superwall.instance.entitlements.active.map {
-                PEntitlement(it.id)
-            }, inactive = Superwall.instance.entitlements.inactive.map {
-                PEntitlement(it.id)
-            }, all = Superwall.instance.entitlements.all.map {
-                PEntitlement(it.id)
-            })
+            active = Superwall.instance.entitlements.active.map { mapEntitlement(it) },
+            inactive = Superwall.instance.entitlements.inactive.map { mapEntitlement(it) },
+            all = Superwall.instance.entitlements.all.map { mapEntitlement(it) },
+            web = Superwall.instance.entitlements.web.map { mapEntitlement(it) }
+        )
     }
 
+    override fun getCustomerInfo(callback: (Result<PCustomerInfo>) -> Unit) {
+        // TODO: Implement customerInfo from Android SDK when available
+        // For now, return minimal data based on current user
+        val customerInfo = PCustomerInfo(
+            subscriptions = emptyList(),
+            nonSubscriptions = emptyList(),
+            entitlements = emptyList(),
+            userId = Superwall.instance.userId
+        )
+        callback(Result.success(customerInfo))
+    }
 
     override fun getSubscriptionStatus(): PSubscriptionStatus {
         return Superwall.instance.subscriptionStatus.value.toPigeon()

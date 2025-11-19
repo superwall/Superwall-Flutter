@@ -56,6 +56,9 @@ abstract class SuperwallDelegate {
   /// `yoursubdomain.superwall.app/app-link/...`.
   void handleSuperwallDeepLink(Uri fullURL, List<String> pathComponents,
       Map<String, String> queryParameters);
+
+  /// Called when the `customerInfo` property of `Superwall` changes.
+  void customerInfoDidChange(CustomerInfo from, CustomerInfo to) => {};
 }
 
 class SuperwallDelegateHost implements PSuperwallDelegateGenerated {
@@ -163,6 +166,17 @@ class SuperwallDelegateHost implements PSuperwallDelegateGenerated {
       _delegate.handleSuperwallDeepLink(uri, pathComponents, queryParameters);
     } catch (e) {
       // Error parsing URL
+    }
+  }
+
+  @override
+  void customerInfoDidChange(PCustomerInfo from, PCustomerInfo to) {
+    try {
+      final fromInfo = CustomerInfo.fromPigeon(from);
+      final toInfo = CustomerInfo.fromPigeon(to);
+      _delegate.customerInfoDidChange(fromInfo, toInfo);
+    } catch (e) {
+      // Error parsing CustomerInfo
     }
   }
 }

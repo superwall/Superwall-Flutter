@@ -35,7 +35,7 @@ sealed class SubscriptionStatus {
         return PActive(
             entitlements: (this as SubscriptionStatusActive)
                 .entitlements
-                .map((e) => PEntitlement(id: e.id))
+                .map((e) => e.toPigeon())
                 .toSet()
                 .toList());
     }
