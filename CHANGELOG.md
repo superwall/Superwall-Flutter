@@ -16,12 +16,11 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - Adds `Superwall.shared.consume(purchaseToken)` method to allow consuming inapp purchases
 - Updates Android SDK to 2.6.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.6.2).
 
-
 ## 2.4.3
 
 ### Enhancements
-- Updates Android SDK to 2.6.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.6.1).
 
+- Updates Android SDK to 2.6.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.6.1).
 
 ## 2.4.2
 
