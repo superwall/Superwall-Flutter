@@ -190,6 +190,12 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
     )
   }
 
+  func getEntitlementsByProductIds(productIds: [String]) -> [PEntitlement] {
+    let productIdSet = Set(productIds)
+    let result = Superwall.shared.entitlements.byProductIds(productIdSet)
+    return result.map { $0.pigeonify() }
+  }
+
   func getCustomerInfo(completion: @escaping (Result<PCustomerInfo, Error>) -> Void) {
     Task {
       let customerInfo = await Superwall.shared.getCustomerInfo()

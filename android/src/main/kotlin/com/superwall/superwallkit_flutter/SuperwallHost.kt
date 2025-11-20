@@ -234,6 +234,28 @@ class SuperwallHost(
         )
     }
 
+    override fun getEntitlementsByProductIds(productIds: List<String>): List<PEntitlement> {
+        // TODO: Android SDK doesn't have byProductIds method yet
+        // For now, implement filtering locally
+        fun mapEntitlement(entitlement: Entitlement): PEntitlement {
+            return PEntitlement(
+                id = entitlement.id,
+                type = PEntitlementType.SERVICE_LEVEL,
+                isActive = true,
+                productIds = emptyList()
+            )
+        }
+
+        val productIdSet = productIds.toSet()
+        val allEntitlements = Superwall.instance.entitlements.all
+
+        // Since Android SDK's Entitlement doesn't expose productIds yet,
+        // we can't filter by productIds. Return empty list for now.
+        // This will need to be updated when Android SDK supports product IDs in entitlements.
+        Log.w("SuperwallHost", "getEntitlementsByProductIds: Android SDK doesn't expose productIds in Entitlement yet, returning empty list")
+        return emptyList()
+    }
+
     override fun getCustomerInfo(callback: (Result<PCustomerInfo>) -> Unit) {
         // TODO: Implement customerInfo from Android SDK when available
         // For now, return minimal data based on current user

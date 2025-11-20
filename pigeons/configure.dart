@@ -1307,6 +1307,7 @@ abstract class PSuperwallHostApi {
 
   // Entitlements methods
   PEntitlements getEntitlements();
+  List<PEntitlement> getEntitlementsByProductIds(List<String> productIds);
 
   // CustomerInfo methods
   @async

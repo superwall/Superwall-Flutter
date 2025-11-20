@@ -3770,6 +3770,7 @@ protocol PSuperwallHostApi {
   func getIsInitialized() throws -> Bool
   func identify(userId: String, identityOptions: PIdentityOptions?) throws
   func getEntitlements() throws -> PEntitlements
+  func getEntitlementsByProductIds(productIds: [String]) throws -> [PEntitlement]
   func getCustomerInfo(completion: @escaping (Result<PCustomerInfo, Error>) -> Void)
   func getSubscriptionStatus() throws -> PSubscriptionStatus
   func setSubscriptionStatus(subscriptionStatus: PSubscriptionStatus) throws
@@ -4086,6 +4087,21 @@ class PSuperwallHostApiSetup {
       }
     } else {
       getEntitlementsChannel.setMessageHandler(nil)
+    }
+    let getEntitlementsByProductIdsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getEntitlementsByProductIds\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getEntitlementsByProductIdsChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let productIdsArg = args[0] as! [String]
+        do {
+          let result = try api.getEntitlementsByProductIds(productIds: productIdsArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getEntitlementsByProductIdsChannel.setMessageHandler(nil)
     }
     let getCustomerInfoChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getCustomerInfo\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

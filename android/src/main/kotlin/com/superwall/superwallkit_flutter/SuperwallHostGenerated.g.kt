@@ -4162,6 +4162,7 @@ interface PSuperwallHostApi {
   fun getIsInitialized(): Boolean
   fun identify(userId: String, identityOptions: PIdentityOptions?)
   fun getEntitlements(): PEntitlements
+  fun getEntitlementsByProductIds(productIds: List<String>): List<PEntitlement>
   fun getCustomerInfo(callback: (Result<PCustomerInfo>) -> Unit)
   fun getSubscriptionStatus(): PSubscriptionStatus
   fun setSubscriptionStatus(subscriptionStatus: PSubscriptionStatus)
@@ -4524,6 +4525,23 @@ interface PSuperwallHostApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> = try {
               listOf(api.getEntitlements())
+            } catch (exception: Throwable) {
+              SuperwallHostGeneratedPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getEntitlementsByProductIds$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val productIdsArg = args[0] as List<String>
+            val wrapped: List<Any?> = try {
+              listOf(api.getEntitlementsByProductIds(productIdsArg))
             } catch (exception: Throwable) {
               SuperwallHostGeneratedPigeonUtils.wrapError(exception)
             }

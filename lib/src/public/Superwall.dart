@@ -342,10 +342,16 @@ class Superwall {
         entitlements.map((e) => Entitlement.fromPigeon(e)).toSet();
 
     return Entitlements(
-        active: map(entitlements.active),
-        inactive: map(entitlements.inactive),
-        all: map(entitlements.all),
-        web: map(entitlements.web));
+      active: map(entitlements.active),
+      inactive: map(entitlements.inactive),
+      all: map(entitlements.all),
+      web: map(entitlements.web),
+      nativeFilterCallback: (productIds) async {
+        final result =
+            await hostApi.getEntitlementsByProductIds(productIds.toList());
+        return result.map((e) => Entitlement.fromPigeon(e)).toSet();
+      },
+    );
   }
 
   // Gets the latest customer info
