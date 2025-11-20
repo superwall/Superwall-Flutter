@@ -266,6 +266,50 @@ class Superwall {
     await hostApi.setUserAttributes(userAttributes);
   }
 
+  /// Sets a single attribute for third-party integrations.
+  ///
+  /// Use this to sync user identifiers from your analytics and attribution providers
+  /// with Superwall. This enables better user tracking and attribution.
+  ///
+  /// - Parameters:
+  ///   - attribute: The [IntegrationAttribute] key specifying the integration provider.
+  ///   - value: The value to associate with the attribute. Pass `null` to remove the attribute.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Superwall.shared.setIntegrationAttribute(
+  ///   IntegrationAttribute.mixpanelDistinctId,
+  ///   'user123'
+  /// );
+  /// ```
+  Future<void> setIntegrationAttribute(
+      IntegrationAttribute attribute, String? value) async {
+    await hostApi.setIntegrationAttribute(attribute.toPigeon(), value);
+  }
+
+  /// Sets multiple attributes for third-party integrations at once.
+  ///
+  /// Use this to sync multiple user identifiers from your analytics and attribution
+  /// providers with Superwall. This enables better user tracking and attribution.
+  ///
+  /// - Parameter attributes: A map of [IntegrationAttribute] keys to their values.
+  ///   Pass `null` as a value to remove that attribute.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Superwall.shared.setIntegrationAttributes({
+  ///   IntegrationAttribute.mixpanelDistinctId: 'user123',
+  ///   IntegrationAttribute.amplitudeUserId: 'amp_456',
+  ///   IntegrationAttribute.adjustId: null, // Remove this attribute
+  /// });
+  /// ```
+  Future<void> setIntegrationAttributes(
+      Map<IntegrationAttribute, String?> attributes) async {
+    final pigeonAttributes =
+        attributes.map((key, value) => MapEntry(key.toPigeon(), value));
+    await hostApi.setIntegrationAttributes(pigeonAttributes);
+  }
+
   // Gets the locale identifier
   Future<String?> getLocaleIdentifier() async {
     return await hostApi.getLocaleIdentifier();

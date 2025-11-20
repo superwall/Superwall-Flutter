@@ -12,6 +12,7 @@ import PEntitlements
 import PFeatureHandlerGenerated
 import PFeatureHandlerHost
 import PIdentityOptions
+import PIntegrationAttribute
 import PInactive
 import PPaywallInfo
 import PPaywallPresentationHandlerGenerated
@@ -163,6 +164,18 @@ class SuperwallHost(
 
     override fun setUserAttributes(userAttributes: Map<String, Any>) {
         Superwall.instance.setUserAttributes(userAttributes)
+    }
+
+    override fun setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
+        // TODO: Android SDK doesn't support setIntegrationAttribute yet
+        // Track issue: https://github.com/superwall/Superwall-Android/issues/XXX
+        Log.w("SuperwallHost", "setIntegrationAttribute is not yet supported on Android SDK")
+    }
+
+    override fun setIntegrationAttributes(attributes: Map<PIntegrationAttribute, String?>) {
+        // TODO: Android SDK doesn't support setIntegrationAttributes yet
+        // Track issue: https://github.com/superwall/Superwall-Android/issues/XXX
+        Log.w("SuperwallHost", "setIntegrationAttributes is not yet supported on Android SDK")
     }
 
     override fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit) {
@@ -405,3 +418,32 @@ class SuperwallHost(
         }
     }
 }
+
+// MARK: - PIntegrationAttribute Extension
+// NOTE: Not currently used as Android SDK doesn't support setIntegrationAttributes yet
+/*
+fun PIntegrationAttribute.toAndroidAttributeKey(): String {
+    return when (this) {
+        PIntegrationAttribute.ADJUST_ID -> "adjustId"
+        PIntegrationAttribute.AMPLITUDE_DEVICE_ID -> "amplitudeDeviceId"
+        PIntegrationAttribute.AMPLITUDE_USER_ID -> "amplitudeUserId"
+        PIntegrationAttribute.APPSFLYER_ID -> "appsflyerId"
+        PIntegrationAttribute.BRAZE_ALIAS_NAME -> "brazeAliasName"
+        PIntegrationAttribute.BRAZE_ALIAS_LABEL -> "brazeAliasLabel"
+        PIntegrationAttribute.ONESIGNAL_ID -> "onesignalId"
+        PIntegrationAttribute.FB_ANON_ID -> "fbAnonId"
+        PIntegrationAttribute.FIREBASE_APP_INSTANCE_ID -> "firebaseAppInstanceId"
+        PIntegrationAttribute.ITERABLE_USER_ID -> "iterableUserId"
+        PIntegrationAttribute.ITERABLE_CAMPAIGN_ID -> "iterableCampaignId"
+        PIntegrationAttribute.ITERABLE_TEMPLATE_ID -> "iterableTemplateId"
+        PIntegrationAttribute.MIXPANEL_DISTINCT_ID -> "mixpanelDistinctId"
+        PIntegrationAttribute.MPARTICLE_ID -> "mparticleId"
+        PIntegrationAttribute.CLEVERTAP_ID -> "clevertapId"
+        PIntegrationAttribute.AIRSHIP_CHANNEL_ID -> "airshipChannelId"
+        PIntegrationAttribute.KOCHAVA_DEVICE_ID -> "kochavaDeviceId"
+        PIntegrationAttribute.TENJIN_ID -> "tenjinId"
+        PIntegrationAttribute.POSTHOG_USER_ID -> "posthogUserId"
+        PIntegrationAttribute.CUSTOMERIO_ID -> "customerioId"
+    }
+}
+*/

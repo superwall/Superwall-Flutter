@@ -6,6 +6,7 @@ export 'src/public/ConfigurationStatus.dart';
 export 'src/public/Experiment.dart';
 export 'src/public/FeatureGatingBehavior.dart';
 export 'src/public/IdentityOptions.dart';
+export 'src/public/IntegrationAttribute.dart';
 export 'src/public/LocalNotification.dart';
 export 'src/public/LogLevel.dart';
 export 'src/public/LogScope.dart';

@@ -663,6 +663,50 @@ enum PLatestSubscriptionOfferType {
   winback,
 }
 
+/// Attributes for third-party integrations with Superwall.
+enum PIntegrationAttribute {
+  /// The unique Adjust identifier for the user.
+  adjustId,
+  /// The Amplitude device identifier.
+  amplitudeDeviceId,
+  /// The Amplitude user identifier.
+  amplitudeUserId,
+  /// The unique Appsflyer identifier for the user.
+  appsflyerId,
+  /// The Braze `alias_name` in User Alias Object.
+  brazeAliasName,
+  /// The Braze `alias_label` in User Alias Object.
+  brazeAliasLabel,
+  /// The OneSignal Player identifier for the user.
+  onesignalId,
+  /// The Facebook Anonymous identifier for the user.
+  fbAnonId,
+  /// The Firebase instance identifier.
+  firebaseAppInstanceId,
+  /// The Iterable identifier for the user.
+  iterableUserId,
+  /// The Iterable campaign identifier.
+  iterableCampaignId,
+  /// The Iterable template identifier.
+  iterableTemplateId,
+  /// The Mixpanel user identifier.
+  mixpanelDistinctId,
+  /// The unique mParticle user identifier (mpid).
+  mparticleId,
+  /// The CleverTap user identifier.
+  clevertapId,
+  /// The Airship channel identifier for the user.
+  airshipChannelId,
+  /// The unique Kochava device identifier.
+  kochavaDeviceId,
+  /// The Tenjin identifier.
+  tenjinId,
+  /// The PostHog User identifier.
+  posthogUserId,
+  /// The Customer.io person's identifier (`id`).
+  customerioId,
+}
+
 /// A subscription transaction.
 class PSubscriptionTransaction {
   /// The unique identifier for the transaction.
@@ -1240,6 +1284,10 @@ abstract class PSuperwallHostApi {
   // User attributes methods
   Map<String, Object> getUserAttributes();
   void setUserAttributes(Map<String, Object> userAttributes);
+
+  // Integration attributes methods
+  void setIntegrationAttribute(PIntegrationAttribute attribute, String? value);
+  void setIntegrationAttributes(Map<PIntegrationAttribute, String?> attributes);
 
   @async
   Map<String, Object> getDeviceAttributes();
