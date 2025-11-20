@@ -167,15 +167,13 @@ class SuperwallHost(
     }
 
     override fun setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
-        // TODO: Android SDK doesn't support setIntegrationAttribute yet
-        // Track issue: https://github.com/superwall/Superwall-Android/issues/XXX
-        Log.w("SuperwallHost", "setIntegrationAttribute is not yet supported on Android SDK")
+        val attributeKey = attribute.toAttributeKey()
+        Superwall.instance.setUserAttributes(mapOf(attributeKey to value))
     }
 
     override fun setIntegrationAttributes(attributes: Map<PIntegrationAttribute, String?>) {
-        // TODO: Android SDK doesn't support setIntegrationAttributes yet
-        // Track issue: https://github.com/superwall/Superwall-Android/issues/XXX
-        Log.w("SuperwallHost", "setIntegrationAttributes is not yet supported on Android SDK")
+        val androidAttributes = attributes.mapKeys { it.key.toAttributeKey() }
+        Superwall.instance.setUserAttributes(androidAttributes)
     }
 
     override fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit) {
@@ -442,30 +440,27 @@ class SuperwallHost(
 }
 
 // MARK: - PIntegrationAttribute Extension
-// NOTE: Not currently used as Android SDK doesn't support setIntegrationAttributes yet
-/*
-fun PIntegrationAttribute.toAndroidAttributeKey(): String {
+fun PIntegrationAttribute.toAttributeKey(): String {
     return when (this) {
-        PIntegrationAttribute.ADJUST_ID -> "adjustId"
-        PIntegrationAttribute.AMPLITUDE_DEVICE_ID -> "amplitudeDeviceId"
-        PIntegrationAttribute.AMPLITUDE_USER_ID -> "amplitudeUserId"
-        PIntegrationAttribute.APPSFLYER_ID -> "appsflyerId"
-        PIntegrationAttribute.BRAZE_ALIAS_NAME -> "brazeAliasName"
-        PIntegrationAttribute.BRAZE_ALIAS_LABEL -> "brazeAliasLabel"
-        PIntegrationAttribute.ONESIGNAL_ID -> "onesignalId"
-        PIntegrationAttribute.FB_ANON_ID -> "fbAnonId"
-        PIntegrationAttribute.FIREBASE_APP_INSTANCE_ID -> "firebaseAppInstanceId"
-        PIntegrationAttribute.ITERABLE_USER_ID -> "iterableUserId"
-        PIntegrationAttribute.ITERABLE_CAMPAIGN_ID -> "iterableCampaignId"
-        PIntegrationAttribute.ITERABLE_TEMPLATE_ID -> "iterableTemplateId"
-        PIntegrationAttribute.MIXPANEL_DISTINCT_ID -> "mixpanelDistinctId"
-        PIntegrationAttribute.MPARTICLE_ID -> "mparticleId"
-        PIntegrationAttribute.CLEVERTAP_ID -> "clevertapId"
-        PIntegrationAttribute.AIRSHIP_CHANNEL_ID -> "airshipChannelId"
-        PIntegrationAttribute.KOCHAVA_DEVICE_ID -> "kochavaDeviceId"
-        PIntegrationAttribute.TENJIN_ID -> "tenjinId"
-        PIntegrationAttribute.POSTHOG_USER_ID -> "posthogUserId"
-        PIntegrationAttribute.CUSTOMERIO_ID -> "customerioId"
+        PIntegrationAttribute.ADJUST_ID -> "\$adjust_id"
+        PIntegrationAttribute.AMPLITUDE_DEVICE_ID -> "\$amplitude_device_id"
+        PIntegrationAttribute.AMPLITUDE_USER_ID -> "\$amplitude_user_id"
+        PIntegrationAttribute.APPSFLYER_ID -> "\$appsflyer_id"
+        PIntegrationAttribute.BRAZE_ALIAS_NAME -> "\$braze_alias_name"
+        PIntegrationAttribute.BRAZE_ALIAS_LABEL -> "\$braze_alias_label"
+        PIntegrationAttribute.ONESIGNAL_ID -> "\$onesignal_id"
+        PIntegrationAttribute.FB_ANON_ID -> "\$fb_anon_id"
+        PIntegrationAttribute.FIREBASE_APP_INSTANCE_ID -> "\$firebase_app_instance_id"
+        PIntegrationAttribute.ITERABLE_USER_ID -> "\$iterable_user_id"
+        PIntegrationAttribute.ITERABLE_CAMPAIGN_ID -> "\$iterable_campaign_id"
+        PIntegrationAttribute.ITERABLE_TEMPLATE_ID -> "\$iterable_template_id"
+        PIntegrationAttribute.MIXPANEL_DISTINCT_ID -> "\$mixpanel_distinct_id"
+        PIntegrationAttribute.MPARTICLE_ID -> "\$mparticle_id"
+        PIntegrationAttribute.CLEVERTAP_ID -> "\$clevertap_id"
+        PIntegrationAttribute.AIRSHIP_CHANNEL_ID -> "\$airship_channel_id"
+        PIntegrationAttribute.KOCHAVA_DEVICE_ID -> "\$kochava_device_id"
+        PIntegrationAttribute.TENJIN_ID -> "\$tenjin_id"
+        PIntegrationAttribute.POSTHOG_USER_ID -> "\$posthog_user_id"
+        PIntegrationAttribute.CUSTOMERIO_ID -> "\$customerio_id"
     }
 }
-*/
