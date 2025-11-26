@@ -13,8 +13,13 @@ class TestingPurchaseController extends PurchaseController {
 
   TestingPurchaseController({BuildContext? context}) : _context = context;
 
-  Future<void> configureAndSyncSubscriptionStatus() async {
-    await Superwall.shared.setSubscriptionStatus(SubscriptionStatusInactive());
+  Future<void> configure() async {
+    // No RevenueCat configuration needed for testing
+  }
+
+  void syncSubscriptionStatus() {
+    // Set initial status to inactive for testing
+    Superwall.shared.setSubscriptionStatus(SubscriptionStatusInactive());
   }
 
   // Toggle methods

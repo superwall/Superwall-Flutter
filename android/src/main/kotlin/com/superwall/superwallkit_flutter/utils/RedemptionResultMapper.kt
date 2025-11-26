@@ -3,6 +3,7 @@ package com.superwall.superwallkit_flutter.utils
 import PAppUserOwnership
 import PDeviceOwnership
 import PEntitlement
+import PEntitlementType
 import PErrorInfo
 import PErrorRedemptionResult
 import PExpiredCodeInfo
@@ -121,10 +122,11 @@ object RedemptionResultMapper {
         )
 
     private fun mapEntitlement(entitlement: Entitlement): PEntitlement {
-        // Note: This assumes PEntitlement has a similar structure to Entitlement
-        // If the structure is different, this needs to be adjusted
         return PEntitlement(
-            entitlement.id,
+            id = entitlement.id,
+            type = PEntitlementType.SERVICE_LEVEL,
+            isActive = true,
+            productIds = emptyList()
         )
     }
 

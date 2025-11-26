@@ -6,6 +6,7 @@ import Combine
 final class SuperwallHost : NSObject, PSuperwallHostApi {
   private let flutterBinaryMessenger: FlutterBinaryMessenger
   private var streamHandler: SubscriptionStatusStreamHandlerImpl?
+  private var customerInfoStreamHandler: CustomerInfoStreamHandlerImpl?
   private var presentationHandlers: [String: PaywallPresentationHandlerHost] = [:]
 
   init(flutterBinaryMessenger: FlutterBinaryMessenger) {
@@ -13,6 +14,7 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
     super.init()
     PSuperwallHostApiSetup.setUp(binaryMessenger: flutterBinaryMessenger, api: self)
     self.streamHandler = SubscriptionStatusStreamHandlerImpl()
+    self.customerInfoStreamHandler = CustomerInfoStreamHandlerImpl()
   }
 
   func configure(apiKey: String, purchaseController: PPurchaseControllerHost?, options: PSuperwallOptions?, completion: PConfigureCompletionHost?, completion completion_: @escaping (Result<Void, Error>) -> Void) {
@@ -31,6 +33,10 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
 
     if let streamHandler = self.streamHandler {
       StreamSubscriptionStatusStreamHandler.register(with: flutterBinaryMessenger, streamHandler: streamHandler)
+    }
+
+    if let customerInfoStreamHandler = self.customerInfoStreamHandler {
+      StreamCustomerInfoStreamHandler.register(with: flutterBinaryMessenger, streamHandler: customerInfoStreamHandler)
     }
 
     Superwall.configure(
@@ -123,6 +129,18 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
     Superwall.shared.setUserAttributes(userAttributes)
   }
 
+  func setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
+    let swAttribute = attribute.toSwiftIntegrationAttribute()
+    Superwall.shared.setIntegrationAttribute(swAttribute, value)
+  }
+
+  func setIntegrationAttributes(attributes: [PIntegrationAttribute : String?]) {
+    let swAttributes = attributes.reduce(into: [IntegrationAttribute: String?]()) { result, pair in
+      result[pair.key.toSwiftIntegrationAttribute()] = pair.value
+    }
+    Superwall.shared.setIntegrationAttributes(swAttributes)
+  }
+
   func getLocaleIdentifier() -> String? {
     return Superwall.shared.localeIdentifier
   }
@@ -165,10 +183,24 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
   func getEntitlements() -> PEntitlements {
     let swEntitlements = Superwall.shared.entitlements
     return PEntitlements(
-      active: swEntitlements.active.map { PEntitlement(id: $0.id) },
-      inactive: swEntitlements.inactive.map { PEntitlement(id: $0.id) },
-      all: swEntitlements.all.map { PEntitlement(id: $0.id) }
+      active: swEntitlements.active.map { $0.pigeonify() },
+      inactive: swEntitlements.inactive.map { $0.pigeonify() },
+      all: swEntitlements.all.map { $0.pigeonify() },
+      web: swEntitlements.web.map { $0.pigeonify() }
     )
+  }
+
+  func getEntitlementsByProductIds(productIds: [String]) -> [PEntitlement] {
+    let productIdSet = Set(productIds)
+    let result = Superwall.shared.entitlements.byProductIds(productIdSet)
+    return result.map { $0.pigeonify() }
+  }
+
+  func getCustomerInfo(completion: @escaping (Result<PCustomerInfo, Error>) -> Void) {
+    Task {
+      let customerInfo = await Superwall.shared.getCustomerInfo()
+      completion(.success(customerInfo.pigeonify()))
+    }
   }
 
   func getSubscriptionStatus() -> PSubscriptionStatus {
@@ -176,7 +208,7 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
 
     switch swStatus {
     case .active(let entitlements):
-      return PActive(entitlements: entitlements.map { PEntitlement(id: $0.id) })
+      return PActive(entitlements: entitlements.map { $0.pigeonify() })
     case .inactive:
       return PInactive(ignore: false)
     case .unknown:
@@ -189,9 +221,8 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
 
     switch subscriptionStatus {
     case let active as PActive:
-      let entitlements = Set<Entitlement>(active.entitlements.compactMap {
-        guard let id = $0.id else { return nil }
-        return Entitlement(id: id)
+      let entitlements = Set<Entitlement>(active.entitlements.map {
+        return Entitlement(id: $0.id)
       })
       swStatus = .active(entitlements)
     case is PInactive:
@@ -357,7 +388,7 @@ final class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamH
         guard let self = self else { return }
         switch status {
         case .active(let entitlements):
-          self.eventSink?.success(PActive(entitlements: entitlements.map { PEntitlement(id: $0.id) }))
+          self.eventSink?.success(PActive(entitlements: entitlements.map { $0.pigeonify() }))
         case .inactive:
           self.eventSink?.success(PInactive(ignore: false))
         case .unknown:
@@ -370,5 +401,90 @@ final class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamH
     cancellable?.cancel()
     cancellable = nil
     eventSink = nil
+  }
+}
+
+final class CustomerInfoStreamHandlerImpl: StreamCustomerInfoStreamHandler {
+  private var eventSink: PigeonEventSink<PCustomerInfo>?
+  private var streamTask: Task<Void, Never>?
+  private var cancellable: AnyCancellable?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PCustomerInfo>) {
+    eventSink = sink
+
+    // Use the SDK's customerInfoStream which already has proper deduplication
+    if #available(iOS 15.0, *) {
+      streamTask = Task { [weak self] in
+        for await customerInfo in Superwall.shared.customerInfoStream {
+          guard let self = self else { return }
+          self.eventSink?.success(customerInfo.pigeonify())
+        }
+      }
+    } else {
+      // Fallback for iOS 14 - use Combine with removeDuplicates
+      // CustomerInfo conforms to Equatable, so this will properly deduplicate
+      cancellable = Superwall.shared.$customerInfo
+        .removeDuplicates()
+        .sink { [weak self] customerInfo in
+          guard let self = self else { return }
+          self.eventSink?.success(customerInfo.pigeonify())
+        }
+    }
+  }
+
+  override func onCancel(withArguments arguments: Any?) {
+    streamTask?.cancel()
+    streamTask = nil
+    cancellable?.cancel()
+    cancellable = nil
+    eventSink = nil
+  }
+}
+
+// MARK: - PIntegrationAttribute Extension
+extension PIntegrationAttribute {
+  func toSwiftIntegrationAttribute() -> IntegrationAttribute {
+    switch self {
+    case .adjustId:
+      return .adjustId
+    case .amplitudeDeviceId:
+      return .amplitudeDeviceId
+    case .amplitudeUserId:
+      return .amplitudeUserId
+    case .appsflyerId:
+      return .appsflyerId
+    case .brazeAliasName:
+      return .brazeAliasName
+    case .brazeAliasLabel:
+      return .brazeAliasLabel
+    case .onesignalId:
+      return .onesignalId
+    case .fbAnonId:
+      return .fbAnonId
+    case .firebaseAppInstanceId:
+      return .firebaseAppInstanceId
+    case .iterableUserId:
+      return .iterableUserId
+    case .iterableCampaignId:
+      return .iterableCampaignId
+    case .iterableTemplateId:
+      return .iterableTemplateId
+    case .mixpanelDistinctId:
+      return .mixpanelDistinctId
+    case .mparticleId:
+      return .mparticleId
+    case .clevertapId:
+      return .clevertapId
+    case .airshipChannelId:
+      return .airshipChannelId
+    case .kochavaDeviceId:
+      return .kochavaDeviceId
+    case .tenjinId:
+      return .tenjinId
+    case .posthogUserId:
+      return .posthogUserId
+    case .customerioId:
+      return .customerioId
+    }
   }
 }

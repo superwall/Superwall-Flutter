@@ -91,7 +91,8 @@ class _MyAppState extends State<MyApp> {
       /// Always configure RevenueCat after Superwall and keep Superwall's
       /// subscription status up-to-date with RevenueCat's.
       if (useRevenueCat) {
-        await purchaseController.configureAndSyncSubscriptionStatus();
+        await purchaseController.configure();
+        purchaseController.syncSubscriptionStatus();
       }
     } catch (e) {
       // Handle any errors that occur during configuration

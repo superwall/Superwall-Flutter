@@ -629,16 +629,239 @@ class PFeatureHandlerHost {
   String? hostId;
 }
 
+// ============= CUSTOMER INFO TYPES =============
+
+/// An enum specifying the store from which a product or entitlement originated.
+enum PProductStore {
+  appStore,
+  stripe,
+  paddle,
+  playStore,
+  superwall,
+  other,
+}
+
+/// An enum specifying the entitlement type.
+enum PEntitlementType {
+  serviceLevel,
+}
+
+/// The state of a subscription.
+enum PLatestSubscriptionState {
+  inGracePeriod,
+  subscribed,
+  expired,
+  inBillingRetryPeriod,
+  revoked,
+}
+
+/// The offer type for a subscription.
+enum PLatestSubscriptionOfferType {
+  trial,
+  code,
+  promotional,
+  winback,
+}
+
+/// Attributes for third-party integrations with Superwall.
+enum PIntegrationAttribute {
+  /// The unique Adjust identifier for the user.
+  adjustId,
+  /// The Amplitude device identifier.
+  amplitudeDeviceId,
+  /// The Amplitude user identifier.
+  amplitudeUserId,
+  /// The unique Appsflyer identifier for the user.
+  appsflyerId,
+  /// The Braze `alias_name` in User Alias Object.
+  brazeAliasName,
+  /// The Braze `alias_label` in User Alias Object.
+  brazeAliasLabel,
+  /// The OneSignal Player identifier for the user.
+  onesignalId,
+  /// The Facebook Anonymous identifier for the user.
+  fbAnonId,
+  /// The Firebase instance identifier.
+  firebaseAppInstanceId,
+  /// The Iterable identifier for the user.
+  iterableUserId,
+  /// The Iterable campaign identifier.
+  iterableCampaignId,
+  /// The Iterable template identifier.
+  iterableTemplateId,
+  /// The Mixpanel user identifier.
+  mixpanelDistinctId,
+  /// The unique mParticle user identifier (mpid).
+  mparticleId,
+  /// The CleverTap user identifier.
+  clevertapId,
+  /// The Airship channel identifier for the user.
+  airshipChannelId,
+  /// The unique Kochava device identifier.
+  kochavaDeviceId,
+  /// The Tenjin identifier.
+  tenjinId,
+  /// The PostHog User identifier.
+  posthogUserId,
+  /// The Customer.io person's identifier (`id`).
+  customerioId,
+}
+
+/// A subscription transaction.
+class PSubscriptionTransaction {
+  /// The unique identifier for the transaction.
+  final String transactionId;
+
+  /// The product identifier of the subscription.
+  final String productId;
+
+  /// The date that the store charged the user's account (milliseconds since epoch).
+  final int purchaseDate;
+
+  /// Indicates whether the subscription will renew.
+  final bool willRenew;
+
+  /// Indicates whether the transaction has been revoked.
+  final bool isRevoked;
+
+  /// Indicates whether the subscription is in a billing grace period state.
+  final bool isInGracePeriod;
+
+  /// Indicates whether the subscription is in a billing retry period state.
+  final bool isInBillingRetryPeriod;
+
+  /// Indicates whether the subscription is active.
+  final bool isActive;
+
+  /// The date that the subscription expires (milliseconds since epoch), null if non-renewing.
+  final int? expirationDate;
+
+  PSubscriptionTransaction({
+    required this.transactionId,
+    required this.productId,
+    required this.purchaseDate,
+    required this.willRenew,
+    required this.isRevoked,
+    required this.isInGracePeriod,
+    required this.isInBillingRetryPeriod,
+    required this.isActive,
+    this.expirationDate,
+  });
+}
+
+/// A non-subscription transaction (consumable or non-consumable).
+class PNonSubscriptionTransaction {
+  /// The unique identifier for the transaction.
+  final String transactionId;
+
+  /// The product identifier of the in-app purchase.
+  final String productId;
+
+  /// The date that the store charged the user's account (milliseconds since epoch).
+  final int purchaseDate;
+
+  /// Indicates whether it's a consumable in-app purchase.
+  final bool isConsumable;
+
+  /// Indicates whether the transaction has been revoked.
+  final bool isRevoked;
+
+  PNonSubscriptionTransaction({
+    required this.transactionId,
+    required this.productId,
+    required this.purchaseDate,
+    required this.isConsumable,
+    required this.isRevoked,
+  });
+}
+
+/// An entitlement that represents a subscription tier in your app.
 class PEntitlement {
-  String? id;
+  /// The identifier for the entitlement.
+  final String id;
+
+  /// The type of entitlement.
+  final PEntitlementType type;
+
+  /// Indicates whether there is any active, non-revoked transaction for this entitlement.
+  final bool isActive;
+
+  /// All product identifiers that map to the entitlement.
+  final List<String> productIds;
+
+  /// The product identifier of the latest transaction to unlock this entitlement.
+  final String? latestProductId;
+
+  /// The store from which this entitlement was granted.
+  final PProductStore? store;
+
+  /// The purchase date of the first transaction that unlocked this entitlement (milliseconds since epoch).
+  final int? startsAt;
+
+  /// The date that the entitlement was last renewed (milliseconds since epoch).
+  final int? renewedAt;
+
+  /// The expiry date of the last transaction that unlocked this entitlement (milliseconds since epoch).
+  final int? expiresAt;
+
+  /// Indicates whether the entitlement is active for a lifetime due to a non-consumable purchase.
+  final bool? isLifetime;
+
+  /// Indicates whether the last subscription transaction will auto renew.
+  final bool? willRenew;
+
+  /// The state of the last subscription transaction.
+  final PLatestSubscriptionState? state;
+
+  /// The type of offer that applies to the last subscription transaction.
+  final PLatestSubscriptionOfferType? offerType;
+
+  PEntitlement({
+    required this.id,
+    required this.type,
+    required this.isActive,
+    required this.productIds,
+    this.latestProductId,
+    this.store,
+    this.startsAt,
+    this.renewedAt,
+    this.expiresAt,
+    this.isLifetime,
+    this.willRenew,
+    this.state,
+    this.offerType,
+  });
+}
+
+/// Contains the latest subscription and entitlement info about the customer.
+class PCustomerInfo {
+  /// The subscription transactions the user has made.
+  final List<PSubscriptionTransaction> subscriptions;
+
+  /// The non-subscription transactions the user has made.
+  final List<PNonSubscriptionTransaction> nonSubscriptions;
+
+  /// All entitlements available to the user.
+  final List<PEntitlement> entitlements;
+
+  /// The ID of the user.
+  final String userId;
+
+  PCustomerInfo({
+    required this.subscriptions,
+    required this.nonSubscriptions,
+    required this.entitlements,
+    required this.userId,
+  });
 }
 
 class PEntitlements {
   List<PEntitlement> active;
   List<PEntitlement> inactive;
   List<PEntitlement> all;
+  List<PEntitlement> web;
 
-  PEntitlements(this.active, this.inactive, this.all);
+  PEntitlements(this.active, this.inactive, this.all, this.web);
 }
 
 sealed class PSubscriptionStatus {
@@ -688,6 +911,9 @@ class PSuperwallEventInfo {
   Map<String, Object>? userEnrichment;
   Map<String, Object>? deviceEnrichment;
   String? message;
+  Map<String, Object>? integrationAttributes;
+  int? reviewRequestedCount;
+  List<String>? missingProductIdentifiers;
 
   PSuperwallEventInfo(
       {required this.eventType,
@@ -713,7 +939,10 @@ class PSuperwallEventInfo {
       this.token,
       this.userEnrichment,
       this.deviceEnrichment,
-      this.message});
+      this.message,
+      this.integrationAttributes,
+      this.reviewRequestedCount,
+      this.missingProductIdentifiers});
 }
 
 // Enums
@@ -828,7 +1057,12 @@ enum PEventType {
   enrichmentStart,
   enrichmentComplete,
   enrichmentFail,
-  networkDecodingFail
+  networkDecodingFail,
+  paywallWebviewProcessTerminated,
+  paywallProductsLoadMissingProducts,
+  customerInfoDidChange,
+  integrationAttributes,
+  reviewRequested
 }
 
 // SubscriptionStatus enum
@@ -1051,6 +1285,10 @@ abstract class PSuperwallHostApi {
   Map<String, Object> getUserAttributes();
   void setUserAttributes(Map<String, Object> userAttributes);
 
+  // Integration attributes methods
+  void setIntegrationAttribute(PIntegrationAttribute attribute, String? value);
+  void setIntegrationAttributes(Map<PIntegrationAttribute, String?> attributes);
+
   @async
   Map<String, Object> getDeviceAttributes();
 
@@ -1069,6 +1307,11 @@ abstract class PSuperwallHostApi {
 
   // Entitlements methods
   PEntitlements getEntitlements();
+  List<PEntitlement> getEntitlementsByProductIds(List<String> productIds);
+
+  // CustomerInfo methods
+  @async
+  PCustomerInfo getCustomerInfo();
 
   // Subscription status methods
   PSubscriptionStatus getSubscriptionStatus();
@@ -1121,6 +1364,7 @@ abstract class PSuperwallDelegateGenerated {
   void didRedeemLink(PRedemptionResult result);
   void handleSuperwallDeepLink(String fullURL, List<String> pathComponents,
       Map<String, String> queryParameters);
+  void customerInfoDidChange(PCustomerInfo from, PCustomerInfo to);
 }
 
 // ============= FLUTTER APIs =============
@@ -1157,6 +1401,7 @@ abstract class PFeatureHandlerGenerated {
 }
 
 @EventChannelApi()
-abstract class SubscriptionStatusStream {
+abstract class SuperwallEventStreams {
   PSubscriptionStatus streamSubscriptionStatus();
+  PCustomerInfo streamCustomerInfo();
 }

@@ -93,4 +93,9 @@ class MySuperwallDelegate extends SuperwallDelegate {
       Map<String, String> queryParameters) {
     logging.info('handleSuperwallDeepLink: $fullURL');
   }
+
+  @override
+  void customerInfoDidChange(CustomerInfo from, CustomerInfo to) {
+    logging.info('customerInfoDidChange: userId=${to.userId}, subscriptions=${to.subscriptions.length}, entitlements=${to.entitlements.length}');
+  }
 }

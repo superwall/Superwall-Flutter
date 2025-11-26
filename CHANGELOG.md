@@ -2,6 +2,13 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.5
+
+### Enhancements
+
+- Updates iOS SDK to 4.10.6 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.10.6).
+- Updates Android SDK to 2.6.4 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.6.4).
+
 ## 2.4.4
 
 ## Enhancements
@@ -9,12 +16,11 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - Adds `Superwall.shared.consume(purchaseToken)` method to allow consuming inapp purchases
 - Updates Android SDK to 2.6.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.6.2).
 
-
 ## 2.4.3
 
 ### Enhancements
-- Updates Android SDK to 2.6.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.6.1).
 
+- Updates Android SDK to 2.6.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.6.1).
 
 ## 2.4.2
 

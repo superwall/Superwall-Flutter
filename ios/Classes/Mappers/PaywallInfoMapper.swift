@@ -9,7 +9,7 @@ extension PaywallInfo {
         PProduct(
           id: product.id,
           name: product.name,
-          entitlements: product.entitlements.map { PEntitlement(id: $0.id) }
+          entitlements: product.entitlements.map { $0.pigeonify() }
         )
       }
     }

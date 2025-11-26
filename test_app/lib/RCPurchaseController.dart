@@ -2,38 +2,67 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:superwallkit_flutter/superwallkit_flutter.dart' hide LogLevel;
+import 'package:superwallkit_flutter/superwallkit_flutter.dart'
+    hide LogLevel, StoreProduct, CustomerInfo;
 
 class RCPurchaseController extends PurchaseController {
-  // MARK: Configure and sync subscription Status
-  /// Makes sure that Superwall knows the customers subscription status by
-  /// changing `Superwall.shared.subscriptionStatus`
-  Future<void> configureAndSyncSubscriptionStatus() async {
-    // Configure RevenueCat
+  // MARK: Configure RevenueCat
+  /// Configures RevenueCat with the appropriate API key for the platform
+  Future<void> configure() async {
     await Purchases.setLogLevel(LogLevel.debug);
     final configuration = Platform.isIOS
         ? PurchasesConfiguration('appl_PpUWCgFONlxwztRfNgEdvyGHiAG')
         : PurchasesConfiguration('goog_DCSOujJzRNnPmxdgjOwdOOjwilC');
     await Purchases.configure(configuration);
+  }
 
-    // Listen for changes
+  // MARK: Sync Subscription Status
+  /// Makes sure that Superwall knows the customer's subscription status by
+  /// changing `Superwall.shared.subscriptionStatus`.
+  ///
+  /// This listens to both RevenueCat and Superwall customerInfo changes to
+  /// properly merge device entitlements (from RevenueCat) with web entitlements
+  /// (from Superwall).
+  void syncSubscriptionStatus() {
+    // Listen to RevenueCat customerInfo changes
     Purchases.addCustomerInfoUpdateListener((customerInfo) async {
-      // Gets called whenever new CustomerInfo is available
-      final entitlements = customerInfo.entitlements.active.keys
+      final rcEntitlements = customerInfo.entitlements.active.keys
           .map((id) => Entitlement(id: id))
           .toSet();
+      await _updateSubscriptionStatus(rcEntitlements);
+    });
 
-      final hasActiveEntitlementOrSubscription = customerInfo
-          .hasActiveEntitlementOrSubscription(); // Why? -> https://www.revenuecat.com/docs/entitlements#entitlements
-
-      if (hasActiveEntitlementOrSubscription) {
-        await Superwall.shared.setSubscriptionStatus(
-            SubscriptionStatusActive(entitlements: entitlements));
-      } else {
-        await Superwall.shared
-            .setSubscriptionStatus(SubscriptionStatusInactive());
+    // Listen to Superwall customerInfo changes (for web entitlements)
+    Superwall.shared.customerInfoStream.listen((_) async {
+      // Get current RC entitlements
+      try {
+        final currentRCCustomerInfo = await Purchases.getCustomerInfo();
+        final rcEntitlements = currentRCCustomerInfo.entitlements.active.keys
+            .map((id) => Entitlement(id: id))
+            .toSet();
+        await _updateSubscriptionStatus(rcEntitlements);
+      } catch (e) {
+        // Error getting RevenueCat customer info
       }
     });
+  }
+
+  /// Merges RevenueCat entitlements with Superwall web entitlements and updates subscription status
+  Future<void> _updateSubscriptionStatus(Set<Entitlement> rcEntitlements) async {
+    // Get web entitlements from Superwall
+    final entitlements = await Superwall.shared.getEntitlements();
+    final webEntitlements = entitlements.web;
+
+    // Merge them with priority-based deduplication
+    final allEntitlements = Entitlement.mergePrioritized(rcEntitlements.union(webEntitlements));
+
+    // Update subscription status
+    if (allEntitlements.isNotEmpty) {
+      await Superwall.shared.setSubscriptionStatus(
+          SubscriptionStatusActive(entitlements: allEntitlements));
+    } else {
+      await Superwall.shared.setSubscriptionStatus(SubscriptionStatusInactive());
+    }
   }
 
   // MARK: Handle Purchases

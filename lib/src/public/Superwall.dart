@@ -266,6 +266,50 @@ class Superwall {
     await hostApi.setUserAttributes(userAttributes);
   }
 
+  /// Sets a single attribute for third-party integrations.
+  ///
+  /// Use this to sync user identifiers from your analytics and attribution providers
+  /// with Superwall. This enables better user tracking and attribution.
+  ///
+  /// - Parameters:
+  ///   - attribute: The [IntegrationAttribute] key specifying the integration provider.
+  ///   - value: The value to associate with the attribute. Pass `null` to remove the attribute.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Superwall.shared.setIntegrationAttribute(
+  ///   IntegrationAttribute.mixpanelDistinctId,
+  ///   'user123'
+  /// );
+  /// ```
+  Future<void> setIntegrationAttribute(
+      IntegrationAttribute attribute, String? value) async {
+    await hostApi.setIntegrationAttribute(attribute.toPigeon(), value);
+  }
+
+  /// Sets multiple attributes for third-party integrations at once.
+  ///
+  /// Use this to sync multiple user identifiers from your analytics and attribution
+  /// providers with Superwall. This enables better user tracking and attribution.
+  ///
+  /// - Parameter attributes: A map of [IntegrationAttribute] keys to their values.
+  ///   Pass `null` as a value to remove that attribute.
+  ///
+  /// Example:
+  /// ```dart
+  /// await Superwall.shared.setIntegrationAttributes({
+  ///   IntegrationAttribute.mixpanelDistinctId: 'user123',
+  ///   IntegrationAttribute.amplitudeUserId: 'amp_456',
+  ///   IntegrationAttribute.adjustId: null, // Remove this attribute
+  /// });
+  /// ```
+  Future<void> setIntegrationAttributes(
+      Map<IntegrationAttribute, String?> attributes) async {
+    final pigeonAttributes =
+        attributes.map((key, value) => MapEntry(key.toPigeon(), value));
+    await hostApi.setIntegrationAttributes(pigeonAttributes);
+  }
+
   // Gets the locale identifier
   Future<String?> getLocaleIdentifier() async {
     return await hostApi.getLocaleIdentifier();
@@ -295,12 +339,25 @@ class Superwall {
   Future<Entitlements> getEntitlements() async {
     final entitlements = await hostApi.getEntitlements();
     map(List<PEntitlement> entitlements) =>
-        entitlements.map((e) => Entitlement(id: e.id!!)).toSet();
+        entitlements.map((e) => Entitlement.fromPigeon(e)).toSet();
 
     return Entitlements(
-        active: map(entitlements.active),
-        inactive: map(entitlements.inactive),
-        all: map(entitlements.all));
+      active: map(entitlements.active),
+      inactive: map(entitlements.inactive),
+      all: map(entitlements.all),
+      web: map(entitlements.web),
+      nativeFilterCallback: (productIds) async {
+        final result =
+            await hostApi.getEntitlementsByProductIds(productIds.toList());
+        return result.map((e) => Entitlement.fromPigeon(e)).toSet();
+      },
+    );
+  }
+
+  // Gets the latest customer info
+  Future<CustomerInfo> getCustomerInfo() async {
+    final customerInfo = await hostApi.getCustomerInfo();
+    return CustomerInfo.fromPigeon(customerInfo);
   }
 
   // Gets the latest PaywallInfo object
@@ -433,6 +490,16 @@ class Superwall {
             SubscriptionStatus.createSubscriptionStatusFromPSubscriptionStatus(
                 e));
     return _subscriptionStatusStream!.asBroadcastStream();
+  }
+
+  Stream<CustomerInfo>? _customerInfoStream;
+
+  Stream<CustomerInfo> get customerInfoStream {
+    // Only initialize the stream if it hasn't been initialized yet
+    _customerInfoStream ??= generated
+        .streamCustomerInfo()
+        .map((e) => CustomerInfo.fromPigeon(e));
+    return _customerInfoStream!.asBroadcastStream();
   }
 
   Future<PresentationResult> getPresentationResult(String placement,

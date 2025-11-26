@@ -2,6 +2,7 @@ package com.superwall.superwallkit_flutter.utils
 
 import PComputedPropertyRequest
 import PEntitlement
+import PEntitlementType
 import PExperiment
 import PLocalNotification
 import PPaywallInfo
@@ -353,7 +354,12 @@ class PaywallInfoMapper {
                         name = product.name,
                         entitlements =
                             product.entitlements.map {
-                                PEntitlement(it.id)
+                                PEntitlement(
+                                    id = it.id,
+                                    type = PEntitlementType.SERVICE_LEVEL,
+                                    isActive = true,
+                                    productIds = emptyList()
+                                )
                             },
                     )
                 }

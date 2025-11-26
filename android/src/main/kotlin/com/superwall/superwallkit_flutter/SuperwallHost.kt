@@ -5,12 +5,14 @@ import PConfigurationStatus
 import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
+import PCustomerInfo
 import PEntitlement
 import PExperiment
 import PEntitlements
 import PFeatureHandlerGenerated
 import PFeatureHandlerHost
 import PIdentityOptions
+import PIntegrationAttribute
 import PInactive
 import PPaywallInfo
 import PPaywallPresentationHandlerGenerated
@@ -164,6 +166,16 @@ class SuperwallHost(
         Superwall.instance.setUserAttributes(userAttributes)
     }
 
+    override fun setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
+        val attributeKey = attribute.toAttributeKey()
+        Superwall.instance.setUserAttributes(mapOf(attributeKey to value))
+    }
+
+    override fun setIntegrationAttributes(attributes: Map<PIntegrationAttribute, String?>) {
+        val androidAttributes = attributes.mapKeys { it.key.toAttributeKey() }
+        Superwall.instance.setUserAttributes(androidAttributes)
+    }
+
     override fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit) {
         ioScope.launch {
             val unfiltered: Map<String, Any?> = Superwall.instance.deviceAttributes()
@@ -203,16 +215,56 @@ class SuperwallHost(
     }
 
     override fun getEntitlements(): PEntitlements {
+        fun mapEntitlement(entitlement: Entitlement): PEntitlement {
+            return PEntitlement(
+                id = entitlement.id,
+                type = PEntitlementType.SERVICE_LEVEL,
+                isActive = true,
+                productIds = emptyList()
+            )
+        }
+
         return PEntitlements(
-            active = Superwall.instance.entitlements.active.map {
-                PEntitlement(it.id)
-            }, inactive = Superwall.instance.entitlements.inactive.map {
-                PEntitlement(it.id)
-            }, all = Superwall.instance.entitlements.all.map {
-                PEntitlement(it.id)
-            })
+            active = Superwall.instance.entitlements.active.map { mapEntitlement(it) },
+            inactive = Superwall.instance.entitlements.inactive.map { mapEntitlement(it) },
+            all = Superwall.instance.entitlements.all.map { mapEntitlement(it) },
+            web = Superwall.instance.entitlements.web.map { mapEntitlement(it) }
+        )
     }
 
+    override fun getEntitlementsByProductIds(productIds: List<String>): List<PEntitlement> {
+        // TODO: Android SDK doesn't have byProductIds method yet
+        // For now, implement filtering locally
+        fun mapEntitlement(entitlement: Entitlement): PEntitlement {
+            return PEntitlement(
+                id = entitlement.id,
+                type = PEntitlementType.SERVICE_LEVEL,
+                isActive = true,
+                productIds = emptyList()
+            )
+        }
+
+        val productIdSet = productIds.toSet()
+        val allEntitlements = Superwall.instance.entitlements.all
+
+        // Since Android SDK's Entitlement doesn't expose productIds yet,
+        // we can't filter by productIds. Return empty list for now.
+        // This will need to be updated when Android SDK supports product IDs in entitlements.
+        Log.w("SuperwallHost", "getEntitlementsByProductIds: Android SDK doesn't expose productIds in Entitlement yet, returning empty list")
+        return emptyList()
+    }
+
+    override fun getCustomerInfo(callback: (Result<PCustomerInfo>) -> Unit) {
+        // TODO: Implement customerInfo from Android SDK when available
+        // For now, return minimal data based on current user
+        val customerInfo = PCustomerInfo(
+            subscriptions = emptyList(),
+            nonSubscriptions = emptyList(),
+            entitlements = emptyList(),
+            userId = Superwall.instance.userId
+        )
+        callback(Result.success(customerInfo))
+    }
 
     override fun getSubscriptionStatus(): PSubscriptionStatus {
         return Superwall.instance.subscriptionStatus.value.toPigeon()
@@ -384,5 +436,31 @@ class SuperwallHost(
             }
             callback(res)
         }
+    }
+}
+
+// MARK: - PIntegrationAttribute Extension
+fun PIntegrationAttribute.toAttributeKey(): String {
+    return when (this) {
+        PIntegrationAttribute.ADJUST_ID -> "\$adjust_id"
+        PIntegrationAttribute.AMPLITUDE_DEVICE_ID -> "\$amplitude_device_id"
+        PIntegrationAttribute.AMPLITUDE_USER_ID -> "\$amplitude_user_id"
+        PIntegrationAttribute.APPSFLYER_ID -> "\$appsflyer_id"
+        PIntegrationAttribute.BRAZE_ALIAS_NAME -> "\$braze_alias_name"
+        PIntegrationAttribute.BRAZE_ALIAS_LABEL -> "\$braze_alias_label"
+        PIntegrationAttribute.ONESIGNAL_ID -> "\$onesignal_id"
+        PIntegrationAttribute.FB_ANON_ID -> "\$fb_anon_id"
+        PIntegrationAttribute.FIREBASE_APP_INSTANCE_ID -> "\$firebase_app_instance_id"
+        PIntegrationAttribute.ITERABLE_USER_ID -> "\$iterable_user_id"
+        PIntegrationAttribute.ITERABLE_CAMPAIGN_ID -> "\$iterable_campaign_id"
+        PIntegrationAttribute.ITERABLE_TEMPLATE_ID -> "\$iterable_template_id"
+        PIntegrationAttribute.MIXPANEL_DISTINCT_ID -> "\$mixpanel_distinct_id"
+        PIntegrationAttribute.MPARTICLE_ID -> "\$mparticle_id"
+        PIntegrationAttribute.CLEVERTAP_ID -> "\$clevertap_id"
+        PIntegrationAttribute.AIRSHIP_CHANNEL_ID -> "\$airship_channel_id"
+        PIntegrationAttribute.KOCHAVA_DEVICE_ID -> "\$kochava_device_id"
+        PIntegrationAttribute.TENJIN_ID -> "\$tenjin_id"
+        PIntegrationAttribute.POSTHOG_USER_ID -> "\$posthog_user_id"
+        PIntegrationAttribute.CUSTOMERIO_ID -> "\$customerio_id"
     }
 }

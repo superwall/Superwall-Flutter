@@ -43,6 +43,8 @@ extension RedemptionResult.RedemptionInfo {
     switch self.purchaserInfo.storeIdentifiers {
     case let .stripe(customerId, subscriptionIds):
       storeIdentifiers = PStripeStoreIdentifiers(customerId: customerId, subscriptionIds: subscriptionIds)
+    case let .paddle(customerId, subscriptionIds):
+      storeIdentifiers = PPaddleStoreIdentifiers(customerId: customerId, subscriptionIds: subscriptionIds)
     case let .unknown(store, additionalInfo):
       storeIdentifiers = PUnknownStoreIdentifiers(store: store, additionalInfo: additionalInfo)
     }
@@ -65,7 +67,7 @@ extension RedemptionResult.RedemptionInfo {
       )
     }
 
-    let entitlements = self.entitlements.map { PEntitlement(id: $0.id) }
+    let entitlements = self.entitlements.map { $0.pigeonify() }
     return PRedemptionInfo(
       ownership: ownership,
       purchaserInfo: purchaseInfo,

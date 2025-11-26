@@ -41,7 +41,7 @@ class Product {
     return PProduct(
       id: id,
       name: name,
-      entitlements: entitlements.map((e) => PEntitlement(id: e.id)).toList(),
+      entitlements: entitlements.map((e) => e.toPigeon()).toList(),
     );
   }
 }

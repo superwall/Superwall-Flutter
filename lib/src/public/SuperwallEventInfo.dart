@@ -88,7 +88,12 @@ enum EventType {
   enrichmentStart,
   enrichmentComplete,
   enrichmentFail,
-  networkDecodingFail
+  networkDecodingFail,
+  paywallWebviewProcessTerminated,
+  paywallProductsLoadMissingProducts,
+  customerInfoDidChange,
+  integrationAttributes,
+  reviewRequested
 }
 
 class SuperwallEvent {
@@ -333,6 +338,21 @@ class SuperwallEvent {
         break;
       case PEventType.networkDecodingFail:
         type = EventType.networkDecodingFail;
+        break;
+      case PEventType.paywallWebviewProcessTerminated:
+        type = EventType.paywallWebviewProcessTerminated;
+        break;
+      case PEventType.paywallProductsLoadMissingProducts:
+        type = EventType.paywallProductsLoadMissingProducts;
+        break;
+      case PEventType.customerInfoDidChange:
+        type = EventType.customerInfoDidChange;
+        break;
+      case PEventType.integrationAttributes:
+        type = EventType.integrationAttributes;
+        break;
+      case PEventType.reviewRequested:
+        type = EventType.reviewRequested;
     }
 
     return SuperwallEvent._(

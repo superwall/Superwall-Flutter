@@ -4,15 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the **Superwall Flutter SDK v2.4.1** - a Flutter plugin that wraps native Superwall SDKs for Android and iOS. Superwall provides remotely configurable in-app paywall infrastructure for mobile applications.
+This is the **Superwall Flutter SDK v2.4.5** - a Flutter plugin that wraps native Superwall SDKs for Android and iOS. Superwall provides remotely configurable in-app paywall infrastructure for mobile applications.
 
 ## Architecture
 
 ### Core Technology Stack
 - **Flutter Plugin**: Uses Pigeon for type-safe communication between Flutter and native platforms
-- **Native SDKs**: 
-  - Android: SuperwallKit Android SDK v2.3.1 (Kotlin)
-  - iOS: SuperwallKit iOS SDK v4.7.0 (Swift)
+- **Native SDKs**:
+  - Android: SuperwallKit Android SDK v2.6.4 (Kotlin)
+  - iOS: SuperwallKit iOS SDK v4.10.4 (Swift)
 - **Code Generation**: Pigeon generates Dart, Kotlin, and Swift interfaces from `pigeons/configure.dart`
 
 ### Communication Flow
@@ -99,12 +99,12 @@ When adding new methods to the SDK, follow this workflow:
 - **Min SDK**: 26 (Android 8.0)
 - **Compile SDK**: 34
 - **Language**: Kotlin
-- **Dependencies**: SuperwallKit Android v2.3.1, Google Billing Client v6.1.0
+- **Dependencies**: SuperwallKit Android v2.6.4, Google Billing Client v6.1.0
 
 ### iOS  
 - **Min Version**: iOS 14.0
 - **Language**: Swift 5.0
-- **Dependencies**: SuperwallKit iOS v4.7.0
+- **Dependencies**: SuperwallKit iOS v4.10.4
 - **Build**: Uses CocoaPods for dependency management
 
 ## Testing Strategy
