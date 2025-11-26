@@ -12,7 +12,6 @@ import 'package:superwallkit_flutter_example/SubscriptionStatusTest.dart';
 import 'RCPurchaseController.dart';
 import 'home.dart';
 import 'launchedFeature.dart';
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 
 @pragma('vm:entry-point')
 void printHello() {
@@ -23,12 +22,9 @@ void printHello() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AndroidAlarmManager.initialize();
 
   runApp(const MyApp());
   final int helloAlarmID = 0;
-  await AndroidAlarmManager.periodic(
-      const Duration(minutes: 1), helloAlarmID, printHello);
 }
 
 class MyApp extends StatefulWidget {
