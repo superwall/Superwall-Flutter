@@ -10,6 +10,16 @@ sealed class SubscriptionStatus {
   static final SubscriptionStatus inactive = SubscriptionStatusInactive();
   static final SubscriptionStatus unknown = SubscriptionStatusUnknown();
 
+  /// A convenience boolean indicating whether the subscription status is active.
+  bool get isActive {
+    switch (this) {
+      case SubscriptionStatusActive():
+        return true;
+      default:
+        return false;
+    }
+  }
+
   static SubscriptionStatus createSubscriptionStatusFromPSubscriptionStatus(
       PSubscriptionStatus pSubscriptionStatus) {
     switch (pSubscriptionStatus) {
