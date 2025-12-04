@@ -607,6 +607,12 @@ class PPaywallOptions {
   PTransactionBackgroundView? transactionBackgroundView;
   Map<String, String>? overrideProductsByName;
   bool? shouldShowWebPurchaseConfirmationAlert;
+  POnBackPressedHost? onBackPressedHost;
+}
+
+class POnBackPressedHost {
+  // The hostId is unused since only one can exist here at a time
+  String? hostId;
 }
 
 class PPurchaseControllerHost {
@@ -1398,6 +1404,11 @@ abstract class PPaywallPresentationHandlerGenerated {
 @FlutterApi()
 abstract class PFeatureHandlerGenerated {
   void onFeature(String id);
+}
+
+@FlutterApi()
+abstract class POnBackPressedGenerated {
+  void onBackPressed(PPaywallInfo? paywallInfo);
 }
 
 @EventChannelApi()

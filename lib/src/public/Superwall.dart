@@ -5,6 +5,7 @@ import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/src/private/ConfigureCompletionProxy.dart';
 import 'package:superwallkit_flutter/src/private/FeatureBlockProxy.dart';
+import 'package:superwallkit_flutter/src/private/OnBackPressedProxy.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
 import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
 import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
@@ -39,9 +40,17 @@ class Superwall {
     final proxy = purchaseController != null
         ? PurchaseControllerProxy.register(purchaseController)
         : null;
+
+    // Register onBackPressed handler if provided (Android only)
+    final hasOnBackPressed = options?.paywalls.onBackPressed != null;
+    if (hasOnBackPressed) {
+      OnBackPressedProxy.register(options!.paywalls.onBackPressed!);
+    }
+
     // Convert SuperwallOptions to generated.PSuperwallOptions if needed
-    final generatedOptions =
-        options != null ? _convertToGeneratedOptions(options) : null;
+    final generatedOptions = options != null
+        ? _convertToGeneratedOptions(options, hasOnBackPressed: hasOnBackPressed)
+        : null;
 
     final completionHost =
         completion != null ? generated.PConfigureCompletionHost() : null;
@@ -60,10 +69,12 @@ class Superwall {
 
   // Helper method to convert SuperwallOptions to generated.PSuperwallOptions
   static generated.PSuperwallOptions? _convertToGeneratedOptions(
-      SuperwallOptions options) {
+      SuperwallOptions options,
+      {bool hasOnBackPressed = false}) {
     final generatedOptions = generated.PSuperwallOptions();
 
-    generatedOptions.paywalls = _convertPaywallOptions(options.paywalls);
+    generatedOptions.paywalls = _convertPaywallOptions(options.paywalls,
+        hasOnBackPressed: hasOnBackPressed);
 
     generatedOptions.networkEnvironment =
         _convertNetworkEnvironment(options.networkEnvironment);
@@ -84,7 +95,8 @@ class Superwall {
 
   // Helper method to convert PaywallOptions
   static generated.PPaywallOptions _convertPaywallOptions(
-      PaywallOptions options) {
+      PaywallOptions options,
+      {bool hasOnBackPressed = false}) {
     final generatedOptions = generated.PPaywallOptions();
 
     generatedOptions.isHapticFeedbackEnabled = options.isHapticFeedbackEnabled;
@@ -105,6 +117,11 @@ class Superwall {
 
     generatedOptions.transactionBackgroundView =
         _convertTransactionBackgroundView(options.transactionBackgroundView);
+
+    // Set onBackPressedHost if callback is provided (Android only)
+    if (hasOnBackPressed) {
+      generatedOptions.onBackPressedHost = generated.POnBackPressedHost();
+    }
 
     return generatedOptions;
   }

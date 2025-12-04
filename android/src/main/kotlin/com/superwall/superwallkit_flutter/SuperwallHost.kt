@@ -23,6 +23,7 @@ import PNoAudienceMatchPresentationResult
 import PPaywallPresentationResult
 import PHoldoutPresentationResult
 import PPaywallNotAvailablePresentationResult
+import POnBackPressedGenerated
 import PPurchaseControllerGenerated
 import PPurchaseControllerHost
 import PRestorationFailed
@@ -95,6 +96,14 @@ class SuperwallHost(
     ) {
         val sdkOptions = (options?.toSdkOptions() ?: SuperwallOptions()).apply {
             logging.level = LogLevel.debug
+
+            // Set up onBackPressed callback if provided
+            options?.paywalls?.onBackPressedHost?.let {
+                val onBackPressedHost = OnBackPressedHost {
+                    POnBackPressedGenerated(binaryMessenger())
+                }
+                paywalls.onBackPressed = onBackPressedHost.onBackPressed
+            }
         }
         Superwall.configure(
             applicationContext = context().applicationContext as Application,

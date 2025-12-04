@@ -1,3 +1,5 @@
+import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
+
 /// Options for configuring the appearance and behavior of paywalls.
 class PaywallOptions {
   /// Determines whether the paywall should use haptic feedback.
@@ -36,6 +38,12 @@ class PaywallOptions {
   /// Shows a localized alert confirming a successful purchase via web checkout.
   /// Defaults to `true`.
   bool shouldShowWebPurchaseConfirmationAlert = true;
+
+  /// A callback that is invoked when the back button is pressed on Android.
+  /// Use this to be notified of back presses on the paywall.
+  /// Call `Superwall.shared.dismiss()` within the callback if you want to dismiss the paywall.
+  /// Note: This is only supported on Android.
+  void Function(PaywallInfo?)? onBackPressed;
 }
 
 extension PaywallOptionsJson on PaywallOptions {
