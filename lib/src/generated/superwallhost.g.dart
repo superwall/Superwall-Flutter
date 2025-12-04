@@ -15,7 +15,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -24,20 +25,21 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every((MapEntry<Object?, Object?> entry) =>
+            (b as Map<Object?, Object?>).containsKey(entry.key) &&
+            _deepEquals(entry.value, b[entry.key]));
   }
   return a == b;
 }
-
 
 enum PFeatureGatingBehavior {
   gated,
@@ -48,18 +50,22 @@ enum PPaywallCloseReason {
   /// The paywall was closed by system logic, either after a purchase, because
   /// a deeplink was presented, close button pressed, etc.
   systemLogic,
+
   /// The paywall was automatically closed because another paywall will show.
   ///
   /// This prevents ``Superwall/register(placement:params:handler:feature:)`` `feature`
   /// block from executing on dismiss of the paywall, because another paywall is set to show
   forNextPaywall,
+
   /// The paywall was closed because the webview couldn't be loaded.
   ///
   /// If this happens for a gated paywall, the ``PaywallPresentationHandler/onError(_:)``
   /// handler will be called. If it's for a non-gated paywall, the feature block will be called.
   webViewFailedToLoad,
+
   /// The paywall was closed because the user tapped the close button or dragged to dismiss.
   manualClose,
+
   /// The paywall hasn't been closed yet.
   none,
 }
@@ -123,42 +129,61 @@ enum PLatestSubscriptionOfferType {
 enum PIntegrationAttribute {
   /// The unique Adjust identifier for the user.
   adjustId,
+
   /// The Amplitude device identifier.
   amplitudeDeviceId,
+
   /// The Amplitude user identifier.
   amplitudeUserId,
+
   /// The unique Appsflyer identifier for the user.
   appsflyerId,
+
   /// The Braze `alias_name` in User Alias Object.
   brazeAliasName,
+
   /// The Braze `alias_label` in User Alias Object.
   brazeAliasLabel,
+
   /// The OneSignal Player identifier for the user.
   onesignalId,
+
   /// The Facebook Anonymous identifier for the user.
   fbAnonId,
+
   /// The Firebase instance identifier.
   firebaseAppInstanceId,
+
   /// The Iterable identifier for the user.
   iterableUserId,
+
   /// The Iterable campaign identifier.
   iterableCampaignId,
+
   /// The Iterable template identifier.
   iterableTemplateId,
+
   /// The Mixpanel user identifier.
   mixpanelDistinctId,
+
   /// The unique mParticle user identifier (mpid).
   mparticleId,
+
   /// The CleverTap user identifier.
   clevertapId,
+
   /// The Airship channel identifier for the user.
   airshipChannelId,
+
   /// The unique Kochava device identifier.
   kochavaDeviceId,
+
   /// The Tenjin identifier.
   tenjinId,
+
   /// The PostHog User identifier.
   posthogUserId,
+
   /// The Customer.io person's identifier (`id`).
   customerioId,
 }
@@ -307,8 +332,7 @@ enum PPaywallSkippedReason {
   placementNotFound,
 }
 
-sealed class PRedemptionResult {
-}
+sealed class PRedemptionResult {}
 
 class PSuccessRedemptionResult extends PRedemptionResult {
   PSuccessRedemptionResult({
@@ -328,7 +352,8 @@ class PSuccessRedemptionResult extends PRedemptionResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PSuccessRedemptionResult decode(Object result) {
     result as List<Object?>;
@@ -341,7 +366,8 @@ class PSuccessRedemptionResult extends PRedemptionResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PSuccessRedemptionResult || other.runtimeType != runtimeType) {
+    if (other is! PSuccessRedemptionResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -352,8 +378,7 @@ class PSuccessRedemptionResult extends PRedemptionResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PErrorRedemptionResult extends PRedemptionResult {
@@ -374,7 +399,8 @@ class PErrorRedemptionResult extends PRedemptionResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PErrorRedemptionResult decode(Object result) {
     result as List<Object?>;
@@ -398,8 +424,7 @@ class PErrorRedemptionResult extends PRedemptionResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PErrorInfo {
@@ -416,7 +441,8 @@ class PErrorInfo {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PErrorInfo decode(Object result) {
     result as List<Object?>;
@@ -439,8 +465,7 @@ class PErrorInfo {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PExpiredCodeRedemptionResult extends PRedemptionResult {
@@ -461,7 +486,8 @@ class PExpiredCodeRedemptionResult extends PRedemptionResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PExpiredCodeRedemptionResult decode(Object result) {
     result as List<Object?>;
@@ -474,7 +500,8 @@ class PExpiredCodeRedemptionResult extends PRedemptionResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PExpiredCodeRedemptionResult || other.runtimeType != runtimeType) {
+    if (other is! PExpiredCodeRedemptionResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -485,8 +512,7 @@ class PExpiredCodeRedemptionResult extends PRedemptionResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Info about the expired code.
@@ -511,7 +537,8 @@ class PExpiredCodeInfo {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PExpiredCodeInfo decode(Object result) {
     result as List<Object?>;
@@ -535,8 +562,7 @@ class PExpiredCodeInfo {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PInvalidCodeRedemptionResult extends PRedemptionResult {
@@ -553,7 +579,8 @@ class PInvalidCodeRedemptionResult extends PRedemptionResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PInvalidCodeRedemptionResult decode(Object result) {
     result as List<Object?>;
@@ -565,7 +592,8 @@ class PInvalidCodeRedemptionResult extends PRedemptionResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PInvalidCodeRedemptionResult || other.runtimeType != runtimeType) {
+    if (other is! PInvalidCodeRedemptionResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -576,8 +604,7 @@ class PInvalidCodeRedemptionResult extends PRedemptionResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PExpiredSubscriptionCode extends PRedemptionResult {
@@ -598,7 +625,8 @@ class PExpiredSubscriptionCode extends PRedemptionResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PExpiredSubscriptionCode decode(Object result) {
     result as List<Object?>;
@@ -611,7 +639,8 @@ class PExpiredSubscriptionCode extends PRedemptionResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PExpiredSubscriptionCode || other.runtimeType != runtimeType) {
+    if (other is! PExpiredSubscriptionCode ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -622,8 +651,7 @@ class PExpiredSubscriptionCode extends PRedemptionResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Information about the redemption.
@@ -657,7 +685,8 @@ class PRedemptionInfo {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PRedemptionInfo decode(Object result) {
     result as List<Object?>;
@@ -683,13 +712,11 @@ class PRedemptionInfo {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Enum specifying code ownership.
-sealed class POwnership {
-}
+sealed class POwnership {}
 
 class PAppUserOwnership extends POwnership {
   PAppUserOwnership({
@@ -705,7 +732,8 @@ class PAppUserOwnership extends POwnership {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PAppUserOwnership decode(Object result) {
     result as List<Object?>;
@@ -728,8 +756,7 @@ class PAppUserOwnership extends POwnership {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PDeviceOwnership extends POwnership {
@@ -746,7 +773,8 @@ class PDeviceOwnership extends POwnership {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PDeviceOwnership decode(Object result) {
     result as List<Object?>;
@@ -769,8 +797,7 @@ class PDeviceOwnership extends POwnership {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Info about the purchaser.
@@ -799,7 +826,8 @@ class PPurchaserInfo {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPurchaserInfo decode(Object result) {
     result as List<Object?>;
@@ -824,13 +852,11 @@ class PPurchaserInfo {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Identifiers of the store that was purchased from.
-sealed class PStoreIdentifiers {
-}
+sealed class PStoreIdentifiers {}
 
 /// Stripe purchase store identifiers.
 class PStripeStoreIdentifiers extends PStoreIdentifiers {
@@ -851,7 +877,8 @@ class PStripeStoreIdentifiers extends PStoreIdentifiers {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStripeStoreIdentifiers decode(Object result) {
     result as List<Object?>;
@@ -875,8 +902,7 @@ class PStripeStoreIdentifiers extends PStoreIdentifiers {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Stripe purchase store identifiers.
@@ -898,7 +924,8 @@ class PPaddleStoreIdentifiers extends PStoreIdentifiers {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPaddleStoreIdentifiers decode(Object result) {
     result as List<Object?>;
@@ -922,8 +949,7 @@ class PPaddleStoreIdentifiers extends PStoreIdentifiers {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Unknown purchase store identifiers.
@@ -945,20 +971,23 @@ class PUnknownStoreIdentifiers extends PStoreIdentifiers {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PUnknownStoreIdentifiers decode(Object result) {
     result as List<Object?>;
     return PUnknownStoreIdentifiers(
       store: result[0]! as String,
-      additionalInfo: (result[1] as Map<Object?, Object?>?)!.cast<String, Object>(),
+      additionalInfo:
+          (result[1] as Map<Object?, Object?>?)!.cast<String, Object>(),
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PUnknownStoreIdentifiers || other.runtimeType != runtimeType) {
+    if (other is! PUnknownStoreIdentifiers ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -969,8 +998,7 @@ class PUnknownStoreIdentifiers extends PStoreIdentifiers {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Info about the paywall the purchase was made from.
@@ -1009,14 +1037,16 @@ class PRedemptionPaywallInfo {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PRedemptionPaywallInfo decode(Object result) {
     result as List<Object?>;
     return PRedemptionPaywallInfo(
       identifier: result[0]! as String,
       placementName: result[1]! as String,
-      placementParams: (result[2] as Map<Object?, Object?>?)!.cast<String, Object>(),
+      placementParams:
+          (result[2] as Map<Object?, Object?>?)!.cast<String, Object>(),
       variantId: result[3]! as String,
       experimentId: result[4]! as String,
     );
@@ -1036,8 +1066,7 @@ class PRedemptionPaywallInfo {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PSuperwallOptions {
@@ -1082,7 +1111,8 @@ class PSuperwallOptions {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PSuperwallOptions decode(Object result) {
     result as List<Object?>;
@@ -1112,8 +1142,7 @@ class PSuperwallOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPaywallInfo {
@@ -1246,7 +1275,8 @@ class PPaywallInfo {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPaywallInfo decode(Object result) {
     result as List<Object?>;
@@ -1278,8 +1308,10 @@ class PPaywallInfo {
       isFreeTrialAvailable: result[24] as bool?,
       featureGatingBehavior: result[25] as PFeatureGatingBehavior?,
       closeReason: result[26] as PPaywallCloseReason?,
-      localNotifications: (result[27] as List<Object?>?)?.cast<PLocalNotification>(),
-      computedPropertyRequests: (result[28] as List<Object?>?)?.cast<PComputedPropertyRequest>(),
+      localNotifications:
+          (result[27] as List<Object?>?)?.cast<PLocalNotification>(),
+      computedPropertyRequests:
+          (result[28] as List<Object?>?)?.cast<PComputedPropertyRequest>(),
       surveys: (result[29] as List<Object?>?)?.cast<PSurvey>(),
     );
   }
@@ -1298,8 +1330,7 @@ class PPaywallInfo {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PProduct {
@@ -1324,7 +1355,8 @@ class PProduct {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PProduct decode(Object result) {
     result as List<Object?>;
@@ -1349,8 +1381,7 @@ class PProduct {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PLocalNotification {
@@ -1387,7 +1418,8 @@ class PLocalNotification {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PLocalNotification decode(Object result) {
     result as List<Object?>;
@@ -1415,8 +1447,7 @@ class PLocalNotification {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PComputedPropertyRequest {
@@ -1437,7 +1468,8 @@ class PComputedPropertyRequest {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PComputedPropertyRequest decode(Object result) {
     result as List<Object?>;
@@ -1450,7 +1482,8 @@ class PComputedPropertyRequest {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PComputedPropertyRequest || other.runtimeType != runtimeType) {
+    if (other is! PComputedPropertyRequest ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1461,8 +1494,7 @@ class PComputedPropertyRequest {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PSurvey {
@@ -1511,7 +1543,8 @@ class PSurvey {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PSurvey decode(Object result) {
     result as List<Object?>;
@@ -1542,8 +1575,7 @@ class PSurvey {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PSurveyOption {
@@ -1564,7 +1596,8 @@ class PSurveyOption {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PSurveyOption decode(Object result) {
     result as List<Object?>;
@@ -1588,12 +1621,10 @@ class PSurveyOption {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-sealed class PPurchaseResult {
-}
+sealed class PPurchaseResult {}
 
 class PPurchaseCancelled extends PPurchaseResult {
   PPurchaseCancelled({
@@ -1609,7 +1640,8 @@ class PPurchaseCancelled extends PPurchaseResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPurchaseCancelled decode(Object result) {
     result as List<Object?>;
@@ -1632,8 +1664,7 @@ class PPurchaseCancelled extends PPurchaseResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPurchasePurchased extends PPurchaseResult {
@@ -1650,7 +1681,8 @@ class PPurchasePurchased extends PPurchaseResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPurchasePurchased decode(Object result) {
     result as List<Object?>;
@@ -1673,8 +1705,7 @@ class PPurchasePurchased extends PPurchaseResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPurchasePending extends PPurchaseResult {
@@ -1691,7 +1722,8 @@ class PPurchasePending extends PPurchaseResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPurchasePending decode(Object result) {
     result as List<Object?>;
@@ -1714,8 +1746,7 @@ class PPurchasePending extends PPurchaseResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPurchaseFailed extends PPurchaseResult {
@@ -1732,7 +1763,8 @@ class PPurchaseFailed extends PPurchaseResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPurchaseFailed decode(Object result) {
     result as List<Object?>;
@@ -1755,12 +1787,10 @@ class PPurchaseFailed extends PPurchaseResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-sealed class PRestorationResult {
-}
+sealed class PRestorationResult {}
 
 class PRestorationRestored extends PRestorationResult {
   PRestorationRestored({
@@ -1776,7 +1806,8 @@ class PRestorationRestored extends PRestorationResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PRestorationRestored decode(Object result) {
     result as List<Object?>;
@@ -1799,8 +1830,7 @@ class PRestorationRestored extends PRestorationResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PRestorationFailed extends PRestorationResult {
@@ -1817,7 +1847,8 @@ class PRestorationFailed extends PRestorationResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PRestorationFailed decode(Object result) {
     result as List<Object?>;
@@ -1840,12 +1871,10 @@ class PRestorationFailed extends PRestorationResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-sealed class PRestoreType {
-}
+sealed class PRestoreType {}
 
 class PViaPurchase extends PRestoreType {
   PViaPurchase({
@@ -1861,7 +1890,8 @@ class PViaPurchase extends PRestoreType {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PViaPurchase decode(Object result) {
     result as List<Object?>;
@@ -1884,8 +1914,7 @@ class PViaPurchase extends PRestoreType {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PViaRestore extends PRestoreType {
@@ -1902,7 +1931,8 @@ class PViaRestore extends PRestoreType {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PViaRestore decode(Object result) {
     result as List<Object?>;
@@ -1925,8 +1955,7 @@ class PViaRestore extends PRestoreType {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PRestoreFailed {
@@ -1951,7 +1980,8 @@ class PRestoreFailed {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PRestoreFailed decode(Object result) {
     result as List<Object?>;
@@ -1976,8 +2006,7 @@ class PRestoreFailed {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PLogging {
@@ -1998,7 +2027,8 @@ class PLogging {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PLogging decode(Object result) {
     result as List<Object?>;
@@ -2022,8 +2052,7 @@ class PLogging {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PStoreTransaction {
@@ -2088,7 +2117,8 @@ class PStoreTransaction {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStoreTransaction decode(Object result) {
     result as List<Object?>;
@@ -2123,8 +2153,7 @@ class PStoreTransaction {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PStoreProduct {
@@ -2301,7 +2330,8 @@ class PStoreProduct {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStoreProduct decode(Object result) {
     result as List<Object?>;
@@ -2364,8 +2394,7 @@ class PStoreProduct {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPaywallOptions {
@@ -2379,6 +2408,7 @@ class PPaywallOptions {
     this.transactionBackgroundView,
     this.overrideProductsByName,
     this.shouldShowWebPurchaseConfirmationAlert,
+    this.onBackPressedHost,
   });
 
   bool? isHapticFeedbackEnabled;
@@ -2399,6 +2429,8 @@ class PPaywallOptions {
 
   bool? shouldShowWebPurchaseConfirmationAlert;
 
+  POnBackPressedHost? onBackPressedHost;
+
   List<Object?> _toList() {
     return <Object?>[
       isHapticFeedbackEnabled,
@@ -2410,11 +2442,13 @@ class PPaywallOptions {
       transactionBackgroundView,
       overrideProductsByName,
       shouldShowWebPurchaseConfirmationAlert,
+      onBackPressedHost,
     ];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPaywallOptions decode(Object result) {
     result as List<Object?>;
@@ -2426,8 +2460,10 @@ class PPaywallOptions {
       automaticallyDismiss: result[4] as bool?,
       shouldShowWebRestorationAlert: result[5] as bool?,
       transactionBackgroundView: result[6] as PTransactionBackgroundView?,
-      overrideProductsByName: (result[7] as Map<Object?, Object?>?)?.cast<String, String>(),
+      overrideProductsByName:
+          (result[7] as Map<Object?, Object?>?)?.cast<String, String>(),
       shouldShowWebPurchaseConfirmationAlert: result[8] as bool?,
+      onBackPressedHost: result[9] as POnBackPressedHost?,
     );
   }
 
@@ -2445,8 +2481,48 @@ class PPaywallOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
+}
+
+class POnBackPressedHost {
+  POnBackPressedHost({
+    this.hostId,
+  });
+
+  String? hostId;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      hostId,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static POnBackPressedHost decode(Object result) {
+    result as List<Object?>;
+    return POnBackPressedHost(
+      hostId: result[0] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! POnBackPressedHost || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPurchaseControllerHost {
@@ -2463,7 +2539,8 @@ class PPurchaseControllerHost {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPurchaseControllerHost decode(Object result) {
     result as List<Object?>;
@@ -2486,8 +2563,7 @@ class PPurchaseControllerHost {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PConfigureCompletionHost {
@@ -2504,7 +2580,8 @@ class PConfigureCompletionHost {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PConfigureCompletionHost decode(Object result) {
     result as List<Object?>;
@@ -2516,7 +2593,8 @@ class PConfigureCompletionHost {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PConfigureCompletionHost || other.runtimeType != runtimeType) {
+    if (other is! PConfigureCompletionHost ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2527,8 +2605,7 @@ class PConfigureCompletionHost {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPaywallPresentationHandlerHost {
@@ -2545,7 +2622,8 @@ class PPaywallPresentationHandlerHost {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPaywallPresentationHandlerHost decode(Object result) {
     result as List<Object?>;
@@ -2557,7 +2635,8 @@ class PPaywallPresentationHandlerHost {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PPaywallPresentationHandlerHost || other.runtimeType != runtimeType) {
+    if (other is! PPaywallPresentationHandlerHost ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2568,8 +2647,7 @@ class PPaywallPresentationHandlerHost {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PFeatureHandlerHost {
@@ -2586,7 +2664,8 @@ class PFeatureHandlerHost {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PFeatureHandlerHost decode(Object result) {
     result as List<Object?>;
@@ -2609,8 +2688,7 @@ class PFeatureHandlerHost {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// A subscription transaction.
@@ -2669,7 +2747,8 @@ class PSubscriptionTransaction {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PSubscriptionTransaction decode(Object result) {
     result as List<Object?>;
@@ -2689,7 +2768,8 @@ class PSubscriptionTransaction {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PSubscriptionTransaction || other.runtimeType != runtimeType) {
+    if (other is! PSubscriptionTransaction ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2700,8 +2780,7 @@ class PSubscriptionTransaction {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// A non-subscription transaction (consumable or non-consumable).
@@ -2740,7 +2819,8 @@ class PNonSubscriptionTransaction {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PNonSubscriptionTransaction decode(Object result) {
     result as List<Object?>;
@@ -2756,7 +2836,8 @@ class PNonSubscriptionTransaction {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PNonSubscriptionTransaction || other.runtimeType != runtimeType) {
+    if (other is! PNonSubscriptionTransaction ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2767,8 +2848,7 @@ class PNonSubscriptionTransaction {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// An entitlement that represents a subscription tier in your app.
@@ -2847,7 +2927,8 @@ class PEntitlement {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PEntitlement decode(Object result) {
     result as List<Object?>;
@@ -2882,8 +2963,7 @@ class PEntitlement {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Contains the latest subscription and entitlement info about the customer.
@@ -2917,13 +2997,16 @@ class PCustomerInfo {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PCustomerInfo decode(Object result) {
     result as List<Object?>;
     return PCustomerInfo(
-      subscriptions: (result[0] as List<Object?>?)!.cast<PSubscriptionTransaction>(),
-      nonSubscriptions: (result[1] as List<Object?>?)!.cast<PNonSubscriptionTransaction>(),
+      subscriptions:
+          (result[0] as List<Object?>?)!.cast<PSubscriptionTransaction>(),
+      nonSubscriptions:
+          (result[1] as List<Object?>?)!.cast<PNonSubscriptionTransaction>(),
       entitlements: (result[2] as List<Object?>?)!.cast<PEntitlement>(),
       userId: result[3]! as String,
     );
@@ -2943,8 +3026,7 @@ class PCustomerInfo {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PEntitlements {
@@ -2973,7 +3055,8 @@ class PEntitlements {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PEntitlements decode(Object result) {
     result as List<Object?>;
@@ -2999,12 +3082,10 @@ class PEntitlements {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-sealed class PSubscriptionStatus {
-}
+sealed class PSubscriptionStatus {}
 
 class PActive extends PSubscriptionStatus {
   PActive({
@@ -3020,7 +3101,8 @@ class PActive extends PSubscriptionStatus {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PActive decode(Object result) {
     result as List<Object?>;
@@ -3043,8 +3125,7 @@ class PActive extends PSubscriptionStatus {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PInactive extends PSubscriptionStatus {
@@ -3061,7 +3142,8 @@ class PInactive extends PSubscriptionStatus {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PInactive decode(Object result) {
     result as List<Object?>;
@@ -3084,8 +3166,7 @@ class PInactive extends PSubscriptionStatus {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PUnknown extends PSubscriptionStatus {
@@ -3102,7 +3183,8 @@ class PUnknown extends PSubscriptionStatus {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PUnknown decode(Object result) {
     result as List<Object?>;
@@ -3125,8 +3207,7 @@ class PUnknown extends PSubscriptionStatus {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PSuperwallEventInfo {
@@ -3247,7 +3328,8 @@ class PSuperwallEventInfo {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PSuperwallEventInfo decode(Object result) {
     result as List<Object?>;
@@ -3255,7 +3337,8 @@ class PSuperwallEventInfo {
       eventType: result[0]! as PEventType,
       params: (result[1] as Map<Object?, Object?>?)?.cast<String, Object>(),
       placementName: result[2] as String?,
-      deviceAttributes: (result[3] as Map<Object?, Object?>?)?.cast<String, Object>(),
+      deviceAttributes:
+          (result[3] as Map<Object?, Object?>?)?.cast<String, Object>(),
       deepLinkUrl: result[4] as String?,
       result: result[5] as PTriggerResult?,
       paywallInfo: result[6] as PPaywallInfo?,
@@ -3271,12 +3354,16 @@ class PSuperwallEventInfo {
       status: result[16] as PPaywallPresentationRequestStatusType?,
       reason: result[17] as PPaywallPresentationRequestStatusReason?,
       restoreType: result[18] as PRestoreType?,
-      userAttributes: (result[19] as Map<Object?, Object?>?)?.cast<String, Object>(),
+      userAttributes:
+          (result[19] as Map<Object?, Object?>?)?.cast<String, Object>(),
       token: result[20] as String?,
-      userEnrichment: (result[21] as Map<Object?, Object?>?)?.cast<String, Object>(),
-      deviceEnrichment: (result[22] as Map<Object?, Object?>?)?.cast<String, Object>(),
+      userEnrichment:
+          (result[21] as Map<Object?, Object?>?)?.cast<String, Object>(),
+      deviceEnrichment:
+          (result[22] as Map<Object?, Object?>?)?.cast<String, Object>(),
       message: result[23] as String?,
-      integrationAttributes: (result[24] as Map<Object?, Object?>?)?.cast<String, Object>(),
+      integrationAttributes:
+          (result[24] as Map<Object?, Object?>?)?.cast<String, Object>(),
       reviewRequestedCount: result[25] as int?,
       missingProductIdentifiers: (result[26] as List<Object?>?)?.cast<String>(),
     );
@@ -3296,14 +3383,13 @@ class PSuperwallEventInfo {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-sealed class PPaywallPresentationRequestStatusReason {
-}
+sealed class PPaywallPresentationRequestStatusReason {}
 
-class PStatusReasonDebuggerPresented extends PPaywallPresentationRequestStatusReason {
+class PStatusReasonDebuggerPresented
+    extends PPaywallPresentationRequestStatusReason {
   PStatusReasonDebuggerPresented({
     this.ignore,
   });
@@ -3317,7 +3403,8 @@ class PStatusReasonDebuggerPresented extends PPaywallPresentationRequestStatusRe
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStatusReasonDebuggerPresented decode(Object result) {
     result as List<Object?>;
@@ -3329,7 +3416,8 @@ class PStatusReasonDebuggerPresented extends PPaywallPresentationRequestStatusRe
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PStatusReasonDebuggerPresented || other.runtimeType != runtimeType) {
+    if (other is! PStatusReasonDebuggerPresented ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3340,11 +3428,11 @@ class PStatusReasonDebuggerPresented extends PPaywallPresentationRequestStatusRe
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-class PStatusReasonPaywallAlreadyPresented extends PPaywallPresentationRequestStatusReason {
+class PStatusReasonPaywallAlreadyPresented
+    extends PPaywallPresentationRequestStatusReason {
   PStatusReasonPaywallAlreadyPresented({
     this.ignore,
   });
@@ -3358,7 +3446,8 @@ class PStatusReasonPaywallAlreadyPresented extends PPaywallPresentationRequestSt
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStatusReasonPaywallAlreadyPresented decode(Object result) {
     result as List<Object?>;
@@ -3370,7 +3459,8 @@ class PStatusReasonPaywallAlreadyPresented extends PPaywallPresentationRequestSt
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PStatusReasonPaywallAlreadyPresented || other.runtimeType != runtimeType) {
+    if (other is! PStatusReasonPaywallAlreadyPresented ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3381,8 +3471,7 @@ class PStatusReasonPaywallAlreadyPresented extends PPaywallPresentationRequestSt
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PStatusReasonHoldout extends PPaywallPresentationRequestStatusReason {
@@ -3399,7 +3488,8 @@ class PStatusReasonHoldout extends PPaywallPresentationRequestStatusReason {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStatusReasonHoldout decode(Object result) {
     result as List<Object?>;
@@ -3422,11 +3512,11 @@ class PStatusReasonHoldout extends PPaywallPresentationRequestStatusReason {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-class PStatusReasonNoAudienceMatch extends PPaywallPresentationRequestStatusReason {
+class PStatusReasonNoAudienceMatch
+    extends PPaywallPresentationRequestStatusReason {
   PStatusReasonNoAudienceMatch({
     this.ignore,
   });
@@ -3440,7 +3530,8 @@ class PStatusReasonNoAudienceMatch extends PPaywallPresentationRequestStatusReas
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStatusReasonNoAudienceMatch decode(Object result) {
     result as List<Object?>;
@@ -3452,7 +3543,8 @@ class PStatusReasonNoAudienceMatch extends PPaywallPresentationRequestStatusReas
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PStatusReasonNoAudienceMatch || other.runtimeType != runtimeType) {
+    if (other is! PStatusReasonNoAudienceMatch ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3463,11 +3555,11 @@ class PStatusReasonNoAudienceMatch extends PPaywallPresentationRequestStatusReas
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-class PStatusReasonPlacementNotFound extends PPaywallPresentationRequestStatusReason {
+class PStatusReasonPlacementNotFound
+    extends PPaywallPresentationRequestStatusReason {
   PStatusReasonPlacementNotFound({
     this.ignore,
   });
@@ -3481,7 +3573,8 @@ class PStatusReasonPlacementNotFound extends PPaywallPresentationRequestStatusRe
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStatusReasonPlacementNotFound decode(Object result) {
     result as List<Object?>;
@@ -3493,7 +3586,8 @@ class PStatusReasonPlacementNotFound extends PPaywallPresentationRequestStatusRe
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PStatusReasonPlacementNotFound || other.runtimeType != runtimeType) {
+    if (other is! PStatusReasonPlacementNotFound ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3504,8 +3598,7 @@ class PStatusReasonPlacementNotFound extends PPaywallPresentationRequestStatusRe
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PStatusReasonNoPaywallVc extends PPaywallPresentationRequestStatusReason {
@@ -3522,7 +3615,8 @@ class PStatusReasonNoPaywallVc extends PPaywallPresentationRequestStatusReason {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStatusReasonNoPaywallVc decode(Object result) {
     result as List<Object?>;
@@ -3534,7 +3628,8 @@ class PStatusReasonNoPaywallVc extends PPaywallPresentationRequestStatusReason {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PStatusReasonNoPaywallVc || other.runtimeType != runtimeType) {
+    if (other is! PStatusReasonNoPaywallVc ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3545,8 +3640,7 @@ class PStatusReasonNoPaywallVc extends PPaywallPresentationRequestStatusReason {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PStatusReasonNoPresenter extends PPaywallPresentationRequestStatusReason {
@@ -3563,7 +3657,8 @@ class PStatusReasonNoPresenter extends PPaywallPresentationRequestStatusReason {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStatusReasonNoPresenter decode(Object result) {
     result as List<Object?>;
@@ -3575,7 +3670,8 @@ class PStatusReasonNoPresenter extends PPaywallPresentationRequestStatusReason {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PStatusReasonNoPresenter || other.runtimeType != runtimeType) {
+    if (other is! PStatusReasonNoPresenter ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3586,8 +3682,7 @@ class PStatusReasonNoPresenter extends PPaywallPresentationRequestStatusReason {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PStatusReasonNoConfig extends PPaywallPresentationRequestStatusReason {
@@ -3604,7 +3699,8 @@ class PStatusReasonNoConfig extends PPaywallPresentationRequestStatusReason {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStatusReasonNoConfig decode(Object result) {
     result as List<Object?>;
@@ -3627,11 +3723,11 @@ class PStatusReasonNoConfig extends PPaywallPresentationRequestStatusReason {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-class PStatusReasonSubsStatusTimeout extends PPaywallPresentationRequestStatusReason {
+class PStatusReasonSubsStatusTimeout
+    extends PPaywallPresentationRequestStatusReason {
   PStatusReasonSubsStatusTimeout({
     this.ignore,
   });
@@ -3645,7 +3741,8 @@ class PStatusReasonSubsStatusTimeout extends PPaywallPresentationRequestStatusRe
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PStatusReasonSubsStatusTimeout decode(Object result) {
     result as List<Object?>;
@@ -3657,7 +3754,8 @@ class PStatusReasonSubsStatusTimeout extends PPaywallPresentationRequestStatusRe
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PStatusReasonSubsStatusTimeout || other.runtimeType != runtimeType) {
+    if (other is! PStatusReasonSubsStatusTimeout ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3668,8 +3766,7 @@ class PStatusReasonSubsStatusTimeout extends PPaywallPresentationRequestStatusRe
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PIdentityOptions {
@@ -3686,7 +3783,8 @@ class PIdentityOptions {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PIdentityOptions decode(Object result) {
     result as List<Object?>;
@@ -3709,8 +3807,7 @@ class PIdentityOptions {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PExperiment {
@@ -3735,7 +3832,8 @@ class PExperiment {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PExperiment decode(Object result) {
     result as List<Object?>;
@@ -3760,12 +3858,10 @@ class PExperiment {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-sealed class PTriggerResult {
-}
+sealed class PTriggerResult {}
 
 class PPlacementNotFoundTriggerResult extends PTriggerResult {
   PPlacementNotFoundTriggerResult({
@@ -3781,7 +3877,8 @@ class PPlacementNotFoundTriggerResult extends PTriggerResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPlacementNotFoundTriggerResult decode(Object result) {
     result as List<Object?>;
@@ -3793,7 +3890,8 @@ class PPlacementNotFoundTriggerResult extends PTriggerResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PPlacementNotFoundTriggerResult || other.runtimeType != runtimeType) {
+    if (other is! PPlacementNotFoundTriggerResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3804,8 +3902,7 @@ class PPlacementNotFoundTriggerResult extends PTriggerResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PNoAudienceMatchTriggerResult extends PTriggerResult {
@@ -3822,7 +3919,8 @@ class PNoAudienceMatchTriggerResult extends PTriggerResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PNoAudienceMatchTriggerResult decode(Object result) {
     result as List<Object?>;
@@ -3834,7 +3932,8 @@ class PNoAudienceMatchTriggerResult extends PTriggerResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PNoAudienceMatchTriggerResult || other.runtimeType != runtimeType) {
+    if (other is! PNoAudienceMatchTriggerResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3845,8 +3944,7 @@ class PNoAudienceMatchTriggerResult extends PTriggerResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPaywallTriggerResult extends PTriggerResult {
@@ -3863,7 +3961,8 @@ class PPaywallTriggerResult extends PTriggerResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPaywallTriggerResult decode(Object result) {
     result as List<Object?>;
@@ -3886,8 +3985,7 @@ class PPaywallTriggerResult extends PTriggerResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PHoldoutTriggerResult extends PTriggerResult {
@@ -3904,7 +4002,8 @@ class PHoldoutTriggerResult extends PTriggerResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PHoldoutTriggerResult decode(Object result) {
     result as List<Object?>;
@@ -3927,8 +4026,7 @@ class PHoldoutTriggerResult extends PTriggerResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PErrorTriggerResult extends PTriggerResult {
@@ -3945,7 +4043,8 @@ class PErrorTriggerResult extends PTriggerResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PErrorTriggerResult decode(Object result) {
     result as List<Object?>;
@@ -3968,8 +4067,7 @@ class PErrorTriggerResult extends PTriggerResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PVariant {
@@ -3994,7 +4092,8 @@ class PVariant {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PVariant decode(Object result) {
     result as List<Object?>;
@@ -4019,8 +4118,7 @@ class PVariant {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PConfirmedAssignment {
@@ -4041,7 +4139,8 @@ class PConfirmedAssignment {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PConfirmedAssignment decode(Object result) {
     result as List<Object?>;
@@ -4065,12 +4164,10 @@ class PConfirmedAssignment {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-sealed class PPaywallResult {
-}
+sealed class PPaywallResult {}
 
 class PPurchasedPaywallResult extends PPaywallResult {
   PPurchasedPaywallResult({
@@ -4086,7 +4183,8 @@ class PPurchasedPaywallResult extends PPaywallResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPurchasedPaywallResult decode(Object result) {
     result as List<Object?>;
@@ -4109,8 +4207,7 @@ class PPurchasedPaywallResult extends PPaywallResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PDeclinedPaywallResult extends PPaywallResult {
@@ -4127,7 +4224,8 @@ class PDeclinedPaywallResult extends PPaywallResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PDeclinedPaywallResult decode(Object result) {
     result as List<Object?>;
@@ -4150,8 +4248,7 @@ class PDeclinedPaywallResult extends PPaywallResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PRestoredPaywallResult extends PPaywallResult {
@@ -4168,7 +4265,8 @@ class PRestoredPaywallResult extends PPaywallResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PRestoredPaywallResult decode(Object result) {
     result as List<Object?>;
@@ -4191,12 +4289,10 @@ class PRestoredPaywallResult extends PPaywallResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
-sealed class PPresentationResult {
-}
+sealed class PPresentationResult {}
 
 class PPlacementNotFoundPresentationResult extends PPresentationResult {
   PPlacementNotFoundPresentationResult({
@@ -4212,7 +4308,8 @@ class PPlacementNotFoundPresentationResult extends PPresentationResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPlacementNotFoundPresentationResult decode(Object result) {
     result as List<Object?>;
@@ -4224,7 +4321,8 @@ class PPlacementNotFoundPresentationResult extends PPresentationResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PPlacementNotFoundPresentationResult || other.runtimeType != runtimeType) {
+    if (other is! PPlacementNotFoundPresentationResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -4235,8 +4333,7 @@ class PPlacementNotFoundPresentationResult extends PPresentationResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PNoAudienceMatchPresentationResult extends PPresentationResult {
@@ -4253,7 +4350,8 @@ class PNoAudienceMatchPresentationResult extends PPresentationResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PNoAudienceMatchPresentationResult decode(Object result) {
     result as List<Object?>;
@@ -4265,7 +4363,8 @@ class PNoAudienceMatchPresentationResult extends PPresentationResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PNoAudienceMatchPresentationResult || other.runtimeType != runtimeType) {
+    if (other is! PNoAudienceMatchPresentationResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -4276,8 +4375,7 @@ class PNoAudienceMatchPresentationResult extends PPresentationResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPaywallPresentationResult extends PPresentationResult {
@@ -4294,7 +4392,8 @@ class PPaywallPresentationResult extends PPresentationResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPaywallPresentationResult decode(Object result) {
     result as List<Object?>;
@@ -4306,7 +4405,8 @@ class PPaywallPresentationResult extends PPresentationResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PPaywallPresentationResult || other.runtimeType != runtimeType) {
+    if (other is! PPaywallPresentationResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -4317,8 +4417,7 @@ class PPaywallPresentationResult extends PPresentationResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PHoldoutPresentationResult extends PPresentationResult {
@@ -4335,7 +4434,8 @@ class PHoldoutPresentationResult extends PPresentationResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PHoldoutPresentationResult decode(Object result) {
     result as List<Object?>;
@@ -4347,7 +4447,8 @@ class PHoldoutPresentationResult extends PPresentationResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PHoldoutPresentationResult || other.runtimeType != runtimeType) {
+    if (other is! PHoldoutPresentationResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -4358,8 +4459,7 @@ class PHoldoutPresentationResult extends PPresentationResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class PPaywallNotAvailablePresentationResult extends PPresentationResult {
@@ -4376,7 +4476,8 @@ class PPaywallNotAvailablePresentationResult extends PPresentationResult {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PPaywallNotAvailablePresentationResult decode(Object result) {
     result as List<Object?>;
@@ -4388,7 +4489,8 @@ class PPaywallNotAvailablePresentationResult extends PPresentationResult {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PPaywallNotAvailablePresentationResult || other.runtimeType != runtimeType) {
+    if (other is! PPaywallNotAvailablePresentationResult ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -4399,10 +4501,8 @@ class PPaywallNotAvailablePresentationResult extends PPresentationResult {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -4411,287 +4511,281 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is PFeatureGatingBehavior) {
+    } else if (value is PFeatureGatingBehavior) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallCloseReason) {
+    } else if (value is PPaywallCloseReason) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is PLocalNotificationType) {
+    } else if (value is PLocalNotificationType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is PComputedPropertyRequestType) {
+    } else if (value is PComputedPropertyRequestType) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is PSurveyShowCondition) {
+    } else if (value is PSurveyShowCondition) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is PProductStore) {
+    } else if (value is PProductStore) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is PEntitlementType) {
+    } else if (value is PEntitlementType) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    }    else if (value is PLatestSubscriptionState) {
+    } else if (value is PLatestSubscriptionState) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    }    else if (value is PLatestSubscriptionOfferType) {
+    } else if (value is PLatestSubscriptionOfferType) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    }    else if (value is PIntegrationAttribute) {
+    } else if (value is PIntegrationAttribute) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    }    else if (value is PNetworkEnvironment) {
+    } else if (value is PNetworkEnvironment) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
-    }    else if (value is PLogLevel) {
+    } else if (value is PLogLevel) {
       buffer.putUint8(140);
       writeValue(buffer, value.index);
-    }    else if (value is PTransactionBackgroundView) {
+    } else if (value is PTransactionBackgroundView) {
       buffer.putUint8(141);
       writeValue(buffer, value.index);
-    }    else if (value is PLogScope) {
+    } else if (value is PLogScope) {
       buffer.putUint8(142);
       writeValue(buffer, value.index);
-    }    else if (value is PConfigurationStatus) {
+    } else if (value is PConfigurationStatus) {
       buffer.putUint8(143);
       writeValue(buffer, value.index);
-    }    else if (value is PEventType) {
+    } else if (value is PEventType) {
       buffer.putUint8(144);
       writeValue(buffer, value.index);
-    }    else if (value is PSubscriptionStatusType) {
+    } else if (value is PSubscriptionStatusType) {
       buffer.putUint8(145);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallPresentationRequestStatusType) {
+    } else if (value is PPaywallPresentationRequestStatusType) {
       buffer.putUint8(146);
       writeValue(buffer, value.index);
-    }    else if (value is PVariantType) {
+    } else if (value is PVariantType) {
       buffer.putUint8(147);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallSkippedReason) {
+    } else if (value is PPaywallSkippedReason) {
       buffer.putUint8(148);
       writeValue(buffer, value.index);
-    }    else if (value is PSuccessRedemptionResult) {
+    } else if (value is PSuccessRedemptionResult) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    }    else if (value is PErrorRedemptionResult) {
+    } else if (value is PErrorRedemptionResult) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    }    else if (value is PErrorInfo) {
+    } else if (value is PErrorInfo) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    }    else if (value is PExpiredCodeRedemptionResult) {
+    } else if (value is PExpiredCodeRedemptionResult) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    }    else if (value is PExpiredCodeInfo) {
+    } else if (value is PExpiredCodeInfo) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    }    else if (value is PInvalidCodeRedemptionResult) {
+    } else if (value is PInvalidCodeRedemptionResult) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is PExpiredSubscriptionCode) {
+    } else if (value is PExpiredSubscriptionCode) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    }    else if (value is PRedemptionInfo) {
+    } else if (value is PRedemptionInfo) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    }    else if (value is PAppUserOwnership) {
+    } else if (value is PAppUserOwnership) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    }    else if (value is PDeviceOwnership) {
+    } else if (value is PDeviceOwnership) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaserInfo) {
+    } else if (value is PPurchaserInfo) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    }    else if (value is PStripeStoreIdentifiers) {
+    } else if (value is PStripeStoreIdentifiers) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaddleStoreIdentifiers) {
+    } else if (value is PPaddleStoreIdentifiers) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknownStoreIdentifiers) {
+    } else if (value is PUnknownStoreIdentifiers) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    }    else if (value is PRedemptionPaywallInfo) {
+    } else if (value is PRedemptionPaywallInfo) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallOptions) {
+    } else if (value is PSuperwallOptions) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallInfo) {
+    } else if (value is PPaywallInfo) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    }    else if (value is PProduct) {
+    } else if (value is PProduct) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    }    else if (value is PLocalNotification) {
+    } else if (value is PLocalNotification) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    }    else if (value is PComputedPropertyRequest) {
+    } else if (value is PComputedPropertyRequest) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurvey) {
+    } else if (value is PSurvey) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurveyOption) {
+    } else if (value is PSurveyOption) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseCancelled) {
+    } else if (value is PPurchaseCancelled) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePurchased) {
+    } else if (value is PPurchasePurchased) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePending) {
+    } else if (value is PPurchasePending) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseFailed) {
+    } else if (value is PPurchaseFailed) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationRestored) {
+    } else if (value is PRestorationRestored) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationFailed) {
+    } else if (value is PRestorationFailed) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    }    else if (value is PViaPurchase) {
+    } else if (value is PViaPurchase) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    }    else if (value is PViaRestore) {
+    } else if (value is PViaRestore) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoreFailed) {
+    } else if (value is PRestoreFailed) {
       buffer.putUint8(179);
       writeValue(buffer, value.encode());
-    }    else if (value is PLogging) {
+    } else if (value is PLogging) {
       buffer.putUint8(180);
       writeValue(buffer, value.encode());
-    }    else if (value is PStoreTransaction) {
+    } else if (value is PStoreTransaction) {
       buffer.putUint8(181);
       writeValue(buffer, value.encode());
-    }    else if (value is PStoreProduct) {
+    } else if (value is PStoreProduct) {
       buffer.putUint8(182);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallOptions) {
+    } else if (value is PPaywallOptions) {
       buffer.putUint8(183);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseControllerHost) {
+    } else if (value is POnBackPressedHost) {
+      buffer.putUint8(179);
+      writeValue(buffer, value.encode());
+    } else if (value is PPurchaseControllerHost) {
+      buffer.putUint8(180);
+      writeValue(buffer, value.encode());
+    } else if (value is PConfigureCompletionHost) {
+      buffer.putUint8(181);
+      writeValue(buffer, value.encode());
+    } else if (value is PPaywallPresentationHandlerHost) {
+      buffer.putUint8(182);
+      writeValue(buffer, value.encode());
+    } else if (value is PFeatureHandlerHost) {
+      buffer.putUint8(183);
+      writeValue(buffer, value.encode());
+    } else if (value is PEntitlement) {
       buffer.putUint8(184);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfigureCompletionHost) {
+    } else if (value is PEntitlements) {
       buffer.putUint8(185);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallPresentationHandlerHost) {
+    } else if (value is PActive) {
       buffer.putUint8(186);
       writeValue(buffer, value.encode());
-    }    else if (value is PFeatureHandlerHost) {
+    } else if (value is PInactive) {
       buffer.putUint8(187);
       writeValue(buffer, value.encode());
-    }    else if (value is PSubscriptionTransaction) {
+    } else if (value is PUnknown) {
       buffer.putUint8(188);
       writeValue(buffer, value.encode());
-    }    else if (value is PNonSubscriptionTransaction) {
+    } else if (value is PSuperwallEventInfo) {
       buffer.putUint8(189);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlement) {
+    } else if (value is PStatusReasonDebuggerPresented) {
       buffer.putUint8(190);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerInfo) {
+    } else if (value is PStatusReasonPaywallAlreadyPresented) {
       buffer.putUint8(191);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlements) {
+    } else if (value is PStatusReasonHoldout) {
       buffer.putUint8(192);
       writeValue(buffer, value.encode());
-    }    else if (value is PActive) {
+    } else if (value is PStatusReasonNoAudienceMatch) {
       buffer.putUint8(193);
       writeValue(buffer, value.encode());
-    }    else if (value is PInactive) {
+    } else if (value is PStatusReasonPlacementNotFound) {
       buffer.putUint8(194);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknown) {
+    } else if (value is PStatusReasonNoPaywallVc) {
       buffer.putUint8(195);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallEventInfo) {
+    } else if (value is PStatusReasonNoPresenter) {
       buffer.putUint8(196);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonDebuggerPresented) {
+    } else if (value is PStatusReasonNoConfig) {
       buffer.putUint8(197);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonPaywallAlreadyPresented) {
+    } else if (value is PStatusReasonSubsStatusTimeout) {
       buffer.putUint8(198);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonHoldout) {
+    } else if (value is PIdentityOptions) {
       buffer.putUint8(199);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoAudienceMatch) {
+    } else if (value is PExperiment) {
       buffer.putUint8(200);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonPlacementNotFound) {
+    } else if (value is PPlacementNotFoundTriggerResult) {
       buffer.putUint8(201);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoPaywallVc) {
+    } else if (value is PNoAudienceMatchTriggerResult) {
       buffer.putUint8(202);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoPresenter) {
+    } else if (value is PPaywallTriggerResult) {
       buffer.putUint8(203);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoConfig) {
+    } else if (value is PHoldoutTriggerResult) {
       buffer.putUint8(204);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonSubsStatusTimeout) {
+    } else if (value is PErrorTriggerResult) {
       buffer.putUint8(205);
       writeValue(buffer, value.encode());
-    }    else if (value is PIdentityOptions) {
+    } else if (value is PVariant) {
       buffer.putUint8(206);
       writeValue(buffer, value.encode());
-    }    else if (value is PExperiment) {
+    } else if (value is PConfirmedAssignment) {
       buffer.putUint8(207);
       writeValue(buffer, value.encode());
-    }    else if (value is PPlacementNotFoundTriggerResult) {
+    } else if (value is PPurchasedPaywallResult) {
       buffer.putUint8(208);
       writeValue(buffer, value.encode());
-    }    else if (value is PNoAudienceMatchTriggerResult) {
+    } else if (value is PDeclinedPaywallResult) {
       buffer.putUint8(209);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallTriggerResult) {
+    } else if (value is PRestoredPaywallResult) {
       buffer.putUint8(210);
       writeValue(buffer, value.encode());
-    }    else if (value is PHoldoutTriggerResult) {
+    } else if (value is PPlacementNotFoundPresentationResult) {
       buffer.putUint8(211);
       writeValue(buffer, value.encode());
-    }    else if (value is PErrorTriggerResult) {
+    } else if (value is PNoAudienceMatchPresentationResult) {
       buffer.putUint8(212);
       writeValue(buffer, value.encode());
-    }    else if (value is PVariant) {
+    } else if (value is PPaywallPresentationResult) {
       buffer.putUint8(213);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfirmedAssignment) {
+    } else if (value is PHoldoutPresentationResult) {
       buffer.putUint8(214);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasedPaywallResult) {
+    } else if (value is PPaywallNotAvailablePresentationResult) {
       buffer.putUint8(215);
-      writeValue(buffer, value.encode());
-    }    else if (value is PDeclinedPaywallResult) {
-      buffer.putUint8(216);
-      writeValue(buffer, value.encode());
-    }    else if (value is PRestoredPaywallResult) {
-      buffer.putUint8(217);
-      writeValue(buffer, value.encode());
-    }    else if (value is PPlacementNotFoundPresentationResult) {
-      buffer.putUint8(218);
-      writeValue(buffer, value.encode());
-    }    else if (value is PNoAudienceMatchPresentationResult) {
-      buffer.putUint8(219);
-      writeValue(buffer, value.encode());
-    }    else if (value is PPaywallPresentationResult) {
-      buffer.putUint8(220);
-      writeValue(buffer, value.encode());
-    }    else if (value is PHoldoutPresentationResult) {
-      buffer.putUint8(221);
-      writeValue(buffer, value.encode());
-    }    else if (value is PPaywallNotAvailablePresentationResult) {
-      buffer.putUint8(222);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -4701,243 +4795,247 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PFeatureGatingBehavior.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PPaywallCloseReason.values[value];
-      case 131: 
+      case 131:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PLocalNotificationType.values[value];
-      case 132: 
+      case 132:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PComputedPropertyRequestType.values[value];
-      case 133: 
+        return value == null
+            ? null
+            : PComputedPropertyRequestType.values[value];
+      case 133:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PSurveyShowCondition.values[value];
-      case 134: 
+      case 134:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PProductStore.values[value];
-      case 135: 
+      case 135:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PEntitlementType.values[value];
-      case 136: 
+      case 136:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PLatestSubscriptionState.values[value];
-      case 137: 
+      case 137:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PLatestSubscriptionOfferType.values[value];
-      case 138: 
+        return value == null
+            ? null
+            : PLatestSubscriptionOfferType.values[value];
+      case 138:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PIntegrationAttribute.values[value];
-      case 139: 
+      case 139:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PNetworkEnvironment.values[value];
-      case 140: 
+      case 140:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PLogLevel.values[value];
-      case 141: 
+      case 141:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PTransactionBackgroundView.values[value];
-      case 142: 
+      case 142:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PLogScope.values[value];
-      case 143: 
+      case 143:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PConfigurationStatus.values[value];
-      case 144: 
+      case 144:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PEventType.values[value];
-      case 145: 
+      case 145:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PSubscriptionStatusType.values[value];
-      case 146: 
+      case 146:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PPaywallPresentationRequestStatusType.values[value];
-      case 147: 
+        return value == null
+            ? null
+            : PPaywallPresentationRequestStatusType.values[value];
+      case 147:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PVariantType.values[value];
-      case 148: 
+      case 148:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PPaywallSkippedReason.values[value];
-      case 149: 
+      case 149:
         return PSuccessRedemptionResult.decode(readValue(buffer)!);
-      case 150: 
+      case 150:
         return PErrorRedemptionResult.decode(readValue(buffer)!);
-      case 151: 
+      case 151:
         return PErrorInfo.decode(readValue(buffer)!);
-      case 152: 
+      case 152:
         return PExpiredCodeRedemptionResult.decode(readValue(buffer)!);
-      case 153: 
+      case 153:
         return PExpiredCodeInfo.decode(readValue(buffer)!);
-      case 154: 
+      case 154:
         return PInvalidCodeRedemptionResult.decode(readValue(buffer)!);
-      case 155: 
+      case 155:
         return PExpiredSubscriptionCode.decode(readValue(buffer)!);
-      case 156: 
+      case 156:
         return PRedemptionInfo.decode(readValue(buffer)!);
-      case 157: 
+      case 157:
         return PAppUserOwnership.decode(readValue(buffer)!);
-      case 158: 
+      case 158:
         return PDeviceOwnership.decode(readValue(buffer)!);
-      case 159: 
+      case 159:
         return PPurchaserInfo.decode(readValue(buffer)!);
-      case 160: 
+      case 160:
         return PStripeStoreIdentifiers.decode(readValue(buffer)!);
-      case 161: 
+      case 161:
         return PPaddleStoreIdentifiers.decode(readValue(buffer)!);
-      case 162: 
+      case 162:
         return PUnknownStoreIdentifiers.decode(readValue(buffer)!);
-      case 163: 
+      case 163:
         return PRedemptionPaywallInfo.decode(readValue(buffer)!);
-      case 164: 
+      case 164:
         return PSuperwallOptions.decode(readValue(buffer)!);
-      case 165: 
+      case 165:
         return PPaywallInfo.decode(readValue(buffer)!);
-      case 166: 
+      case 166:
         return PProduct.decode(readValue(buffer)!);
-      case 167: 
+      case 167:
         return PLocalNotification.decode(readValue(buffer)!);
-      case 168: 
+      case 168:
         return PComputedPropertyRequest.decode(readValue(buffer)!);
-      case 169: 
+      case 169:
         return PSurvey.decode(readValue(buffer)!);
-      case 170: 
+      case 170:
         return PSurveyOption.decode(readValue(buffer)!);
-      case 171: 
+      case 171:
         return PPurchaseCancelled.decode(readValue(buffer)!);
-      case 172: 
+      case 172:
         return PPurchasePurchased.decode(readValue(buffer)!);
-      case 173: 
+      case 173:
         return PPurchasePending.decode(readValue(buffer)!);
-      case 174: 
+      case 174:
         return PPurchaseFailed.decode(readValue(buffer)!);
-      case 175: 
+      case 175:
         return PRestorationRestored.decode(readValue(buffer)!);
-      case 176: 
+      case 176:
         return PRestorationFailed.decode(readValue(buffer)!);
-      case 177: 
+      case 177:
         return PViaPurchase.decode(readValue(buffer)!);
-      case 178: 
+      case 178:
         return PViaRestore.decode(readValue(buffer)!);
-      case 179: 
-        return PRestoreFailed.decode(readValue(buffer)!);
-      case 180: 
-        return PLogging.decode(readValue(buffer)!);
-      case 181: 
-        return PStoreTransaction.decode(readValue(buffer)!);
-      case 182: 
-        return PStoreProduct.decode(readValue(buffer)!);
-      case 183: 
-        return PPaywallOptions.decode(readValue(buffer)!);
-      case 184: 
+      case 179:
+        return POnBackPressedHost.decode(readValue(buffer)!);
+      case 180:
         return PPurchaseControllerHost.decode(readValue(buffer)!);
-      case 185: 
+      case 181:
         return PConfigureCompletionHost.decode(readValue(buffer)!);
-      case 186: 
+      case 182:
         return PPaywallPresentationHandlerHost.decode(readValue(buffer)!);
-      case 187: 
+      case 183:
         return PFeatureHandlerHost.decode(readValue(buffer)!);
-      case 188: 
-        return PSubscriptionTransaction.decode(readValue(buffer)!);
-      case 189: 
-        return PNonSubscriptionTransaction.decode(readValue(buffer)!);
-      case 190: 
+      case 184:
         return PEntitlement.decode(readValue(buffer)!);
-      case 191: 
-        return PCustomerInfo.decode(readValue(buffer)!);
-      case 192: 
+      case 185:
         return PEntitlements.decode(readValue(buffer)!);
-      case 193: 
+      case 186:
         return PActive.decode(readValue(buffer)!);
-      case 194: 
+      case 187:
         return PInactive.decode(readValue(buffer)!);
-      case 195: 
+      case 188:
         return PUnknown.decode(readValue(buffer)!);
-      case 196: 
+      case 189:
         return PSuperwallEventInfo.decode(readValue(buffer)!);
-      case 197: 
+      case 190:
         return PStatusReasonDebuggerPresented.decode(readValue(buffer)!);
-      case 198: 
+      case 191:
         return PStatusReasonPaywallAlreadyPresented.decode(readValue(buffer)!);
-      case 199: 
+      case 192:
         return PStatusReasonHoldout.decode(readValue(buffer)!);
-      case 200: 
+      case 193:
         return PStatusReasonNoAudienceMatch.decode(readValue(buffer)!);
-      case 201: 
+      case 194:
         return PStatusReasonPlacementNotFound.decode(readValue(buffer)!);
-      case 202: 
+      case 195:
         return PStatusReasonNoPaywallVc.decode(readValue(buffer)!);
-      case 203: 
+      case 196:
         return PStatusReasonNoPresenter.decode(readValue(buffer)!);
-      case 204: 
+      case 197:
         return PStatusReasonNoConfig.decode(readValue(buffer)!);
-      case 205: 
+      case 198:
         return PStatusReasonSubsStatusTimeout.decode(readValue(buffer)!);
-      case 206: 
+      case 199:
         return PIdentityOptions.decode(readValue(buffer)!);
-      case 207: 
+      case 200:
         return PExperiment.decode(readValue(buffer)!);
-      case 208: 
+      case 201:
         return PPlacementNotFoundTriggerResult.decode(readValue(buffer)!);
-      case 209: 
+      case 202:
         return PNoAudienceMatchTriggerResult.decode(readValue(buffer)!);
-      case 210: 
+      case 203:
         return PPaywallTriggerResult.decode(readValue(buffer)!);
-      case 211: 
+      case 204:
         return PHoldoutTriggerResult.decode(readValue(buffer)!);
-      case 212: 
+      case 205:
         return PErrorTriggerResult.decode(readValue(buffer)!);
-      case 213: 
+      case 206:
         return PVariant.decode(readValue(buffer)!);
-      case 214: 
+      case 207:
         return PConfirmedAssignment.decode(readValue(buffer)!);
-      case 215: 
+      case 208:
         return PPurchasedPaywallResult.decode(readValue(buffer)!);
-      case 216: 
+      case 209:
         return PDeclinedPaywallResult.decode(readValue(buffer)!);
-      case 217: 
+      case 210:
         return PRestoredPaywallResult.decode(readValue(buffer)!);
-      case 218: 
+      case 211:
         return PPlacementNotFoundPresentationResult.decode(readValue(buffer)!);
-      case 219: 
+      case 212:
         return PNoAudienceMatchPresentationResult.decode(readValue(buffer)!);
-      case 220: 
+      case 213:
         return PPaywallPresentationResult.decode(readValue(buffer)!);
-      case 221: 
+      case 214:
         return PHoldoutPresentationResult.decode(readValue(buffer)!);
-      case 222: 
-        return PPaywallNotAvailablePresentationResult.decode(readValue(buffer)!);
+      case 215:
+        return PPaywallNotAvailablePresentationResult.decode(
+            readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec =
+    StandardMethodCodec(_PigeonCodec());
 
 class PSuperwallHostApi {
   /// Constructor for [PSuperwallHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  PSuperwallHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  PSuperwallHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        pigeonVar_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-  Future<void> configure(String apiKey, {PPurchaseControllerHost? purchaseController, PSuperwallOptions? options, PConfigureCompletionHost? completion, }) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.configure$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<void> configure(
+    String apiKey, {
+    PPurchaseControllerHost? purchaseController,
+    PSuperwallOptions? options,
+    PConfigureCompletionHost? completion,
+  }) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.configure$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[apiKey, purchaseController, options, completion]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[apiKey, purchaseController, options, completion]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4954,8 +5052,10 @@ class PSuperwallHostApi {
   }
 
   Future<void> reset() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.reset$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.reset$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -4977,13 +5077,16 @@ class PSuperwallHostApi {
   }
 
   Future<void> setDelegate(bool hasDelegate) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setDelegate$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setDelegate$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[hasDelegate]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[hasDelegate]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5000,8 +5103,10 @@ class PSuperwallHostApi {
   }
 
   Future<List<PConfirmedAssignment>> confirmAllAssignments() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.confirmAllAssignments$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.confirmAllAssignments$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5023,13 +5128,16 @@ class PSuperwallHostApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<PConfirmedAssignment>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<PConfirmedAssignment>();
     }
   }
 
   Future<PRestorationResult> restorePurchases() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.restorePurchases$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.restorePurchases$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5056,8 +5164,10 @@ class PSuperwallHostApi {
   }
 
   Future<String> getLogLevel() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLogLevel$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLogLevel$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5084,13 +5194,16 @@ class PSuperwallHostApi {
   }
 
   Future<void> setLogLevel(String logLevel) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setLogLevel$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setLogLevel$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[logLevel]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[logLevel]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5107,8 +5220,10 @@ class PSuperwallHostApi {
   }
 
   Future<Map<String, Object>> getUserAttributes() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getUserAttributes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getUserAttributes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5130,18 +5245,22 @@ class PSuperwallHostApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!.cast<String, Object>();
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String, Object>();
     }
   }
 
   Future<void> setUserAttributes(Map<String, Object> userAttributes) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setUserAttributes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setUserAttributes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[userAttributes]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[userAttributes]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5157,14 +5276,18 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<void> setIntegrationAttribute(PIntegrationAttribute attribute, String? value) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setIntegrationAttribute$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<void> setIntegrationAttribute(
+      PIntegrationAttribute attribute, String? value) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setIntegrationAttribute$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[attribute, value]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[attribute, value]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5180,14 +5303,18 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<void> setIntegrationAttributes(Map<PIntegrationAttribute, String?> attributes) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setIntegrationAttributes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<void> setIntegrationAttributes(
+      Map<PIntegrationAttribute, String?> attributes) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setIntegrationAttributes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[attributes]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[attributes]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5204,8 +5331,10 @@ class PSuperwallHostApi {
   }
 
   Future<Map<String, Object>> getDeviceAttributes() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getDeviceAttributes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getDeviceAttributes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5227,18 +5356,22 @@ class PSuperwallHostApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!.cast<String, Object>();
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String, Object>();
     }
   }
 
   Future<String> consume(String purchaseToken) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.consume$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.consume$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[purchaseToken]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[purchaseToken]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5260,8 +5393,10 @@ class PSuperwallHostApi {
   }
 
   Future<String?> getLocaleIdentifier() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLocaleIdentifier$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLocaleIdentifier$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5283,13 +5418,16 @@ class PSuperwallHostApi {
   }
 
   Future<void> setLocaleIdentifier(String? localeIdentifier) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setLocaleIdentifier$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setLocaleIdentifier$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[localeIdentifier]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[localeIdentifier]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5306,8 +5444,10 @@ class PSuperwallHostApi {
   }
 
   Future<String> getUserId() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getUserId$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getUserId$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5334,8 +5474,10 @@ class PSuperwallHostApi {
   }
 
   Future<bool> getIsLoggedIn() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getIsLoggedIn$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getIsLoggedIn$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5362,8 +5504,10 @@ class PSuperwallHostApi {
   }
 
   Future<bool> getIsInitialized() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getIsInitialized$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getIsInitialized$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5389,14 +5533,18 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<void> identify(String userId, PIdentityOptions? identityOptions) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.identify$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<void> identify(
+      String userId, PIdentityOptions? identityOptions) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.identify$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[userId, identityOptions]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[userId, identityOptions]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5413,8 +5561,10 @@ class PSuperwallHostApi {
   }
 
   Future<PEntitlements> getEntitlements() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getEntitlements$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getEntitlements$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5440,14 +5590,18 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<List<PEntitlement>> getEntitlementsByProductIds(List<String> productIds) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getEntitlementsByProductIds$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<List<PEntitlement>> getEntitlementsByProductIds(
+      List<String> productIds) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getEntitlementsByProductIds$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[productIds]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[productIds]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5469,8 +5623,10 @@ class PSuperwallHostApi {
   }
 
   Future<PCustomerInfo> getCustomerInfo() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getCustomerInfo$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getCustomerInfo$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5497,8 +5653,10 @@ class PSuperwallHostApi {
   }
 
   Future<PSubscriptionStatus> getSubscriptionStatus() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getSubscriptionStatus$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getSubscriptionStatus$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5524,14 +5682,18 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<void> setSubscriptionStatus(PSubscriptionStatus subscriptionStatus) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setSubscriptionStatus$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<void> setSubscriptionStatus(
+      PSubscriptionStatus subscriptionStatus) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setSubscriptionStatus$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[subscriptionStatus]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[subscriptionStatus]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5548,8 +5710,10 @@ class PSuperwallHostApi {
   }
 
   Future<PConfigurationStatus> getConfigurationStatus() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getConfigurationStatus$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getConfigurationStatus$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5576,8 +5740,10 @@ class PSuperwallHostApi {
   }
 
   Future<bool> getIsConfigured() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getIsConfigured$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getIsConfigured$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5603,14 +5769,18 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<PPresentationResult> getPresentationResult(String placement, Map<String, Object>? params) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getPresentationResult$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<PPresentationResult> getPresentationResult(
+      String placement, Map<String, Object>? params) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getPresentationResult$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[placement, params]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[placement, params]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5632,8 +5802,10 @@ class PSuperwallHostApi {
   }
 
   Future<bool> getIsPaywallPresented() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getIsPaywallPresented$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getIsPaywallPresented$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5660,8 +5832,10 @@ class PSuperwallHostApi {
   }
 
   Future<void> preloadAllPaywalls() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.preloadAllPaywalls$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.preloadAllPaywalls$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5683,13 +5857,16 @@ class PSuperwallHostApi {
   }
 
   Future<void> preloadPaywallsForPlacements(List<String> placementNames) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.preloadPaywallsForPlacements$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.preloadPaywallsForPlacements$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[placementNames]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[placementNames]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5706,13 +5883,16 @@ class PSuperwallHostApi {
   }
 
   Future<bool> handleDeepLink(String url) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.handleDeepLink$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.handleDeepLink$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[url]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5734,13 +5914,16 @@ class PSuperwallHostApi {
   }
 
   Future<void> togglePaywallSpinner(bool isHidden) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.togglePaywallSpinner$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.togglePaywallSpinner$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[isHidden]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[isHidden]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5757,8 +5940,10 @@ class PSuperwallHostApi {
   }
 
   Future<PPaywallInfo?> getLatestPaywallInfo() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLatestPaywallInfo$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLatestPaywallInfo$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5779,14 +5964,22 @@ class PSuperwallHostApi {
     }
   }
 
-  Future<void> registerPlacement(String placement, {Map<String, Object>? params, PPaywallPresentationHandlerHost? handler, PFeatureHandlerHost? feature, }) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.registerPlacement$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<void> registerPlacement(
+    String placement, {
+    Map<String, Object>? params,
+    PPaywallPresentationHandlerHost? handler,
+    PFeatureHandlerHost? feature,
+  }) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.registerPlacement$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[placement, params, handler, feature]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[placement, params, handler, feature]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5803,8 +5996,10 @@ class PSuperwallHostApi {
   }
 
   Future<void> dismiss() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismiss$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismiss$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5826,8 +6021,10 @@ class PSuperwallHostApi {
   }
 
   Future<Map<String, String>?> getOverrideProductsByName() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getOverrideProductsByName$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getOverrideProductsByName$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -5844,18 +6041,23 @@ class PSuperwallHostApi {
         details: pigeonVar_replyList[2],
       );
     } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)?.cast<String, String>();
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<String, String>();
     }
   }
 
-  Future<void> setOverrideProductsByName(Map<String, String>? overrideProducts) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setOverrideProductsByName$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<void> setOverrideProductsByName(
+      Map<String, String>? overrideProducts) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setOverrideProductsByName$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[overrideProducts]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[overrideProducts]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5875,7 +6077,8 @@ class PSuperwallHostApi {
 abstract class PSuperwallDelegateGenerated {
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-  void subscriptionStatusDidChange(PSubscriptionStatus from, PSubscriptionStatus to);
+  void subscriptionStatusDidChange(
+      PSubscriptionStatus from, PSubscriptionStatus to);
 
   void handleSuperwallEvent(PSuperwallEventInfo eventInfo);
 
@@ -5893,30 +6096,41 @@ abstract class PSuperwallDelegateGenerated {
 
   void paywallWillOpenDeepLink(String url);
 
-  void handleLog(String level, String scope, String? message, Map<String, Object>? info, String? error);
+  void handleLog(String level, String scope, String? message,
+      Map<String, Object>? info, String? error);
 
   void willRedeemLink();
 
   void didRedeemLink(PRedemptionResult result);
 
-  void handleSuperwallDeepLink(String fullURL, List<String> pathComponents, Map<String, String> queryParameters);
+  void handleSuperwallDeepLink(String fullURL, List<String> pathComponents,
+      Map<String, String> queryParameters);
 
   void customerInfoDidChange(PCustomerInfo from, PCustomerInfo to);
 
-  static void setUp(PSuperwallDelegateGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(
+    PSuperwallDelegateGenerated? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final PSubscriptionStatus? arg_from = (args[0] as PSubscriptionStatus?);
+          final PSubscriptionStatus? arg_from =
+              (args[0] as PSubscriptionStatus?);
           assert(arg_from != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.subscriptionStatusDidChange was null, expected non-null PSubscriptionStatus.');
           final PSubscriptionStatus? arg_to = (args[1] as PSubscriptionStatus?);
@@ -5927,24 +6141,29 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final PSuperwallEventInfo? arg_eventInfo = (args[0] as PSuperwallEventInfo?);
+          final PSuperwallEventInfo? arg_eventInfo =
+              (args[0] as PSuperwallEventInfo?);
           assert(arg_eventInfo != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallEvent was null, expected non-null PSuperwallEventInfo.');
           try {
@@ -5952,22 +6171,26 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleCustomPaywallAction$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleCustomPaywallAction$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleCustomPaywallAction was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleCustomPaywallAction was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_name = (args[0] as String?);
           assert(arg_name != null,
@@ -5977,22 +6200,26 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willDismissPaywall$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willDismissPaywall$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willDismissPaywall was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willDismissPaywall was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
           assert(arg_paywallInfo != null,
@@ -6002,22 +6229,26 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willPresentPaywall$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willPresentPaywall$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willPresentPaywall was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willPresentPaywall was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
           assert(arg_paywallInfo != null,
@@ -6027,22 +6258,26 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didDismissPaywall$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didDismissPaywall$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didDismissPaywall was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didDismissPaywall was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
           assert(arg_paywallInfo != null,
@@ -6052,22 +6287,26 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didPresentPaywall$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didPresentPaywall$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didPresentPaywall was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didPresentPaywall was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
           assert(arg_paywallInfo != null,
@@ -6077,22 +6316,26 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenURL$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenURL$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenURL was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenURL was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_url = (args[0] as String?);
           assert(arg_url != null,
@@ -6102,22 +6345,26 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenDeepLink$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenDeepLink$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenDeepLink was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.paywallWillOpenDeepLink was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_url = (args[0] as String?);
           assert(arg_url != null,
@@ -6127,22 +6374,26 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_level = (args[0] as String?);
           assert(arg_level != null,
@@ -6151,22 +6402,28 @@ abstract class PSuperwallDelegateGenerated {
           assert(arg_scope != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleLog was null, expected non-null String.');
           final String? arg_message = (args[2] as String?);
-          final Map<String, Object>? arg_info = (args[3] as Map<Object?, Object?>?)?.cast<String, Object>();
+          final Map<String, Object>? arg_info =
+              (args[3] as Map<Object?, Object?>?)?.cast<String, Object>();
           final String? arg_error = (args[4] as String?);
           try {
-            api.handleLog(arg_level!, arg_scope!, arg_message, arg_info, arg_error);
+            api.handleLog(
+                arg_level!, arg_scope!, arg_message, arg_info, arg_error);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willRedeemLink$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.willRedeemLink$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
@@ -6177,22 +6434,26 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didRedeemLink$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didRedeemLink$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didRedeemLink was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.didRedeemLink was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PRedemptionResult? arg_result = (args[0] as PRedemptionResult?);
           assert(arg_result != null,
@@ -6202,53 +6463,64 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallDeepLink$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallDeepLink$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallDeepLink was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallDeepLink was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_fullURL = (args[0] as String?);
           assert(arg_fullURL != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallDeepLink was null, expected non-null String.');
-          final List<String>? arg_pathComponents = (args[1] as List<Object?>?)?.cast<String>();
+          final List<String>? arg_pathComponents =
+              (args[1] as List<Object?>?)?.cast<String>();
           assert(arg_pathComponents != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallDeepLink was null, expected non-null List<String>.');
-          final Map<String, String>? arg_queryParameters = (args[2] as Map<Object?, Object?>?)?.cast<String, String>();
+          final Map<String, String>? arg_queryParameters =
+              (args[2] as Map<Object?, Object?>?)?.cast<String, String>();
           assert(arg_queryParameters != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.handleSuperwallDeepLink was null, expected non-null Map<String, String>.');
           try {
-            api.handleSuperwallDeepLink(arg_fullURL!, arg_pathComponents!, arg_queryParameters!);
+            api.handleSuperwallDeepLink(
+                arg_fullURL!, arg_pathComponents!, arg_queryParameters!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.customerInfoDidChange$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.customerInfoDidChange$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.customerInfoDidChange was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.customerInfoDidChange was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PCustomerInfo? arg_from = (args[0] as PCustomerInfo?);
           assert(arg_from != null,
@@ -6261,8 +6533,9 @@ abstract class PSuperwallDelegateGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -6275,47 +6548,61 @@ abstract class PPurchaseControllerGenerated {
 
   Future<PPurchaseResult> purchaseFromAppStore(String productId);
 
-  Future<PPurchaseResult> purchaseFromGooglePlay(String productId, String? basePlanId, String? offerId);
+  Future<PPurchaseResult> purchaseFromGooglePlay(
+      String productId, String? basePlanId, String? offerId);
 
   Future<PRestorationResult> restorePurchases();
 
-  static void setUp(PPurchaseControllerGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(
+    PPurchaseControllerGenerated? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromAppStore$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromAppStore$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromAppStore was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromAppStore was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_productId = (args[0] as String?);
           assert(arg_productId != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromAppStore was null, expected non-null String.');
           try {
-            final PPurchaseResult output = await api.purchaseFromAppStore(arg_productId!);
+            final PPurchaseResult output =
+                await api.purchaseFromAppStore(arg_productId!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromGooglePlay$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromGooglePlay$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromGooglePlay was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromGooglePlay was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_productId = (args[0] as String?);
           assert(arg_productId != null,
@@ -6323,19 +6610,24 @@ abstract class PPurchaseControllerGenerated {
           final String? arg_basePlanId = (args[1] as String?);
           final String? arg_offerId = (args[2] as String?);
           try {
-            final PPurchaseResult output = await api.purchaseFromGooglePlay(arg_productId!, arg_basePlanId, arg_offerId);
+            final PPurchaseResult output = await api.purchaseFromGooglePlay(
+                arg_productId!, arg_basePlanId, arg_offerId);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.restorePurchases$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.restorePurchases$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
@@ -6346,8 +6638,9 @@ abstract class PPurchaseControllerGenerated {
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -6360,18 +6653,26 @@ abstract class PConfigureCompletionGenerated {
 
   void onConfigureCompleted(bool success);
 
-  static void setUp(PConfigureCompletionGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(
+    PConfigureCompletionGenerated? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PConfigureCompletionGenerated.onConfigureCompleted$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PConfigureCompletionGenerated.onConfigureCompleted$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PConfigureCompletionGenerated.onConfigureCompleted was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PConfigureCompletionGenerated.onConfigureCompleted was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final bool? arg_success = (args[0] as bool?);
           assert(arg_success != null,
@@ -6381,8 +6682,9 @@ abstract class PConfigureCompletionGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -6401,18 +6703,26 @@ abstract class PPaywallPresentationHandlerGenerated {
 
   void onSkip(PPaywallSkippedReason reason);
 
-  static void setUp(PPaywallPresentationHandlerGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(
+    PPaywallPresentationHandlerGenerated? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onPresent$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onPresent$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onPresent was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onPresent was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
           assert(arg_paywallInfo != null,
@@ -6422,27 +6732,32 @@ abstract class PPaywallPresentationHandlerGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
           assert(arg_paywallInfo != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss was null, expected non-null PPaywallInfo.');
-          final PPaywallResult? arg_paywallResult = (args[1] as PPaywallResult?);
+          final PPaywallResult? arg_paywallResult =
+              (args[1] as PPaywallResult?);
           assert(arg_paywallResult != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onDismiss was null, expected non-null PPaywallResult.');
           try {
@@ -6450,22 +6765,26 @@ abstract class PPaywallPresentationHandlerGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onError$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onError$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onError was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onError was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_error = (args[0] as String?);
           assert(arg_error != null,
@@ -6475,24 +6794,29 @@ abstract class PPaywallPresentationHandlerGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final PPaywallSkippedReason? arg_reason = (args[0] as PPaywallSkippedReason?);
+          final PPaywallSkippedReason? arg_reason =
+              (args[0] as PPaywallSkippedReason?);
           assert(arg_reason != null,
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip was null, expected non-null PPaywallSkippedReason.');
           try {
@@ -6500,8 +6824,9 @@ abstract class PPaywallPresentationHandlerGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -6514,18 +6839,26 @@ abstract class PFeatureHandlerGenerated {
 
   void onFeature(String id);
 
-  static void setUp(PFeatureHandlerGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(
+    PFeatureHandlerGenerated? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.superwallkit_flutter.PFeatureHandlerGenerated.onFeature$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PFeatureHandlerGenerated.onFeature$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.superwallkit_flutter.PFeatureHandlerGenerated.onFeature was null.');
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PFeatureHandlerGenerated.onFeature was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_id = (args[0] as String?);
           assert(arg_id != null,
@@ -6535,8 +6868,9 @@ abstract class PFeatureHandlerGenerated {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -6544,25 +6878,73 @@ abstract class PFeatureHandlerGenerated {
   }
 }
 
-Stream<PSubscriptionStatus> streamSubscriptionStatus( {String instanceName = ''}) {
+abstract class POnBackPressedGenerated {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  void onBackPressed(PPaywallInfo? paywallInfo);
+
+  static void setUp(
+    POnBackPressedGenerated? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.POnBackPressedGenerated.onBackPressed$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.POnBackPressedGenerated.onBackPressed was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PPaywallInfo? arg_paywallInfo = (args[0] as PPaywallInfo?);
+          try {
+            api.onBackPressed(arg_paywallInfo);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+}
+
+Stream<PSubscriptionStatus> streamSubscriptionStatus(
+    {String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel streamSubscriptionStatusChannel =
-      EventChannel('dev.flutter.pigeon.superwallkit_flutter.SuperwallEventStreams.streamSubscriptionStatus$instanceName', pigeonMethodCodec);
-  return streamSubscriptionStatusChannel.receiveBroadcastStream().map((dynamic event) {
+  final EventChannel streamSubscriptionStatusChannel = EventChannel(
+      'dev.flutter.pigeon.superwallkit_flutter.SuperwallEventStreams.streamSubscriptionStatus$instanceName',
+      pigeonMethodCodec);
+  return streamSubscriptionStatusChannel
+      .receiveBroadcastStream()
+      .map((dynamic event) {
     return event as PSubscriptionStatus;
   });
 }
-    
-Stream<PCustomerInfo> streamCustomerInfo( {String instanceName = ''}) {
+
+Stream<PCustomerInfo> streamCustomerInfo({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel streamCustomerInfoChannel =
-      EventChannel('dev.flutter.pigeon.superwallkit_flutter.SuperwallEventStreams.streamCustomerInfo$instanceName', pigeonMethodCodec);
-  return streamCustomerInfoChannel.receiveBroadcastStream().map((dynamic event) {
+  final EventChannel streamCustomerInfoChannel = EventChannel(
+      'dev.flutter.pigeon.superwallkit_flutter.SuperwallEventStreams.streamCustomerInfo$instanceName',
+      pigeonMethodCodec);
+  return streamCustomerInfoChannel
+      .receiveBroadcastStream()
+      .map((dynamic event) {
     return event as PCustomerInfo;
   });
 }
-    
