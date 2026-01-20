@@ -4412,6 +4412,7 @@ protocol PSuperwallDelegateGeneratedProtocol {
   func didRedeemLink(result resultArg: PRedemptionResult, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func handleSuperwallDeepLink(fullURL fullURLArg: String, pathComponents pathComponentsArg: [String], queryParameters queryParametersArg: [String: String], completion: @escaping (Result<Void, PigeonError>) -> Void)
   func customerInfoDidChange(from fromArg: PCustomerInfo, to toArg: PCustomerInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func userAttributesDidChange(newAttributes newAttributesArg: [String: Any], completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class PSuperwallDelegateGenerated: PSuperwallDelegateGeneratedProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -4661,6 +4662,24 @@ class PSuperwallDelegateGenerated: PSuperwallDelegateGeneratedProtocol {
     let channelName: String = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.customerInfoDidChange\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([fromArg, toArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
+      }
+    }
+  }
+  func userAttributesDidChange(newAttributes newAttributesArg: [String: Any], completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.userAttributesDidChange\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([newAttributesArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return

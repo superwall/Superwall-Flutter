@@ -5983,6 +5983,8 @@ abstract class PSuperwallDelegateGenerated {
 
   void customerInfoDidChange(PCustomerInfo from, PCustomerInfo to);
 
+  void userAttributesDidChange(Map<String, Object> newAttributes);
+
   static void setUp(PSuperwallDelegateGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
@@ -6338,6 +6340,31 @@ abstract class PSuperwallDelegateGenerated {
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.customerInfoDidChange was null, expected non-null PCustomerInfo.');
           try {
             api.customerInfoDidChange(arg_from!, arg_to!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.userAttributesDidChange$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.userAttributesDidChange was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Map<String, Object>? arg_newAttributes = (args[0] as Map<Object?, Object?>?)?.cast<String, Object>();
+          assert(arg_newAttributes != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.userAttributesDidChange was null, expected non-null Map<String, Object>.');
+          try {
+            api.userAttributesDidChange(arg_newAttributes!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

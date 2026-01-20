@@ -131,4 +131,11 @@ class SuperwallDelegateHost(
             backingDelegate.didRedeemLink(RedemptionResultMapper.toPRedemptionResult(result), {})
         }
     }
+
+    override fun userAttributesDidChange(newAttributes: Map<String, Any>) {
+        super.userAttributesDidChange(newAttributes)
+        onMain {
+            backingDelegate.userAttributesDidChange(newAttributes, {})
+        }
+    }
 }

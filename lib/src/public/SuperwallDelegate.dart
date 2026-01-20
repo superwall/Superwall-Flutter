@@ -59,6 +59,9 @@ abstract class SuperwallDelegate {
 
   /// Called when the `customerInfo` property of `Superwall` changes.
   void customerInfoDidChange(CustomerInfo from, CustomerInfo to) => {};
+
+  /// Called when user attributes change.
+  void userAttributesDidChange(Map<String, Object> newAttributes) => {};
 }
 
 class SuperwallDelegateHost implements PSuperwallDelegateGenerated {
@@ -178,5 +181,10 @@ class SuperwallDelegateHost implements PSuperwallDelegateGenerated {
     } catch (e) {
       // Error parsing CustomerInfo
     }
+  }
+
+  @override
+  void userAttributesDidChange(Map<String, Object> newAttributes) {
+    _delegate.userAttributesDidChange(newAttributes);
   }
 }

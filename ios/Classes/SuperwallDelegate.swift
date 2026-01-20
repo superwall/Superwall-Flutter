@@ -552,4 +552,10 @@ final class SuperwallDelegateHost: SuperwallDelegate {
       // NO-OP
     }
   }
+
+  func userAttributesDidChange(newAttributes: [String: Any]) {
+    flutterDelegate().userAttributesDidChange(newAttributes: newAttributes) { _ in
+      // NO-OP
+    }
+  }
 }

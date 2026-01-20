@@ -1392,6 +1392,7 @@ abstract class PSuperwallDelegateGenerated {
   void handleSuperwallDeepLink(String fullURL, List<String> pathComponents,
       Map<String, String> queryParameters);
   void customerInfoDidChange(PCustomerInfo from, PCustomerInfo to);
+  void userAttributesDidChange(Map<String, Object> newAttributes);
 }
 
 // ============= FLUTTER APIs =============
