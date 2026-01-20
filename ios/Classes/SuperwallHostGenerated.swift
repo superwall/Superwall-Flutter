@@ -347,34 +347,39 @@ enum PEventType: Int {
   case paywallProductsLoadStart = 37
   case paywallProductsLoadFail = 38
   case paywallProductsLoadComplete = 39
-  case paywallResourceLoadFail = 40
-  case surveyResponse = 41
-  case paywallPresentationRequest = 42
-  case touchesBegan = 43
-  case surveyClose = 44
-  case reset = 45
-  case configRefresh = 46
-  case customPlacement = 47
-  case configAttributes = 48
-  case confirmAllAssignments = 49
-  case configFail = 50
-  case adServicesTokenRequestStart = 51
-  case adServicesTokenRequestFail = 52
-  case adServicesTokenRequestComplete = 53
-  case shimmerViewStart = 54
-  case shimmerViewComplete = 55
-  case redemptionStart = 56
-  case redemptionComplete = 57
-  case redemptionFail = 58
-  case enrichmentStart = 59
-  case enrichmentComplete = 60
-  case enrichmentFail = 61
-  case networkDecodingFail = 62
-  case paywallWebviewProcessTerminated = 63
-  case paywallProductsLoadMissingProducts = 64
-  case customerInfoDidChange = 65
-  case integrationAttributes = 66
-  case reviewRequested = 67
+  case paywallPreloadStart = 40
+  case paywallPreloadComplete = 41
+  case paywallResourceLoadFail = 42
+  case surveyResponse = 43
+  case paywallPresentationRequest = 44
+  case touchesBegan = 45
+  case surveyClose = 46
+  case reset = 47
+  case configRefresh = 48
+  case customPlacement = 49
+  case configAttributes = 50
+  case confirmAllAssignments = 51
+  case configFail = 52
+  case adServicesTokenRequestStart = 53
+  case adServicesTokenRequestFail = 54
+  case adServicesTokenRequestComplete = 55
+  case shimmerViewStart = 56
+  case shimmerViewComplete = 57
+  case redemptionStart = 58
+  case redemptionComplete = 59
+  case redemptionFail = 60
+  case enrichmentStart = 61
+  case enrichmentComplete = 62
+  case enrichmentFail = 63
+  case networkDecodingFail = 64
+  case paywallWebviewProcessTerminated = 65
+  case paywallProductsLoadMissingProducts = 66
+  case customerInfoDidChange = 67
+  case integrationAttributes = 68
+  case reviewRequested = 69
+  case permissionRequested = 70
+  case permissionGranted = 71
+  case permissionDenied = 72
 }
 
 enum PSubscriptionStatusType: Int {
@@ -1123,7 +1128,7 @@ struct PProduct: Hashable {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct PLocalNotification: Hashable {
-  var id: Int64
+  var id: String
   var type: PLocalNotificationType
   var title: String
   var subtitle: String? = nil
@@ -1133,7 +1138,7 @@ struct PLocalNotification: Hashable {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PLocalNotification? {
-    let id = pigeonVar_list[0] as! Int64
+    let id = pigeonVar_list[0] as! String
     let type = pigeonVar_list[1] as! PLocalNotificationType
     let title = pigeonVar_list[2] as! String
     let subtitle: String? = nilOrValue(pigeonVar_list[3])
@@ -2027,6 +2032,12 @@ struct PSubscriptionTransaction: Hashable {
   var isActive: Bool
   /// The date that the subscription expires (milliseconds since epoch), null if non-renewing.
   var expirationDate: Int64? = nil
+  /// The type of offer that applies to the subscription transaction.
+  var offerType: PLatestSubscriptionOfferType? = nil
+  /// The subscription group identifier.
+  var subscriptionGroupId: String? = nil
+  /// The store from which this transaction originated.
+  var store: PProductStore? = nil
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -2040,6 +2051,9 @@ struct PSubscriptionTransaction: Hashable {
     let isInBillingRetryPeriod = pigeonVar_list[6] as! Bool
     let isActive = pigeonVar_list[7] as! Bool
     let expirationDate: Int64? = nilOrValue(pigeonVar_list[8])
+    let offerType: PLatestSubscriptionOfferType? = nilOrValue(pigeonVar_list[9])
+    let subscriptionGroupId: String? = nilOrValue(pigeonVar_list[10])
+    let store: PProductStore? = nilOrValue(pigeonVar_list[11])
 
     return PSubscriptionTransaction(
       transactionId: transactionId,
@@ -2050,7 +2064,10 @@ struct PSubscriptionTransaction: Hashable {
       isInGracePeriod: isInGracePeriod,
       isInBillingRetryPeriod: isInBillingRetryPeriod,
       isActive: isActive,
-      expirationDate: expirationDate
+      expirationDate: expirationDate,
+      offerType: offerType,
+      subscriptionGroupId: subscriptionGroupId,
+      store: store
     )
   }
   func toList() -> [Any?] {
@@ -2064,6 +2081,9 @@ struct PSubscriptionTransaction: Hashable {
       isInBillingRetryPeriod,
       isActive,
       expirationDate,
+      offerType,
+      subscriptionGroupId,
+      store,
     ]
   }
   static func == (lhs: PSubscriptionTransaction, rhs: PSubscriptionTransaction) -> Bool {
@@ -2087,6 +2107,8 @@ struct PNonSubscriptionTransaction: Hashable {
   var isConsumable: Bool
   /// Indicates whether the transaction has been revoked.
   var isRevoked: Bool
+  /// The store from which this transaction originated.
+  var store: PProductStore? = nil
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -2096,13 +2118,15 @@ struct PNonSubscriptionTransaction: Hashable {
     let purchaseDate = pigeonVar_list[2] as! Int64
     let isConsumable = pigeonVar_list[3] as! Bool
     let isRevoked = pigeonVar_list[4] as! Bool
+    let store: PProductStore? = nilOrValue(pigeonVar_list[5])
 
     return PNonSubscriptionTransaction(
       transactionId: transactionId,
       productId: productId,
       purchaseDate: purchaseDate,
       isConsumable: isConsumable,
-      isRevoked: isRevoked
+      isRevoked: isRevoked,
+      store: store
     )
   }
   func toList() -> [Any?] {
@@ -2112,6 +2136,7 @@ struct PNonSubscriptionTransaction: Hashable {
       purchaseDate,
       isConsumable,
       isRevoked,
+      store,
     ]
   }
   static func == (lhs: PNonSubscriptionTransaction, rhs: PNonSubscriptionTransaction) -> Bool {
@@ -4387,6 +4412,7 @@ protocol PSuperwallDelegateGeneratedProtocol {
   func didRedeemLink(result resultArg: PRedemptionResult, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func handleSuperwallDeepLink(fullURL fullURLArg: String, pathComponents pathComponentsArg: [String], queryParameters queryParametersArg: [String: String], completion: @escaping (Result<Void, PigeonError>) -> Void)
   func customerInfoDidChange(from fromArg: PCustomerInfo, to toArg: PCustomerInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func userAttributesDidChange(newAttributes newAttributesArg: [String: Any], completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class PSuperwallDelegateGenerated: PSuperwallDelegateGeneratedProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -4636,6 +4662,24 @@ class PSuperwallDelegateGenerated: PSuperwallDelegateGeneratedProtocol {
     let channelName: String = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.customerInfoDidChange\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([fromArg, toArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
+      }
+    }
+  }
+  func userAttributesDidChange(newAttributes newAttributesArg: [String: Any], completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.userAttributesDidChange\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([newAttributesArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return

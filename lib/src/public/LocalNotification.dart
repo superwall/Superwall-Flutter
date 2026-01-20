@@ -49,7 +49,7 @@ class LocalNotification {
   /// Convert this LocalNotification to a PLocalNotification
   PLocalNotification toPigeon() {
     return PLocalNotification(
-      id: 0, // Default id, this might need adjustment
+      id: "", // Default id, this might need adjustment
       type: LocalNotificationTypeExtension(type).toPigeon(),
       title: title,
       subtitle: subtitle,

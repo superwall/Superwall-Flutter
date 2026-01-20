@@ -389,34 +389,39 @@ enum class PEventType(val raw: Int) {
   PAYWALL_PRODUCTS_LOAD_START(37),
   PAYWALL_PRODUCTS_LOAD_FAIL(38),
   PAYWALL_PRODUCTS_LOAD_COMPLETE(39),
-  PAYWALL_RESOURCE_LOAD_FAIL(40),
-  SURVEY_RESPONSE(41),
-  PAYWALL_PRESENTATION_REQUEST(42),
-  TOUCHES_BEGAN(43),
-  SURVEY_CLOSE(44),
-  RESET(45),
-  CONFIG_REFRESH(46),
-  CUSTOM_PLACEMENT(47),
-  CONFIG_ATTRIBUTES(48),
-  CONFIRM_ALL_ASSIGNMENTS(49),
-  CONFIG_FAIL(50),
-  AD_SERVICES_TOKEN_REQUEST_START(51),
-  AD_SERVICES_TOKEN_REQUEST_FAIL(52),
-  AD_SERVICES_TOKEN_REQUEST_COMPLETE(53),
-  SHIMMER_VIEW_START(54),
-  SHIMMER_VIEW_COMPLETE(55),
-  REDEMPTION_START(56),
-  REDEMPTION_COMPLETE(57),
-  REDEMPTION_FAIL(58),
-  ENRICHMENT_START(59),
-  ENRICHMENT_COMPLETE(60),
-  ENRICHMENT_FAIL(61),
-  NETWORK_DECODING_FAIL(62),
-  PAYWALL_WEBVIEW_PROCESS_TERMINATED(63),
-  PAYWALL_PRODUCTS_LOAD_MISSING_PRODUCTS(64),
-  CUSTOMER_INFO_DID_CHANGE(65),
-  INTEGRATION_ATTRIBUTES(66),
-  REVIEW_REQUESTED(67);
+  PAYWALL_PRELOAD_START(40),
+  PAYWALL_PRELOAD_COMPLETE(41),
+  PAYWALL_RESOURCE_LOAD_FAIL(42),
+  SURVEY_RESPONSE(43),
+  PAYWALL_PRESENTATION_REQUEST(44),
+  TOUCHES_BEGAN(45),
+  SURVEY_CLOSE(46),
+  RESET(47),
+  CONFIG_REFRESH(48),
+  CUSTOM_PLACEMENT(49),
+  CONFIG_ATTRIBUTES(50),
+  CONFIRM_ALL_ASSIGNMENTS(51),
+  CONFIG_FAIL(52),
+  AD_SERVICES_TOKEN_REQUEST_START(53),
+  AD_SERVICES_TOKEN_REQUEST_FAIL(54),
+  AD_SERVICES_TOKEN_REQUEST_COMPLETE(55),
+  SHIMMER_VIEW_START(56),
+  SHIMMER_VIEW_COMPLETE(57),
+  REDEMPTION_START(58),
+  REDEMPTION_COMPLETE(59),
+  REDEMPTION_FAIL(60),
+  ENRICHMENT_START(61),
+  ENRICHMENT_COMPLETE(62),
+  ENRICHMENT_FAIL(63),
+  NETWORK_DECODING_FAIL(64),
+  PAYWALL_WEBVIEW_PROCESS_TERMINATED(65),
+  PAYWALL_PRODUCTS_LOAD_MISSING_PRODUCTS(66),
+  CUSTOMER_INFO_DID_CHANGE(67),
+  INTEGRATION_ATTRIBUTES(68),
+  REVIEW_REQUESTED(69),
+  PERMISSION_REQUESTED(70),
+  PERMISSION_GRANTED(71),
+  PERMISSION_DENIED(72);
 
   companion object {
     fun ofRaw(raw: Int): PEventType? {
@@ -1207,7 +1212,7 @@ data class PProduct (
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PLocalNotification (
-  val id: Long,
+  val id: String,
   val type: PLocalNotificationType,
   val title: String,
   val subtitle: String? = null,
@@ -1217,7 +1222,7 @@ data class PLocalNotification (
  {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PLocalNotification {
-      val id = pigeonVar_list[0] as Long
+      val id = pigeonVar_list[0] as String
       val type = pigeonVar_list[1] as PLocalNotificationType
       val title = pigeonVar_list[2] as String
       val subtitle = pigeonVar_list[3] as String?
@@ -2096,7 +2101,13 @@ data class PSubscriptionTransaction (
   /** Indicates whether the subscription is active. */
   val isActive: Boolean,
   /** The date that the subscription expires (milliseconds since epoch), null if non-renewing. */
-  val expirationDate: Long? = null
+  val expirationDate: Long? = null,
+  /** The type of offer that applies to the subscription transaction. */
+  val offerType: PLatestSubscriptionOfferType? = null,
+  /** The subscription group identifier. */
+  val subscriptionGroupId: String? = null,
+  /** The store from which this transaction originated. */
+  val store: PProductStore? = null
 )
  {
   companion object {
@@ -2110,7 +2121,10 @@ data class PSubscriptionTransaction (
       val isInBillingRetryPeriod = pigeonVar_list[6] as Boolean
       val isActive = pigeonVar_list[7] as Boolean
       val expirationDate = pigeonVar_list[8] as Long?
-      return PSubscriptionTransaction(transactionId, productId, purchaseDate, willRenew, isRevoked, isInGracePeriod, isInBillingRetryPeriod, isActive, expirationDate)
+      val offerType = pigeonVar_list[9] as PLatestSubscriptionOfferType?
+      val subscriptionGroupId = pigeonVar_list[10] as String?
+      val store = pigeonVar_list[11] as PProductStore?
+      return PSubscriptionTransaction(transactionId, productId, purchaseDate, willRenew, isRevoked, isInGracePeriod, isInBillingRetryPeriod, isActive, expirationDate, offerType, subscriptionGroupId, store)
     }
   }
   fun toList(): List<Any?> {
@@ -2124,6 +2138,9 @@ data class PSubscriptionTransaction (
       isInBillingRetryPeriod,
       isActive,
       expirationDate,
+      offerType,
+      subscriptionGroupId,
+      store,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -2153,7 +2170,9 @@ data class PNonSubscriptionTransaction (
   /** Indicates whether it's a consumable in-app purchase. */
   val isConsumable: Boolean,
   /** Indicates whether the transaction has been revoked. */
-  val isRevoked: Boolean
+  val isRevoked: Boolean,
+  /** The store from which this transaction originated. */
+  val store: PProductStore? = null
 )
  {
   companion object {
@@ -2163,7 +2182,8 @@ data class PNonSubscriptionTransaction (
       val purchaseDate = pigeonVar_list[2] as Long
       val isConsumable = pigeonVar_list[3] as Boolean
       val isRevoked = pigeonVar_list[4] as Boolean
-      return PNonSubscriptionTransaction(transactionId, productId, purchaseDate, isConsumable, isRevoked)
+      val store = pigeonVar_list[5] as PProductStore?
+      return PNonSubscriptionTransaction(transactionId, productId, purchaseDate, isConsumable, isRevoked, store)
     }
   }
   fun toList(): List<Any?> {
@@ -2173,6 +2193,7 @@ data class PNonSubscriptionTransaction (
       purchaseDate,
       isConsumable,
       isRevoked,
+      store,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -5099,6 +5120,23 @@ class PSuperwallDelegateGenerated(private val binaryMessenger: BinaryMessenger, 
     val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.customerInfoDidChange$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(fromArg, toArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun userAttributesDidChange(newAttributesArg: Map<String, Any>, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.userAttributesDidChange$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(newAttributesArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))

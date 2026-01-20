@@ -2,9 +2,17 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.7
+
+### Enhancements
+
+- Updates iOS SDK to 4.12.7 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.12.7).
+- Updates Android SDK to 2.6.8 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.6.8).
+
 ## 2.4.6
 
 ## Enhancements
+
 - Adds `isActive` convenience property on the `SubscriptionStatus` class
 - Adds support for `SuperwallOptions.paywalls.onBackPressed` callback to react to back button presses on Android
 
@@ -14,7 +22,6 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 
 - Updates iOS SDK to 4.10.6 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.10.6).
 - Updates Android SDK to 2.6.5 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.6.5).
-
 
 ## 2.4.4
 

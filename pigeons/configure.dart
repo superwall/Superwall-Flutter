@@ -322,7 +322,7 @@ enum PPaywallCloseReason {
 
 // LocalNotification class
 class PLocalNotification {
-  int id;
+  String id;
   PLocalNotificationType type;
   String title;
   String? subtitle;
@@ -673,42 +673,61 @@ enum PLatestSubscriptionOfferType {
 enum PIntegrationAttribute {
   /// The unique Adjust identifier for the user.
   adjustId,
+
   /// The Amplitude device identifier.
   amplitudeDeviceId,
+
   /// The Amplitude user identifier.
   amplitudeUserId,
+
   /// The unique Appsflyer identifier for the user.
   appsflyerId,
+
   /// The Braze `alias_name` in User Alias Object.
   brazeAliasName,
+
   /// The Braze `alias_label` in User Alias Object.
   brazeAliasLabel,
+
   /// The OneSignal Player identifier for the user.
   onesignalId,
+
   /// The Facebook Anonymous identifier for the user.
   fbAnonId,
+
   /// The Firebase instance identifier.
   firebaseAppInstanceId,
+
   /// The Iterable identifier for the user.
   iterableUserId,
+
   /// The Iterable campaign identifier.
   iterableCampaignId,
+
   /// The Iterable template identifier.
   iterableTemplateId,
+
   /// The Mixpanel user identifier.
   mixpanelDistinctId,
+
   /// The unique mParticle user identifier (mpid).
   mparticleId,
+
   /// The CleverTap user identifier.
   clevertapId,
+
   /// The Airship channel identifier for the user.
   airshipChannelId,
+
   /// The unique Kochava device identifier.
   kochavaDeviceId,
+
   /// The Tenjin identifier.
   tenjinId,
+
   /// The PostHog User identifier.
   posthogUserId,
+
   /// The Customer.io person's identifier (`id`).
   customerioId,
 }
@@ -742,6 +761,15 @@ class PSubscriptionTransaction {
   /// The date that the subscription expires (milliseconds since epoch), null if non-renewing.
   final int? expirationDate;
 
+  /// The type of offer that applies to the subscription transaction.
+  final PLatestSubscriptionOfferType? offerType;
+
+  /// The subscription group identifier.
+  final String? subscriptionGroupId;
+
+  /// The store from which this transaction originated.
+  final PProductStore? store;
+
   PSubscriptionTransaction({
     required this.transactionId,
     required this.productId,
@@ -752,6 +780,9 @@ class PSubscriptionTransaction {
     required this.isInBillingRetryPeriod,
     required this.isActive,
     this.expirationDate,
+    this.offerType,
+    this.subscriptionGroupId,
+    this.store,
   });
 }
 
@@ -772,12 +803,16 @@ class PNonSubscriptionTransaction {
   /// Indicates whether the transaction has been revoked.
   final bool isRevoked;
 
+  /// The store from which this transaction originated.
+  final PProductStore? store;
+
   PNonSubscriptionTransaction({
     required this.transactionId,
     required this.productId,
     required this.purchaseDate,
     required this.isConsumable,
     required this.isRevoked,
+    this.store,
   });
 }
 
@@ -1041,6 +1076,8 @@ enum PEventType {
   paywallProductsLoadStart,
   paywallProductsLoadFail,
   paywallProductsLoadComplete,
+  paywallPreloadStart,
+  paywallPreloadComplete,
   paywallResourceLoadFail,
   surveyResponse,
   paywallPresentationRequest,
@@ -1068,7 +1105,10 @@ enum PEventType {
   paywallProductsLoadMissingProducts,
   customerInfoDidChange,
   integrationAttributes,
-  reviewRequested
+  reviewRequested,
+  permissionRequested,
+  permissionGranted,
+  permissionDenied
 }
 
 // SubscriptionStatus enum
@@ -1371,6 +1411,7 @@ abstract class PSuperwallDelegateGenerated {
   void handleSuperwallDeepLink(String fullURL, List<String> pathComponents,
       Map<String, String> queryParameters);
   void customerInfoDidChange(PCustomerInfo from, PCustomerInfo to);
+  void userAttributesDidChange(Map<String, Object> newAttributes);
 }
 
 // ============= FLUTTER APIs =============

@@ -254,6 +254,8 @@ enum PEventType {
   paywallProductsLoadStart,
   paywallProductsLoadFail,
   paywallProductsLoadComplete,
+  paywallPreloadStart,
+  paywallPreloadComplete,
   paywallResourceLoadFail,
   surveyResponse,
   paywallPresentationRequest,
@@ -282,6 +284,9 @@ enum PEventType {
   customerInfoDidChange,
   integrationAttributes,
   reviewRequested,
+  permissionRequested,
+  permissionGranted,
+  permissionDenied,
 }
 
 enum PSubscriptionStatusType {
@@ -1363,7 +1368,7 @@ class PLocalNotification {
     required this.delay,
   });
 
-  int id;
+  String id;
 
   PLocalNotificationType type;
 
@@ -1392,7 +1397,7 @@ class PLocalNotification {
   static PLocalNotification decode(Object result) {
     result as List<Object?>;
     return PLocalNotification(
-      id: result[0]! as int,
+      id: result[0]! as String,
       type: result[1]! as PLocalNotificationType,
       title: result[2]! as String,
       subtitle: result[3] as String?,
@@ -2671,6 +2676,9 @@ class PSubscriptionTransaction {
     required this.isInBillingRetryPeriod,
     required this.isActive,
     this.expirationDate,
+    this.offerType,
+    this.subscriptionGroupId,
+    this.store,
   });
 
   /// The unique identifier for the transaction.
@@ -2700,6 +2708,15 @@ class PSubscriptionTransaction {
   /// The date that the subscription expires (milliseconds since epoch), null if non-renewing.
   int? expirationDate;
 
+  /// The type of offer that applies to the subscription transaction.
+  PLatestSubscriptionOfferType? offerType;
+
+  /// The subscription group identifier.
+  String? subscriptionGroupId;
+
+  /// The store from which this transaction originated.
+  PProductStore? store;
+
   List<Object?> _toList() {
     return <Object?>[
       transactionId,
@@ -2711,6 +2728,9 @@ class PSubscriptionTransaction {
       isInBillingRetryPeriod,
       isActive,
       expirationDate,
+      offerType,
+      subscriptionGroupId,
+      store,
     ];
   }
 
@@ -2729,6 +2749,9 @@ class PSubscriptionTransaction {
       isInBillingRetryPeriod: result[6]! as bool,
       isActive: result[7]! as bool,
       expirationDate: result[8] as int?,
+      offerType: result[9] as PLatestSubscriptionOfferType?,
+      subscriptionGroupId: result[10] as String?,
+      store: result[11] as PProductStore?,
     );
   }
 
@@ -2758,6 +2781,7 @@ class PNonSubscriptionTransaction {
     required this.purchaseDate,
     required this.isConsumable,
     required this.isRevoked,
+    this.store,
   });
 
   /// The unique identifier for the transaction.
@@ -2775,6 +2799,9 @@ class PNonSubscriptionTransaction {
   /// Indicates whether the transaction has been revoked.
   bool isRevoked;
 
+  /// The store from which this transaction originated.
+  PProductStore? store;
+
   List<Object?> _toList() {
     return <Object?>[
       transactionId,
@@ -2782,6 +2809,7 @@ class PNonSubscriptionTransaction {
       purchaseDate,
       isConsumable,
       isRevoked,
+      store,
     ];
   }
 
@@ -2796,6 +2824,7 @@ class PNonSubscriptionTransaction {
       purchaseDate: result[2]! as int,
       isConsumable: result[3]! as bool,
       isRevoked: result[4]! as bool,
+      store: result[5] as PProductStore?,
     );
   }
 
@@ -5954,6 +5983,8 @@ abstract class PSuperwallDelegateGenerated {
 
   void customerInfoDidChange(PCustomerInfo from, PCustomerInfo to);
 
+  void userAttributesDidChange(Map<String, Object> newAttributes);
+
   static void setUp(PSuperwallDelegateGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
@@ -6309,6 +6340,31 @@ abstract class PSuperwallDelegateGenerated {
               'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.customerInfoDidChange was null, expected non-null PCustomerInfo.');
           try {
             api.customerInfoDidChange(arg_from!, arg_to!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.userAttributesDidChange$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.userAttributesDidChange was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Map<String, Object>? arg_newAttributes = (args[0] as Map<Object?, Object?>?)?.cast<String, Object>();
+          assert(arg_newAttributes != null,
+              'Argument for dev.flutter.pigeon.superwallkit_flutter.PSuperwallDelegateGenerated.userAttributesDidChange was null, expected non-null Map<String, Object>.');
+          try {
+            api.userAttributesDidChange(arg_newAttributes!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
