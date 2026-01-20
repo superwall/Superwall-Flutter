@@ -89,7 +89,7 @@ extension LocalNotification {
     }
 
     return PLocalNotification(
-      id: self.id,
+      id: "",
       type: type,
       title: title,
       subtitle: subtitle,
