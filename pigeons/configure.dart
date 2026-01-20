@@ -742,6 +742,15 @@ class PSubscriptionTransaction {
   /// The date that the subscription expires (milliseconds since epoch), null if non-renewing.
   final int? expirationDate;
 
+  /// The type of offer that applies to the subscription transaction.
+  final PLatestSubscriptionOfferType? offerType;
+
+  /// The subscription group identifier.
+  final String? subscriptionGroupId;
+
+  /// The store from which this transaction originated.
+  final PProductStore? store;
+
   PSubscriptionTransaction({
     required this.transactionId,
     required this.productId,
@@ -752,6 +761,9 @@ class PSubscriptionTransaction {
     required this.isInBillingRetryPeriod,
     required this.isActive,
     this.expirationDate,
+    this.offerType,
+    this.subscriptionGroupId,
+    this.store,
   });
 }
 
@@ -772,12 +784,16 @@ class PNonSubscriptionTransaction {
   /// Indicates whether the transaction has been revoked.
   final bool isRevoked;
 
+  /// The store from which this transaction originated.
+  final PProductStore? store;
+
   PNonSubscriptionTransaction({
     required this.transactionId,
     required this.productId,
     required this.purchaseDate,
     required this.isConsumable,
     required this.isRevoked,
+    this.store,
   });
 }
 
@@ -1041,6 +1057,8 @@ enum PEventType {
   paywallProductsLoadStart,
   paywallProductsLoadFail,
   paywallProductsLoadComplete,
+  paywallPreloadStart,
+  paywallPreloadComplete,
   paywallResourceLoadFail,
   surveyResponse,
   paywallPresentationRequest,
@@ -1068,7 +1086,10 @@ enum PEventType {
   paywallProductsLoadMissingProducts,
   customerInfoDidChange,
   integrationAttributes,
-  reviewRequested
+  reviewRequested,
+  permissionRequested,
+  permissionGranted,
+  permissionDenied
 }
 
 // SubscriptionStatus enum

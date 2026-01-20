@@ -247,6 +247,18 @@ class EventMapper {
                         params = params,
                     )
 
+                is SuperwallEvent.PaywallPreloadStart ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.PAYWALL_PRELOAD_START,
+                        params = params,
+                    )
+
+                is SuperwallEvent.PaywallPreloadComplete ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.PAYWALL_PRELOAD_COMPLETE,
+                        params = params,
+                    )
+
                 is SuperwallEvent.PaywallResourceLoadFail ->
                     PSuperwallEventInfo(
                         eventType = PEventType.PAYWALL_RESOURCE_LOAD_FAIL,
@@ -303,6 +315,10 @@ class EventMapper {
                         error = event.rawName,
                         params = params,
                     )
+
+                is SuperwallEvent.PermissionRequested -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_REQUESTED, params = params)
+                is SuperwallEvent.PermissionGranted -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_GRANTED, params = params)
+                is SuperwallEvent.PermissionDenied -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_DENIED, params = params)
 
                 else -> PSuperwallEventInfo(
                     eventType = PEventType.CUSTOM_PLACEMENT,

@@ -277,6 +277,16 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         params: params,
         triggeredPlacementName: triggeredPlacementName
       )
+    case .paywallPreloadStart:
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallPreloadStart,
+        params: params
+      )
+    case .paywallPreloadComplete:
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallPreloadComplete,
+        params: params
+      )
     case let .paywallProductsLoadRetry(triggeredPlacementName, paywallInfo, attempt):
       pEventInfo = PSuperwallEventInfo(
         eventType: .paywallProductsLoadRetry,
@@ -396,6 +406,27 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         eventType: .reviewRequested,
         params: params,
         reviewRequestedCount: Int64(count)
+      )
+    case .permissionRequested:
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .permissionRequested,
+        params: params
+      )
+    case .permissionGranted:
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .permissionGranted,
+        params: params
+      )
+    case .permissionDenied:
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .permissionDenied,
+        params: params
+      )
+    @unknown default:
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .customPlacement,
+        params: params,
+        name: String(describing: eventInfo.event)
       )
     }
 

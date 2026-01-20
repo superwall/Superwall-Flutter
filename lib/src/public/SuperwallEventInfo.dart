@@ -67,6 +67,8 @@ enum EventType {
   paywallProductsLoadStart,
   paywallProductsLoadFail,
   paywallProductsLoadComplete,
+  paywallPreloadStart,
+  paywallPreloadComplete,
   surveyResponse,
   paywallPresentationRequest,
   touchesBegan,
@@ -93,7 +95,10 @@ enum EventType {
   paywallProductsLoadMissingProducts,
   customerInfoDidChange,
   integrationAttributes,
-  reviewRequested
+  reviewRequested,
+  permissionRequested,
+  permissionGranted,
+  permissionDenied
 }
 
 class SuperwallEvent {
@@ -269,6 +274,12 @@ class SuperwallEvent {
       case PEventType.paywallProductsLoadComplete:
         type = EventType.paywallProductsLoadComplete;
         break;
+      case PEventType.paywallPreloadStart:
+        type = EventType.paywallPreloadStart;
+        break;
+      case PEventType.paywallPreloadComplete:
+        type = EventType.paywallPreloadComplete;
+        break;
       case PEventType.paywallResourceLoadFail:
         // No exact match in EventType, using closest equivalent
         type = EventType.paywallResponseLoadFail;
@@ -353,6 +364,15 @@ class SuperwallEvent {
         break;
       case PEventType.reviewRequested:
         type = EventType.reviewRequested;
+        break;
+      case PEventType.permissionRequested:
+        type = EventType.permissionRequested;
+        break;
+      case PEventType.permissionGranted:
+        type = EventType.permissionGranted;
+        break;
+      case PEventType.permissionDenied:
+        type = EventType.permissionDenied;
     }
 
     return SuperwallEvent._(

@@ -115,6 +115,15 @@ class SubscriptionTransaction {
   /// The date that the subscription expires, null if non-renewing.
   final DateTime? expirationDate;
 
+  /// The type of offer that applies to the subscription transaction.
+  final LatestSubscriptionOfferType? offerType;
+
+  /// The subscription group identifier.
+  final String? subscriptionGroupId;
+
+  /// The store from which this transaction originated.
+  final ProductStore? store;
+
   SubscriptionTransaction({
     required this.transactionId,
     required this.productId,
@@ -125,6 +134,9 @@ class SubscriptionTransaction {
     required this.isInBillingRetryPeriod,
     required this.isActive,
     this.expirationDate,
+    this.offerType,
+    this.subscriptionGroupId,
+    this.store,
   });
 
   factory SubscriptionTransaction.fromPigeon(PSubscriptionTransaction pigeon) {
@@ -141,6 +153,11 @@ class SubscriptionTransaction {
       expirationDate: pigeon.expirationDate != null
           ? DateTime.fromMillisecondsSinceEpoch(pigeon.expirationDate!.toInt())
           : null,
+      offerType: pigeon.offerType != null
+          ? LatestSubscriptionOfferType.fromPigeon(pigeon.offerType!)
+          : null,
+      subscriptionGroupId: pigeon.subscriptionGroupId,
+      store: pigeon.store != null ? ProductStore.fromPigeon(pigeon.store!) : null,
     );
   }
 }
@@ -162,12 +179,16 @@ class NonSubscriptionTransaction {
   /// Indicates whether the transaction has been revoked.
   final bool isRevoked;
 
+  /// The store from which this transaction originated.
+  final ProductStore? store;
+
   NonSubscriptionTransaction({
     required this.transactionId,
     required this.productId,
     required this.purchaseDate,
     required this.isConsumable,
     required this.isRevoked,
+    this.store,
   });
 
   factory NonSubscriptionTransaction.fromPigeon(
@@ -179,6 +200,7 @@ class NonSubscriptionTransaction {
           DateTime.fromMillisecondsSinceEpoch(pigeon.purchaseDate.toInt()),
       isConsumable: pigeon.isConsumable,
       isRevoked: pigeon.isRevoked,
+      store: pigeon.store != null ? ProductStore.fromPigeon(pigeon.store!) : null,
     );
   }
 }

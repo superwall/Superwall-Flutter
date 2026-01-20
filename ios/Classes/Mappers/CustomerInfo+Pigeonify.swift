@@ -23,7 +23,10 @@ extension SubscriptionTransaction {
       isInGracePeriod: isInGracePeriod,
       isInBillingRetryPeriod: isInBillingRetryPeriod,
       isActive: isActive,
-      expirationDate: expirationDate.map { Int64($0.timeIntervalSince1970 * 1000) }
+      expirationDate: expirationDate.map { Int64($0.timeIntervalSince1970 * 1000) },
+      offerType: offerType?.pigeonify(),
+      subscriptionGroupId: subscriptionGroupId,
+      store: store.pigeonify()
     )
   }
 }
@@ -35,7 +38,8 @@ extension NonSubscriptionTransaction {
       productId: productId,
       purchaseDate: Int64(purchaseDate.timeIntervalSince1970 * 1000),
       isConsumable: isConsumable,
-      isRevoked: isRevoked
+      isRevoked: isRevoked,
+      store: store.pigeonify()
     )
   }
 }
