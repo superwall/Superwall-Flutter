@@ -322,7 +322,7 @@ enum PPaywallCloseReason {
 
 // LocalNotification class
 class PLocalNotification {
-  int id;
+  String id;
   PLocalNotificationType type;
   String title;
   String? subtitle;
@@ -673,42 +673,61 @@ enum PLatestSubscriptionOfferType {
 enum PIntegrationAttribute {
   /// The unique Adjust identifier for the user.
   adjustId,
+
   /// The Amplitude device identifier.
   amplitudeDeviceId,
+
   /// The Amplitude user identifier.
   amplitudeUserId,
+
   /// The unique Appsflyer identifier for the user.
   appsflyerId,
+
   /// The Braze `alias_name` in User Alias Object.
   brazeAliasName,
+
   /// The Braze `alias_label` in User Alias Object.
   brazeAliasLabel,
+
   /// The OneSignal Player identifier for the user.
   onesignalId,
+
   /// The Facebook Anonymous identifier for the user.
   fbAnonId,
+
   /// The Firebase instance identifier.
   firebaseAppInstanceId,
+
   /// The Iterable identifier for the user.
   iterableUserId,
+
   /// The Iterable campaign identifier.
   iterableCampaignId,
+
   /// The Iterable template identifier.
   iterableTemplateId,
+
   /// The Mixpanel user identifier.
   mixpanelDistinctId,
+
   /// The unique mParticle user identifier (mpid).
   mparticleId,
+
   /// The CleverTap user identifier.
   clevertapId,
+
   /// The Airship channel identifier for the user.
   airshipChannelId,
+
   /// The unique Kochava device identifier.
   kochavaDeviceId,
+
   /// The Tenjin identifier.
   tenjinId,
+
   /// The PostHog User identifier.
   posthogUserId,
+
   /// The Customer.io person's identifier (`id`).
   customerioId,
 }

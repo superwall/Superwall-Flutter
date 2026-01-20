@@ -64,14 +64,14 @@ class _MyAppState extends State<MyApp> {
       // Get Superwall API Key
       final apiKey = Platform.isIOS
           ? 'pk_e361c8a9662281f4249f2fa11d1a63854615fa80e15e7a4d'
-          : 'pk_d1f0959f70c761b1d55bb774a03e22b2b6ed290ce6561f85';
+          : 'pk_0ff90006c5c2078e1ce832bd2343ba2f806ca510a0a1696a';
 
       final logging = Logging();
       logging.level = LogLevel.info;
       logging.scopes = {LogScope.all};
 
       final options = SuperwallOptions();
-      options.paywalls.shouldPreload = false;
+      options.paywalls.shouldPreload = true;
       options.paywalls.shouldShowWebRestorationAlert = false;
       // options.logging = logging;
 

@@ -24,7 +24,7 @@ class Home extends StatelessWidget {
                 // Launch Non-Gated Feature.
                 child: Text('Launch Non-Gated Feature'),
                 onPressed: () async {
-                  await Superwall.shared.registerPlacement('non_gated',
+                  await Superwall.shared.registerPlacement('permission_test',
                       feature: () {
                     Navigator.pushNamed(
                       context,

@@ -382,7 +382,7 @@ class PaywallInfoMapper {
             val localNotifications =
                 paywallInfo.localNotifications.map { notification ->
                     PLocalNotification(
-                        id = notification.id.toLong(),
+                        id = notification.id.toString(),
                         type =
                             when (notification.type) {
                                 is com.superwall.sdk.models.paywall.LocalNotificationType.TrialStarted -> PLocalNotificationType.TRIAL_STARTED
