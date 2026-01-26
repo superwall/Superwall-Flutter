@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.8
+
+### Fixes
+
+- Fixes an issue where `IdentityOptions` passed to `identify()` were not being sent to the native SDK due to a variable shadowing bug.
+
 ## 2.4.7
 
 ### Enhancements
