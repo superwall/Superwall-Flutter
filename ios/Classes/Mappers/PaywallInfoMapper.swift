@@ -56,7 +56,8 @@ extension PaywallInfo {
       computedPropertyRequests: computedPropertyRequests.map {
         $0.pigeonify()
       },
-      surveys: surveys.map { $0.pigeonify() }
+      surveys: surveys.map { $0.pigeonify() },
+      state: state.isEmpty ? nil : state
     )
   }
 }

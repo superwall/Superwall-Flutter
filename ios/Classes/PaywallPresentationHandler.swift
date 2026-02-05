@@ -78,5 +78,39 @@ final class PaywallPresentationHandlerHost {
         }
       )
     }
+
+    handler.onCustomCallback { [weak self] callback in
+      guard let self = self else {
+        return CustomCallbackResult.failure()
+      }
+
+      // Convert SDK's CustomCallback to Pigeon's PCustomCallback
+      let pCallback = PCustomCallback(
+        name: callback.name,
+        variables: callback.variables
+      )
+
+      // Use a semaphore to wait for the async Flutter call
+      let semaphore = DispatchSemaphore(value: 0)
+      var result: CustomCallbackResult = .failure()
+
+      self.flutterHandler.onCustomCallback(callback: pCallback) { pResult in
+        switch pResult {
+        case .success(let pCallbackResult):
+          result = CustomCallbackResult(
+            status: pCallbackResult.status == .success ? .success : .failure,
+            data: pCallbackResult.data
+          )
+        case .failure:
+          result = .failure()
+        }
+        semaphore.signal()
+      }
+
+      // Wait for the result with a timeout
+      _ = semaphore.wait(timeout: .now() + 30)
+
+      return result
+    }
   }
 }
