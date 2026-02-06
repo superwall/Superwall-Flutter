@@ -79,36 +79,29 @@ final class PaywallPresentationHandlerHost {
       )
     }
 
-    handler.onCustomCallback { [weak self] callback in
+    handler.onCustomCallback { [weak self] callback async in
       guard let self = self else {
-        return CustomCallbackResult.failure()
+        return CustomCallbackResult(status: .failure, data: nil)
       }
 
-      // Convert SDK's CustomCallback to Pigeon's PCustomCallback
       let pCallback = PCustomCallback(
         name: callback.name,
         variables: callback.variables
       )
 
-      // Use a semaphore to wait for the async Flutter call
-      let semaphore = DispatchSemaphore(value: 0)
-      var result: CustomCallbackResult = .failure()
-
-      self.flutterHandler.onCustomCallback(callback: pCallback) { pResult in
-        switch pResult {
-        case .success(let pCallbackResult):
-          result = CustomCallbackResult(
-            status: pCallbackResult.status == .success ? .success : .failure,
-            data: pCallbackResult.data
-          )
-        case .failure:
-          result = .failure()
+      let result: CustomCallbackResult = await withCheckedContinuation { continuation in
+        self.flutterHandler.onCustomCallback(callback: pCallback) { pResult in
+          switch pResult {
+          case .success(let pCallbackResult):
+            continuation.resume(returning: CustomCallbackResult(
+              status: pCallbackResult.status == .success ? .success : .failure,
+              data: pCallbackResult.data
+            ))
+          case .failure:
+            continuation.resume(returning: CustomCallbackResult(status: .failure, data: nil))
+          }
         }
-        semaphore.signal()
       }
-
-      // Wait for the result with a timeout
-      _ = semaphore.wait(timeout: .now() + 30)
 
       return result
     }

@@ -9,8 +9,8 @@ PODS:
     - RevenueCat (= 5.18.0)
   - RevenueCat (5.18.0)
   - Superscript (1.0.4)
-  - SuperwallKit (4.10.0):
-    - Superscript (= 1.0.4)
+  - SuperwallKit (4.12.10):
+    - Superscript (= 1.0.13)
   - superwallkit_flutter (0.0.1):
     - Flutter
     - SuperwallKit (= 4.10.0)
