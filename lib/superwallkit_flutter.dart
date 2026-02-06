@@ -2,6 +2,7 @@ library superwallkit_flutter;
 
 export 'src/public/ComputedPropertyRequest.dart';
 export 'src/public/ConfirmedAssignments.dart';
+export 'src/public/CustomCallback.dart';
 export 'src/public/ConfigurationStatus.dart';
 export 'src/public/Experiment.dart';
 export 'src/public/FeatureGatingBehavior.dart';

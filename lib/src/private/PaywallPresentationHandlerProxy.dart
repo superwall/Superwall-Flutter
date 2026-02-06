@@ -4,6 +4,7 @@ import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/src/public/PaywallInfo.dart';
 import 'package:superwallkit_flutter/src/public/PaywallResult.dart';
 import 'package:superwallkit_flutter/src/public/PaywallSkippedReason.dart';
+import 'package:superwallkit_flutter/src/public/CustomCallback.dart';
 
 /// A proxy class that bridges between the Flutter PaywallPresentationHandler
 /// and the generated PPaywallPresentationHandlerGenerated interface.
@@ -46,5 +47,21 @@ class PaywallPresentationHandlerProxy
     if (handler.onSkipHandler != null) {
       handler.onSkipHandler!(PaywallSkippedReason.fromPigeon(reason)!!);
     }
+  }
+
+  @override
+  Future<PCustomCallbackResult> onCustomCallback(
+      PCustomCallback callback) async {
+    if (handler.onCustomCallbackHandler != null) {
+      final result = await handler.onCustomCallbackHandler!(
+        CustomCallback.fromPigeon(callback),
+      );
+      return result.toPigeon();
+    }
+    // Return failure if no handler is registered
+    return PCustomCallbackResult(
+      status: PCustomCallbackResultStatus.failure,
+      data: null,
+    );
   }
 }
