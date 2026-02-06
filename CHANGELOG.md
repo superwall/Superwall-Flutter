@@ -2,6 +2,17 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.8
+
+## Enhancements
+- Adds `onCustomCallback` method to `PaywallPresentationHandler` that allows invoking custom callbacks and passing data from and to the paywall
+- Updates iOS SDK to 4.12.10 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.12.10).
+- Updates Android SDK to 2.7.0 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.7.0).
+  
+### Fixes
+
+- Fixes an issue where `IdentityOptions` passed to `identify()` were not being sent to the native SDK due to a variable shadowing bug.
+
 ## 2.4.7
 
 ### Enhancements

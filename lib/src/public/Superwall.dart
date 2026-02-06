@@ -477,7 +477,7 @@ class Superwall {
     generated.PIdentityOptions? generatedOptions;
 
     if (options != null) {
-      generated.PIdentityOptions generatedOptions = generated.PIdentityOptions(
+      generatedOptions = generated.PIdentityOptions(
           restorePaywallAssignments: options.restorePaywallAssignments);
     }
 

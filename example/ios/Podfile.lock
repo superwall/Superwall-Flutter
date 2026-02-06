@@ -11,11 +11,11 @@ PODS:
     - RevenueCat (= 5.43.0)
   - RevenueCat (5.43.0)
   - Superscript (1.0.12)
-  - SuperwallKit (4.12.7):
+  - SuperwallKit (4.12.10):
     - Superscript (= 1.0.12)
   - superwallkit_flutter (0.0.1):
     - Flutter
-    - SuperwallKit (= 4.12.7)
+    - SuperwallKit (= 4.12.10)
 
 DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
@@ -44,16 +44,16 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/superwallkit_flutter/ios"
 
 SPEC CHECKSUMS:
-  app_links: 76b66b60cc809390ca1ad69bfd66b998d2387ac7
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  purchases_flutter: a5cdfe4efd74e1beb23a069d02f960efdbf327dd
+  app_links: f3e17e4ee5e357b39d8b95290a9b2c299fca71c6
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  purchases_flutter: 037ed5ccef5d69cb21ab9b19ffe7e0f5c44d511e
   PurchasesHybridCommon: b7b4eafb55fbaaac19b4c36d4082657a3f0d8490
   RevenueCat: a51003d4cb33820cc504cf177c627832b462a98e
   Superscript: 00e98fcd78a2cefa33b658d4a16756b535eabd2c
-  SuperwallKit: 33955981901609c33a2773b94756a26db7b21fbb
-  superwallkit_flutter: d7362c9428bf5b162c8886ae92925d658ce9c7be
+  SuperwallKit: 9bdeb59a3e062364fce2c1faaf196597bf81890e
+  superwallkit_flutter: c8ebe1f8b10408c3e97b691c10c3539c33fbc2eb
 
 PODFILE CHECKSUM: 1959d098c91d8a792531a723c4a9d7e9f6a01e38
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2

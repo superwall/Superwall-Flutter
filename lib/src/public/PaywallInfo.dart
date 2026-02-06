@@ -54,6 +54,7 @@ class PaywallInfo {
           ?.map((cpr) => ComputedPropertyRequest.fromPigeon(cpr))
           .toList(),
       surveys: pigeonInfo.surveys?.map((s) => Survey.fromPigeon(s)).toList(),
+      state: pigeonInfo.state,
     );
   }
 
@@ -92,6 +93,7 @@ class PaywallInfo {
       computedPropertyRequests:
           computedPropertyRequests?.map((cpr) => cpr.toPigeon()).toList(),
       surveys: surveys?.map((s) => s.toPigeon()).toList(),
+      state: state,
     );
   }
 
@@ -185,6 +187,10 @@ class PaywallInfo {
   /// Surveys attached to a paywall.
   final List<Survey>? surveys;
 
+  /// The current state of the paywall as key-value pairs.
+  /// This allows retrieving dynamic state information from the paywall.
+  final Map<String, Object>? state;
+
   PaywallInfo({
     this.identifier,
     this.name,
@@ -216,5 +222,6 @@ class PaywallInfo {
     this.localNotifications,
     this.computedPropertyRequests,
     this.surveys,
+    this.state,
   });
 }

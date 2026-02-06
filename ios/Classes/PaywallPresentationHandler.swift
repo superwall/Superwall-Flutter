@@ -78,5 +78,32 @@ final class PaywallPresentationHandlerHost {
         }
       )
     }
+
+    handler.onCustomCallback { [weak self] callback async in
+      guard let self = self else {
+        return CustomCallbackResult(status: .failure, data: nil)
+      }
+
+      let pCallback = PCustomCallback(
+        name: callback.name,
+        variables: callback.variables
+      )
+
+      let result: CustomCallbackResult = await withCheckedContinuation { continuation in
+        self.flutterHandler.onCustomCallback(callback: pCallback) { pResult in
+          switch pResult {
+          case .success(let pCallbackResult):
+            continuation.resume(returning: CustomCallbackResult(
+              status: pCallbackResult.status == .success ? .success : .failure,
+              data: pCallbackResult.data
+            ))
+          case .failure:
+            continuation.resume(returning: CustomCallbackResult(status: .failure, data: nil))
+          }
+        }
+      }
+
+      return result
+    }
   }
 }

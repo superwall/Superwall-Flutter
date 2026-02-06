@@ -242,6 +242,7 @@ class PPaywallInfo {
     this.localNotifications,
     this.computedPropertyRequests,
     this.surveys,
+    this.state,
   });
 
   String? identifier;
@@ -274,6 +275,9 @@ class PPaywallInfo {
   List<PLocalNotification>? localNotifications;
   List<PComputedPropertyRequest>? computedPropertyRequests;
   List<PSurvey>? surveys;
+
+  /// The current state of the paywall as key-value pairs.
+  Map<String, Object>? state;
 }
 
 // Product class for paywall products
@@ -633,6 +637,42 @@ class PPaywallPresentationHandlerHost {
 class PFeatureHandlerHost {
   // The hostId is used here to identify the flutter handler based on the id
   String? hostId;
+}
+
+// ============= CUSTOM CALLBACK TYPES =============
+
+/// Represents a custom callback request from the paywall.
+class PCustomCallback {
+  /// The name of the callback being requested.
+  final String name;
+
+  /// Optional key-value pairs passed from the paywall.
+  final Map<String, Object>? variables;
+
+  PCustomCallback({
+    required this.name,
+    this.variables,
+  });
+}
+
+/// The result status of a custom callback.
+enum PCustomCallbackResultStatus {
+  success,
+  failure,
+}
+
+/// The result to return from a custom callback handler.
+class PCustomCallbackResult {
+  /// Whether the callback succeeded or failed.
+  final PCustomCallbackResultStatus status;
+
+  /// Optional key-value pairs to return to the paywall.
+  final Map<String, Object>? data;
+
+  PCustomCallbackResult({
+    required this.status,
+    this.data,
+  });
 }
 
 // ============= CUSTOMER INFO TYPES =============
@@ -1440,6 +1480,11 @@ abstract class PPaywallPresentationHandlerGenerated {
   void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult);
   void onError(String error);
   void onSkip(PPaywallSkippedReason reason);
+
+  /// Called when the paywall requests a custom callback.
+  /// Returns a result indicating success/failure with optional data.
+  @async
+  PCustomCallbackResult onCustomCallback(PCustomCallback callback);
 }
 
 @FlutterApi()

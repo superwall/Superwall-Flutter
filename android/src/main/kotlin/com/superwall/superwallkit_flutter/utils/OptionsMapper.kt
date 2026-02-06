@@ -17,6 +17,7 @@ import com.superwall.sdk.config.options.PaywallOptions
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.logger.LogLevel
 import com.superwall.sdk.logger.LogScope
+import com.superwall.sdk.models.config.ComputedPropertyRequest.*
 import com.superwall.sdk.models.entitlements.Entitlement
 import com.superwall.sdk.models.product.Offer
 import com.superwall.sdk.models.product.PlayStoreProduct
@@ -166,14 +167,15 @@ class PaywallInfoMapper {
                             ProductItem.StoreProductType.PlayStore(
                                 PlayStoreProduct(
                                     productIdentifier = decomposedProductIds.subscriptionId,
-                                    basePlanIdentifier = decomposedProductIds.basePlanId,
+                                    basePlanIdentifier = decomposedProductIds.basePlanId?:"",
                                     offer =
-                                        when {
-                                            offer is OfferType.Offer ->
+                                        when (offer) {
+                                            is OfferType.Specific ->
                                                 Offer.Specified(
-                                                    offerIdentifier = decomposedProductIds.offerType.id!!,
+                                                    offerIdentifier = offer.id,
                                                 )
-                                            else -> Offer.Automatic()
+                                            is OfferType.None -> Offer.NoOffer
+                                            is OfferType.Auto -> Offer.Automatic()
                                         },
                                 ),
                             ),
@@ -241,12 +243,12 @@ class PaywallInfoMapper {
                     com.superwall.sdk.models.config.ComputedPropertyRequest(
                         type =
                             when (request.type) {
-                                PComputedPropertyRequestType.MINUTES_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MINUTES_SINCE
-                                PComputedPropertyRequestType.HOURS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.HOURS_SINCE
-                                PComputedPropertyRequestType.DAYS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.DAYS_SINCE
-                                PComputedPropertyRequestType.MONTHS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MONTHS_SINCE
-                                PComputedPropertyRequestType.YEARS_SINCE -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.YEARS_SINCE
-                                else -> com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.DAYS_SINCE
+                                PComputedPropertyRequestType.MINUTES_SINCE -> ComputedPropertyRequestType.MINUTES_SINCE
+                                PComputedPropertyRequestType.HOURS_SINCE -> ComputedPropertyRequestType.HOURS_SINCE
+                                PComputedPropertyRequestType.DAYS_SINCE -> ComputedPropertyRequestType.DAYS_SINCE
+                                PComputedPropertyRequestType.MONTHS_SINCE -> ComputedPropertyRequestType.MONTHS_SINCE
+                                PComputedPropertyRequestType.YEARS_SINCE -> ComputedPropertyRequestType.YEARS_SINCE
+                                else -> ComputedPropertyRequestType.DAYS_SINCE
                             },
                         eventName = request.eventName,
                     )
@@ -399,11 +401,11 @@ class PaywallInfoMapper {
                 paywallInfo.computedPropertyRequests.map { request ->
                     val pType =
                         when (request.type) {
-                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MINUTES_SINCE -> PComputedPropertyRequestType.MINUTES_SINCE
-                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.HOURS_SINCE -> PComputedPropertyRequestType.HOURS_SINCE
-                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.DAYS_SINCE -> PComputedPropertyRequestType.DAYS_SINCE
-                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.MONTHS_SINCE -> PComputedPropertyRequestType.MONTHS_SINCE
-                            com.superwall.sdk.models.config.ComputedPropertyRequest.ComputedPropertyRequestType.YEARS_SINCE -> PComputedPropertyRequestType.YEARS_SINCE
+                            ComputedPropertyRequestType.MINUTES_SINCE -> PComputedPropertyRequestType.MINUTES_SINCE
+                            ComputedPropertyRequestType.HOURS_SINCE -> PComputedPropertyRequestType.HOURS_SINCE
+                            ComputedPropertyRequestType.DAYS_SINCE -> PComputedPropertyRequestType.DAYS_SINCE
+                            ComputedPropertyRequestType.MONTHS_SINCE -> PComputedPropertyRequestType.MONTHS_SINCE
+                            ComputedPropertyRequestType.YEARS_SINCE -> PComputedPropertyRequestType.YEARS_SINCE
                             else -> PComputedPropertyRequestType.DAYS_SINCE
                         }
                     PComputedPropertyRequest(
@@ -470,6 +472,7 @@ class PaywallInfoMapper {
                 localNotifications = localNotifications,
                 computedPropertyRequests = computedPropertyRequests,
                 surveys = surveys,
+                state = paywallInfo.state.mapValues { it.value as Object }.ifEmpty { null },
             )
         }
     }
