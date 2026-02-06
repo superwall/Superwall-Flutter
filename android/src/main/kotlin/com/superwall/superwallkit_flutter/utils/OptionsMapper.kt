@@ -167,14 +167,15 @@ class PaywallInfoMapper {
                             ProductItem.StoreProductType.PlayStore(
                                 PlayStoreProduct(
                                     productIdentifier = decomposedProductIds.subscriptionId,
-                                    basePlanIdentifier = decomposedProductIds.basePlanId,
+                                    basePlanIdentifier = decomposedProductIds.basePlanId?:"",
                                     offer =
-                                        when {
-                                            offer is OfferType.Offer ->
+                                        when (offer) {
+                                            is OfferType.Specific ->
                                                 Offer.Specified(
-                                                    offerIdentifier = decomposedProductIds.offerType.id!!,
+                                                    offerIdentifier = offer.id,
                                                 )
-                                            else -> Offer.Automatic()
+                                            is OfferType.None -> Offer.NoOffer
+                                            is OfferType.Auto -> Offer.Automatic()
                                         },
                                 ),
                             ),

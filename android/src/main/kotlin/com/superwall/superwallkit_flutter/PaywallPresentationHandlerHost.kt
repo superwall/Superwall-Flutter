@@ -15,6 +15,8 @@ import com.superwall.sdk.paywall.presentation.PaywallPresentationHandler
 import com.superwall.sdk.paywall.presentation.internal.state.PaywallResult
 import com.superwall.sdk.paywall.presentation.internal.state.PaywallSkippedReason
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -59,14 +61,16 @@ class PaywallPresentationHandlerHost(
                     variables = callback.variables?.mapValues { it.value as Object }
                 )
 
-                // Use suspendCoroutine to properly bridge callback-based API to suspend function
-                val pResult = suspendCoroutine<PCustomCallbackResult> { continuation ->
-                    backingHandler.onCustomCallback(pCallback) { result ->
-                        val callbackResult = result.getOrNull() ?: PCustomCallbackResult(
-                            status = PCustomCallbackResultStatus.FAILURE,
-                            data = null
-                        )
-                        continuation.resume(callbackResult)
+                // Pigeon FlutterApi calls are @UiThread, so switch to Main dispatcher
+                val pResult = withContext(Dispatchers.Main) {
+                    suspendCoroutine<PCustomCallbackResult> { continuation ->
+                        backingHandler.onCustomCallback(pCallback) { result ->
+                            val callbackResult = result.getOrNull() ?: PCustomCallbackResult(
+                                status = PCustomCallbackResultStatus.FAILURE,
+                                data = null
+                            )
+                            continuation.resume(callbackResult)
+                        }
                     }
                 }
 

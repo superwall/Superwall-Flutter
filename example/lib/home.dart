@@ -3,6 +3,7 @@ import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 class Home extends StatelessWidget {
 // Home screen with buttons to trigger Superwall events and navigation.
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -24,7 +25,7 @@ class Home extends StatelessWidget {
                 // Launch Non-Gated Feature.
                 child: Text('Launch Non-Gated Feature'),
                 onPressed: () async {
-                  await Superwall.shared.registerPlacement('permission_test',
+                  await Superwall.shared.registerPlacement('non_gated',
                       feature: () {
                     Navigator.pushNamed(
                       context,
