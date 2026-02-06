@@ -1,3 +1,6 @@
 [submodule ".context/Superwall-Android"]
 	path = .context/Superwall-Android
 	url = git@github.com:superwall/Superwall-Android.git
+[submodule ".context/Superwall-iOS"]
+	path = .context/Superwall-iOS
+	url = git@github.com:superwall/Superwall-iOS.git
