@@ -2,6 +2,11 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.10
+
+## Updates
+- Updates pigeon to 26.1.5 to support analyzer 9.+.+ versions
+
 ## 2.4.9
 
 ## Enhancements
