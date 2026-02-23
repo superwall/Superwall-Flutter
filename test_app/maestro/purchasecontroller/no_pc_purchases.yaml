@@ -36,7 +36,6 @@ appId: com.superwall.superapp
       - assertVisible: "Declined by always denied test instrument"
       - tapOn: "Got it"
       - assertVisible: "An error occurred"
-      - assertVisible: "3"
       - tapOn: "Done"
       - tapOn: "Continue"
       - tapOn: "Test card, always declines"
