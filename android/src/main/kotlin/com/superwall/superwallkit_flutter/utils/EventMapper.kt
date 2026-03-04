@@ -320,6 +320,9 @@ class EventMapper {
                 is SuperwallEvent.PermissionGranted -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_GRANTED, params = params)
                 is SuperwallEvent.PermissionDenied -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_DENIED, params = params)
 
+                is SuperwallEvent.TestModeModalOpen -> PSuperwallEventInfo(eventType = PEventType.TEST_MODE_MODAL_OPEN, params = params)
+                is SuperwallEvent.TestModeModalClose -> PSuperwallEventInfo(eventType = PEventType.TEST_MODE_MODAL_CLOSE, params = params)
+
                 else -> PSuperwallEventInfo(
                     eventType = PEventType.CUSTOM_PLACEMENT,
                     name = event.rawName,

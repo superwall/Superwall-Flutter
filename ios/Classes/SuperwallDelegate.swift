@@ -422,6 +422,40 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         eventType: .permissionDenied,
         params: params
       )
+    case .stripeCheckoutStart(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .stripeCheckoutStart,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .stripeCheckoutSubmit(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .stripeCheckoutSubmit,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .stripeCheckoutComplete(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .stripeCheckoutComplete,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .stripeCheckoutFail(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .stripeCheckoutFail,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .testModeModalOpen:
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .testModeModalOpen,
+        params: params
+      )
+    case .testModeModalClose:
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .testModeModalClose,
+        params: params
+      )
     @unknown default:
       pEventInfo = PSuperwallEventInfo(
         eventType: .customPlacement,

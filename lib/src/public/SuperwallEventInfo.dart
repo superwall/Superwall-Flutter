@@ -98,7 +98,13 @@ enum EventType {
   reviewRequested,
   permissionRequested,
   permissionGranted,
-  permissionDenied
+  permissionDenied,
+  stripeCheckoutStart,
+  stripeCheckoutSubmit,
+  stripeCheckoutComplete,
+  stripeCheckoutFail,
+  testModeModalOpen,
+  testModeModalClose
 }
 
 class SuperwallEvent {
@@ -373,6 +379,24 @@ class SuperwallEvent {
         break;
       case PEventType.permissionDenied:
         type = EventType.permissionDenied;
+        break;
+      case PEventType.stripeCheckoutStart:
+        type = EventType.stripeCheckoutStart;
+        break;
+      case PEventType.stripeCheckoutSubmit:
+        type = EventType.stripeCheckoutSubmit;
+        break;
+      case PEventType.stripeCheckoutComplete:
+        type = EventType.stripeCheckoutComplete;
+        break;
+      case PEventType.stripeCheckoutFail:
+        type = EventType.stripeCheckoutFail;
+        break;
+      case PEventType.testModeModalOpen:
+        type = EventType.testModeModalOpen;
+        break;
+      case PEventType.testModeModalClose:
+        type = EventType.testModeModalClose;
     }
 
     return SuperwallEvent._(

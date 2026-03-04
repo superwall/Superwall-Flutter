@@ -27,6 +27,9 @@ class SuperwallOptions {
 
   /// Enables passing identifier to the Play Store as AccountId's. Defaults to `false`.
   bool passIdentifiersToPlayStore = false;
+
+  /// Determines the behavior of test mode. Defaults to `TestModeBehavior.automatic`.
+  TestModeBehavior testModeBehavior = TestModeBehavior.automatic;
 }
 
 extension SuperwallOptionsJson on SuperwallOptions {
@@ -115,4 +118,19 @@ extension LoggingJson on Logging {
       'scopes': scopes.map((scope) => scope.toJson()).toList(),
     };
   }
+}
+
+/// Determines the behavior of test mode.
+enum TestModeBehavior {
+  /// Automatically determines test mode based on the environment.
+  automatic,
+
+  /// Only enables test mode when it is enabled for the user.
+  whenEnabledForUser,
+
+  /// Never enables test mode.
+  never,
+
+  /// Always enables test mode.
+  always,
 }
