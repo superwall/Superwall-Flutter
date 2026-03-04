@@ -6,6 +6,7 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 
 ### Enhancements
 
+- All `SuperwallDelegate` methods now have default empty implementations, making them optional to override.
 - Updates iOS SDK to 4.14.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.14.0).
 - Updates Android SDK to 2.7.4 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.7.4).
 - Adds `TestModeBehavior` enum and `testModeBehavior` property to `SuperwallOptions`.
