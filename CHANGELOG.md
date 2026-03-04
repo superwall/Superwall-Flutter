@@ -2,25 +2,37 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.11
+
+### Enhancements
+
+- All `SuperwallDelegate` methods now have default empty implementations, making them optional to override.
+- Updates iOS SDK to 4.14.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.14.0).
+- Updates Android SDK to 2.7.4 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.7.4).
+- Adds `TestModeBehavior` enum and `testModeBehavior` property to `SuperwallOptions`.
+- Adds new event types: `stripeCheckoutStart`, `stripeCheckoutSubmit`, `stripeCheckoutComplete`, `stripeCheckoutFail`, `testModeModalOpen`, `testModeModalClose`.
+
 ## 2.4.10
 
 ## Updates
+
 - Updates pigeon to 26.1.5 to support analyzer 9.+.+ versions
 
 ## 2.4.9
 
 ## Enhancements
+
 - Updates iOS SDK to 4.13.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.13.0).
 - Updates Android SDK to 2.7.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.7.1).
-
 
 ## 2.4.8
 
 ## Enhancements
+
 - Adds `onCustomCallback` method to `PaywallPresentationHandler` that allows invoking custom callbacks and passing data from and to the paywall
 - Updates iOS SDK to 4.12.10 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.12.10).
 - Updates Android SDK to 2.7.0 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.7.0).
-  
+
 ### Fixes
 
 - Fixes an issue where `IdentityOptions` passed to `identify()` were not being sent to the native SDK due to a variable shadowing bug.

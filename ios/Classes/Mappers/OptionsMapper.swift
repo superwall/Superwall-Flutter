@@ -82,6 +82,19 @@ extension PSuperwallOptions {
       options.isGameControllerEnabled = isGameControllerEnabled
     }
     
+    if let testModeBehavior = self.testModeBehavior {
+      switch testModeBehavior {
+      case .automatic:
+        options.testModeBehavior = .automatic
+      case .whenEnabledForUser:
+        options.testModeBehavior = .whenEnabledForUser
+      case .never:
+        options.testModeBehavior = .never
+      case .always:
+        options.testModeBehavior = .always
+      }
+    }
+
     if let logging = self.logging {
       if let level = logging.level {
         switch level {

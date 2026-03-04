@@ -90,6 +90,9 @@ class Superwall {
     // Convert Logging if available
     generatedOptions.logging = _convertLogging(options.logging);
 
+    generatedOptions.testModeBehavior =
+        _convertTestModeBehavior(options.testModeBehavior);
+
     return generatedOptions;
   }
 
@@ -147,6 +150,21 @@ class Superwall {
         return generated.PNetworkEnvironment.releaseCandidate;
       case NetworkEnvironment.developer:
         return generated.PNetworkEnvironment.developer;
+    }
+  }
+
+  // Helper method to convert TestModeBehavior
+  static generated.PTestModeBehavior _convertTestModeBehavior(
+      TestModeBehavior behavior) {
+    switch (behavior) {
+      case TestModeBehavior.automatic:
+        return generated.PTestModeBehavior.automatic;
+      case TestModeBehavior.whenEnabledForUser:
+        return generated.PTestModeBehavior.whenEnabledForUser;
+      case TestModeBehavior.never:
+        return generated.PTestModeBehavior.never;
+      case TestModeBehavior.always:
+        return generated.PTestModeBehavior.always;
     }
   }
 

@@ -24,6 +24,7 @@ import com.superwall.sdk.models.product.PlayStoreProduct
 import com.superwall.sdk.models.product.ProductItem
 import com.superwall.sdk.models.triggers.Experiment
 import com.superwall.sdk.store.abstractions.product.OfferType
+import com.superwall.sdk.store.testmode.TestModeBehavior
 import java.util.EnumSet
 
 /**
@@ -50,6 +51,17 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
     this.localeIdentifier?.let { sdkOptions.localeIdentifier = it }
     this.isGameControllerEnabled?.let { sdkOptions.isGameControllerEnabled = it }
     this.passIdentifiersToPlayStore?.let { sdkOptions.passIdentifiersToPlayStore = it }
+
+    this.testModeBehavior?.let { hostTestModeBehavior ->
+        sdkOptions.testModeBehavior =
+            when (hostTestModeBehavior) {
+                PTestModeBehavior.AUTOMATIC -> TestModeBehavior.AUTOMATIC
+                PTestModeBehavior.WHEN_ENABLED_FOR_USER -> TestModeBehavior.WHEN_ENABLED_FOR_USER
+                PTestModeBehavior.NEVER -> TestModeBehavior.NEVER
+                PTestModeBehavior.ALWAYS -> TestModeBehavior.ALWAYS
+                else -> TestModeBehavior.AUTOMATIC
+            }
+    }
 
     this.logging?.let { hostLogging ->
         hostLogging.level?.let { hostLevel ->

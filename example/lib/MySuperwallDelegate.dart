@@ -96,6 +96,7 @@ class MySuperwallDelegate extends SuperwallDelegate {
 
   @override
   void customerInfoDidChange(CustomerInfo from, CustomerInfo to) {
-    logging.info('customerInfoDidChange: userId=${to.userId}, subscriptions=${to.subscriptions.length}, entitlements=${to.entitlements.length}');
+    logging.info(
+        'customerInfoDidChange: userId=${to.userId}, subscriptions=${to.subscriptions.length}, entitlements=${to.entitlements.length}');
   }
 }

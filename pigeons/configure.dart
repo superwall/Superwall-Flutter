@@ -197,6 +197,13 @@ class PRedemptionPaywallInfo {
   });
 }
 
+enum PTestModeBehavior {
+  automatic,
+  whenEnabledForUser,
+  never,
+  always,
+}
+
 // Options for configuring Superwall
 class PSuperwallOptions {
   PPaywallOptions? paywalls;
@@ -207,6 +214,7 @@ class PSuperwallOptions {
   bool? enableExperimentalDeviceVariables;
   PLogging? logging;
   bool? passIdentifiersToPlayStore;
+  PTestModeBehavior? testModeBehavior;
 }
 
 // PaywallInfo class for getting latest paywall info
@@ -1148,7 +1156,13 @@ enum PEventType {
   reviewRequested,
   permissionRequested,
   permissionGranted,
-  permissionDenied
+  permissionDenied,
+  stripeCheckoutStart,
+  stripeCheckoutSubmit,
+  stripeCheckoutComplete,
+  stripeCheckoutFail,
+  testModeModalOpen,
+  testModeModalClose
 }
 
 // SubscriptionStatus enum
