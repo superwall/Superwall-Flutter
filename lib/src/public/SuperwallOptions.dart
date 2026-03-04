@@ -41,7 +41,8 @@ extension SuperwallOptionsJson on SuperwallOptions {
       'localeIdentifier': localeIdentifier,
       'isGameControllerEnabled': isGameControllerEnabled,
       'logging': logging.toJson(),
-      'passIdentifiersToPlayStore': passIdentifiersToPlayStore
+      'passIdentifiersToPlayStore': passIdentifiersToPlayStore,
+      'testModeBehavior': testModeBehavior.index
     };
   }
 }
