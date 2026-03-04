@@ -2,6 +2,14 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.11
+
+### Enhancements
+- Updates iOS SDK to 4.14.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.14.0).
+- Updates Android SDK to 2.7.4 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.7.4).
+- Adds `TestModeBehavior` enum and `testModeBehavior` property to `SuperwallOptions`.
+- Adds new event types: `stripeCheckoutStart`, `stripeCheckoutSubmit`, `stripeCheckoutComplete`, `stripeCheckoutFail`, `testModeModalOpen`, `testModeModalClose`.
+
 ## 2.4.10
 
 ## Updates
