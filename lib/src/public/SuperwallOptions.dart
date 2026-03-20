@@ -27,6 +27,26 @@ class SuperwallOptions {
 
   /// Enables passing identifier to the Play Store as AccountId's. Defaults to `false`.
   bool passIdentifiersToPlayStore = false;
+
+  /// Controls when the SDK enters test mode. Defaults to `TestModeBehavior.automatic`.
+  TestModeBehavior testModeBehavior = TestModeBehavior.automatic;
+
+  /// Observe purchases made outside of Superwall. When true, Superwall will observe
+  /// StoreKit/Play Store transactions and report them. Defaults to `false`.
+  bool shouldObservePurchases = false;
+
+  /// Disables the app transaction check on SDK launch. Defaults to `false`.
+  /// iOS only.
+  bool shouldBypassAppTransactionCheck = false;
+
+  /// Number of times the SDK will attempt to get the Superwall configuration after
+  /// a network failure before it times out. Defaults to 6.
+  /// iOS only.
+  int maxConfigRetryCount = 6;
+
+  /// Enable mock review functionality. Defaults to `false`.
+  /// Android only.
+  bool useMockReviews = false;
 }
 
 extension SuperwallOptionsJson on SuperwallOptions {
@@ -38,8 +58,43 @@ extension SuperwallOptionsJson on SuperwallOptions {
       'localeIdentifier': localeIdentifier,
       'isGameControllerEnabled': isGameControllerEnabled,
       'logging': logging.toJson(),
-      'passIdentifiersToPlayStore': passIdentifiersToPlayStore
+      'passIdentifiersToPlayStore': passIdentifiersToPlayStore,
+      'testModeBehavior': testModeBehavior.toJson(),
+      'shouldObservePurchases': shouldObservePurchases,
+      'shouldBypassAppTransactionCheck': shouldBypassAppTransactionCheck,
+      'maxConfigRetryCount': maxConfigRetryCount,
+      'useMockReviews': useMockReviews,
     };
+  }
+}
+
+/// Controls when the SDK enters test mode.
+enum TestModeBehavior {
+  /// Test mode is automatically determined based on server configuration.
+  automatic,
+
+  /// Test mode is enabled only when the server enables it for the user.
+  whenEnabledForUser,
+
+  /// Test mode is never activated, regardless of configuration.
+  never,
+
+  /// Test mode is always activated, regardless of configuration.
+  always,
+}
+
+extension TestModeBehaviorJson on TestModeBehavior {
+  String toJson() {
+    switch (this) {
+      case TestModeBehavior.automatic:
+        return 'automatic';
+      case TestModeBehavior.whenEnabledForUser:
+        return 'whenEnabledForUser';
+      case TestModeBehavior.never:
+        return 'never';
+      case TestModeBehavior.always:
+        return 'always';
+    }
   }
 }
 

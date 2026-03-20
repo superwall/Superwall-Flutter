@@ -63,7 +63,10 @@ enum IntegrationAttribute {
   posthogUserId,
 
   /// The Customer.io person's identifier (`id`).
-  customerioId;
+  customerioId,
+
+  /// The Appstack identifier.
+  appstackId;
 
   PIntegrationAttribute toPigeon() {
     switch (this) {
@@ -107,6 +110,8 @@ enum IntegrationAttribute {
         return PIntegrationAttribute.posthogUserId;
       case IntegrationAttribute.customerioId:
         return PIntegrationAttribute.customerioId;
+      case IntegrationAttribute.appstackId:
+        return PIntegrationAttribute.appstackId;
     }
   }
 }

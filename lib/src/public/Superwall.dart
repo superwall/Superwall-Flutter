@@ -87,6 +87,14 @@ class Superwall {
     generatedOptions.passIdentifiersToPlayStore =
         options.passIdentifiersToPlayStore;
 
+    generatedOptions.testModeBehavior =
+        _convertTestModeBehavior(options.testModeBehavior);
+    generatedOptions.shouldObservePurchases = options.shouldObservePurchases;
+    generatedOptions.shouldBypassAppTransactionCheck =
+        options.shouldBypassAppTransactionCheck;
+    generatedOptions.maxConfigRetryCount = options.maxConfigRetryCount;
+    generatedOptions.useMockReviews = options.useMockReviews;
+
     // Convert Logging if available
     generatedOptions.logging = _convertLogging(options.logging);
 
@@ -147,6 +155,20 @@ class Superwall {
         return generated.PNetworkEnvironment.releaseCandidate;
       case NetworkEnvironment.developer:
         return generated.PNetworkEnvironment.developer;
+    }
+  }
+
+  static generated.PTestModeBehavior _convertTestModeBehavior(
+      TestModeBehavior behavior) {
+    switch (behavior) {
+      case TestModeBehavior.automatic:
+        return generated.PTestModeBehavior.automatic;
+      case TestModeBehavior.whenEnabledForUser:
+        return generated.PTestModeBehavior.whenEnabledForUser;
+      case TestModeBehavior.never:
+        return generated.PTestModeBehavior.never;
+      case TestModeBehavior.always:
+        return generated.PTestModeBehavior.always;
     }
   }
 

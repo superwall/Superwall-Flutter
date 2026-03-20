@@ -471,5 +471,6 @@ fun PIntegrationAttribute.toAttributeKey(): String {
         PIntegrationAttribute.TENJIN_ID -> "\$tenjin_id"
         PIntegrationAttribute.POSTHOG_USER_ID -> "\$posthog_user_id"
         PIntegrationAttribute.CUSTOMERIO_ID -> "\$customerio_id"
+        PIntegrationAttribute.APPSTACK_ID -> "\$appstack_id"
     }
 }
