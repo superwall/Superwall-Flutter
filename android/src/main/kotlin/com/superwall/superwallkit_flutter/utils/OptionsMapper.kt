@@ -14,7 +14,9 @@ import PSurveyOption
 import PVariant
 import com.superwall.sdk.billing.DecomposedProductIds
 import com.superwall.sdk.config.options.PaywallOptions
+import PTestModeBehavior
 import com.superwall.sdk.config.options.SuperwallOptions
+import com.superwall.sdk.store.testmode.TestModeBehavior
 import com.superwall.sdk.logger.LogLevel
 import com.superwall.sdk.logger.LogScope
 import com.superwall.sdk.models.config.ComputedPropertyRequest.*
@@ -50,6 +52,18 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
     this.localeIdentifier?.let { sdkOptions.localeIdentifier = it }
     this.isGameControllerEnabled?.let { sdkOptions.isGameControllerEnabled = it }
     this.passIdentifiersToPlayStore?.let { sdkOptions.passIdentifiersToPlayStore = it }
+
+    this.testModeBehavior?.let { hostTestMode ->
+        sdkOptions.testModeBehavior = when (hostTestMode) {
+            PTestModeBehavior.AUTOMATIC -> TestModeBehavior.AUTOMATIC
+            PTestModeBehavior.WHEN_ENABLED_FOR_USER -> TestModeBehavior.WHEN_ENABLED_FOR_USER
+            PTestModeBehavior.NEVER -> TestModeBehavior.NEVER
+            PTestModeBehavior.ALWAYS -> TestModeBehavior.ALWAYS
+        }
+    }
+
+    this.shouldObservePurchases?.let { sdkOptions.shouldObservePurchases = it }
+    this.useMockReviews?.let { sdkOptions.useMockReviews = it }
 
     this.logging?.let { hostLogging ->
         hostLogging.level?.let { hostLevel ->

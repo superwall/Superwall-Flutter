@@ -197,6 +197,21 @@ class PRedemptionPaywallInfo {
   });
 }
 
+/// Controls when the SDK enters test mode.
+enum PTestModeBehavior {
+  /// Test mode is automatically determined based on server configuration.
+  automatic,
+
+  /// Test mode is enabled only when the server enables it for the user.
+  whenEnabledForUser,
+
+  /// Test mode is never activated, regardless of configuration.
+  never,
+
+  /// Test mode is always activated, regardless of configuration.
+  always,
+}
+
 // Options for configuring Superwall
 class PSuperwallOptions {
   PPaywallOptions? paywalls;
@@ -207,6 +222,25 @@ class PSuperwallOptions {
   bool? enableExperimentalDeviceVariables;
   PLogging? logging;
   bool? passIdentifiersToPlayStore;
+
+  /// Controls when the SDK enters test mode. Defaults to `automatic`.
+  PTestModeBehavior? testModeBehavior;
+
+  /// Observe purchases made outside of Superwall. Defaults to `false`.
+  bool? shouldObservePurchases;
+
+  /// Disables the app transaction check on SDK launch. Defaults to `false`.
+  /// iOS only.
+  bool? shouldBypassAppTransactionCheck;
+
+  /// Number of times the SDK will attempt to get configuration after
+  /// a network failure before timing out. Defaults to 6.
+  /// iOS only.
+  int? maxConfigRetryCount;
+
+  /// Enable mock review functionality. Defaults to `false`.
+  /// Android only.
+  bool? useMockReviews;
 }
 
 // PaywallInfo class for getting latest paywall info
@@ -770,6 +804,9 @@ enum PIntegrationAttribute {
 
   /// The Customer.io person's identifier (`id`).
   customerioId,
+
+  /// The Appstack identifier.
+  appstackId,
 }
 
 /// A subscription transaction.

@@ -73,6 +73,7 @@ class _MyAppState extends State<MyApp> {
       final options = SuperwallOptions();
       options.paywalls.shouldPreload = false;
       options.paywalls.shouldShowWebRestorationAlert = false;
+      options.testModeBehavior = TestModeBehavior.always;
       // options.logging = logging;
 
       // MARK: Step 2 - Configure Superwall
@@ -87,6 +88,9 @@ class _MyAppState extends State<MyApp> {
 
       _handleIncomingLinks();
       Superwall.shared.setDelegate(delegate);
+      Superwall.shared.setIntegrationAttributes({
+        IntegrationAttribute.appstackId: 'your-appstack-id',
+      });
       // MARK: Step 3 – Configure RevenueCat and Sync Subscription Status
       /// Always configure RevenueCat after Superwall and keep Superwall's
       /// subscription status up-to-date with RevenueCat's.

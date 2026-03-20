@@ -485,6 +485,8 @@ extension PIntegrationAttribute {
       return .posthogUserId
     case .customerioId:
       return .customerioId
+    case .appstackId:
+      return .appstackId
     }
   }
 }

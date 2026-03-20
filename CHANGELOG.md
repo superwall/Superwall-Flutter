@@ -2,9 +2,21 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.11
+
+### Enhancements
+- Updates iOS SDK to 4.14.1 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.14.1).
+- Updates Android SDK to 2.7.8 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.7.8).
+- Adds `appstackId` integration attribute for Appstack integration support
+- Adds `testModeBehavior` option to `SuperwallOptions` to control when the SDK enters test mode (automatic, whenEnabledForUser, never, always)
+- Adds `shouldObservePurchases` option to `SuperwallOptions` to observe purchases made outside of Superwall
+- Adds `shouldBypassAppTransactionCheck` option to `SuperwallOptions` (iOS only)
+- Adds `maxConfigRetryCount` option to `SuperwallOptions` (iOS only)
+- Adds `useMockReviews` option to `SuperwallOptions` (Android only)
+
 ## 2.4.10
 
-## Updates
+### Updates
 - Updates pigeon to 26.1.5 to support analyzer 9.+.+ versions
 
 ## 2.4.9
