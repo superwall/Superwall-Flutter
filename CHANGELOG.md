@@ -2,6 +2,12 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.4.13
+
+### Enhancements
+- Updates Android SDK to 2.7.20 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.7.20).
+- Updates iOS SDK to 4.16.1 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.16.1).
+
 ## 2.4.12
 
 ### Enhancements
