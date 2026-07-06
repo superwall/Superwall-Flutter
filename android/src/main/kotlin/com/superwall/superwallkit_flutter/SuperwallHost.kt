@@ -452,6 +452,7 @@ class SuperwallHost(
 fun PIntegrationAttribute.toAttributeKey(): String {
     return when (this) {
         PIntegrationAttribute.ADJUST_ID -> "\$adjust_id"
+        PIntegrationAttribute.SINGULAR_DEVICE_ID -> "\$singular_device_id"
         PIntegrationAttribute.AMPLITUDE_DEVICE_ID -> "\$amplitude_device_id"
         PIntegrationAttribute.AMPLITUDE_USER_ID -> "\$amplitude_user_id"
         PIntegrationAttribute.APPSFLYER_ID -> "\$appsflyer_id"

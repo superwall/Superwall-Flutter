@@ -447,6 +447,8 @@ extension PIntegrationAttribute {
     switch self {
     case .adjustId:
       return .adjustId
+    case .singularDeviceId:
+      return .singularDeviceId
     case .amplitudeDeviceId:
       return .amplitudeDeviceId
     case .amplitudeUserId:

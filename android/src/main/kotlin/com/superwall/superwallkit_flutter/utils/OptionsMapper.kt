@@ -16,6 +16,8 @@ import com.superwall.sdk.analytics.Tier
 import com.superwall.sdk.billing.DecomposedProductIds
 import com.superwall.sdk.config.options.PaywallOptions
 import PTestModeBehavior
+import PEventTrackingBehavior
+import com.superwall.sdk.config.options.EventTrackingBehavior
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.store.testmode.TestModeBehavior
 import com.superwall.sdk.logger.LogLevel
@@ -50,6 +52,15 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
     }
 
     this.isExternalDataCollectionEnabled?.let { sdkOptions.isExternalDataCollectionEnabled = it }
+    // Applied after the deprecated isExternalDataCollectionEnabled so that an
+    // explicit eventTrackingBehavior takes precedence.
+    this.eventTrackingBehavior?.let { hostBehavior ->
+        sdkOptions.eventTrackingBehavior = when (hostBehavior) {
+            PEventTrackingBehavior.ALL -> EventTrackingBehavior.ALL
+            PEventTrackingBehavior.SUPERWALL_ONLY -> EventTrackingBehavior.SUPERWALL_ONLY
+            PEventTrackingBehavior.NONE -> EventTrackingBehavior.NONE
+        }
+    }
     this.localeIdentifier?.let { sdkOptions.localeIdentifier = it }
     this.isGameControllerEnabled?.let { sdkOptions.isGameControllerEnabled = it }
     this.passIdentifiersToPlayStore?.let { sdkOptions.passIdentifiersToPlayStore = it }
@@ -160,6 +171,8 @@ fun PPaywallOptions.toSdkPaywallOptions(): PaywallOptions {
     this.overrideProductsByName?.let { hostOverrides ->
         sdkPaywallOptions.overrideProductsByName = hostOverrides
     }
+
+    this.loadingColor?.let { sdkPaywallOptions.loadingColor = it.toInt() }
 
     return sdkPaywallOptions
 }

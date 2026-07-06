@@ -75,7 +75,20 @@ extension PSuperwallOptions {
     if let isExternalDataCollectionEnabled = self.isExternalDataCollectionEnabled {
       options.isExternalDataCollectionEnabled = isExternalDataCollectionEnabled
     }
-    
+
+    // Applied after the deprecated isExternalDataCollectionEnabled so that an
+    // explicit eventTrackingBehavior takes precedence.
+    if let eventTrackingBehavior = self.eventTrackingBehavior {
+      switch eventTrackingBehavior {
+      case .all:
+        options.eventTrackingBehavior = .all
+      case .superwallOnly:
+        options.eventTrackingBehavior = .superwallOnly
+      case .none:
+        options.eventTrackingBehavior = .none
+      }
+    }
+
     options.localeIdentifier = self.localeIdentifier
     
     if let isGameControllerEnabled = self.isGameControllerEnabled {

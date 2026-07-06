@@ -212,10 +212,23 @@ enum PTestModeBehavior {
   always,
 }
 
+/// Controls which events are sent to the Superwall servers.
+enum PEventTrackingBehavior {
+  /// All events are tracked. This is the default.
+  all,
+
+  /// Only internal Superwall events are tracked.
+  superwallOnly,
+
+  /// No events are sent to the Superwall servers.
+  none,
+}
+
 // Options for configuring Superwall
 class PSuperwallOptions {
   PPaywallOptions? paywalls;
   PNetworkEnvironment? networkEnvironment;
+  PEventTrackingBehavior? eventTrackingBehavior;
   bool? isExternalDataCollectionEnabled;
   String? localeIdentifier;
   bool? isGameControllerEnabled;
@@ -651,6 +664,10 @@ class PPaywallOptions {
   /// Keys are raw `DeviceTier` values (e.g. `ultra_low`, `low`, `mid`,
   /// `high`, `ultra_high`, `unknown`).
   Map<String, bool>? preloadDeviceOverrides;
+
+  /// Android only. Color resource ID (`@ColorRes`) used to tint the loading
+  /// spinner. Has no effect on iOS.
+  int? loadingColor;
 }
 
 class POnBackPressedHost {
@@ -752,6 +769,9 @@ enum PLatestSubscriptionOfferType {
 enum PIntegrationAttribute {
   /// The unique Adjust identifier for the user.
   adjustId,
+
+  /// The Singular Device ID (SDID) for the user.
+  singularDeviceId,
 
   /// The Amplitude device identifier.
   amplitudeDeviceId,

@@ -53,6 +53,15 @@ class PaywallOptions {
   /// Call `Superwall.shared.dismiss()` within the callback if you want to dismiss the paywall.
   /// Note: This is only supported on Android.
   void Function(PaywallInfo?)? onBackPressed;
+
+  /// A color resource used to tint the circular progress bar shown while a
+  /// purchase or restoration is in progress. Defaults to `null`, which keeps
+  /// the system's default spinner color.
+  ///
+  /// The value is an Android color resource ID (`@ColorRes`).
+  ///
+  /// Note: Android only. Has no effect on iOS.
+  int? loadingColor;
 }
 
 extension PaywallOptionsJson on PaywallOptions {
@@ -69,6 +78,7 @@ extension PaywallOptionsJson on PaywallOptions {
       'shouldShowWebRestorationAlert': shouldShowWebRestorationAlert,
       'overrideProductsByName': overrideProductsByName,
       'shouldShowWebPurchaseConfirmationAlert': shouldShowWebPurchaseConfirmationAlert,
+      'loadingColor': loadingColor,
     };
   }
 }

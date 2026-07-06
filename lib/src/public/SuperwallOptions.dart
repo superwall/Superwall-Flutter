@@ -10,10 +10,35 @@ class SuperwallOptions {
   /// change this unless you received the go-ahead from the Superwall team.
   NetworkEnvironment networkEnvironment = NetworkEnvironment.release;
 
+  /// Controls which events are sent to the Superwall servers.
+  ///
+  /// Defaults to [EventTrackingBehavior.all]. Set this to
+  /// [EventTrackingBehavior.superwallOnly] to suppress user-initiated tracking,
+  /// trigger fires, and user-attribute updates while keeping internal SDK
+  /// events, or [EventTrackingBehavior.none] to stop all event collection
+  /// entirely (e.g. for GDPR compliance).
+  EventTrackingBehavior eventTrackingBehavior = EventTrackingBehavior.all;
+
   /// Enables the sending of non-Superwall tracked events and properties
   /// back to the Superwall servers.
   /// Defaults to `true`.
-  bool isExternalDataCollectionEnabled = true;
+  ///
+  /// **Deprecated**: Use [eventTrackingBehavior] instead. Setting this to
+  /// `false` maps to [EventTrackingBehavior.superwallOnly] unless the current
+  /// value is already [EventTrackingBehavior.none], in which case `none` is
+  /// preserved. Setting it back to `true` maps to [EventTrackingBehavior.all].
+  @Deprecated('Use eventTrackingBehavior instead.')
+  bool get isExternalDataCollectionEnabled =>
+      eventTrackingBehavior == EventTrackingBehavior.all;
+
+  @Deprecated('Use eventTrackingBehavior instead.')
+  set isExternalDataCollectionEnabled(bool value) {
+    if (value) {
+      eventTrackingBehavior = EventTrackingBehavior.all;
+    } else if (eventTrackingBehavior != EventTrackingBehavior.none) {
+      eventTrackingBehavior = EventTrackingBehavior.superwallOnly;
+    }
+  }
 
   /// Sets the device locale identifier to use when evaluating rules.
   String? localeIdentifier;
@@ -54,7 +79,9 @@ extension SuperwallOptionsJson on SuperwallOptions {
     return {
       'paywalls': paywalls.toJson(),
       'networkEnvironment': networkEnvironment.toJson(),
-      'isExternalDataCollectionEnabled': isExternalDataCollectionEnabled,
+      'eventTrackingBehavior': eventTrackingBehavior.toJson(),
+      'isExternalDataCollectionEnabled':
+          eventTrackingBehavior == EventTrackingBehavior.all,
       'localeIdentifier': localeIdentifier,
       'isGameControllerEnabled': isGameControllerEnabled,
       'logging': logging.toJson(),
@@ -65,6 +92,32 @@ extension SuperwallOptionsJson on SuperwallOptions {
       'maxConfigRetryCount': maxConfigRetryCount,
       'useMockReviews': useMockReviews,
     };
+  }
+}
+
+/// Controls which events are sent to the Superwall servers.
+enum EventTrackingBehavior {
+  /// All events are tracked. This is the default.
+  all,
+
+  /// Only internal Superwall events are tracked. User-initiated tracking calls,
+  /// trigger-fire events, and user-attribute updates are suppressed.
+  superwallOnly,
+
+  /// No events are sent to the Superwall servers.
+  none,
+}
+
+extension EventTrackingBehaviorJson on EventTrackingBehavior {
+  String toJson() {
+    switch (this) {
+      case EventTrackingBehavior.all:
+        return 'all';
+      case EventTrackingBehavior.superwallOnly:
+        return 'superwallOnly';
+      case EventTrackingBehavior.none:
+        return 'none';
+    }
   }
 }
 

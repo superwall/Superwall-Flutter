@@ -8,6 +8,9 @@ enum IntegrationAttribute {
   /// The unique Adjust identifier for the user.
   adjustId,
 
+  /// The Singular Device ID (SDID) for the user.
+  singularDeviceId,
+
   /// The Amplitude device identifier.
   amplitudeDeviceId,
 
@@ -72,6 +75,8 @@ enum IntegrationAttribute {
     switch (this) {
       case IntegrationAttribute.adjustId:
         return PIntegrationAttribute.adjustId;
+      case IntegrationAttribute.singularDeviceId:
+        return PIntegrationAttribute.singularDeviceId;
       case IntegrationAttribute.amplitudeDeviceId:
         return PIntegrationAttribute.amplitudeDeviceId;
       case IntegrationAttribute.amplitudeUserId:
