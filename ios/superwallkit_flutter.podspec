@@ -11,9 +11,9 @@ Pod::Spec.new do |s|
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Superwall' => 'jake@superwall.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'superwallkit_flutter/Sources/superwallkit_flutter/**/*'
   s.dependency 'Flutter'
-  s.dependency 'SuperwallKit', '4.14.2'
+  s.dependency 'SuperwallKit', '4.16.3'
   s.platform = :ios, '14.0'
 
   # Flutter.framework does not contain a i386 slice.

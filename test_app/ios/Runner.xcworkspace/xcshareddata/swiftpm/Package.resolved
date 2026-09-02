@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "superscript-ios-next",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/superwall/superscript-ios-next",
+      "state" : {
+        "revision" : "c3d1ee8d23ae6bf27e2d261c41a61001281166ec",
+        "version" : "1.0.15"
+      }
+    },
+    {
+      "identity" : "superwall-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/superwall/Superwall-iOS.git",
+      "state" : {
+        "revision" : "a9990308209c27de2f3c74e666774f121149678e",
+        "version" : "4.16.3"
+      }
+    }
+  ],
+  "version" : 2
+}

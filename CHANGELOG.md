@@ -2,6 +2,13 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.5.0
+
+### Enhancements
+- Adds Swift Package Manager (SPM) support for iOS, alongside the existing CocoaPods support. This removes the "plugin does not support Swift Package Manager" warning under Flutter 3.44+ while remaining fully backward compatible with CocoaPods.
+- Updates Android SDK to 2.7.24 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.7.24).
+- Updates iOS SDK to 4.16.3 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.16.3).
+
 ## 2.4.12
 
 ### Enhancements

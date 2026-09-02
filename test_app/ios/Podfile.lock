@@ -1,52 +1,32 @@
 PODS:
   - Flutter (1.0.0)
-  - integration_test (0.0.1):
+  - purchases_flutter (8.11.0):
     - Flutter
-  - purchases_flutter (8.6.0):
-    - Flutter
-    - PurchasesHybridCommon (= 13.21.0)
-  - PurchasesHybridCommon (13.21.0):
-    - RevenueCat (= 5.18.0)
-  - RevenueCat (5.18.0)
-  - Superscript (1.0.4)
-  - SuperwallKit (4.12.10):
-    - Superscript (= 1.0.13)
-  - superwallkit_flutter (0.0.1):
-    - Flutter
-    - SuperwallKit (= 4.10.0)
+    - PurchasesHybridCommon (= 14.3.0)
+  - PurchasesHybridCommon (14.3.0):
+    - RevenueCat (= 5.32.0)
+  - RevenueCat (5.32.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
-  - superwallkit_flutter (from `.symlinks/plugins/superwallkit_flutter/ios`)
 
 SPEC REPOS:
   trunk:
     - PurchasesHybridCommon
     - RevenueCat
-    - Superscript
-    - SuperwallKit
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  integration_test:
-    :path: ".symlinks/plugins/integration_test/ios"
   purchases_flutter:
     :path: ".symlinks/plugins/purchases_flutter/ios"
-  superwallkit_flutter:
-    :path: ".symlinks/plugins/superwallkit_flutter/ios"
 
 SPEC CHECKSUMS:
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  purchases_flutter: cbcf97969b7bf0f1db71d802f4e682bb851f0576
-  PurchasesHybridCommon: 9691d74a051f30858360d78936d59dc14575014e
-  RevenueCat: e825836f5d6baa870c53d7281be25a5fd91abd91
-  Superscript: 4572a7b03b7a39140d3639d6468a1816fa28411d
-  SuperwallKit: c878b33705c6a5366b9c544156b8f82bd9a76ca8
-  superwallkit_flutter: 5e0edf3a7ba1f545f7518ba2335f768d88a0dd2f
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  purchases_flutter: 3570127ba41583a75e553d68a763367007830eff
+  PurchasesHybridCommon: 7f0944cc5411bdcd1ea5d69affa6a6f9aaf87b13
+  RevenueCat: 7e1d0768fb287c9983173c9b28e39ccbeeb828a9
 
 PODFILE CHECKSUM: 1959d098c91d8a792531a723c4a9d7e9f6a01e38
 

@@ -4,22 +4,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the **Superwall Flutter SDK v2.4.5** - a Flutter plugin that wraps native Superwall SDKs for Android and iOS. Superwall provides remotely configurable in-app paywall infrastructure for mobile applications.
+This is the **Superwall Flutter SDK v2.5.0** - a Flutter plugin that wraps native Superwall SDKs for Android and iOS. Superwall provides remotely configurable in-app paywall infrastructure for mobile applications.
 
 ## Architecture
 
 ### Core Technology Stack
 - **Flutter Plugin**: Uses Pigeon for type-safe communication between Flutter and native platforms
 - **Native SDKs**:
-  - Android: SuperwallKit Android SDK v2.6.4 (Kotlin)
-  - iOS: SuperwallKit iOS SDK v4.10.4 (Swift)
+  - Android: SuperwallKit Android SDK v2.7.24 (Kotlin)
+  - iOS: SuperwallKit iOS SDK v4.16.3 (Swift)
 - **Code Generation**: Pigeon generates Dart, Kotlin, and Swift interfaces from `pigeons/configure.dart`
 
 ### Communication Flow
 The SDK uses a layered architecture:
 1. **Public Flutter API** (`lib/src/public/`) - Developer-facing API
 2. **Generated Interfaces** (`lib/src/generated/superwallhost.g.dart`) - Pigeon-generated type-safe communication
-3. **Native Host Implementations** (`android/src/main/kotlin/`, `ios/Classes/`) - Platform-specific implementations
+3. **Native Host Implementations** (`android/src/main/kotlin/`, `ios/superwallkit_flutter/Sources/superwallkit_flutter/`) - Platform-specific implementations
 4. **Native SDKs** - Superwall's native Android/iOS SDKs
 
 ### Key Components
@@ -74,7 +74,7 @@ When adding new methods to the SDK, follow this workflow:
 
 3. **Implement Native Hosts**:
    - Android: `android/src/main/kotlin/.../SuperwallHost.kt`
-   - iOS: `ios/Classes/SuperwallHost.swift`
+   - iOS: `ios/superwallkit_flutter/Sources/superwallkit_flutter/SuperwallHost.swift`
 
 4. **Add to Flutter API**: Implement in `lib/src/public/Superwall.dart`
    - Add conversion methods between public and Pigeon types
@@ -89,7 +89,7 @@ When adding new methods to the SDK, follow this workflow:
 - `lib/src/generated/`: Pigeon-generated communication interfaces
 - `pigeons/configure.dart`: Single source of truth for API definitions
 - `android/src/main/kotlin/`: Android native implementation
-- `ios/Classes/`: iOS native implementation
+- `ios/superwallkit_flutter/Sources/superwallkit_flutter/`: iOS native implementation
 - `test_app/`: Comprehensive test application with UI tests
 - `example/`: Simple integration example
 
@@ -99,12 +99,12 @@ When adding new methods to the SDK, follow this workflow:
 - **Min SDK**: 26 (Android 8.0)
 - **Compile SDK**: 34
 - **Language**: Kotlin
-- **Dependencies**: SuperwallKit Android v2.6.4, Google Billing Client v6.1.0
+- **Dependencies**: SuperwallKit Android v2.7.24, Google Billing Client v8.0.0
 
 ### iOS  
 - **Min Version**: iOS 14.0
 - **Language**: Swift 5.0
-- **Dependencies**: SuperwallKit iOS v4.10.4
+- **Dependencies**: SuperwallKit iOS v4.16.3
 - **Build**: Uses CocoaPods for dependency management
 
 ## Testing Strategy
