@@ -19,7 +19,7 @@ This is the **Superwall Flutter SDK v2.4.5** - a Flutter plugin that wraps nativ
 The SDK uses a layered architecture:
 1. **Public Flutter API** (`lib/src/public/`) - Developer-facing API
 2. **Generated Interfaces** (`lib/src/generated/superwallhost.g.dart`) - Pigeon-generated type-safe communication
-3. **Native Host Implementations** (`android/src/main/kotlin/`, `ios/Classes/`) - Platform-specific implementations
+3. **Native Host Implementations** (`android/src/main/kotlin/`, `ios/superwallkit_flutter/Sources/superwallkit_flutter/`) - Platform-specific implementations
 4. **Native SDKs** - Superwall's native Android/iOS SDKs
 
 ### Key Components
@@ -74,7 +74,7 @@ When adding new methods to the SDK, follow this workflow:
 
 3. **Implement Native Hosts**:
    - Android: `android/src/main/kotlin/.../SuperwallHost.kt`
-   - iOS: `ios/Classes/SuperwallHost.swift`
+   - iOS: `ios/superwallkit_flutter/Sources/superwallkit_flutter/SuperwallHost.swift`
 
 4. **Add to Flutter API**: Implement in `lib/src/public/Superwall.dart`
    - Add conversion methods between public and Pigeon types
@@ -89,7 +89,7 @@ When adding new methods to the SDK, follow this workflow:
 - `lib/src/generated/`: Pigeon-generated communication interfaces
 - `pigeons/configure.dart`: Single source of truth for API definitions
 - `android/src/main/kotlin/`: Android native implementation
-- `ios/Classes/`: iOS native implementation
+- `ios/superwallkit_flutter/Sources/superwallkit_flutter/`: iOS native implementation
 - `test_app/`: Comprehensive test application with UI tests
 - `example/`: Simple integration example
 

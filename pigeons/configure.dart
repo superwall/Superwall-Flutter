@@ -7,7 +7,8 @@ import 'package:pigeon/pigeon.dart';
       'android/src/main/kotlin/com/superwall/superwallkit_flutter/SuperwallHostGenerated.g.kt',
   kotlinOptions: KotlinOptions(),
   dartPackageName: 'superwallkit_flutter',
-  swiftOut: 'ios/Classes/SuperwallHostGenerated.swift',
+  swiftOut:
+      'ios/superwallkit_flutter/Sources/superwallkit_flutter/SuperwallHostGenerated.swift',
   swiftOptions: SwiftOptions(),
 ))
 
