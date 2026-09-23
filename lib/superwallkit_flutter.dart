@@ -14,6 +14,7 @@ export 'src/public/LogScope.dart';
 export 'src/public/PaywallCloseReason.dart';
 export 'src/public/PaywallInfo.dart';
 export 'src/public/PresentationResult.dart';
+export 'src/public/OwnedInAppPurchase.dart';
 export 'src/public/Product.dart';
 export 'src/public/PurchaseController.dart';
 export 'src/public/PurchaseResult.dart';

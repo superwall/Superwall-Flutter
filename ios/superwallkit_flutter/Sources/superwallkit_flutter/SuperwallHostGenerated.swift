@@ -1879,6 +1879,51 @@ struct PStoreProduct: Hashable {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
+struct POwnedInAppPurchase: Hashable {
+  var productIds: [String]
+  var purchaseToken: String
+  var orderId: String? = nil
+  var purchaseTime: Int64
+  var quantity: Int64
+  var isAcknowledged: Bool
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> POwnedInAppPurchase? {
+    let productIds = pigeonVar_list[0] as! [String]
+    let purchaseToken = pigeonVar_list[1] as! String
+    let orderId: String? = nilOrValue(pigeonVar_list[2])
+    let purchaseTime = pigeonVar_list[3] as! Int64
+    let quantity = pigeonVar_list[4] as! Int64
+    let isAcknowledged = pigeonVar_list[5] as! Bool
+
+    return POwnedInAppPurchase(
+      productIds: productIds,
+      purchaseToken: purchaseToken,
+      orderId: orderId,
+      purchaseTime: purchaseTime,
+      quantity: quantity,
+      isAcknowledged: isAcknowledged
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      productIds,
+      purchaseToken,
+      orderId,
+      purchaseTime,
+      quantity,
+      isAcknowledged,
+    ]
+  }
+  static func == (lhs: POwnedInAppPurchase, rhs: POwnedInAppPurchase) -> Bool {
+    return deepEqualsSuperwallHostGenerated(lhs.toList(), rhs.toList())  }
+  func hash(into hasher: inout Hasher) {
+    deepHashSuperwallHostGenerated(value: toList(), hasher: &hasher)
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
 struct PPaywallOptions: Hashable {
   var isHapticFeedbackEnabled: Bool? = nil
   var restoreFailed: PRestoreFailed? = nil
@@ -3549,90 +3594,92 @@ private class SuperwallHostGeneratedPigeonCodecReader: FlutterStandardReader {
     case 184:
       return PStoreProduct.fromList(self.readValue() as! [Any?])
     case 185:
-      return PPaywallOptions.fromList(self.readValue() as! [Any?])
+      return POwnedInAppPurchase.fromList(self.readValue() as! [Any?])
     case 186:
-      return POnBackPressedHost.fromList(self.readValue() as! [Any?])
+      return PPaywallOptions.fromList(self.readValue() as! [Any?])
     case 187:
-      return PPurchaseControllerHost.fromList(self.readValue() as! [Any?])
+      return POnBackPressedHost.fromList(self.readValue() as! [Any?])
     case 188:
-      return PConfigureCompletionHost.fromList(self.readValue() as! [Any?])
+      return PPurchaseControllerHost.fromList(self.readValue() as! [Any?])
     case 189:
-      return PPaywallPresentationHandlerHost.fromList(self.readValue() as! [Any?])
+      return PConfigureCompletionHost.fromList(self.readValue() as! [Any?])
     case 190:
-      return PFeatureHandlerHost.fromList(self.readValue() as! [Any?])
+      return PPaywallPresentationHandlerHost.fromList(self.readValue() as! [Any?])
     case 191:
-      return PCustomCallback.fromList(self.readValue() as! [Any?])
+      return PFeatureHandlerHost.fromList(self.readValue() as! [Any?])
     case 192:
-      return PCustomCallbackResult.fromList(self.readValue() as! [Any?])
+      return PCustomCallback.fromList(self.readValue() as! [Any?])
     case 193:
-      return PSubscriptionTransaction.fromList(self.readValue() as! [Any?])
+      return PCustomCallbackResult.fromList(self.readValue() as! [Any?])
     case 194:
-      return PNonSubscriptionTransaction.fromList(self.readValue() as! [Any?])
+      return PSubscriptionTransaction.fromList(self.readValue() as! [Any?])
     case 195:
-      return PEntitlement.fromList(self.readValue() as! [Any?])
+      return PNonSubscriptionTransaction.fromList(self.readValue() as! [Any?])
     case 196:
-      return PCustomerInfo.fromList(self.readValue() as! [Any?])
+      return PEntitlement.fromList(self.readValue() as! [Any?])
     case 197:
-      return PEntitlements.fromList(self.readValue() as! [Any?])
+      return PCustomerInfo.fromList(self.readValue() as! [Any?])
     case 198:
-      return PActive.fromList(self.readValue() as! [Any?])
+      return PEntitlements.fromList(self.readValue() as! [Any?])
     case 199:
-      return PInactive.fromList(self.readValue() as! [Any?])
+      return PActive.fromList(self.readValue() as! [Any?])
     case 200:
-      return PUnknown.fromList(self.readValue() as! [Any?])
+      return PInactive.fromList(self.readValue() as! [Any?])
     case 201:
-      return PSuperwallEventInfo.fromList(self.readValue() as! [Any?])
+      return PUnknown.fromList(self.readValue() as! [Any?])
     case 202:
-      return PStatusReasonDebuggerPresented.fromList(self.readValue() as! [Any?])
+      return PSuperwallEventInfo.fromList(self.readValue() as! [Any?])
     case 203:
-      return PStatusReasonPaywallAlreadyPresented.fromList(self.readValue() as! [Any?])
+      return PStatusReasonDebuggerPresented.fromList(self.readValue() as! [Any?])
     case 204:
-      return PStatusReasonHoldout.fromList(self.readValue() as! [Any?])
+      return PStatusReasonPaywallAlreadyPresented.fromList(self.readValue() as! [Any?])
     case 205:
-      return PStatusReasonNoAudienceMatch.fromList(self.readValue() as! [Any?])
+      return PStatusReasonHoldout.fromList(self.readValue() as! [Any?])
     case 206:
-      return PStatusReasonPlacementNotFound.fromList(self.readValue() as! [Any?])
+      return PStatusReasonNoAudienceMatch.fromList(self.readValue() as! [Any?])
     case 207:
-      return PStatusReasonNoPaywallVc.fromList(self.readValue() as! [Any?])
+      return PStatusReasonPlacementNotFound.fromList(self.readValue() as! [Any?])
     case 208:
-      return PStatusReasonNoPresenter.fromList(self.readValue() as! [Any?])
+      return PStatusReasonNoPaywallVc.fromList(self.readValue() as! [Any?])
     case 209:
-      return PStatusReasonNoConfig.fromList(self.readValue() as! [Any?])
+      return PStatusReasonNoPresenter.fromList(self.readValue() as! [Any?])
     case 210:
-      return PStatusReasonSubsStatusTimeout.fromList(self.readValue() as! [Any?])
+      return PStatusReasonNoConfig.fromList(self.readValue() as! [Any?])
     case 211:
-      return PIdentityOptions.fromList(self.readValue() as! [Any?])
+      return PStatusReasonSubsStatusTimeout.fromList(self.readValue() as! [Any?])
     case 212:
-      return PExperiment.fromList(self.readValue() as! [Any?])
+      return PIdentityOptions.fromList(self.readValue() as! [Any?])
     case 213:
-      return PPlacementNotFoundTriggerResult.fromList(self.readValue() as! [Any?])
+      return PExperiment.fromList(self.readValue() as! [Any?])
     case 214:
-      return PNoAudienceMatchTriggerResult.fromList(self.readValue() as! [Any?])
+      return PPlacementNotFoundTriggerResult.fromList(self.readValue() as! [Any?])
     case 215:
-      return PPaywallTriggerResult.fromList(self.readValue() as! [Any?])
+      return PNoAudienceMatchTriggerResult.fromList(self.readValue() as! [Any?])
     case 216:
-      return PHoldoutTriggerResult.fromList(self.readValue() as! [Any?])
+      return PPaywallTriggerResult.fromList(self.readValue() as! [Any?])
     case 217:
-      return PErrorTriggerResult.fromList(self.readValue() as! [Any?])
+      return PHoldoutTriggerResult.fromList(self.readValue() as! [Any?])
     case 218:
-      return PVariant.fromList(self.readValue() as! [Any?])
+      return PErrorTriggerResult.fromList(self.readValue() as! [Any?])
     case 219:
-      return PConfirmedAssignment.fromList(self.readValue() as! [Any?])
+      return PVariant.fromList(self.readValue() as! [Any?])
     case 220:
-      return PPurchasedPaywallResult.fromList(self.readValue() as! [Any?])
+      return PConfirmedAssignment.fromList(self.readValue() as! [Any?])
     case 221:
-      return PDeclinedPaywallResult.fromList(self.readValue() as! [Any?])
+      return PPurchasedPaywallResult.fromList(self.readValue() as! [Any?])
     case 222:
-      return PRestoredPaywallResult.fromList(self.readValue() as! [Any?])
+      return PDeclinedPaywallResult.fromList(self.readValue() as! [Any?])
     case 223:
-      return PPlacementNotFoundPresentationResult.fromList(self.readValue() as! [Any?])
+      return PRestoredPaywallResult.fromList(self.readValue() as! [Any?])
     case 224:
-      return PNoAudienceMatchPresentationResult.fromList(self.readValue() as! [Any?])
+      return PPlacementNotFoundPresentationResult.fromList(self.readValue() as! [Any?])
     case 225:
-      return PPaywallPresentationResult.fromList(self.readValue() as! [Any?])
+      return PNoAudienceMatchPresentationResult.fromList(self.readValue() as! [Any?])
     case 226:
-      return PHoldoutPresentationResult.fromList(self.readValue() as! [Any?])
+      return PPaywallPresentationResult.fromList(self.readValue() as! [Any?])
     case 227:
+      return PHoldoutPresentationResult.fromList(self.readValue() as! [Any?])
+    case 228:
       return PPaywallNotAvailablePresentationResult.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -3810,134 +3857,137 @@ private class SuperwallHostGeneratedPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PStoreProduct {
       super.writeByte(184)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallOptions {
+    } else if let value = value as? POwnedInAppPurchase {
       super.writeByte(185)
       super.writeValue(value.toList())
-    } else if let value = value as? POnBackPressedHost {
+    } else if let value = value as? PPaywallOptions {
       super.writeByte(186)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchaseControllerHost {
+    } else if let value = value as? POnBackPressedHost {
       super.writeByte(187)
       super.writeValue(value.toList())
-    } else if let value = value as? PConfigureCompletionHost {
+    } else if let value = value as? PPurchaseControllerHost {
       super.writeByte(188)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallPresentationHandlerHost {
+    } else if let value = value as? PConfigureCompletionHost {
       super.writeByte(189)
       super.writeValue(value.toList())
-    } else if let value = value as? PFeatureHandlerHost {
+    } else if let value = value as? PPaywallPresentationHandlerHost {
       super.writeByte(190)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomCallback {
+    } else if let value = value as? PFeatureHandlerHost {
       super.writeByte(191)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomCallbackResult {
+    } else if let value = value as? PCustomCallback {
       super.writeByte(192)
       super.writeValue(value.toList())
-    } else if let value = value as? PSubscriptionTransaction {
+    } else if let value = value as? PCustomCallbackResult {
       super.writeByte(193)
       super.writeValue(value.toList())
-    } else if let value = value as? PNonSubscriptionTransaction {
+    } else if let value = value as? PSubscriptionTransaction {
       super.writeByte(194)
       super.writeValue(value.toList())
-    } else if let value = value as? PEntitlement {
+    } else if let value = value as? PNonSubscriptionTransaction {
       super.writeByte(195)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerInfo {
+    } else if let value = value as? PEntitlement {
       super.writeByte(196)
       super.writeValue(value.toList())
-    } else if let value = value as? PEntitlements {
+    } else if let value = value as? PCustomerInfo {
       super.writeByte(197)
       super.writeValue(value.toList())
-    } else if let value = value as? PActive {
+    } else if let value = value as? PEntitlements {
       super.writeByte(198)
       super.writeValue(value.toList())
-    } else if let value = value as? PInactive {
+    } else if let value = value as? PActive {
       super.writeByte(199)
       super.writeValue(value.toList())
-    } else if let value = value as? PUnknown {
+    } else if let value = value as? PInactive {
       super.writeByte(200)
       super.writeValue(value.toList())
-    } else if let value = value as? PSuperwallEventInfo {
+    } else if let value = value as? PUnknown {
       super.writeByte(201)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonDebuggerPresented {
+    } else if let value = value as? PSuperwallEventInfo {
       super.writeByte(202)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonPaywallAlreadyPresented {
+    } else if let value = value as? PStatusReasonDebuggerPresented {
       super.writeByte(203)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonHoldout {
+    } else if let value = value as? PStatusReasonPaywallAlreadyPresented {
       super.writeByte(204)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonNoAudienceMatch {
+    } else if let value = value as? PStatusReasonHoldout {
       super.writeByte(205)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonPlacementNotFound {
+    } else if let value = value as? PStatusReasonNoAudienceMatch {
       super.writeByte(206)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonNoPaywallVc {
+    } else if let value = value as? PStatusReasonPlacementNotFound {
       super.writeByte(207)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonNoPresenter {
+    } else if let value = value as? PStatusReasonNoPaywallVc {
       super.writeByte(208)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonNoConfig {
+    } else if let value = value as? PStatusReasonNoPresenter {
       super.writeByte(209)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonSubsStatusTimeout {
+    } else if let value = value as? PStatusReasonNoConfig {
       super.writeByte(210)
       super.writeValue(value.toList())
-    } else if let value = value as? PIdentityOptions {
+    } else if let value = value as? PStatusReasonSubsStatusTimeout {
       super.writeByte(211)
       super.writeValue(value.toList())
-    } else if let value = value as? PExperiment {
+    } else if let value = value as? PIdentityOptions {
       super.writeByte(212)
       super.writeValue(value.toList())
-    } else if let value = value as? PPlacementNotFoundTriggerResult {
+    } else if let value = value as? PExperiment {
       super.writeByte(213)
       super.writeValue(value.toList())
-    } else if let value = value as? PNoAudienceMatchTriggerResult {
+    } else if let value = value as? PPlacementNotFoundTriggerResult {
       super.writeByte(214)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallTriggerResult {
+    } else if let value = value as? PNoAudienceMatchTriggerResult {
       super.writeByte(215)
       super.writeValue(value.toList())
-    } else if let value = value as? PHoldoutTriggerResult {
+    } else if let value = value as? PPaywallTriggerResult {
       super.writeByte(216)
       super.writeValue(value.toList())
-    } else if let value = value as? PErrorTriggerResult {
+    } else if let value = value as? PHoldoutTriggerResult {
       super.writeByte(217)
       super.writeValue(value.toList())
-    } else if let value = value as? PVariant {
+    } else if let value = value as? PErrorTriggerResult {
       super.writeByte(218)
       super.writeValue(value.toList())
-    } else if let value = value as? PConfirmedAssignment {
+    } else if let value = value as? PVariant {
       super.writeByte(219)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchasedPaywallResult {
+    } else if let value = value as? PConfirmedAssignment {
       super.writeByte(220)
       super.writeValue(value.toList())
-    } else if let value = value as? PDeclinedPaywallResult {
+    } else if let value = value as? PPurchasedPaywallResult {
       super.writeByte(221)
       super.writeValue(value.toList())
-    } else if let value = value as? PRestoredPaywallResult {
+    } else if let value = value as? PDeclinedPaywallResult {
       super.writeByte(222)
       super.writeValue(value.toList())
-    } else if let value = value as? PPlacementNotFoundPresentationResult {
+    } else if let value = value as? PRestoredPaywallResult {
       super.writeByte(223)
       super.writeValue(value.toList())
-    } else if let value = value as? PNoAudienceMatchPresentationResult {
+    } else if let value = value as? PPlacementNotFoundPresentationResult {
       super.writeByte(224)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallPresentationResult {
+    } else if let value = value as? PNoAudienceMatchPresentationResult {
       super.writeByte(225)
       super.writeValue(value.toList())
-    } else if let value = value as? PHoldoutPresentationResult {
+    } else if let value = value as? PPaywallPresentationResult {
       super.writeByte(226)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallNotAvailablePresentationResult {
+    } else if let value = value as? PHoldoutPresentationResult {
       super.writeByte(227)
+      super.writeValue(value.toList())
+    } else if let value = value as? PPaywallNotAvailablePresentationResult {
+      super.writeByte(228)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -3977,6 +4027,9 @@ protocol PSuperwallHostApi {
   func setIntegrationAttributes(attributes: [PIntegrationAttribute: String?]) throws
   func getDeviceAttributes(completion: @escaping (Result<[String: Any], Error>) -> Void)
   func consume(purchaseToken: String, completion: @escaping (Result<String, Error>) -> Void)
+  func getProducts(productIds: [String], completion: @escaping (Result<[PStoreProduct], Error>) -> Void)
+  func purchase(productId: String, completion: @escaping (Result<PPurchaseResult, Error>) -> Void)
+  func queryInAppPurchases(completion: @escaping (Result<[POwnedInAppPurchase], Error>) -> Void)
   func getLocaleIdentifier() throws -> String?
   func setLocaleIdentifier(localeIdentifier: String?) throws
   func getUserId() throws -> String
@@ -4205,6 +4258,55 @@ class PSuperwallHostApiSetup {
       }
     } else {
       consumeChannel.setMessageHandler(nil)
+    }
+    let getProductsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getProducts\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getProductsChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let productIdsArg = args[0] as! [String]
+        api.getProducts(productIds: productIdsArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getProductsChannel.setMessageHandler(nil)
+    }
+    let purchaseChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.purchase\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      purchaseChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let productIdArg = args[0] as! String
+        api.purchase(productId: productIdArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      purchaseChannel.setMessageHandler(nil)
+    }
+    let queryInAppPurchasesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.queryInAppPurchases\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      queryInAppPurchasesChannel.setMessageHandler { _, reply in
+        api.queryInAppPurchases { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      queryInAppPurchasesChannel.setMessageHandler(nil)
     }
     let getLocaleIdentifierChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getLocaleIdentifier\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
