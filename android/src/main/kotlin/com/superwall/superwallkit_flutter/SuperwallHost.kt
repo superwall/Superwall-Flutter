@@ -24,8 +24,14 @@ import PPaywallPresentationResult
 import PHoldoutPresentationResult
 import PPaywallNotAvailablePresentationResult
 import POnBackPressedGenerated
+import POwnedInAppPurchase
+import PPurchaseCancelled
 import PPurchaseControllerGenerated
 import PPurchaseControllerHost
+import PPurchaseFailed
+import PPurchasePending
+import PPurchasePurchased
+import PPurchaseResult
 import PRestorationFailed
 import PRestorationRestored
 import PRestorationResult
@@ -33,6 +39,7 @@ import PSubscriptionStatus
 import PSuperwallDelegateGenerated
 import PSuperwallHostApi
 import PSuperwallHostApi.Companion.setUp
+import PStoreProduct
 import PSuperwallOptions
 import PUnknown
 import PVariant
@@ -42,6 +49,8 @@ import StreamSubscriptionStatusStreamHandler
 import android.app.Activity
 import android.app.Application
 import com.superwall.sdk.Superwall
+import com.superwall.sdk.billing.BillingError
+import com.superwall.sdk.delegate.PurchaseResult
 import com.superwall.sdk.config.models.ConfigurationStatus
 import com.superwall.sdk.identity.IdentityOptions
 import com.superwall.sdk.identity.identify
@@ -49,6 +58,7 @@ import com.superwall.sdk.identity.setUserAttributes
 import com.superwall.sdk.models.entitlements.Entitlement
 import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.models.triggers.Experiment
+import com.superwall.sdk.store.abstractions.product.StoreProduct
 import com.superwall.sdk.paywall.presentation.dismiss
 import com.superwall.superwallkit_flutter.json.JsonExtensions
 import com.superwall.superwallkit_flutter.utils.toSdkOptions
@@ -56,6 +66,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import logLevelFromJson
+import pigeonify
 import toJson
 import androidx.core.net.toUri
 import com.superwall.sdk.paywall.presentation.register
@@ -72,6 +83,8 @@ import com.superwall.sdk.paywall.presentation.result.PresentationResult
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.fromPigeon
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.toPigeon
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.collectLatest
 
 class SuperwallHost(
@@ -87,6 +100,7 @@ class SuperwallHost(
     private val mainScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
     private var latestStreamJob: Job? = null
+    private val inAppPurchaseQuery = InAppPurchaseQuery(context)
     override fun configure(
         apiKey: String,
         purchaseController: PPurchaseControllerHost?,
@@ -419,6 +433,64 @@ class SuperwallHost(
         }
     }
 
+    override fun getProducts(
+        productIds: List<String>,
+        callback: (Result<List<PStoreProduct>>) -> Unit
+    ) {
+        ioScope.launch {
+            val ids = productIds.distinct()
+            if (ids.isEmpty()) {
+                callback(Result.success(emptyList()))
+                return@launch
+            }
+            val result = Superwall.instance.getProducts(*ids.toTypedArray()).fold(
+                onSuccess = { Result.success(it) },
+                onFailure = { batchError ->
+                    // An identifier the store previously failed to return fails the whole batch,
+                    // so retry each identifier on its own and omit the unknown ones.
+                    val individual = ids.map { id ->
+                        async { Superwall.instance.getProducts(id) }
+                    }.awaitAll()
+                    val found = individual.mapNotNull { it.getOrNull() }
+                        .fold(emptyMap<String, StoreProduct>()) { acc, map -> acc + map }
+                    if (found.isEmpty() && batchError.isBillingError()) {
+                        Result.failure(batchError)
+                    } else {
+                        Result.success(found)
+                    }
+                }
+            ).map { productsById ->
+                ids.mapNotNull { productsById[it]?.pigeonify() }
+            }
+            callback(result)
+        }
+    }
+
+    override fun purchase(productId: String, callback: (Result<PPurchaseResult>) -> Unit) {
+        ioScope.launch {
+            val result = Superwall.instance.purchase(productId).fold(
+                onSuccess = {
+                    when (it) {
+                        is PurchaseResult.Purchased -> PPurchasePurchased()
+                        is PurchaseResult.Cancelled -> PPurchaseCancelled()
+                        is PurchaseResult.Pending -> PPurchasePending()
+                        is PurchaseResult.Failed -> PPurchaseFailed(it.errorMessage)
+                    }
+                },
+                onFailure = {
+                    PPurchaseFailed(it.localizedMessage ?: it.toString())
+                }
+            )
+            callback(Result.success(result))
+        }
+    }
+
+    override fun queryInAppPurchases(callback: (Result<List<POwnedInAppPurchase>>) -> Unit) {
+        ioScope.launch {
+            callback(runCatching { inAppPurchaseQuery.queryPurchased() })
+        }
+    }
+
     override fun onListen(p0: Any?, sink: PigeonEventSink<PSubscriptionStatus>) {
         latestStreamJob = ioScope.launch {
             Superwall.instance.subscriptionStatus.collectLatest {
@@ -447,6 +519,9 @@ class SuperwallHost(
         }
     }
 }
+
+private fun Throwable.isBillingError(): Boolean =
+    generateSequence(this) { it.cause }.any { it is BillingError }
 
 // MARK: - PIntegrationAttribute Extension
 fun PIntegrationAttribute.toAttributeKey(): String {

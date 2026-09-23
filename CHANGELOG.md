@@ -7,6 +7,10 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 ### Enhancements
 - Updates Android SDK to 2.8.4 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.8.4).
 - Updates iOS SDK to 4.17.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.17.0).
+- Adds `Superwall.shared.getProducts(productIds)` to fetch `StoreProduct`s (including price, localized price and currency code) outside of a paywall. Unknown identifiers are omitted.
+- Adds `Superwall.shared.purchase(productId)` to purchase a product through Superwall outside of a paywall, returning the native `PurchaseResult`. Purchase controller and observer mode behavior matches the native SDKs.
+- Adds Android-only `Superwall.shared.queryInAppPurchases()`, returning owned one-time purchases in the `PURCHASED` state with their product IDs and purchase tokens, so the benefit can be granted before calling `consume()`.
+
 
 ### ⚠️ Android: Google Play Billing Library 9 migration
 
