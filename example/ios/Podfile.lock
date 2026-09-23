@@ -1,58 +1,15 @@
 PODS:
-  - app_links (0.0.2):
-    - Flutter
   - Flutter (1.0.0)
-  - integration_test (0.0.1):
-    - Flutter
-  - purchases_flutter (9.8.0):
-    - Flutter
-    - PurchasesHybridCommon (= 17.10.0)
-  - PurchasesHybridCommon (17.10.0):
-    - RevenueCat (= 5.43.0)
-  - RevenueCat (5.43.0)
-  - Superscript (1.0.13)
-  - SuperwallKit (4.14.2):
-    - Superscript (= 1.0.13)
-  - superwallkit_flutter (0.0.1):
-    - Flutter
-    - SuperwallKit (= 4.14.2)
 
 DEPENDENCIES:
-  - app_links (from `.symlinks/plugins/app_links/ios`)
   - Flutter (from `Flutter`)
-  - integration_test (from `.symlinks/plugins/integration_test/ios`)
-  - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
-  - superwallkit_flutter (from `.symlinks/plugins/superwallkit_flutter/ios`)
-
-SPEC REPOS:
-  trunk:
-    - PurchasesHybridCommon
-    - RevenueCat
-    - Superscript
-    - SuperwallKit
 
 EXTERNAL SOURCES:
-  app_links:
-    :path: ".symlinks/plugins/app_links/ios"
   Flutter:
     :path: Flutter
-  integration_test:
-    :path: ".symlinks/plugins/integration_test/ios"
-  purchases_flutter:
-    :path: ".symlinks/plugins/purchases_flutter/ios"
-  superwallkit_flutter:
-    :path: ".symlinks/plugins/superwallkit_flutter/ios"
 
 SPEC CHECKSUMS:
-  app_links: 76b66b60cc809390ca1ad69bfd66b998d2387ac7
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  purchases_flutter: a5cdfe4efd74e1beb23a069d02f960efdbf327dd
-  PurchasesHybridCommon: b7b4eafb55fbaaac19b4c36d4082657a3f0d8490
-  RevenueCat: a51003d4cb33820cc504cf177c627832b462a98e
-  Superscript: bcb4099b41bed108ab7e88cfc56af0ed1170b582
-  SuperwallKit: 2db74ff2a15a1ea5771ae222dc164e6f33a8d241
-  superwallkit_flutter: fb64ed024ae3cadcd1a8b151eda2769e9a077b44
 
 PODFILE CHECKSUM: 1959d098c91d8a792531a723c4a9d7e9f6a01e38
 

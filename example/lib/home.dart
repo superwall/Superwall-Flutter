@@ -63,6 +63,13 @@ class Home extends StatelessWidget {
                 },
               ),
               ElevatedButton(
+                // Fetch products, purchase and query in-app purchases.
+                child: Text('Products Test'),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/productsTest');
+                },
+              ),
+              ElevatedButton(
                 // Identify action.
                 child: Text('Identify'),
                 onPressed: () {

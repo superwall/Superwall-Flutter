@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import 'MySuperwallDelegate.dart';
 import 'RCPurchaseController.dart';
+import 'ProductsTest.dart';
 import 'home.dart';
 import 'launchedFeature.dart';
 
@@ -327,6 +328,8 @@ class _MyAppState extends State<MyApp> {
           '/': (context) => Home(),
           // LaunchedFeature route receives a string argument.
           '/launchedFeature': (context) => LaunchedFeature(),
+          // Fetch products, purchase, and query in-app purchases outside a paywall.
+          '/productsTest': (context) => ProductsTest(),
         },
       );
 }
