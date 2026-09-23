@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
@@ -161,6 +162,50 @@ void main() {
       expect(assignments, isNotNull);
 
       expect(assignments, isA<Set>());
+    });
+
+    testWidgets('getProducts omits unknown product identifiers',
+        (WidgetTester tester) async {
+      final products = await Superwall.shared.getProducts([
+        'com.superwall.does_not_exist_${DateTime.now().millisecondsSinceEpoch}'
+      ]);
+
+      expect(products, isA<List<StoreProduct>>());
+      expect(products, isEmpty);
+    });
+
+    testWidgets('getProducts returns store products in requested order',
+        (WidgetTester tester) async {
+      // Requires a device with a signed-in store account; ids match the
+      // Products Test screen defaults for each platform.
+      final ids = defaultTargetPlatform == TargetPlatform.iOS
+          ? ['superwall_pro_3999', 'superwall_diamond_8999']
+          : ['com.ui_tests.quarterly2', 'com.ui_tests.monthly'];
+
+      final products = await Superwall.shared.getProducts(ids);
+
+      expect(products, isNotEmpty);
+      final returnedIds = products.map((p) => p.productIdentifier).toList();
+      expect(returnedIds, ids.where(returnedIds.contains).toList());
+      for (final product in products) {
+        expect(product.localizedPrice, isNotEmpty);
+      }
+    });
+
+    testWidgets('queryInAppPurchases is Android only',
+        (WidgetTester tester) async {
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        final purchases = await Superwall.shared.queryInAppPurchases();
+
+        expect(purchases, isA<List<OwnedInAppPurchase>>());
+        for (final purchase in purchases) {
+          expect(purchase.productIds, isNotEmpty);
+          expect(purchase.purchaseToken, isNotEmpty);
+        }
+      } else {
+        expect(() => Superwall.shared.queryInAppPurchases(),
+            throwsA(isA<UnsupportedError>()));
+      }
     });
   });
 }

@@ -375,6 +375,51 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
       completion(.success(purchaseToken))
     }
   }
+
+  func getProducts(productIds: [String], completion: @escaping (Result<[PStoreProduct], Error>) -> Void) {
+    Task {
+      let products = await Superwall.shared.products(for: Set(productIds))
+      let productsById = Dictionary(
+        products.map { ($0.productIdentifier, $0) },
+        uniquingKeysWith: { first, _ in first }
+      )
+      // Preserve the requested order and omit identifiers the store didn't return.
+      var seen = Set<String>()
+      let result = productIds
+        .filter { seen.insert($0).inserted }
+        .compactMap { productsById[$0]?.pigeonify() }
+      completion(.success(result))
+    }
+  }
+
+  func purchase(productId: String, completion: @escaping (Result<any PPurchaseResult, Error>) -> Void) {
+    Task {
+      let products = await Superwall.shared.products(for: [productId])
+      guard let product = products.first(where: { $0.productIdentifier == productId }) else {
+        completion(.success(PPurchaseFailed(error: "Product with id \(productId) not found")))
+        return
+      }
+      let result = await Superwall.shared.purchase(product)
+      switch result {
+      case .purchased:
+        completion(.success(PPurchasePurchased()))
+      case .cancelled:
+        completion(.success(PPurchaseCancelled()))
+      case .pending:
+        completion(.success(PPurchasePending()))
+      case .failed(let error):
+        completion(.success(PPurchaseFailed(error: error.localizedDescription)))
+      }
+    }
+  }
+
+  func queryInAppPurchases(completion: @escaping (Result<[POwnedInAppPurchase], Error>) -> Void) {
+    completion(.failure(PigeonError(
+      code: "unsupported",
+      message: "queryInAppPurchases is only available on Android.",
+      details: nil
+    )))
+  }
 }
 
 final class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamHandler {

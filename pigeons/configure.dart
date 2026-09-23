@@ -636,6 +636,19 @@ class PStoreProduct {
       this.price);
 }
 
+// A one-time (INAPP) Google Play purchase that is currently owned by the user.
+class POwnedInAppPurchase {
+  List<String> productIds;
+  String purchaseToken;
+  String? orderId;
+  int purchaseTime;
+  int quantity;
+  bool isAcknowledged;
+
+  POwnedInAppPurchase(this.productIds, this.purchaseToken, this.orderId,
+      this.purchaseTime, this.quantity, this.isAcknowledged);
+}
+
 class PPaywallOptions {
   bool? isHapticFeedbackEnabled;
   PRestoreFailed? restoreFailed;
@@ -1423,6 +1436,17 @@ abstract class PSuperwallHostApi {
 
   @async
   String consume(String purchaseToken);
+
+  // Products & purchasing outside of a paywall
+  @async
+  List<PStoreProduct> getProducts(List<String> productIds);
+
+  @async
+  PPurchaseResult purchase(String productId);
+
+  // Android only: owned one-time products in the PURCHASED state.
+  @async
+  List<POwnedInAppPurchase> queryInAppPurchases();
 
   // Locale methods
   String? getLocaleIdentifier();

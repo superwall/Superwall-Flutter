@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/widgets.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
@@ -551,6 +553,45 @@ class Superwall {
 
   Future<String> consume(String purchaseToken) async {
     return await hostApi.consume(purchaseToken);
+  }
+
+  /// Fetches the [StoreProduct]s for the given product identifiers.
+  ///
+  /// Products are returned in the order requested. Identifiers the store
+  /// doesn't recognize are omitted from the result.
+  Future<List<StoreProduct>> getProducts(List<String> productIds) async {
+    final products = await hostApi.getProducts(productIds);
+    return products.map(StoreProduct.fromPigeon).toList();
+  }
+
+  /// Purchases the product with the given identifier outside of a paywall.
+  ///
+  /// The purchase goes through Superwall, which uses your [PurchaseController]
+  /// if one was provided when configuring, and returns the resulting
+  /// [PurchaseResult]. If the product can't be found or the purchase fails,
+  /// a [PurchaseResultFailed] with the error is returned.
+  ///
+  /// On iOS, this returns [PurchaseResultCancelled] when
+  /// `SuperwallOptions.shouldObservePurchases` is enabled, matching the native SDK.
+  Future<PurchaseResult> purchase(String productId) async {
+    final result = await hostApi.purchase(productId);
+    return PurchaseResult.fromPPurchaseResult(result);
+  }
+
+  /// Android only. Returns the one-time (in-app) products the user currently
+  /// owns in the `PURCHASED` state, as reported by Google Play Billing.
+  ///
+  /// Use this to find consumables that still need to be granted, then call
+  /// [consume] with each [OwnedInAppPurchase.purchaseToken] once the benefit
+  /// has been granted.
+  ///
+  /// Throws an [UnsupportedError] on other platforms.
+  Future<List<OwnedInAppPurchase>> queryInAppPurchases() async {
+    if (defaultTargetPlatform != TargetPlatform.android) {
+      throw UnsupportedError('queryInAppPurchases is only available on Android.');
+    }
+    final purchases = await hostApi.queryInAppPurchases();
+    return purchases.map(OwnedInAppPurchase.fromPigeon).toList();
   }
 
   // Set override products by name globally across all paywalls
