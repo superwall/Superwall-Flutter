@@ -2,6 +2,44 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.6.0
+
+### Enhancements
+- Updates Android SDK to 2.8.4 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.8.4).
+- Updates iOS SDK to 4.17.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.17.0).
+
+### ⚠️ Android: Google Play Billing Library 9 migration
+
+This release moves the Android SDK from 2.7.x to 2.8.x, which updates the Google Play Billing Library from 8.0.0 to 9.1.0. See the [Play Billing Library 9 migration guide](https://developer.android.com/google/play/billing/migrate-gpblv9) for the full list of changes. The notes below are copied from the [Android SDK 2.8.0 release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.8.0).
+
+- **Impact:** if your app still calls the removed Billing Library APIs (`SkuDetails`, `SkuDetailsParams`, `querySkuDetailsAsync`, `queryPurchaseHistoryAsync`, `BillingClient.SkuType`, or the no-arg `enablePendingPurchases()`), it will no longer compile once it picks up Billing 9 through this SDK. Migrate those call sites to the `ProductDetails` APIs before upgrading; the [migration guide](https://developer.android.com/google/play/billing/migrate-gpblv9) has a mapping of every removed API to its replacement.
+- **Please test your billing and purchasing flows before shipping this upgrade.** Because the Billing Library is resolved to a single version across your app, upgrading Superwall also upgrades Billing for everything else that depends on it. If you use Google Play Billing directly, or another subscription provider such as RevenueCat, Adapty or Purchasely, make sure that provider's SDK supports Billing 9 and run through purchase, restore and subscription-status flows end to end.
+- **If you use other subscription management libraries (RevenueCat, Purchasely, Adapty) and they do not support Play Billing 9:** you can pin the Billing Client version to 8 in the following way.
+
+  Add this to your app module's `android/app/build.gradle.kts`, outside the `android { }` block:
+
+  ```kotlin
+  configurations.all {
+      resolutionStrategy.force("com.android.billingclient:billing:8.3.0")
+  }
+  ```
+
+  Or in Groovy (`android/app/build.gradle`):
+
+  ```groovy
+  configurations.all {
+      resolutionStrategy.force 'com.android.billingclient:billing:8.3.0'
+  }
+  ```
+
+  You can confirm which version you end up with via `./gradlew :app:dependencies --configuration releaseRuntimeClasspath` (run from your `android/` directory) — look for `com.android.billingclient:billing:9.1.0 -> 8.3.0`. Billing 8 still satisfies Google's August 31, 2026 requirement, so this is a safe interim state, and no Superwall functionality is lost: the SDK works on both 8.x and 9.x.
+
+  Note that a `-dontwarn com.android.billingclient.api.QueryPurchaseHistoryParams` ProGuard rule is **not** a fix. It silences the R8 error and lets the build through, but then throws at runtime.
+- Billing Library 9 requires Android 6.0 (API 23). This plugin already requires `minSdkVersion 26`, so no change is needed on the Flutter side.
+
+### Behavior Changes
+- Android: system back presses are now forwarded into the paywall as a `back_button_input` message instead of dismissing it directly. Multi-page paywalls navigate back one page, and paywalls with nowhere to go back (root page, single page) close through the standard manual-close path, so single-page paywalls dismiss the same as before. When `reroute_back_button` is enabled in Paywall settings, the `PaywallOptions.onBackPressed` callback keeps first refusal before the press is forwarded. Paywalls built on runtimes that predate `back_button_input` ignore the press until republished.
+
 ## 2.5.0
 
 ### Enhancements
