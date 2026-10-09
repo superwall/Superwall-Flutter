@@ -420,6 +420,26 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
       details: nil
     )))
   }
+
+  func presentCustomerCenter(
+    configuration: PCustomerCenterConfiguration?,
+    delegate: PCustomerCenterDelegateHost?,
+    completion: @escaping (Result<Void, Error>) -> Void
+  ) {
+    completion(.failure(PigeonError(
+      code: "unsupported",
+      message: "presentCustomerCenter is only available on Android.",
+      details: nil
+    )))
+  }
+
+  func dismissCustomerCenter(completion: @escaping (Result<Void, Error>) -> Void) {
+    completion(.failure(PigeonError(
+      code: "unsupported",
+      message: "dismissCustomerCenter is only available on Android.",
+      details: nil
+    )))
+  }
 }
 
 final class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamHandler {

@@ -5,6 +5,9 @@ import PConfigurationStatus
 import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
+import PCustomerCenterConfiguration
+import PCustomerCenterDelegateGenerated
+import PCustomerCenterDelegateHost
 import PCustomerInfo
 import PEntitlement
 import PExperiment
@@ -71,6 +74,7 @@ import toJson
 import androidx.core.net.toUri
 import com.superwall.sdk.paywall.presentation.register
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
+import com.superwall.superwallkit_flutter.utils.CustomerCenterMapper.toSdk
 import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
 import android.util.Log
@@ -416,6 +420,38 @@ class SuperwallHost(
     override fun dismiss() {
         ioScope.launch {
             Superwall.instance.dismiss()
+        }
+    }
+
+    override fun presentCustomerCenter(
+        configuration: PCustomerCenterConfiguration?,
+        delegate: PCustomerCenterDelegateHost?,
+        callback: (Result<Unit>) -> Unit
+    ) {
+        val host = delegate?.let {
+            CustomerCenterDelegateHost(
+                PCustomerCenterDelegateGenerated(binaryMessenger(), it.hostId ?: "")
+            )
+        }
+        mainScope.launch {
+            val result = runCatching {
+                Superwall.instance.presentCustomerCenter(
+                    configuration = configuration?.toSdk(),
+                    delegate = host,
+                    onDismiss = host?.let { { it.onDismiss() } },
+                )
+            }
+            callback(result)
+        }
+    }
+
+    override fun dismissCustomerCenter(callback: (Result<Unit>) -> Unit) {
+        mainScope.launch {
+            try {
+                Superwall.instance.dismissCustomerCenter { callback(Result.success(Unit)) }
+            } catch (e: Throwable) {
+                callback(Result.failure(e))
+            }
         }
     }
 

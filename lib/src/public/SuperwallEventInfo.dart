@@ -98,7 +98,28 @@ enum EventType {
   reviewRequested,
   permissionRequested,
   permissionGranted,
-  permissionDenied
+  permissionDenied,
+
+  /// Android only. The Customer Center was presented. `params` include
+  /// `screen` (`management` or `no_purchases`).
+  customerCenterOpen,
+
+  /// Android only. The Customer Center was dismissed.
+  customerCenterClose,
+
+  /// Android only. The user tapped a path in the Customer Center. `params`
+  /// include `action`, `path_id` and, when relevant, `product_id`, `url` and
+  /// `custom_identifier`.
+  customerCenterAction,
+
+  /// Android only. The user answered a Customer Center survey. `params`
+  /// include `survey_id`, `option_id`, `action`, `path_id` and, when
+  /// relevant, `product_id`.
+  customerCenterSurveyResponse,
+
+  /// Android only. A refund request started from the Customer Center
+  /// completed. `params` include `product_id` and `status`.
+  customerCenterRefundRequest
 }
 
 class SuperwallEvent {
@@ -373,6 +394,21 @@ class SuperwallEvent {
         break;
       case PEventType.permissionDenied:
         type = EventType.permissionDenied;
+        break;
+      case PEventType.customerCenterOpen:
+        type = EventType.customerCenterOpen;
+        break;
+      case PEventType.customerCenterClose:
+        type = EventType.customerCenterClose;
+        break;
+      case PEventType.customerCenterAction:
+        type = EventType.customerCenterAction;
+        break;
+      case PEventType.customerCenterSurveyResponse:
+        type = EventType.customerCenterSurveyResponse;
+        break;
+      case PEventType.customerCenterRefundRequest:
+        type = EventType.customerCenterRefundRequest;
     }
 
     return SuperwallEvent._(
