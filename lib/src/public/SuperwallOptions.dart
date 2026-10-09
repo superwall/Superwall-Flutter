@@ -47,6 +47,12 @@ class SuperwallOptions {
   /// Enable mock review functionality. Defaults to `false`.
   /// Android only.
   bool useMockReviews = false;
+
+  /// Configures the Customer Center presented via
+  /// `Superwall.shared.presentCustomerCenter()`. `null` (the default) uses
+  /// [CustomerCenterConfiguration.defaultConfiguration].
+  /// Android only.
+  CustomerCenterConfiguration? customerCenter;
 }
 
 extension SuperwallOptionsJson on SuperwallOptions {

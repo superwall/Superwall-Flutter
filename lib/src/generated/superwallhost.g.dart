@@ -119,6 +119,19 @@ enum PSurveyShowCondition {
   onPurchase,
 }
 
+/// How a URL path in the Customer Center opens.
+enum PCustomerCenterOpenMethod {
+  inApp,
+  external,
+}
+
+/// Outcome of a refund request made from the Customer Center.
+enum PCustomerCenterRefundStatus {
+  success,
+  userCancelled,
+  error,
+}
+
 /// The result status of a custom callback.
 enum PCustomCallbackResultStatus {
   success,
@@ -327,6 +340,11 @@ enum PEventType {
   permissionRequested,
   permissionGranted,
   permissionDenied,
+  customerCenterOpen,
+  customerCenterClose,
+  customerCenterAction,
+  customerCenterSurveyResponse,
+  customerCenterRefundRequest,
 }
 
 enum PSubscriptionStatusType {
@@ -1100,6 +1118,7 @@ class PSuperwallOptions {
     this.shouldBypassAppTransactionCheck,
     this.maxConfigRetryCount,
     this.useMockReviews,
+    this.customerCenter,
   });
 
   PPaywallOptions? paywalls;
@@ -1137,6 +1156,10 @@ class PSuperwallOptions {
   /// Android only.
   bool? useMockReviews;
 
+  /// Configures the Customer Center. `null` uses the native default.
+  /// Android only.
+  PCustomerCenterConfiguration? customerCenter;
+
   List<Object?> _toList() {
     return <Object?>[
       paywalls,
@@ -1152,6 +1175,7 @@ class PSuperwallOptions {
       shouldBypassAppTransactionCheck,
       maxConfigRetryCount,
       useMockReviews,
+      customerCenter,
     ];
   }
 
@@ -1174,6 +1198,7 @@ class PSuperwallOptions {
       shouldBypassAppTransactionCheck: result[10] as bool?,
       maxConfigRetryCount: result[11] as int?,
       useMockReviews: result[12] as bool?,
+      customerCenter: result[13] as PCustomerCenterConfiguration?,
     );
   }
 
@@ -2804,6 +2829,1068 @@ class PFeatureHandlerHost {
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
     if (other is! PFeatureHandlerHost || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+sealed class PCustomerCenterPathType {
+}
+
+class PCustomerCenterRestorePathType extends PCustomerCenterPathType {
+  PCustomerCenterRestorePathType({
+    this.ignore,
+  });
+
+  bool? ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterRestorePathType decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterRestorePathType(
+      ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterRestorePathType || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterManageSubscriptionPathType extends PCustomerCenterPathType {
+  PCustomerCenterManageSubscriptionPathType({
+    this.ignore,
+  });
+
+  bool? ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterManageSubscriptionPathType decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterManageSubscriptionPathType(
+      ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterManageSubscriptionPathType || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterRefundPathType extends PCustomerCenterPathType {
+  PCustomerCenterRefundPathType({
+    this.windowMillis,
+  });
+
+  int? windowMillis;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      windowMillis,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterRefundPathType decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterRefundPathType(
+      windowMillis: result[0] as int?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterRefundPathType || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterChangePlanPathType extends PCustomerCenterPathType {
+  PCustomerCenterChangePlanPathType({
+    this.productIds,
+  });
+
+  List<String>? productIds;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      productIds,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterChangePlanPathType decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterChangePlanPathType(
+      productIds: (result[0] as List<Object?>?)?.cast<String>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterChangePlanPathType || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterContactSupportPathType extends PCustomerCenterPathType {
+  PCustomerCenterContactSupportPathType({
+    this.ignore,
+  });
+
+  bool? ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterContactSupportPathType decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterContactSupportPathType(
+      ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterContactSupportPathType || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterUrlPathType extends PCustomerCenterPathType {
+  PCustomerCenterUrlPathType({
+    required this.url,
+    required this.openMethod,
+  });
+
+  String url;
+
+  PCustomerCenterOpenMethod openMethod;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      url,
+      openMethod,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterUrlPathType decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterUrlPathType(
+      url: result[0]! as String,
+      openMethod: result[1]! as PCustomerCenterOpenMethod,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterUrlPathType || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterCustomPathType extends PCustomerCenterPathType {
+  PCustomerCenterCustomPathType({
+    required this.identifier,
+  });
+
+  String identifier;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      identifier,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterCustomPathType decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterCustomPathType(
+      identifier: result[0]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterCustomPathType || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterSurveyOption {
+  PCustomerCenterSurveyOption({
+    required this.id,
+    this.title,
+  });
+
+  String id;
+
+  String? title;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      title,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterSurveyOption decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterSurveyOption(
+      id: result[0]! as String,
+      title: result[1] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterSurveyOption || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterSurvey {
+  PCustomerCenterSurvey({
+    required this.id,
+    this.title,
+    required this.options,
+  });
+
+  String id;
+
+  String? title;
+
+  List<PCustomerCenterSurveyOption> options;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      title,
+      options,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterSurvey decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterSurvey(
+      id: result[0]! as String,
+      title: result[1] as String?,
+      options: (result[2]! as List<Object?>).cast<PCustomerCenterSurveyOption>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterSurvey || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterPath {
+  PCustomerCenterPath({
+    required this.type,
+    this.title,
+    this.survey,
+    this.id,
+  });
+
+  PCustomerCenterPathType type;
+
+  String? title;
+
+  PCustomerCenterSurvey? survey;
+
+  /// `null` uses the native default ID for [type].
+  String? id;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      type,
+      title,
+      survey,
+      id,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterPath decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterPath(
+      type: result[0]! as PCustomerCenterPathType,
+      title: result[1] as String?,
+      survey: result[2] as PCustomerCenterSurvey?,
+      id: result[3] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterPath || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterScreen {
+  PCustomerCenterScreen({
+    this.title,
+    this.subtitle,
+    required this.paths,
+  });
+
+  String? title;
+
+  String? subtitle;
+
+  List<PCustomerCenterPath> paths;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      title,
+      subtitle,
+      paths,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterScreen decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterScreen(
+      title: result[0] as String?,
+      subtitle: result[1] as String?,
+      paths: (result[2]! as List<Object?>).cast<PCustomerCenterPath>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterScreen || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterSupport {
+  PCustomerCenterSupport({
+    this.email,
+    this.latestAppVersion,
+    required this.warnsAboutUpdates,
+    this.webManagementUrl,
+  });
+
+  String? email;
+
+  String? latestAppVersion;
+
+  bool warnsAboutUpdates;
+
+  String? webManagementUrl;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      email,
+      latestAppVersion,
+      warnsAboutUpdates,
+      webManagementUrl,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterSupport decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterSupport(
+      email: result[0] as String?,
+      latestAppVersion: result[1] as String?,
+      warnsAboutUpdates: result[2]! as bool,
+      webManagementUrl: result[3] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterSupport || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterColorPair {
+  PCustomerCenterColorPair({
+    required this.light,
+    required this.dark,
+  });
+
+  String light;
+
+  String dark;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      light,
+      dark,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterColorPair decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterColorPair(
+      light: result[0]! as String,
+      dark: result[1]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterColorPair || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterConfiguration {
+  PCustomerCenterConfiguration({
+    required this.managementScreen,
+    required this.noPurchasesScreen,
+    required this.support,
+    this.accent,
+    required this.showsAccountDetails,
+    required this.warnsAboutDuplicateSubscriptions,
+  });
+
+  PCustomerCenterScreen managementScreen;
+
+  PCustomerCenterScreen noPurchasesScreen;
+
+  PCustomerCenterSupport support;
+
+  PCustomerCenterColorPair? accent;
+
+  bool showsAccountDetails;
+
+  bool warnsAboutDuplicateSubscriptions;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      managementScreen,
+      noPurchasesScreen,
+      support,
+      accent,
+      showsAccountDetails,
+      warnsAboutDuplicateSubscriptions,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterConfiguration decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterConfiguration(
+      managementScreen: result[0]! as PCustomerCenterScreen,
+      noPurchasesScreen: result[1]! as PCustomerCenterScreen,
+      support: result[2]! as PCustomerCenterSupport,
+      accent: result[3] as PCustomerCenterColorPair?,
+      showsAccountDetails: result[4]! as bool,
+      warnsAboutDuplicateSubscriptions: result[5]! as bool,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterConfiguration || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// An action the user selected in the Customer Center.
+sealed class PCustomerCenterAction {
+}
+
+class PCustomerCenterRestoreAction extends PCustomerCenterAction {
+  PCustomerCenterRestoreAction({
+    this.ignore,
+  });
+
+  bool? ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterRestoreAction decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterRestoreAction(
+      ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterRestoreAction || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterManageSubscriptionAction extends PCustomerCenterAction {
+  PCustomerCenterManageSubscriptionAction({
+    this.ignore,
+  });
+
+  bool? ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterManageSubscriptionAction decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterManageSubscriptionAction(
+      ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterManageSubscriptionAction || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterRefundAction extends PCustomerCenterAction {
+  PCustomerCenterRefundAction({
+    this.ignore,
+  });
+
+  bool? ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterRefundAction decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterRefundAction(
+      ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterRefundAction || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterChangePlanAction extends PCustomerCenterAction {
+  PCustomerCenterChangePlanAction({
+    this.ignore,
+  });
+
+  bool? ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterChangePlanAction decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterChangePlanAction(
+      ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterChangePlanAction || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterContactSupportAction extends PCustomerCenterAction {
+  PCustomerCenterContactSupportAction({
+    this.ignore,
+  });
+
+  bool? ignore;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      ignore,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterContactSupportAction decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterContactSupportAction(
+      ignore: result[0] as bool?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterContactSupportAction || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterUrlAction extends PCustomerCenterAction {
+  PCustomerCenterUrlAction({
+    required this.url,
+  });
+
+  String url;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      url,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterUrlAction decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterUrlAction(
+      url: result[0]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterUrlAction || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterCustomAction extends PCustomerCenterAction {
+  PCustomerCenterCustomAction({
+    required this.identifier,
+  });
+
+  String identifier;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      identifier,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterCustomAction decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterCustomAction(
+      identifier: result[0]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterCustomAction || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// The purchase a Customer Center action applies to.
+class PCustomerCenterPurchase {
+  PCustomerCenterPurchase({
+    this.productId,
+    required this.store,
+    required this.entitlements,
+    this.subscription,
+    this.nonSubscription,
+  });
+
+  String? productId;
+
+  PProductStore store;
+
+  List<PEntitlement> entitlements;
+
+  PSubscriptionTransaction? subscription;
+
+  PNonSubscriptionTransaction? nonSubscription;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      productId,
+      store,
+      entitlements,
+      subscription,
+      nonSubscription,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterPurchase decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterPurchase(
+      productId: result[0] as String?,
+      store: result[1]! as PProductStore,
+      entitlements: (result[2]! as List<Object?>).cast<PEntitlement>(),
+      subscription: result[3] as PSubscriptionTransaction?,
+      nonSubscription: result[4] as PNonSubscriptionTransaction?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterPurchase || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+class PCustomerCenterDelegateHost {
+  PCustomerCenterDelegateHost({
+    this.hostId,
+  });
+
+  String? hostId;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      hostId,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PCustomerCenterDelegateHost decode(Object result) {
+    result as List<Object?>;
+    return PCustomerCenterDelegateHost(
+      hostId: result[0] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PCustomerCenterDelegateHost || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -4756,287 +5843,362 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PSurveyShowCondition) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is PCustomCallbackResultStatus) {
+    }    else if (value is PCustomerCenterOpenMethod) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    }    else if (value is PProductStore) {
+    }    else if (value is PCustomerCenterRefundStatus) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    }    else if (value is PEntitlementType) {
+    }    else if (value is PCustomCallbackResultStatus) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    }    else if (value is PLatestSubscriptionState) {
+    }    else if (value is PProductStore) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    }    else if (value is PLatestSubscriptionOfferType) {
+    }    else if (value is PEntitlementType) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
-    }    else if (value is PIntegrationAttribute) {
+    }    else if (value is PLatestSubscriptionState) {
       buffer.putUint8(140);
       writeValue(buffer, value.index);
-    }    else if (value is PNetworkEnvironment) {
+    }    else if (value is PLatestSubscriptionOfferType) {
       buffer.putUint8(141);
       writeValue(buffer, value.index);
-    }    else if (value is PLogLevel) {
+    }    else if (value is PIntegrationAttribute) {
       buffer.putUint8(142);
       writeValue(buffer, value.index);
-    }    else if (value is PTransactionBackgroundView) {
+    }    else if (value is PNetworkEnvironment) {
       buffer.putUint8(143);
       writeValue(buffer, value.index);
-    }    else if (value is PLogScope) {
+    }    else if (value is PLogLevel) {
       buffer.putUint8(144);
       writeValue(buffer, value.index);
-    }    else if (value is PConfigurationStatus) {
+    }    else if (value is PTransactionBackgroundView) {
       buffer.putUint8(145);
       writeValue(buffer, value.index);
-    }    else if (value is PEventType) {
+    }    else if (value is PLogScope) {
       buffer.putUint8(146);
       writeValue(buffer, value.index);
-    }    else if (value is PSubscriptionStatusType) {
+    }    else if (value is PConfigurationStatus) {
       buffer.putUint8(147);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallPresentationRequestStatusType) {
+    }    else if (value is PEventType) {
       buffer.putUint8(148);
       writeValue(buffer, value.index);
-    }    else if (value is PVariantType) {
+    }    else if (value is PSubscriptionStatusType) {
       buffer.putUint8(149);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallSkippedReason) {
+    }    else if (value is PPaywallPresentationRequestStatusType) {
       buffer.putUint8(150);
       writeValue(buffer, value.index);
-    }    else if (value is PSuccessRedemptionResult) {
+    }    else if (value is PVariantType) {
       buffer.putUint8(151);
-      writeValue(buffer, value.encode());
-    }    else if (value is PErrorRedemptionResult) {
+      writeValue(buffer, value.index);
+    }    else if (value is PPaywallSkippedReason) {
       buffer.putUint8(152);
-      writeValue(buffer, value.encode());
-    }    else if (value is PErrorInfo) {
+      writeValue(buffer, value.index);
+    }    else if (value is PSuccessRedemptionResult) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    }    else if (value is PExpiredCodeRedemptionResult) {
+    }    else if (value is PErrorRedemptionResult) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is PExpiredCodeInfo) {
+    }    else if (value is PErrorInfo) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    }    else if (value is PInvalidCodeRedemptionResult) {
+    }    else if (value is PExpiredCodeRedemptionResult) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    }    else if (value is PExpiredSubscriptionCode) {
+    }    else if (value is PExpiredCodeInfo) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    }    else if (value is PRedemptionInfo) {
+    }    else if (value is PInvalidCodeRedemptionResult) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    }    else if (value is PAppUserOwnership) {
+    }    else if (value is PExpiredSubscriptionCode) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    }    else if (value is PDeviceOwnership) {
+    }    else if (value is PRedemptionInfo) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaserInfo) {
+    }    else if (value is PAppUserOwnership) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    }    else if (value is PStripeStoreIdentifiers) {
+    }    else if (value is PDeviceOwnership) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaddleStoreIdentifiers) {
+    }    else if (value is PPurchaserInfo) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknownStoreIdentifiers) {
+    }    else if (value is PStripeStoreIdentifiers) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    }    else if (value is PRedemptionPaywallInfo) {
+    }    else if (value is PPaddleStoreIdentifiers) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallOptions) {
+    }    else if (value is PUnknownStoreIdentifiers) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallInfo) {
+    }    else if (value is PRedemptionPaywallInfo) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    }    else if (value is PProduct) {
+    }    else if (value is PSuperwallOptions) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is PLocalNotification) {
+    }    else if (value is PPaywallInfo) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    }    else if (value is PComputedPropertyRequest) {
+    }    else if (value is PProduct) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurvey) {
+    }    else if (value is PLocalNotification) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurveyOption) {
+    }    else if (value is PComputedPropertyRequest) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseCancelled) {
+    }    else if (value is PSurvey) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePurchased) {
+    }    else if (value is PSurveyOption) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePending) {
+    }    else if (value is PPurchaseCancelled) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseFailed) {
+    }    else if (value is PPurchasePurchased) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationRestored) {
+    }    else if (value is PPurchasePending) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationFailed) {
+    }    else if (value is PPurchaseFailed) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
-    }    else if (value is PViaPurchase) {
+    }    else if (value is PRestorationRestored) {
       buffer.putUint8(179);
       writeValue(buffer, value.encode());
-    }    else if (value is PViaRestore) {
+    }    else if (value is PRestorationFailed) {
       buffer.putUint8(180);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoreFailed) {
+    }    else if (value is PViaPurchase) {
       buffer.putUint8(181);
       writeValue(buffer, value.encode());
-    }    else if (value is PLogging) {
+    }    else if (value is PViaRestore) {
       buffer.putUint8(182);
       writeValue(buffer, value.encode());
-    }    else if (value is PStoreTransaction) {
+    }    else if (value is PRestoreFailed) {
       buffer.putUint8(183);
       writeValue(buffer, value.encode());
-    }    else if (value is PStoreProduct) {
+    }    else if (value is PLogging) {
       buffer.putUint8(184);
       writeValue(buffer, value.encode());
-    }    else if (value is POwnedInAppPurchase) {
+    }    else if (value is PStoreTransaction) {
       buffer.putUint8(185);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallOptions) {
+    }    else if (value is PStoreProduct) {
       buffer.putUint8(186);
       writeValue(buffer, value.encode());
-    }    else if (value is POnBackPressedHost) {
+    }    else if (value is POwnedInAppPurchase) {
       buffer.putUint8(187);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseControllerHost) {
+    }    else if (value is PPaywallOptions) {
       buffer.putUint8(188);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfigureCompletionHost) {
+    }    else if (value is POnBackPressedHost) {
       buffer.putUint8(189);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallPresentationHandlerHost) {
+    }    else if (value is PPurchaseControllerHost) {
       buffer.putUint8(190);
       writeValue(buffer, value.encode());
-    }    else if (value is PFeatureHandlerHost) {
+    }    else if (value is PConfigureCompletionHost) {
       buffer.putUint8(191);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomCallback) {
+    }    else if (value is PPaywallPresentationHandlerHost) {
       buffer.putUint8(192);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomCallbackResult) {
+    }    else if (value is PFeatureHandlerHost) {
       buffer.putUint8(193);
       writeValue(buffer, value.encode());
-    }    else if (value is PSubscriptionTransaction) {
+    }    else if (value is PCustomerCenterRestorePathType) {
       buffer.putUint8(194);
       writeValue(buffer, value.encode());
-    }    else if (value is PNonSubscriptionTransaction) {
+    }    else if (value is PCustomerCenterManageSubscriptionPathType) {
       buffer.putUint8(195);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlement) {
+    }    else if (value is PCustomerCenterRefundPathType) {
       buffer.putUint8(196);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerInfo) {
+    }    else if (value is PCustomerCenterChangePlanPathType) {
       buffer.putUint8(197);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlements) {
+    }    else if (value is PCustomerCenterContactSupportPathType) {
       buffer.putUint8(198);
       writeValue(buffer, value.encode());
-    }    else if (value is PActive) {
+    }    else if (value is PCustomerCenterUrlPathType) {
       buffer.putUint8(199);
       writeValue(buffer, value.encode());
-    }    else if (value is PInactive) {
+    }    else if (value is PCustomerCenterCustomPathType) {
       buffer.putUint8(200);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknown) {
+    }    else if (value is PCustomerCenterSurveyOption) {
       buffer.putUint8(201);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallEventInfo) {
+    }    else if (value is PCustomerCenterSurvey) {
       buffer.putUint8(202);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonDebuggerPresented) {
+    }    else if (value is PCustomerCenterPath) {
       buffer.putUint8(203);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonPaywallAlreadyPresented) {
+    }    else if (value is PCustomerCenterScreen) {
       buffer.putUint8(204);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonHoldout) {
+    }    else if (value is PCustomerCenterSupport) {
       buffer.putUint8(205);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoAudienceMatch) {
+    }    else if (value is PCustomerCenterColorPair) {
       buffer.putUint8(206);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonPlacementNotFound) {
+    }    else if (value is PCustomerCenterConfiguration) {
       buffer.putUint8(207);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoPaywallVc) {
+    }    else if (value is PCustomerCenterRestoreAction) {
       buffer.putUint8(208);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoPresenter) {
+    }    else if (value is PCustomerCenterManageSubscriptionAction) {
       buffer.putUint8(209);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoConfig) {
+    }    else if (value is PCustomerCenterRefundAction) {
       buffer.putUint8(210);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonSubsStatusTimeout) {
+    }    else if (value is PCustomerCenterChangePlanAction) {
       buffer.putUint8(211);
       writeValue(buffer, value.encode());
-    }    else if (value is PIdentityOptions) {
+    }    else if (value is PCustomerCenterContactSupportAction) {
       buffer.putUint8(212);
       writeValue(buffer, value.encode());
-    }    else if (value is PExperiment) {
+    }    else if (value is PCustomerCenterUrlAction) {
       buffer.putUint8(213);
       writeValue(buffer, value.encode());
-    }    else if (value is PPlacementNotFoundTriggerResult) {
+    }    else if (value is PCustomerCenterCustomAction) {
       buffer.putUint8(214);
       writeValue(buffer, value.encode());
-    }    else if (value is PNoAudienceMatchTriggerResult) {
+    }    else if (value is PCustomerCenterPurchase) {
       buffer.putUint8(215);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallTriggerResult) {
+    }    else if (value is PCustomerCenterDelegateHost) {
       buffer.putUint8(216);
       writeValue(buffer, value.encode());
-    }    else if (value is PHoldoutTriggerResult) {
+    }    else if (value is PCustomCallback) {
       buffer.putUint8(217);
       writeValue(buffer, value.encode());
-    }    else if (value is PErrorTriggerResult) {
+    }    else if (value is PCustomCallbackResult) {
       buffer.putUint8(218);
       writeValue(buffer, value.encode());
-    }    else if (value is PVariant) {
+    }    else if (value is PSubscriptionTransaction) {
       buffer.putUint8(219);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfirmedAssignment) {
+    }    else if (value is PNonSubscriptionTransaction) {
       buffer.putUint8(220);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasedPaywallResult) {
+    }    else if (value is PEntitlement) {
       buffer.putUint8(221);
       writeValue(buffer, value.encode());
-    }    else if (value is PDeclinedPaywallResult) {
+    }    else if (value is PCustomerInfo) {
       buffer.putUint8(222);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoredPaywallResult) {
+    }    else if (value is PEntitlements) {
       buffer.putUint8(223);
       writeValue(buffer, value.encode());
-    }    else if (value is PPlacementNotFoundPresentationResult) {
+    }    else if (value is PActive) {
       buffer.putUint8(224);
       writeValue(buffer, value.encode());
-    }    else if (value is PNoAudienceMatchPresentationResult) {
+    }    else if (value is PInactive) {
       buffer.putUint8(225);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallPresentationResult) {
+    }    else if (value is PUnknown) {
       buffer.putUint8(226);
       writeValue(buffer, value.encode());
-    }    else if (value is PHoldoutPresentationResult) {
+    }    else if (value is PSuperwallEventInfo) {
       buffer.putUint8(227);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallNotAvailablePresentationResult) {
+    }    else if (value is PStatusReasonDebuggerPresented) {
       buffer.putUint8(228);
+      writeValue(buffer, value.encode());
+    }    else if (value is PStatusReasonPaywallAlreadyPresented) {
+      buffer.putUint8(229);
+      writeValue(buffer, value.encode());
+    }    else if (value is PStatusReasonHoldout) {
+      buffer.putUint8(230);
+      writeValue(buffer, value.encode());
+    }    else if (value is PStatusReasonNoAudienceMatch) {
+      buffer.putUint8(231);
+      writeValue(buffer, value.encode());
+    }    else if (value is PStatusReasonPlacementNotFound) {
+      buffer.putUint8(232);
+      writeValue(buffer, value.encode());
+    }    else if (value is PStatusReasonNoPaywallVc) {
+      buffer.putUint8(233);
+      writeValue(buffer, value.encode());
+    }    else if (value is PStatusReasonNoPresenter) {
+      buffer.putUint8(234);
+      writeValue(buffer, value.encode());
+    }    else if (value is PStatusReasonNoConfig) {
+      buffer.putUint8(235);
+      writeValue(buffer, value.encode());
+    }    else if (value is PStatusReasonSubsStatusTimeout) {
+      buffer.putUint8(236);
+      writeValue(buffer, value.encode());
+    }    else if (value is PIdentityOptions) {
+      buffer.putUint8(237);
+      writeValue(buffer, value.encode());
+    }    else if (value is PExperiment) {
+      buffer.putUint8(238);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPlacementNotFoundTriggerResult) {
+      buffer.putUint8(239);
+      writeValue(buffer, value.encode());
+    }    else if (value is PNoAudienceMatchTriggerResult) {
+      buffer.putUint8(240);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPaywallTriggerResult) {
+      buffer.putUint8(241);
+      writeValue(buffer, value.encode());
+    }    else if (value is PHoldoutTriggerResult) {
+      buffer.putUint8(242);
+      writeValue(buffer, value.encode());
+    }    else if (value is PErrorTriggerResult) {
+      buffer.putUint8(243);
+      writeValue(buffer, value.encode());
+    }    else if (value is PVariant) {
+      buffer.putUint8(244);
+      writeValue(buffer, value.encode());
+    }    else if (value is PConfirmedAssignment) {
+      buffer.putUint8(245);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPurchasedPaywallResult) {
+      buffer.putUint8(246);
+      writeValue(buffer, value.encode());
+    }    else if (value is PDeclinedPaywallResult) {
+      buffer.putUint8(247);
+      writeValue(buffer, value.encode());
+    }    else if (value is PRestoredPaywallResult) {
+      buffer.putUint8(248);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPlacementNotFoundPresentationResult) {
+      buffer.putUint8(249);
+      writeValue(buffer, value.encode());
+    }    else if (value is PNoAudienceMatchPresentationResult) {
+      buffer.putUint8(250);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPaywallPresentationResult) {
+      buffer.putUint8(251);
+      writeValue(buffer, value.encode());
+    }    else if (value is PHoldoutPresentationResult) {
+      buffer.putUint8(252);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPaywallNotAvailablePresentationResult) {
+      buffer.putUint8(253);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -5066,207 +6228,259 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : PSurveyShowCondition.values[value];
       case 135:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PCustomCallbackResultStatus.values[value];
+        return value == null ? null : PCustomerCenterOpenMethod.values[value];
       case 136:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PProductStore.values[value];
+        return value == null ? null : PCustomerCenterRefundStatus.values[value];
       case 137:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PEntitlementType.values[value];
+        return value == null ? null : PCustomCallbackResultStatus.values[value];
       case 138:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PLatestSubscriptionState.values[value];
+        return value == null ? null : PProductStore.values[value];
       case 139:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PLatestSubscriptionOfferType.values[value];
+        return value == null ? null : PEntitlementType.values[value];
       case 140:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PIntegrationAttribute.values[value];
+        return value == null ? null : PLatestSubscriptionState.values[value];
       case 141:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PNetworkEnvironment.values[value];
+        return value == null ? null : PLatestSubscriptionOfferType.values[value];
       case 142:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PLogLevel.values[value];
+        return value == null ? null : PIntegrationAttribute.values[value];
       case 143:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PTransactionBackgroundView.values[value];
+        return value == null ? null : PNetworkEnvironment.values[value];
       case 144:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PLogScope.values[value];
+        return value == null ? null : PLogLevel.values[value];
       case 145:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PConfigurationStatus.values[value];
+        return value == null ? null : PTransactionBackgroundView.values[value];
       case 146:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PEventType.values[value];
+        return value == null ? null : PLogScope.values[value];
       case 147:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PSubscriptionStatusType.values[value];
+        return value == null ? null : PConfigurationStatus.values[value];
       case 148:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PPaywallPresentationRequestStatusType.values[value];
+        return value == null ? null : PEventType.values[value];
       case 149:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PVariantType.values[value];
+        return value == null ? null : PSubscriptionStatusType.values[value];
       case 150:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PPaywallSkippedReason.values[value];
+        return value == null ? null : PPaywallPresentationRequestStatusType.values[value];
       case 151:
-        return PSuccessRedemptionResult.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : PVariantType.values[value];
       case 152:
-        return PErrorRedemptionResult.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : PPaywallSkippedReason.values[value];
       case 153:
-        return PErrorInfo.decode(readValue(buffer)!);
+        return PSuccessRedemptionResult.decode(readValue(buffer)!);
       case 154:
-        return PExpiredCodeRedemptionResult.decode(readValue(buffer)!);
+        return PErrorRedemptionResult.decode(readValue(buffer)!);
       case 155:
-        return PExpiredCodeInfo.decode(readValue(buffer)!);
+        return PErrorInfo.decode(readValue(buffer)!);
       case 156:
-        return PInvalidCodeRedemptionResult.decode(readValue(buffer)!);
+        return PExpiredCodeRedemptionResult.decode(readValue(buffer)!);
       case 157:
-        return PExpiredSubscriptionCode.decode(readValue(buffer)!);
+        return PExpiredCodeInfo.decode(readValue(buffer)!);
       case 158:
-        return PRedemptionInfo.decode(readValue(buffer)!);
+        return PInvalidCodeRedemptionResult.decode(readValue(buffer)!);
       case 159:
-        return PAppUserOwnership.decode(readValue(buffer)!);
+        return PExpiredSubscriptionCode.decode(readValue(buffer)!);
       case 160:
-        return PDeviceOwnership.decode(readValue(buffer)!);
+        return PRedemptionInfo.decode(readValue(buffer)!);
       case 161:
-        return PPurchaserInfo.decode(readValue(buffer)!);
+        return PAppUserOwnership.decode(readValue(buffer)!);
       case 162:
-        return PStripeStoreIdentifiers.decode(readValue(buffer)!);
+        return PDeviceOwnership.decode(readValue(buffer)!);
       case 163:
-        return PPaddleStoreIdentifiers.decode(readValue(buffer)!);
+        return PPurchaserInfo.decode(readValue(buffer)!);
       case 164:
-        return PUnknownStoreIdentifiers.decode(readValue(buffer)!);
+        return PStripeStoreIdentifiers.decode(readValue(buffer)!);
       case 165:
-        return PRedemptionPaywallInfo.decode(readValue(buffer)!);
+        return PPaddleStoreIdentifiers.decode(readValue(buffer)!);
       case 166:
-        return PSuperwallOptions.decode(readValue(buffer)!);
+        return PUnknownStoreIdentifiers.decode(readValue(buffer)!);
       case 167:
-        return PPaywallInfo.decode(readValue(buffer)!);
+        return PRedemptionPaywallInfo.decode(readValue(buffer)!);
       case 168:
-        return PProduct.decode(readValue(buffer)!);
+        return PSuperwallOptions.decode(readValue(buffer)!);
       case 169:
-        return PLocalNotification.decode(readValue(buffer)!);
+        return PPaywallInfo.decode(readValue(buffer)!);
       case 170:
-        return PComputedPropertyRequest.decode(readValue(buffer)!);
+        return PProduct.decode(readValue(buffer)!);
       case 171:
-        return PSurvey.decode(readValue(buffer)!);
+        return PLocalNotification.decode(readValue(buffer)!);
       case 172:
-        return PSurveyOption.decode(readValue(buffer)!);
+        return PComputedPropertyRequest.decode(readValue(buffer)!);
       case 173:
-        return PPurchaseCancelled.decode(readValue(buffer)!);
+        return PSurvey.decode(readValue(buffer)!);
       case 174:
-        return PPurchasePurchased.decode(readValue(buffer)!);
+        return PSurveyOption.decode(readValue(buffer)!);
       case 175:
-        return PPurchasePending.decode(readValue(buffer)!);
+        return PPurchaseCancelled.decode(readValue(buffer)!);
       case 176:
-        return PPurchaseFailed.decode(readValue(buffer)!);
+        return PPurchasePurchased.decode(readValue(buffer)!);
       case 177:
-        return PRestorationRestored.decode(readValue(buffer)!);
+        return PPurchasePending.decode(readValue(buffer)!);
       case 178:
-        return PRestorationFailed.decode(readValue(buffer)!);
+        return PPurchaseFailed.decode(readValue(buffer)!);
       case 179:
-        return PViaPurchase.decode(readValue(buffer)!);
+        return PRestorationRestored.decode(readValue(buffer)!);
       case 180:
-        return PViaRestore.decode(readValue(buffer)!);
+        return PRestorationFailed.decode(readValue(buffer)!);
       case 181:
-        return PRestoreFailed.decode(readValue(buffer)!);
+        return PViaPurchase.decode(readValue(buffer)!);
       case 182:
-        return PLogging.decode(readValue(buffer)!);
+        return PViaRestore.decode(readValue(buffer)!);
       case 183:
-        return PStoreTransaction.decode(readValue(buffer)!);
+        return PRestoreFailed.decode(readValue(buffer)!);
       case 184:
-        return PStoreProduct.decode(readValue(buffer)!);
+        return PLogging.decode(readValue(buffer)!);
       case 185:
-        return POwnedInAppPurchase.decode(readValue(buffer)!);
+        return PStoreTransaction.decode(readValue(buffer)!);
       case 186:
-        return PPaywallOptions.decode(readValue(buffer)!);
+        return PStoreProduct.decode(readValue(buffer)!);
       case 187:
-        return POnBackPressedHost.decode(readValue(buffer)!);
+        return POwnedInAppPurchase.decode(readValue(buffer)!);
       case 188:
-        return PPurchaseControllerHost.decode(readValue(buffer)!);
+        return PPaywallOptions.decode(readValue(buffer)!);
       case 189:
-        return PConfigureCompletionHost.decode(readValue(buffer)!);
+        return POnBackPressedHost.decode(readValue(buffer)!);
       case 190:
-        return PPaywallPresentationHandlerHost.decode(readValue(buffer)!);
+        return PPurchaseControllerHost.decode(readValue(buffer)!);
       case 191:
-        return PFeatureHandlerHost.decode(readValue(buffer)!);
+        return PConfigureCompletionHost.decode(readValue(buffer)!);
       case 192:
-        return PCustomCallback.decode(readValue(buffer)!);
+        return PPaywallPresentationHandlerHost.decode(readValue(buffer)!);
       case 193:
-        return PCustomCallbackResult.decode(readValue(buffer)!);
+        return PFeatureHandlerHost.decode(readValue(buffer)!);
       case 194:
-        return PSubscriptionTransaction.decode(readValue(buffer)!);
+        return PCustomerCenterRestorePathType.decode(readValue(buffer)!);
       case 195:
-        return PNonSubscriptionTransaction.decode(readValue(buffer)!);
+        return PCustomerCenterManageSubscriptionPathType.decode(readValue(buffer)!);
       case 196:
-        return PEntitlement.decode(readValue(buffer)!);
+        return PCustomerCenterRefundPathType.decode(readValue(buffer)!);
       case 197:
-        return PCustomerInfo.decode(readValue(buffer)!);
+        return PCustomerCenterChangePlanPathType.decode(readValue(buffer)!);
       case 198:
-        return PEntitlements.decode(readValue(buffer)!);
+        return PCustomerCenterContactSupportPathType.decode(readValue(buffer)!);
       case 199:
-        return PActive.decode(readValue(buffer)!);
+        return PCustomerCenterUrlPathType.decode(readValue(buffer)!);
       case 200:
-        return PInactive.decode(readValue(buffer)!);
+        return PCustomerCenterCustomPathType.decode(readValue(buffer)!);
       case 201:
-        return PUnknown.decode(readValue(buffer)!);
+        return PCustomerCenterSurveyOption.decode(readValue(buffer)!);
       case 202:
-        return PSuperwallEventInfo.decode(readValue(buffer)!);
+        return PCustomerCenterSurvey.decode(readValue(buffer)!);
       case 203:
-        return PStatusReasonDebuggerPresented.decode(readValue(buffer)!);
+        return PCustomerCenterPath.decode(readValue(buffer)!);
       case 204:
-        return PStatusReasonPaywallAlreadyPresented.decode(readValue(buffer)!);
+        return PCustomerCenterScreen.decode(readValue(buffer)!);
       case 205:
-        return PStatusReasonHoldout.decode(readValue(buffer)!);
+        return PCustomerCenterSupport.decode(readValue(buffer)!);
       case 206:
-        return PStatusReasonNoAudienceMatch.decode(readValue(buffer)!);
+        return PCustomerCenterColorPair.decode(readValue(buffer)!);
       case 207:
-        return PStatusReasonPlacementNotFound.decode(readValue(buffer)!);
+        return PCustomerCenterConfiguration.decode(readValue(buffer)!);
       case 208:
-        return PStatusReasonNoPaywallVc.decode(readValue(buffer)!);
+        return PCustomerCenterRestoreAction.decode(readValue(buffer)!);
       case 209:
-        return PStatusReasonNoPresenter.decode(readValue(buffer)!);
+        return PCustomerCenterManageSubscriptionAction.decode(readValue(buffer)!);
       case 210:
-        return PStatusReasonNoConfig.decode(readValue(buffer)!);
+        return PCustomerCenterRefundAction.decode(readValue(buffer)!);
       case 211:
-        return PStatusReasonSubsStatusTimeout.decode(readValue(buffer)!);
+        return PCustomerCenterChangePlanAction.decode(readValue(buffer)!);
       case 212:
-        return PIdentityOptions.decode(readValue(buffer)!);
+        return PCustomerCenterContactSupportAction.decode(readValue(buffer)!);
       case 213:
-        return PExperiment.decode(readValue(buffer)!);
+        return PCustomerCenterUrlAction.decode(readValue(buffer)!);
       case 214:
-        return PPlacementNotFoundTriggerResult.decode(readValue(buffer)!);
+        return PCustomerCenterCustomAction.decode(readValue(buffer)!);
       case 215:
-        return PNoAudienceMatchTriggerResult.decode(readValue(buffer)!);
+        return PCustomerCenterPurchase.decode(readValue(buffer)!);
       case 216:
-        return PPaywallTriggerResult.decode(readValue(buffer)!);
+        return PCustomerCenterDelegateHost.decode(readValue(buffer)!);
       case 217:
-        return PHoldoutTriggerResult.decode(readValue(buffer)!);
+        return PCustomCallback.decode(readValue(buffer)!);
       case 218:
-        return PErrorTriggerResult.decode(readValue(buffer)!);
+        return PCustomCallbackResult.decode(readValue(buffer)!);
       case 219:
-        return PVariant.decode(readValue(buffer)!);
+        return PSubscriptionTransaction.decode(readValue(buffer)!);
       case 220:
-        return PConfirmedAssignment.decode(readValue(buffer)!);
+        return PNonSubscriptionTransaction.decode(readValue(buffer)!);
       case 221:
-        return PPurchasedPaywallResult.decode(readValue(buffer)!);
+        return PEntitlement.decode(readValue(buffer)!);
       case 222:
-        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+        return PCustomerInfo.decode(readValue(buffer)!);
       case 223:
-        return PRestoredPaywallResult.decode(readValue(buffer)!);
+        return PEntitlements.decode(readValue(buffer)!);
       case 224:
-        return PPlacementNotFoundPresentationResult.decode(readValue(buffer)!);
+        return PActive.decode(readValue(buffer)!);
       case 225:
-        return PNoAudienceMatchPresentationResult.decode(readValue(buffer)!);
+        return PInactive.decode(readValue(buffer)!);
       case 226:
-        return PPaywallPresentationResult.decode(readValue(buffer)!);
+        return PUnknown.decode(readValue(buffer)!);
       case 227:
-        return PHoldoutPresentationResult.decode(readValue(buffer)!);
+        return PSuperwallEventInfo.decode(readValue(buffer)!);
       case 228:
+        return PStatusReasonDebuggerPresented.decode(readValue(buffer)!);
+      case 229:
+        return PStatusReasonPaywallAlreadyPresented.decode(readValue(buffer)!);
+      case 230:
+        return PStatusReasonHoldout.decode(readValue(buffer)!);
+      case 231:
+        return PStatusReasonNoAudienceMatch.decode(readValue(buffer)!);
+      case 232:
+        return PStatusReasonPlacementNotFound.decode(readValue(buffer)!);
+      case 233:
+        return PStatusReasonNoPaywallVc.decode(readValue(buffer)!);
+      case 234:
+        return PStatusReasonNoPresenter.decode(readValue(buffer)!);
+      case 235:
+        return PStatusReasonNoConfig.decode(readValue(buffer)!);
+      case 236:
+        return PStatusReasonSubsStatusTimeout.decode(readValue(buffer)!);
+      case 237:
+        return PIdentityOptions.decode(readValue(buffer)!);
+      case 238:
+        return PExperiment.decode(readValue(buffer)!);
+      case 239:
+        return PPlacementNotFoundTriggerResult.decode(readValue(buffer)!);
+      case 240:
+        return PNoAudienceMatchTriggerResult.decode(readValue(buffer)!);
+      case 241:
+        return PPaywallTriggerResult.decode(readValue(buffer)!);
+      case 242:
+        return PHoldoutTriggerResult.decode(readValue(buffer)!);
+      case 243:
+        return PErrorTriggerResult.decode(readValue(buffer)!);
+      case 244:
+        return PVariant.decode(readValue(buffer)!);
+      case 245:
+        return PConfirmedAssignment.decode(readValue(buffer)!);
+      case 246:
+        return PPurchasedPaywallResult.decode(readValue(buffer)!);
+      case 247:
+        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+      case 248:
+        return PRestoredPaywallResult.decode(readValue(buffer)!);
+      case 249:
+        return PPlacementNotFoundPresentationResult.decode(readValue(buffer)!);
+      case 250:
+        return PNoAudienceMatchPresentationResult.decode(readValue(buffer)!);
+      case 251:
+        return PPaywallPresentationResult.decode(readValue(buffer)!);
+      case 252:
+        return PHoldoutPresentationResult.decode(readValue(buffer)!);
+      case 253:
         return PPaywallNotAvailablePresentationResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -5996,6 +7210,42 @@ class PSuperwallHostApi {
     ;
   }
 
+  Future<void> presentCustomerCenter(PCustomerCenterConfiguration? configuration, PCustomerCenterDelegateHost? delegate) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.presentCustomerCenter$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[configuration, delegate]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
+  }
+
+  Future<void> dismissCustomerCenter() async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismissCustomerCenter$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
+  }
+
   Future<Map<String, String>?> getOverrideProductsByName() async {
     final pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getOverrideProductsByName$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
@@ -6616,6 +7866,152 @@ abstract class PPaywallPresentationHandlerGenerated {
           try {
             final PCustomCallbackResult output = await api.onCustomCallback(arg_callback);
             return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+}
+
+abstract class PCustomerCenterDelegateGenerated {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  Future<bool> shouldRestorePurchases();
+
+  void didSelectAction(PCustomerCenterAction action, String pathId, PCustomerCenterPurchase? purchase);
+
+  void didCompleteSurvey(String surveyId, String optionId, PCustomerCenterAction action, String pathId);
+
+  void didCompleteRefundRequest(String productId, PCustomerCenterRefundStatus status);
+
+  void didDismiss();
+
+  void onDismiss();
+
+  static void setUp(PCustomerCenterDelegateGenerated? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.shouldRestorePurchases$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            final bool output = await api.shouldRestorePurchases();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.didSelectAction$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final PCustomerCenterAction arg_action = args[0]! as PCustomerCenterAction;
+          final String arg_pathId = args[1]! as String;
+          final PCustomerCenterPurchase? arg_purchase = args[2] as PCustomerCenterPurchase?;
+          try {
+            api.didSelectAction(arg_action, arg_pathId, arg_purchase);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.didCompleteSurvey$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final String arg_surveyId = args[0]! as String;
+          final String arg_optionId = args[1]! as String;
+          final PCustomerCenterAction arg_action = args[2]! as PCustomerCenterAction;
+          final String arg_pathId = args[3]! as String;
+          try {
+            api.didCompleteSurvey(arg_surveyId, arg_optionId, arg_action, arg_pathId);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.didCompleteRefundRequest$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final String arg_productId = args[0]! as String;
+          final PCustomerCenterRefundStatus arg_status = args[1]! as PCustomerCenterRefundStatus;
+          try {
+            api.didCompleteRefundRequest(arg_productId, arg_status);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.didDismiss$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            api.didDismiss();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.onDismiss$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            api.onDismiss();
+            return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           }          catch (e) {

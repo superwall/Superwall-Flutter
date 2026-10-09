@@ -6,6 +6,7 @@ import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/src/private/ConfigureCompletionProxy.dart';
+import 'package:superwallkit_flutter/src/private/CustomerCenterDelegateProxy.dart';
 import 'package:superwallkit_flutter/src/private/FeatureBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/OnBackPressedProxy.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
@@ -96,6 +97,7 @@ class Superwall {
         options.shouldBypassAppTransactionCheck;
     generatedOptions.maxConfigRetryCount = options.maxConfigRetryCount;
     generatedOptions.useMockReviews = options.useMockReviews;
+    generatedOptions.customerCenter = options.customerCenter?.toPigeon();
 
     // Convert Logging if available
     generatedOptions.logging = _convertLogging(options.logging);
@@ -592,6 +594,51 @@ class Superwall {
     }
     final purchases = await hostApi.queryInAppPurchases();
     return purchases.map(OwnedInAppPurchase.fromPigeon).toList();
+  }
+
+  /// Android only. Presents the Customer Center, a self-service screen where
+  /// users can view and restore their purchases, cancel or change a Google
+  /// Play subscription, request a refund, manage a web subscription and
+  /// contact support.
+  ///
+  /// Only one Customer Center can be presented at a time; calling this while
+  /// one is already presented does nothing.
+  ///
+  /// - [configuration] overrides [SuperwallOptions.customerCenter] for this
+  ///   presentation. `null` uses the configured value.
+  /// - [delegate] receives Customer Center events while it's presented.
+  /// - [onDismiss] is called after the Customer Center is dismissed, or if it
+  ///   couldn't be presented.
+  ///
+  /// The returned future completes once presentation has been requested, not
+  /// when the Customer Center is dismissed.
+  ///
+  /// Throws an [UnsupportedError] on other platforms.
+  Future<void> presentCustomerCenter({
+    CustomerCenterConfiguration? configuration,
+    CustomerCenterDelegate? delegate,
+    void Function()? onDismiss,
+  }) async {
+    if (defaultTargetPlatform != TargetPlatform.android) {
+      throw UnsupportedError(
+          'presentCustomerCenter is only available on Android.');
+    }
+    final hostId = CustomerCenterDelegateProxy.register(delegate, onDismiss);
+    await hostApi.presentCustomerCenter(configuration?.toPigeon(),
+        generated.PCustomerCenterDelegateHost(hostId: hostId));
+  }
+
+  /// Android only. Dismisses a Customer Center presented via
+  /// [presentCustomerCenter]. Does nothing if none is presented. The returned
+  /// future completes once it has been dismissed.
+  ///
+  /// Throws an [UnsupportedError] on other platforms.
+  Future<void> dismissCustomerCenter() async {
+    if (defaultTargetPlatform != TargetPlatform.android) {
+      throw UnsupportedError(
+          'dismissCustomerCenter is only available on Android.');
+    }
+    await hostApi.dismissCustomerCenter();
   }
 
   // Set override products by name globally across all paywalls

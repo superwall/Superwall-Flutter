@@ -2,6 +2,17 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.7.0
+
+### Enhancements
+- Updates Android SDK to 2.8.5 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.8.5).
+- Adds the Android-only Customer Center, a self-service screen where users can view and restore their purchases, cancel or change a Google Play subscription, request a refund, manage a web subscription and contact support. Present it with `Superwall.shared.presentCustomerCenter()`, dismiss it with `Superwall.shared.dismissCustomerCenter()`, and configure it with `SuperwallOptions.customerCenter` or by passing a `CustomerCenterConfiguration` when presenting. Both methods throw an `UnsupportedError` on iOS.
+- Adds `CustomerCenterDelegate`, passed to `presentCustomerCenter()`, to decide whether purchases are restored and to hear about selected actions, survey responses, refund requests and dismissal.
+- Adds the Android-only `customerCenterOpen`, `customerCenterClose`, `customerCenterAction`, `customerCenterSurveyResponse` and `customerCenterRefundRequest` event types, delivered to `SuperwallDelegate.handleSuperwallEvent` with their details in `params`.
+
+### Fixes
+- Android: a paywall whose webview can't load, because every URL and retry has been used up, is now dismissed as declined with the `PaywallCloseReason.webViewFailedToLoad` close reason, matching iOS. The `registerPlacement` handler gets `onDismiss` and then the feature block for a non-gated placement, or `onError` for a gated one.
+
 ## 2.6.0
 
 ### Enhancements

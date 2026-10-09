@@ -319,6 +319,11 @@ class EventMapper {
                 is SuperwallEvent.PermissionRequested -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_REQUESTED, params = params)
                 is SuperwallEvent.PermissionGranted -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_GRANTED, params = params)
                 is SuperwallEvent.PermissionDenied -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_DENIED, params = params)
+                is SuperwallEvent.CustomerCenterOpen -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_OPEN, params = params)
+                is SuperwallEvent.CustomerCenterClose -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_CLOSE, params = params)
+                is SuperwallEvent.CustomerCenterAction -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_ACTION, params = params)
+                is SuperwallEvent.CustomerCenterSurveyResponse -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_SURVEY_RESPONSE, params = params)
+                is SuperwallEvent.CustomerCenterRefundRequest -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_REFUND_REQUEST, params = params)
 
                 else -> PSuperwallEventInfo(
                     eventType = PEventType.CUSTOM_PLACEMENT,
