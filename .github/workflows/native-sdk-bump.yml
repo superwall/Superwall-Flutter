@@ -118,6 +118,19 @@ jobs:
           ref: ${{ env.BASE_BRANCH }}
           token: ${{ secrets.SDK_BOT_TOKEN || secrets.GITHUB_TOKEN }}
 
+      # Workflow scripts live on the default branch with this YAML; BASE_BRANCH
+      # (develop) may not have .github/scripts yet. Load them from the commit
+      # that ran this workflow so we never depend on develop having them.
+      - name: Load workflow scripts
+        run: |
+          mkdir -p "$RUNNER_TEMP/workflow-scripts"
+          git fetch --depth=1 origin "${{ github.sha }}"
+          git show "${{ github.sha }}:.github/scripts/native-changelog.py" \
+            > "$RUNNER_TEMP/workflow-scripts/native-changelog.py"
+          git show "${{ github.sha }}:.github/scripts/changelog-entry.py" \
+            > "$RUNNER_TEMP/workflow-scripts/changelog-entry.py"
+          echo "WORKFLOW_SCRIPTS=$RUNNER_TEMP/workflow-scripts" >> "$GITHUB_ENV"
+
       - name: Read current pin
         run: |
           if [ "$PLATFORM" = android ]; then
@@ -149,7 +162,7 @@ jobs:
           git -C .native-sdk checkout --quiet "$VERSION" 2>/dev/null \
             || git -C .native-sdk checkout --quiet "v$VERSION"
           echo ".native-sdk/" >> .git/info/exclude
-          python3 .github/scripts/native-changelog.py .native-sdk/CHANGELOG.md "$CURRENT" "$VERSION" \
+          python3 "$WORKFLOW_SCRIPTS/native-changelog.py" .native-sdk/CHANGELOG.md "$CURRENT" "$VERSION" \
             > "$RUNNER_TEMP/native-changelog.md"
           [ -s "$RUNNER_TEMP/native-changelog.md" ] \
             || echo "_No CHANGELOG.md entries found between $CURRENT and $VERSION._" > "$RUNNER_TEMP/native-changelog.md"
@@ -180,7 +193,7 @@ jobs:
           fi
           echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> "$GITHUB_ENV"
 
-          python3 .github/scripts/changelog-entry.py CHANGELOG.md "$PLUGIN_VERSION" "### Enhancements" \
+          python3 "$WORKFLOW_SCRIPTS/changelog-entry.py" CHANGELOG.md "$PLUGIN_VERSION" "### Enhancements" \
             "Updates $LABEL SDK to $VERSION [View $LABEL SDK release notes](https://github.com/$REPO/releases/tag/$VERSION)." \
             "Updates $LABEL SDK to"
           git -c core.fileMode=false --no-pager diff
