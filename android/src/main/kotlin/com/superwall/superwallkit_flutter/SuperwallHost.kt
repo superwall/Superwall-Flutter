@@ -5,6 +5,11 @@ import PConfigurationStatus
 import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
+import FlutterError
+import PAdConsent
+import PCustomerCenterConfiguration
+import PCustomerCenterDelegateGenerated
+import PCustomerCenterDelegateHost
 import PCustomerInfo
 import PEntitlement
 import PExperiment
@@ -71,6 +76,7 @@ import toJson
 import androidx.core.net.toUri
 import com.superwall.sdk.paywall.presentation.register
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
+import com.superwall.superwallkit_flutter.utils.CustomerCenterMapper.toSdk
 import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
 import android.util.Log
@@ -215,6 +221,15 @@ class SuperwallHost(
 
     override fun setLocaleIdentifier(localeIdentifier: String?) {
         Superwall.instance.localeIdentifier = localeIdentifier
+    }
+
+    // Ad consent is iOS only. The Dart API doesn't call these on Android.
+    override fun getAdConsent(): PAdConsent {
+        throw FlutterError("unsupported", "getAdConsent is only available on iOS.")
+    }
+
+    override fun setAdConsent(adConsent: PAdConsent) {
+        // No-op: the Android SDK has no ad consent API.
     }
 
     override fun getUserId(): String {
@@ -416,6 +431,38 @@ class SuperwallHost(
     override fun dismiss() {
         ioScope.launch {
             Superwall.instance.dismiss()
+        }
+    }
+
+    override fun presentCustomerCenter(
+        configuration: PCustomerCenterConfiguration?,
+        delegate: PCustomerCenterDelegateHost?,
+        callback: (Result<Unit>) -> Unit
+    ) {
+        val host = delegate?.let {
+            CustomerCenterDelegateHost(
+                PCustomerCenterDelegateGenerated(binaryMessenger(), it.hostId ?: "")
+            )
+        }
+        mainScope.launch {
+            val result = runCatching {
+                Superwall.instance.presentCustomerCenter(
+                    configuration = configuration?.toSdk(),
+                    delegate = host,
+                    onDismiss = host?.let { { it.onDismiss() } },
+                )
+            }
+            callback(result)
+        }
+    }
+
+    override fun dismissCustomerCenter(callback: (Result<Unit>) -> Unit) {
+        mainScope.launch {
+            try {
+                Superwall.instance.dismissCustomerCenter { callback(Result.success(Unit)) }
+            } catch (e: Throwable) {
+                callback(Result.failure(e))
+            }
         }
     }
 

@@ -242,6 +242,24 @@ class PSuperwallOptions {
   /// Enable mock review functionality. Defaults to `false`.
   /// Android only.
   bool? useMockReviews;
+
+  /// Configures the Customer Center. `null` uses the native default.
+  PCustomerCenterConfiguration? customerCenter;
+
+  /// The user's ad consent. `null` leaves it unset, so the native SDK falls
+  /// back to a TCF banner's stored consent or the default.
+  /// iOS only.
+  PAdConsent? adConsent;
+}
+
+/// Whether a user has granted or denied consent for an advertising purpose.
+enum PAdConsentStatus { granted, denied }
+
+/// A user's consent for how their data is used for advertising.
+class PAdConsent {
+  PAdConsentStatus adUserData;
+  PAdConsentStatus adPersonalization;
+  PAdConsent(this.adUserData, this.adPersonalization);
 }
 
 // PaywallInfo class for getting latest paywall info
@@ -689,6 +707,177 @@ class PPaywallPresentationHandlerHost {
 
 class PFeatureHandlerHost {
   // The hostId is used here to identify the flutter handler based on the id
+  String? hostId;
+}
+
+// ============= CUSTOMER CENTER TYPES =============
+
+/// How a URL path in the Customer Center opens.
+enum PCustomerCenterOpenMethod { inApp, external }
+
+/// Outcome of a refund request made from the Customer Center.
+enum PCustomerCenterRefundStatus { success, userCancelled, error }
+
+sealed class PCustomerCenterPathType {
+  PCustomerCenterPathType();
+}
+
+class PCustomerCenterRestorePathType extends PCustomerCenterPathType {
+  bool? ignore;
+  PCustomerCenterRestorePathType(this.ignore);
+}
+
+class PCustomerCenterManageSubscriptionPathType
+    extends PCustomerCenterPathType {
+  bool? ignore;
+  PCustomerCenterManageSubscriptionPathType(this.ignore);
+}
+
+class PCustomerCenterRefundPathType extends PCustomerCenterPathType {
+  int? windowMillis;
+  PCustomerCenterRefundPathType(this.windowMillis);
+}
+
+class PCustomerCenterChangePlanPathType extends PCustomerCenterPathType {
+  List<String>? productIds;
+  PCustomerCenterChangePlanPathType(this.productIds);
+}
+
+class PCustomerCenterContactSupportPathType extends PCustomerCenterPathType {
+  bool? ignore;
+  PCustomerCenterContactSupportPathType(this.ignore);
+}
+
+class PCustomerCenterUrlPathType extends PCustomerCenterPathType {
+  String url;
+  PCustomerCenterOpenMethod openMethod;
+  PCustomerCenterUrlPathType(this.url, this.openMethod);
+}
+
+class PCustomerCenterCustomPathType extends PCustomerCenterPathType {
+  String identifier;
+  PCustomerCenterCustomPathType(this.identifier);
+}
+
+class PCustomerCenterSurveyOption {
+  String id;
+  String? title;
+  PCustomerCenterSurveyOption(this.id, this.title);
+}
+
+class PCustomerCenterSurvey {
+  String id;
+  String? title;
+  List<PCustomerCenterSurveyOption> options;
+  PCustomerCenterSurvey(this.id, this.title, this.options);
+}
+
+class PCustomerCenterPath {
+  PCustomerCenterPathType type;
+  String? title;
+  PCustomerCenterSurvey? survey;
+
+  /// `null` uses the native default ID for [type].
+  String? id;
+  PCustomerCenterPath(this.type, this.title, this.survey, this.id);
+}
+
+class PCustomerCenterScreen {
+  String? title;
+  String? subtitle;
+  List<PCustomerCenterPath> paths;
+  PCustomerCenterScreen(this.title, this.subtitle, this.paths);
+}
+
+class PCustomerCenterSupport {
+  String? email;
+  String? latestAppVersion;
+  bool warnsAboutUpdates;
+  String? webManagementUrl;
+
+  /// Whether to look the latest version up from the App Store when
+  /// [latestAppVersion] isn't set. iOS only.
+  bool checksAppStoreForUpdates;
+  PCustomerCenterSupport(this.email, this.latestAppVersion,
+      this.warnsAboutUpdates, this.webManagementUrl,
+      this.checksAppStoreForUpdates);
+}
+
+class PCustomerCenterColorPair {
+  String light;
+  String dark;
+  PCustomerCenterColorPair(this.light, this.dark);
+}
+
+class PCustomerCenterConfiguration {
+  PCustomerCenterScreen managementScreen;
+  PCustomerCenterScreen noPurchasesScreen;
+  PCustomerCenterSupport support;
+  PCustomerCenterColorPair? accent;
+  bool showsAccountDetails;
+  bool warnsAboutDuplicateSubscriptions;
+  PCustomerCenterConfiguration(
+      this.managementScreen,
+      this.noPurchasesScreen,
+      this.support,
+      this.accent,
+      this.showsAccountDetails,
+      this.warnsAboutDuplicateSubscriptions);
+}
+
+/// An action the user selected in the Customer Center.
+sealed class PCustomerCenterAction {
+  PCustomerCenterAction();
+}
+
+class PCustomerCenterRestoreAction extends PCustomerCenterAction {
+  bool? ignore;
+  PCustomerCenterRestoreAction(this.ignore);
+}
+
+class PCustomerCenterManageSubscriptionAction extends PCustomerCenterAction {
+  bool? ignore;
+  PCustomerCenterManageSubscriptionAction(this.ignore);
+}
+
+class PCustomerCenterRefundAction extends PCustomerCenterAction {
+  bool? ignore;
+  PCustomerCenterRefundAction(this.ignore);
+}
+
+class PCustomerCenterChangePlanAction extends PCustomerCenterAction {
+  bool? ignore;
+  PCustomerCenterChangePlanAction(this.ignore);
+}
+
+class PCustomerCenterContactSupportAction extends PCustomerCenterAction {
+  bool? ignore;
+  PCustomerCenterContactSupportAction(this.ignore);
+}
+
+class PCustomerCenterUrlAction extends PCustomerCenterAction {
+  String url;
+  PCustomerCenterUrlAction(this.url);
+}
+
+class PCustomerCenterCustomAction extends PCustomerCenterAction {
+  String identifier;
+  PCustomerCenterCustomAction(this.identifier);
+}
+
+/// The purchase a Customer Center action applies to.
+class PCustomerCenterPurchase {
+  String? productId;
+  PProductStore store;
+  List<PEntitlement> entitlements;
+  PSubscriptionTransaction? subscription;
+  PNonSubscriptionTransaction? nonSubscription;
+  PCustomerCenterPurchase(this.productId, this.store, this.entitlements,
+      this.subscription, this.nonSubscription);
+}
+
+class PCustomerCenterDelegateHost {
+  // The hostId identifies the Flutter delegate for one presentation
   String? hostId;
 }
 
@@ -1204,7 +1393,14 @@ enum PEventType {
   reviewRequested,
   permissionRequested,
   permissionGranted,
-  permissionDenied
+  permissionDenied,
+  customerCenterOpen,
+  customerCenterClose,
+  customerCenterAction,
+  customerCenterSurveyResponse,
+  customerCenterRefundRequest,
+  teleportOpen,
+  teleportReturn
 }
 
 // SubscriptionStatus enum
@@ -1452,6 +1648,10 @@ abstract class PSuperwallHostApi {
   String? getLocaleIdentifier();
   void setLocaleIdentifier(String? localeIdentifier);
 
+  // Ad consent (iOS only)
+  PAdConsent getAdConsent();
+  void setAdConsent(PAdConsent adConsent);
+
   // User identity methods
   String getUserId();
   bool getIsLoggedIn();
@@ -1493,6 +1693,13 @@ abstract class PSuperwallHostApi {
       PFeatureHandlerHost? feature});
   // Presentation methods
   void dismiss();
+
+  // Customer Center
+  @async
+  void presentCustomerCenter(PCustomerCenterConfiguration? configuration,
+      PCustomerCenterDelegateHost? delegate);
+  @async
+  void dismissCustomerCenter();
 
   // Override products by name globally - getter and setter
   Map<String, String>? getOverrideProductsByName();
@@ -1552,6 +1759,23 @@ abstract class PPaywallPresentationHandlerGenerated {
   /// Returns a result indicating success/failure with optional data.
   @async
   PCustomCallbackResult onCustomCallback(PCustomCallback callback);
+}
+
+@FlutterApi()
+abstract class PCustomerCenterDelegateGenerated {
+  @async
+  bool shouldRestorePurchases();
+  void didSelectAction(PCustomerCenterAction action, String pathId,
+      PCustomerCenterPurchase? purchase);
+  void didCompleteSurvey(String surveyId, String optionId,
+      PCustomerCenterAction action, String pathId);
+  void didCompleteRefundRequest(
+      String productId, PCustomerCenterRefundStatus status);
+  void didDismiss();
+
+  // The `onDismiss` passed to `presentCustomerCenter`. Also called when the
+  // Customer Center couldn't be presented.
+  void onDismiss();
 }
 
 @FlutterApi()

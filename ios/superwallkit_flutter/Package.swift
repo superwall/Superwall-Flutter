@@ -6,15 +6,15 @@ import PackageDescription
 let package = Package(
     name: "superwallkit_flutter",
     platforms: [
-        .iOS("14.0")
+        .iOS("15.0")
     ],
     products: [
         .library(name: "superwallkit-flutter", targets: ["superwallkit_flutter"])
     ],
     dependencies: [
         // Pinned to match the version declared in the podspec
-        // (s.dependency 'SuperwallKit', '4.17.0').
-        .package(url: "https://github.com/superwall/Superwall-iOS.git", exact: "4.17.0")
+        // (s.dependency 'SuperwallKit', '4.18.0').
+        .package(url: "https://github.com/superwall/Superwall-iOS.git", exact: "4.18.0")
     ],
     targets: [
         .target(
