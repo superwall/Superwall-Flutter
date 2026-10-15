@@ -98,6 +98,7 @@ class Superwall {
     generatedOptions.maxConfigRetryCount = options.maxConfigRetryCount;
     generatedOptions.useMockReviews = options.useMockReviews;
     generatedOptions.customerCenter = options.customerCenter?.toPigeon();
+    generatedOptions.adConsent = options.adConsent?.toPigeon();
 
     // Convert Logging if available
     generatedOptions.logging = _convertLogging(options.logging);
@@ -365,6 +366,32 @@ class Superwall {
     await hostApi.setLocaleIdentifier(localeIdentifier);
   }
 
+  /// iOS only. Gets the user's ad consent, as set via [setAdConsent] or
+  /// [SuperwallOptions.adConsent]. If neither was set, this is the default
+  /// (both granted), even when the SDK reports a TCF consent banner's stored
+  /// answer instead.
+  ///
+  /// Throws an [UnsupportedError] on other platforms.
+  Future<AdConsent> getAdConsent() async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) {
+      throw UnsupportedError('getAdConsent is only available on iOS.');
+    }
+    return AdConsent.fromPigeon(await hostApi.getAdConsent());
+  }
+
+  /// iOS only. Sets the user's consent for how their data is used for
+  /// advertising, which Superwall passes on with the conversions it uploads
+  /// to Google Ads and Meta. Call it from your consent flow whenever the
+  /// user's choice changes. See [SuperwallOptions.adConsent].
+  ///
+  /// Does nothing on other platforms.
+  Future<void> setAdConsent(AdConsent adConsent) async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) {
+      return;
+    }
+    await hostApi.setAdConsent(adConsent.toPigeon());
+  }
+
   // Gets the current user's ID
   Future<String> getUserId() async {
     return await hostApi.getUserId();
@@ -596,10 +623,10 @@ class Superwall {
     return purchases.map(OwnedInAppPurchase.fromPigeon).toList();
   }
 
-  /// Android only. Presents the Customer Center, a self-service screen where
-  /// users can view and restore their purchases, cancel or change a Google
-  /// Play subscription, request a refund, manage a web subscription and
-  /// contact support.
+  /// Presents the Customer Center, a self-service screen where users can
+  /// view and restore their purchases, manage, cancel or change a
+  /// subscription, request a refund, manage a web subscription and contact
+  /// support. Available on Android and iOS.
   ///
   /// Only one Customer Center can be presented at a time; calling this while
   /// one is already presented does nothing.
@@ -619,27 +646,31 @@ class Superwall {
     CustomerCenterDelegate? delegate,
     void Function()? onDismiss,
   }) async {
-    if (defaultTargetPlatform != TargetPlatform.android) {
+    if (!_supportsCustomerCenter) {
       throw UnsupportedError(
-          'presentCustomerCenter is only available on Android.');
+          'presentCustomerCenter is only available on Android and iOS.');
     }
     final hostId = CustomerCenterDelegateProxy.register(delegate, onDismiss);
     await hostApi.presentCustomerCenter(configuration?.toPigeon(),
         generated.PCustomerCenterDelegateHost(hostId: hostId));
   }
 
-  /// Android only. Dismisses a Customer Center presented via
-  /// [presentCustomerCenter]. Does nothing if none is presented. The returned
-  /// future completes once it has been dismissed.
+  /// Dismisses a Customer Center presented via [presentCustomerCenter]. Does
+  /// nothing if none is presented. The returned future completes once it has
+  /// been dismissed.
   ///
-  /// Throws an [UnsupportedError] on other platforms.
+  /// Throws an [UnsupportedError] on platforms other than Android and iOS.
   Future<void> dismissCustomerCenter() async {
-    if (defaultTargetPlatform != TargetPlatform.android) {
+    if (!_supportsCustomerCenter) {
       throw UnsupportedError(
-          'dismissCustomerCenter is only available on Android.');
+          'dismissCustomerCenter is only available on Android and iOS.');
     }
     await hostApi.dismissCustomerCenter();
   }
+
+  bool get _supportsCustomerCenter =>
+      defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS;
 
   // Set override products by name globally across all paywalls
   set overrideProductsByName(Map<String, String>? overrideProducts) {

@@ -5,6 +5,8 @@ import PConfigurationStatus
 import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
+import FlutterError
+import PAdConsent
 import PCustomerCenterConfiguration
 import PCustomerCenterDelegateGenerated
 import PCustomerCenterDelegateHost
@@ -219,6 +221,15 @@ class SuperwallHost(
 
     override fun setLocaleIdentifier(localeIdentifier: String?) {
         Superwall.instance.localeIdentifier = localeIdentifier
+    }
+
+    // Ad consent is iOS only. The Dart API doesn't call these on Android.
+    override fun getAdConsent(): PAdConsent {
+        throw FlutterError("unsupported", "getAdConsent is only available on iOS.")
+    }
+
+    override fun setAdConsent(adConsent: PAdConsent) {
+        // No-op: the Android SDK has no ad consent API.
     }
 
     override fun getUserId(): String {

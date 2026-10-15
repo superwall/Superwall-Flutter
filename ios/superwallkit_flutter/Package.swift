@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "superwallkit_flutter",
     platforms: [
-        .iOS("14.0")
+        .iOS("15.0")
     ],
     products: [
         .library(name: "superwallkit-flutter", targets: ["superwallkit_flutter"])

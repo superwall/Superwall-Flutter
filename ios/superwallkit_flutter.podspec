@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.source_files = 'superwallkit_flutter/Sources/superwallkit_flutter/**/*'
   s.dependency 'Flutter'
   s.dependency 'SuperwallKit', '4.18.0'
-  s.platform = :ios, '14.0'
+  s.platform = :ios, '15.0'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }

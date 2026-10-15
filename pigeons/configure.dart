@@ -244,8 +244,22 @@ class PSuperwallOptions {
   bool? useMockReviews;
 
   /// Configures the Customer Center. `null` uses the native default.
-  /// Android only.
   PCustomerCenterConfiguration? customerCenter;
+
+  /// The user's ad consent. `null` leaves it unset, so the native SDK falls
+  /// back to a TCF banner's stored consent or the default.
+  /// iOS only.
+  PAdConsent? adConsent;
+}
+
+/// Whether a user has granted or denied consent for an advertising purpose.
+enum PAdConsentStatus { granted, denied }
+
+/// A user's consent for how their data is used for advertising.
+class PAdConsent {
+  PAdConsentStatus adUserData;
+  PAdConsentStatus adPersonalization;
+  PAdConsent(this.adUserData, this.adPersonalization);
 }
 
 // PaywallInfo class for getting latest paywall info
@@ -696,7 +710,7 @@ class PFeatureHandlerHost {
   String? hostId;
 }
 
-// ============= CUSTOMER CENTER TYPES (Android only) =============
+// ============= CUSTOMER CENTER TYPES =============
 
 /// How a URL path in the Customer Center opens.
 enum PCustomerCenterOpenMethod { inApp, external }
@@ -780,8 +794,13 @@ class PCustomerCenterSupport {
   String? latestAppVersion;
   bool warnsAboutUpdates;
   String? webManagementUrl;
+
+  /// Whether to look the latest version up from the App Store when
+  /// [latestAppVersion] isn't set. iOS only.
+  bool checksAppStoreForUpdates;
   PCustomerCenterSupport(this.email, this.latestAppVersion,
-      this.warnsAboutUpdates, this.webManagementUrl);
+      this.warnsAboutUpdates, this.webManagementUrl,
+      this.checksAppStoreForUpdates);
 }
 
 class PCustomerCenterColorPair {
@@ -1379,7 +1398,9 @@ enum PEventType {
   customerCenterClose,
   customerCenterAction,
   customerCenterSurveyResponse,
-  customerCenterRefundRequest
+  customerCenterRefundRequest,
+  teleportOpen,
+  teleportReturn
 }
 
 // SubscriptionStatus enum
@@ -1627,6 +1648,10 @@ abstract class PSuperwallHostApi {
   String? getLocaleIdentifier();
   void setLocaleIdentifier(String? localeIdentifier);
 
+  // Ad consent (iOS only)
+  PAdConsent getAdConsent();
+  void setAdConsent(PAdConsent adConsent);
+
   // User identity methods
   String getUserId();
   bool getIsLoggedIn();
@@ -1669,7 +1694,7 @@ abstract class PSuperwallHostApi {
   // Presentation methods
   void dismiss();
 
-  // Customer Center (Android only)
+  // Customer Center
   @async
   void presentCustomerCenter(PCustomerCenterConfiguration? configuration,
       PCustomerCenterDelegateHost? delegate);

@@ -1,5 +1,6 @@
 import Flutter
 import SuperwallKit
+import UIKit
 import Foundation
 import Combine
 
@@ -426,19 +427,74 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
     delegate: PCustomerCenterDelegateHost?,
     completion: @escaping (Result<Void, Error>) -> Void
   ) {
-    completion(.failure(PigeonError(
-      code: "unsupported",
-      message: "presentCustomerCenter is only available on Android.",
-      details: nil
-    )))
+    let flutterDelegate = delegate.map {
+      PCustomerCenterDelegateGenerated(
+        binaryMessenger: flutterBinaryMessenger,
+        messageChannelSuffix: $0.hostId ?? ""
+      )
+    }
+    Task { @MainActor in
+      let host = flutterDelegate.map { CustomerCenterDelegateHost(flutterDelegate: $0) }
+      var onDismiss: (() -> Void)? = nil
+      if let host = host {
+        onDismiss = { host.onDismiss() }
+      }
+
+      let previouslyPresented = Self.presentedCustomerCenter()
+      Superwall.shared.presentCustomerCenter(
+        configuration: configuration?.toSdk(),
+        delegate: host,
+        onDismiss: onDismiss
+      )
+
+      // The SDK only logs when it can't present (not configured, one already presented, or
+      // nowhere to present from), and then never calls `onDismiss`. Call it here so Flutter
+      // releases the delegate and hears about it, as on Android.
+      let presented = Self.presentedCustomerCenter()
+      if presented == nil || presented === previouslyPresented {
+        onDismiss?()
+      }
+      completion(.success(()))
+    }
   }
 
   func dismissCustomerCenter(completion: @escaping (Result<Void, Error>) -> Void) {
-    completion(.failure(PigeonError(
-      code: "unsupported",
-      message: "dismissCustomerCenter is only available on Android.",
-      details: nil
-    )))
+    Task { @MainActor in
+      // The SDK returns without calling the completion when it isn't configured.
+      guard Superwall.isInitialized else {
+        completion(.success(()))
+        return
+      }
+      Superwall.shared.dismissCustomerCenter {
+        completion(.success(()))
+      }
+    }
+  }
+
+  /// The Customer Center currently presented in any window, if there is one.
+  @MainActor
+  private static func presentedCustomerCenter() -> CustomerCenterViewController? {
+    let windows = UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap { $0.windows }
+    for window in windows {
+      var controller = window.rootViewController
+      while let current = controller {
+        if let customerCenter = current as? CustomerCenterViewController {
+          return customerCenter
+        }
+        controller = current.presentedViewController
+      }
+    }
+    return nil
+  }
+
+  func getAdConsent() -> PAdConsent {
+    return Superwall.shared.adConsent.pigeonify()
+  }
+
+  func setAdConsent(adConsent: PAdConsent) {
+    Superwall.shared.adConsent = adConsent.toSdk()
   }
 }
 

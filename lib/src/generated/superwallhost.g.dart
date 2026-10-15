@@ -71,6 +71,12 @@ enum PTestModeBehavior {
   always,
 }
 
+/// Whether a user has granted or denied consent for an advertising purpose.
+enum PAdConsentStatus {
+  granted,
+  denied,
+}
+
 enum PFeatureGatingBehavior {
   gated,
   nonGated,
@@ -345,6 +351,8 @@ enum PEventType {
   customerCenterAction,
   customerCenterSurveyResponse,
   customerCenterRefundRequest,
+  teleportOpen,
+  teleportReturn,
 }
 
 enum PSubscriptionStatusType {
@@ -1119,6 +1127,7 @@ class PSuperwallOptions {
     this.maxConfigRetryCount,
     this.useMockReviews,
     this.customerCenter,
+    this.adConsent,
   });
 
   PPaywallOptions? paywalls;
@@ -1157,8 +1166,12 @@ class PSuperwallOptions {
   bool? useMockReviews;
 
   /// Configures the Customer Center. `null` uses the native default.
-  /// Android only.
   PCustomerCenterConfiguration? customerCenter;
+
+  /// The user's ad consent. `null` leaves it unset, so the native SDK falls
+  /// back to a TCF banner's stored consent or the default.
+  /// iOS only.
+  PAdConsent? adConsent;
 
   List<Object?> _toList() {
     return <Object?>[
@@ -1176,6 +1189,7 @@ class PSuperwallOptions {
       maxConfigRetryCount,
       useMockReviews,
       customerCenter,
+      adConsent,
     ];
   }
 
@@ -1199,6 +1213,7 @@ class PSuperwallOptions {
       maxConfigRetryCount: result[11] as int?,
       useMockReviews: result[12] as bool?,
       customerCenter: result[13] as PCustomerCenterConfiguration?,
+      adConsent: result[14] as PAdConsent?,
     );
   }
 
@@ -1206,6 +1221,53 @@ class PSuperwallOptions {
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
     if (other is! PSuperwallOptions || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
+}
+
+/// A user's consent for how their data is used for advertising.
+class PAdConsent {
+  PAdConsent({
+    required this.adUserData,
+    required this.adPersonalization,
+  });
+
+  PAdConsentStatus adUserData;
+
+  PAdConsentStatus adPersonalization;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      adUserData,
+      adPersonalization,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static PAdConsent decode(Object result) {
+    result as List<Object?>;
+    return PAdConsent(
+      adUserData: result[0]! as PAdConsentStatus,
+      adPersonalization: result[1]! as PAdConsentStatus,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PAdConsent || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -3349,6 +3411,7 @@ class PCustomerCenterSupport {
     this.latestAppVersion,
     required this.warnsAboutUpdates,
     this.webManagementUrl,
+    required this.checksAppStoreForUpdates,
   });
 
   String? email;
@@ -3359,12 +3422,17 @@ class PCustomerCenterSupport {
 
   String? webManagementUrl;
 
+  /// Whether to look the latest version up from the App Store when
+  /// [latestAppVersion] isn't set. iOS only.
+  bool checksAppStoreForUpdates;
+
   List<Object?> _toList() {
     return <Object?>[
       email,
       latestAppVersion,
       warnsAboutUpdates,
       webManagementUrl,
+      checksAppStoreForUpdates,
     ];
   }
 
@@ -3378,6 +3446,7 @@ class PCustomerCenterSupport {
       latestAppVersion: result[1] as String?,
       warnsAboutUpdates: result[2]! as bool,
       webManagementUrl: result[3] as String?,
+      checksAppStoreForUpdates: result[4]! as bool,
     );
   }
 
@@ -5818,6 +5887,38 @@ class PPaywallNotAvailablePresentationResult extends PPresentationResult {
 }
 
 
+// ignore: camel_case_types
+class _PigeonCodecOverflow {
+  _PigeonCodecOverflow({required this.type, required this.wrapped});
+
+  int type;
+  Object? wrapped;
+
+  Object encode() {
+    return <Object?>[type, wrapped];
+  }
+
+  static _PigeonCodecOverflow decode(Object result) {
+    result as List<Object?>;
+    return _PigeonCodecOverflow(
+      type: result[0]! as int,
+      wrapped: result[1],
+    );
+  }
+
+  Object? unwrap() {
+    if (wrapped == null) {
+      return null;
+    }
+
+    switch (type) {
+      case 0:
+        return PPaywallNotAvailablePresentationResult.decode(wrapped!);
+    }
+    return null;
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -5828,378 +5929,385 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PTestModeBehavior) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is PFeatureGatingBehavior) {
+    }    else if (value is PAdConsentStatus) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallCloseReason) {
+    }    else if (value is PFeatureGatingBehavior) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is PLocalNotificationType) {
+    }    else if (value is PPaywallCloseReason) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is PComputedPropertyRequestType) {
+    }    else if (value is PLocalNotificationType) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is PSurveyShowCondition) {
+    }    else if (value is PComputedPropertyRequestType) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is PCustomerCenterOpenMethod) {
+    }    else if (value is PSurveyShowCondition) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    }    else if (value is PCustomerCenterRefundStatus) {
+    }    else if (value is PCustomerCenterOpenMethod) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    }    else if (value is PCustomCallbackResultStatus) {
+    }    else if (value is PCustomerCenterRefundStatus) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    }    else if (value is PProductStore) {
+    }    else if (value is PCustomCallbackResultStatus) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    }    else if (value is PEntitlementType) {
+    }    else if (value is PProductStore) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
-    }    else if (value is PLatestSubscriptionState) {
+    }    else if (value is PEntitlementType) {
       buffer.putUint8(140);
       writeValue(buffer, value.index);
-    }    else if (value is PLatestSubscriptionOfferType) {
+    }    else if (value is PLatestSubscriptionState) {
       buffer.putUint8(141);
       writeValue(buffer, value.index);
-    }    else if (value is PIntegrationAttribute) {
+    }    else if (value is PLatestSubscriptionOfferType) {
       buffer.putUint8(142);
       writeValue(buffer, value.index);
-    }    else if (value is PNetworkEnvironment) {
+    }    else if (value is PIntegrationAttribute) {
       buffer.putUint8(143);
       writeValue(buffer, value.index);
-    }    else if (value is PLogLevel) {
+    }    else if (value is PNetworkEnvironment) {
       buffer.putUint8(144);
       writeValue(buffer, value.index);
-    }    else if (value is PTransactionBackgroundView) {
+    }    else if (value is PLogLevel) {
       buffer.putUint8(145);
       writeValue(buffer, value.index);
-    }    else if (value is PLogScope) {
+    }    else if (value is PTransactionBackgroundView) {
       buffer.putUint8(146);
       writeValue(buffer, value.index);
-    }    else if (value is PConfigurationStatus) {
+    }    else if (value is PLogScope) {
       buffer.putUint8(147);
       writeValue(buffer, value.index);
-    }    else if (value is PEventType) {
+    }    else if (value is PConfigurationStatus) {
       buffer.putUint8(148);
       writeValue(buffer, value.index);
-    }    else if (value is PSubscriptionStatusType) {
+    }    else if (value is PEventType) {
       buffer.putUint8(149);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallPresentationRequestStatusType) {
+    }    else if (value is PSubscriptionStatusType) {
       buffer.putUint8(150);
       writeValue(buffer, value.index);
-    }    else if (value is PVariantType) {
+    }    else if (value is PPaywallPresentationRequestStatusType) {
       buffer.putUint8(151);
       writeValue(buffer, value.index);
-    }    else if (value is PPaywallSkippedReason) {
+    }    else if (value is PVariantType) {
       buffer.putUint8(152);
       writeValue(buffer, value.index);
-    }    else if (value is PSuccessRedemptionResult) {
+    }    else if (value is PPaywallSkippedReason) {
       buffer.putUint8(153);
-      writeValue(buffer, value.encode());
-    }    else if (value is PErrorRedemptionResult) {
+      writeValue(buffer, value.index);
+    }    else if (value is PSuccessRedemptionResult) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is PErrorInfo) {
+    }    else if (value is PErrorRedemptionResult) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    }    else if (value is PExpiredCodeRedemptionResult) {
+    }    else if (value is PErrorInfo) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    }    else if (value is PExpiredCodeInfo) {
+    }    else if (value is PExpiredCodeRedemptionResult) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    }    else if (value is PInvalidCodeRedemptionResult) {
+    }    else if (value is PExpiredCodeInfo) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    }    else if (value is PExpiredSubscriptionCode) {
+    }    else if (value is PInvalidCodeRedemptionResult) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    }    else if (value is PRedemptionInfo) {
+    }    else if (value is PExpiredSubscriptionCode) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    }    else if (value is PAppUserOwnership) {
+    }    else if (value is PRedemptionInfo) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    }    else if (value is PDeviceOwnership) {
+    }    else if (value is PAppUserOwnership) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaserInfo) {
+    }    else if (value is PDeviceOwnership) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    }    else if (value is PStripeStoreIdentifiers) {
+    }    else if (value is PPurchaserInfo) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaddleStoreIdentifiers) {
+    }    else if (value is PStripeStoreIdentifiers) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknownStoreIdentifiers) {
+    }    else if (value is PPaddleStoreIdentifiers) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    }    else if (value is PRedemptionPaywallInfo) {
+    }    else if (value is PUnknownStoreIdentifiers) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallOptions) {
+    }    else if (value is PRedemptionPaywallInfo) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallInfo) {
+    }    else if (value is PSuperwallOptions) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    }    else if (value is PProduct) {
+    }    else if (value is PAdConsent) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    }    else if (value is PLocalNotification) {
+    }    else if (value is PPaywallInfo) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    }    else if (value is PComputedPropertyRequest) {
+    }    else if (value is PProduct) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurvey) {
+    }    else if (value is PLocalNotification) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    }    else if (value is PSurveyOption) {
+    }    else if (value is PComputedPropertyRequest) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseCancelled) {
+    }    else if (value is PSurvey) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePurchased) {
+    }    else if (value is PSurveyOption) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasePending) {
+    }    else if (value is PPurchaseCancelled) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseFailed) {
+    }    else if (value is PPurchasePurchased) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationRestored) {
+    }    else if (value is PPurchasePending) {
       buffer.putUint8(179);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestorationFailed) {
+    }    else if (value is PPurchaseFailed) {
       buffer.putUint8(180);
       writeValue(buffer, value.encode());
-    }    else if (value is PViaPurchase) {
+    }    else if (value is PRestorationRestored) {
       buffer.putUint8(181);
       writeValue(buffer, value.encode());
-    }    else if (value is PViaRestore) {
+    }    else if (value is PRestorationFailed) {
       buffer.putUint8(182);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoreFailed) {
+    }    else if (value is PViaPurchase) {
       buffer.putUint8(183);
       writeValue(buffer, value.encode());
-    }    else if (value is PLogging) {
+    }    else if (value is PViaRestore) {
       buffer.putUint8(184);
       writeValue(buffer, value.encode());
-    }    else if (value is PStoreTransaction) {
+    }    else if (value is PRestoreFailed) {
       buffer.putUint8(185);
       writeValue(buffer, value.encode());
-    }    else if (value is PStoreProduct) {
+    }    else if (value is PLogging) {
       buffer.putUint8(186);
       writeValue(buffer, value.encode());
-    }    else if (value is POwnedInAppPurchase) {
+    }    else if (value is PStoreTransaction) {
       buffer.putUint8(187);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallOptions) {
+    }    else if (value is PStoreProduct) {
       buffer.putUint8(188);
       writeValue(buffer, value.encode());
-    }    else if (value is POnBackPressedHost) {
+    }    else if (value is POwnedInAppPurchase) {
       buffer.putUint8(189);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchaseControllerHost) {
+    }    else if (value is PPaywallOptions) {
       buffer.putUint8(190);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfigureCompletionHost) {
+    }    else if (value is POnBackPressedHost) {
       buffer.putUint8(191);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallPresentationHandlerHost) {
+    }    else if (value is PPurchaseControllerHost) {
       buffer.putUint8(192);
       writeValue(buffer, value.encode());
-    }    else if (value is PFeatureHandlerHost) {
+    }    else if (value is PConfigureCompletionHost) {
       buffer.putUint8(193);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterRestorePathType) {
+    }    else if (value is PPaywallPresentationHandlerHost) {
       buffer.putUint8(194);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterManageSubscriptionPathType) {
+    }    else if (value is PFeatureHandlerHost) {
       buffer.putUint8(195);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterRefundPathType) {
+    }    else if (value is PCustomerCenterRestorePathType) {
       buffer.putUint8(196);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterChangePlanPathType) {
+    }    else if (value is PCustomerCenterManageSubscriptionPathType) {
       buffer.putUint8(197);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterContactSupportPathType) {
+    }    else if (value is PCustomerCenterRefundPathType) {
       buffer.putUint8(198);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterUrlPathType) {
+    }    else if (value is PCustomerCenterChangePlanPathType) {
       buffer.putUint8(199);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterCustomPathType) {
+    }    else if (value is PCustomerCenterContactSupportPathType) {
       buffer.putUint8(200);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterSurveyOption) {
+    }    else if (value is PCustomerCenterUrlPathType) {
       buffer.putUint8(201);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterSurvey) {
+    }    else if (value is PCustomerCenterCustomPathType) {
       buffer.putUint8(202);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterPath) {
+    }    else if (value is PCustomerCenterSurveyOption) {
       buffer.putUint8(203);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterScreen) {
+    }    else if (value is PCustomerCenterSurvey) {
       buffer.putUint8(204);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterSupport) {
+    }    else if (value is PCustomerCenterPath) {
       buffer.putUint8(205);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterColorPair) {
+    }    else if (value is PCustomerCenterScreen) {
       buffer.putUint8(206);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterConfiguration) {
+    }    else if (value is PCustomerCenterSupport) {
       buffer.putUint8(207);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterRestoreAction) {
+    }    else if (value is PCustomerCenterColorPair) {
       buffer.putUint8(208);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterManageSubscriptionAction) {
+    }    else if (value is PCustomerCenterConfiguration) {
       buffer.putUint8(209);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterRefundAction) {
+    }    else if (value is PCustomerCenterRestoreAction) {
       buffer.putUint8(210);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterChangePlanAction) {
+    }    else if (value is PCustomerCenterManageSubscriptionAction) {
       buffer.putUint8(211);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterContactSupportAction) {
+    }    else if (value is PCustomerCenterRefundAction) {
       buffer.putUint8(212);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterUrlAction) {
+    }    else if (value is PCustomerCenterChangePlanAction) {
       buffer.putUint8(213);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterCustomAction) {
+    }    else if (value is PCustomerCenterContactSupportAction) {
       buffer.putUint8(214);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterPurchase) {
+    }    else if (value is PCustomerCenterUrlAction) {
       buffer.putUint8(215);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerCenterDelegateHost) {
+    }    else if (value is PCustomerCenterCustomAction) {
       buffer.putUint8(216);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomCallback) {
+    }    else if (value is PCustomerCenterPurchase) {
       buffer.putUint8(217);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomCallbackResult) {
+    }    else if (value is PCustomerCenterDelegateHost) {
       buffer.putUint8(218);
       writeValue(buffer, value.encode());
-    }    else if (value is PSubscriptionTransaction) {
+    }    else if (value is PCustomCallback) {
       buffer.putUint8(219);
       writeValue(buffer, value.encode());
-    }    else if (value is PNonSubscriptionTransaction) {
+    }    else if (value is PCustomCallbackResult) {
       buffer.putUint8(220);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlement) {
+    }    else if (value is PSubscriptionTransaction) {
       buffer.putUint8(221);
       writeValue(buffer, value.encode());
-    }    else if (value is PCustomerInfo) {
+    }    else if (value is PNonSubscriptionTransaction) {
       buffer.putUint8(222);
       writeValue(buffer, value.encode());
-    }    else if (value is PEntitlements) {
+    }    else if (value is PEntitlement) {
       buffer.putUint8(223);
       writeValue(buffer, value.encode());
-    }    else if (value is PActive) {
+    }    else if (value is PCustomerInfo) {
       buffer.putUint8(224);
       writeValue(buffer, value.encode());
-    }    else if (value is PInactive) {
+    }    else if (value is PEntitlements) {
       buffer.putUint8(225);
       writeValue(buffer, value.encode());
-    }    else if (value is PUnknown) {
+    }    else if (value is PActive) {
       buffer.putUint8(226);
       writeValue(buffer, value.encode());
-    }    else if (value is PSuperwallEventInfo) {
+    }    else if (value is PInactive) {
       buffer.putUint8(227);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonDebuggerPresented) {
+    }    else if (value is PUnknown) {
       buffer.putUint8(228);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonPaywallAlreadyPresented) {
+    }    else if (value is PSuperwallEventInfo) {
       buffer.putUint8(229);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonHoldout) {
+    }    else if (value is PStatusReasonDebuggerPresented) {
       buffer.putUint8(230);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoAudienceMatch) {
+    }    else if (value is PStatusReasonPaywallAlreadyPresented) {
       buffer.putUint8(231);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonPlacementNotFound) {
+    }    else if (value is PStatusReasonHoldout) {
       buffer.putUint8(232);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoPaywallVc) {
+    }    else if (value is PStatusReasonNoAudienceMatch) {
       buffer.putUint8(233);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoPresenter) {
+    }    else if (value is PStatusReasonPlacementNotFound) {
       buffer.putUint8(234);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonNoConfig) {
+    }    else if (value is PStatusReasonNoPaywallVc) {
       buffer.putUint8(235);
       writeValue(buffer, value.encode());
-    }    else if (value is PStatusReasonSubsStatusTimeout) {
+    }    else if (value is PStatusReasonNoPresenter) {
       buffer.putUint8(236);
       writeValue(buffer, value.encode());
-    }    else if (value is PIdentityOptions) {
+    }    else if (value is PStatusReasonNoConfig) {
       buffer.putUint8(237);
       writeValue(buffer, value.encode());
-    }    else if (value is PExperiment) {
+    }    else if (value is PStatusReasonSubsStatusTimeout) {
       buffer.putUint8(238);
       writeValue(buffer, value.encode());
-    }    else if (value is PPlacementNotFoundTriggerResult) {
+    }    else if (value is PIdentityOptions) {
       buffer.putUint8(239);
       writeValue(buffer, value.encode());
-    }    else if (value is PNoAudienceMatchTriggerResult) {
+    }    else if (value is PExperiment) {
       buffer.putUint8(240);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallTriggerResult) {
+    }    else if (value is PPlacementNotFoundTriggerResult) {
       buffer.putUint8(241);
       writeValue(buffer, value.encode());
-    }    else if (value is PHoldoutTriggerResult) {
+    }    else if (value is PNoAudienceMatchTriggerResult) {
       buffer.putUint8(242);
       writeValue(buffer, value.encode());
-    }    else if (value is PErrorTriggerResult) {
+    }    else if (value is PPaywallTriggerResult) {
       buffer.putUint8(243);
       writeValue(buffer, value.encode());
-    }    else if (value is PVariant) {
+    }    else if (value is PHoldoutTriggerResult) {
       buffer.putUint8(244);
       writeValue(buffer, value.encode());
-    }    else if (value is PConfirmedAssignment) {
+    }    else if (value is PErrorTriggerResult) {
       buffer.putUint8(245);
       writeValue(buffer, value.encode());
-    }    else if (value is PPurchasedPaywallResult) {
+    }    else if (value is PVariant) {
       buffer.putUint8(246);
       writeValue(buffer, value.encode());
-    }    else if (value is PDeclinedPaywallResult) {
+    }    else if (value is PConfirmedAssignment) {
       buffer.putUint8(247);
       writeValue(buffer, value.encode());
-    }    else if (value is PRestoredPaywallResult) {
+    }    else if (value is PPurchasedPaywallResult) {
       buffer.putUint8(248);
       writeValue(buffer, value.encode());
-    }    else if (value is PPlacementNotFoundPresentationResult) {
+    }    else if (value is PDeclinedPaywallResult) {
       buffer.putUint8(249);
       writeValue(buffer, value.encode());
-    }    else if (value is PNoAudienceMatchPresentationResult) {
+    }    else if (value is PRestoredPaywallResult) {
       buffer.putUint8(250);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallPresentationResult) {
+    }    else if (value is PPlacementNotFoundPresentationResult) {
       buffer.putUint8(251);
       writeValue(buffer, value.encode());
-    }    else if (value is PHoldoutPresentationResult) {
+    }    else if (value is PNoAudienceMatchPresentationResult) {
       buffer.putUint8(252);
       writeValue(buffer, value.encode());
-    }    else if (value is PPaywallNotAvailablePresentationResult) {
+    }    else if (value is PPaywallPresentationResult) {
       buffer.putUint8(253);
       writeValue(buffer, value.encode());
+    }    else if (value is PHoldoutPresentationResult) {
+      buffer.putUint8(254);
+      writeValue(buffer, value.encode());
+    }    else if (value is PPaywallNotAvailablePresentationResult) {
+      final _PigeonCodecOverflow wrap = _PigeonCodecOverflow(type: 0, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -6213,275 +6321,281 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : PTestModeBehavior.values[value];
       case 130:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PFeatureGatingBehavior.values[value];
+        return value == null ? null : PAdConsentStatus.values[value];
       case 131:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PPaywallCloseReason.values[value];
+        return value == null ? null : PFeatureGatingBehavior.values[value];
       case 132:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PLocalNotificationType.values[value];
+        return value == null ? null : PPaywallCloseReason.values[value];
       case 133:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PComputedPropertyRequestType.values[value];
+        return value == null ? null : PLocalNotificationType.values[value];
       case 134:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PSurveyShowCondition.values[value];
+        return value == null ? null : PComputedPropertyRequestType.values[value];
       case 135:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PCustomerCenterOpenMethod.values[value];
+        return value == null ? null : PSurveyShowCondition.values[value];
       case 136:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PCustomerCenterRefundStatus.values[value];
+        return value == null ? null : PCustomerCenterOpenMethod.values[value];
       case 137:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PCustomCallbackResultStatus.values[value];
+        return value == null ? null : PCustomerCenterRefundStatus.values[value];
       case 138:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PProductStore.values[value];
+        return value == null ? null : PCustomCallbackResultStatus.values[value];
       case 139:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PEntitlementType.values[value];
+        return value == null ? null : PProductStore.values[value];
       case 140:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PLatestSubscriptionState.values[value];
+        return value == null ? null : PEntitlementType.values[value];
       case 141:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PLatestSubscriptionOfferType.values[value];
+        return value == null ? null : PLatestSubscriptionState.values[value];
       case 142:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PIntegrationAttribute.values[value];
+        return value == null ? null : PLatestSubscriptionOfferType.values[value];
       case 143:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PNetworkEnvironment.values[value];
+        return value == null ? null : PIntegrationAttribute.values[value];
       case 144:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PLogLevel.values[value];
+        return value == null ? null : PNetworkEnvironment.values[value];
       case 145:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PTransactionBackgroundView.values[value];
+        return value == null ? null : PLogLevel.values[value];
       case 146:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PLogScope.values[value];
+        return value == null ? null : PTransactionBackgroundView.values[value];
       case 147:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PConfigurationStatus.values[value];
+        return value == null ? null : PLogScope.values[value];
       case 148:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PEventType.values[value];
+        return value == null ? null : PConfigurationStatus.values[value];
       case 149:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PSubscriptionStatusType.values[value];
+        return value == null ? null : PEventType.values[value];
       case 150:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PPaywallPresentationRequestStatusType.values[value];
+        return value == null ? null : PSubscriptionStatusType.values[value];
       case 151:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PVariantType.values[value];
+        return value == null ? null : PPaywallPresentationRequestStatusType.values[value];
       case 152:
         final value = readValue(buffer) as int?;
-        return value == null ? null : PPaywallSkippedReason.values[value];
+        return value == null ? null : PVariantType.values[value];
       case 153:
-        return PSuccessRedemptionResult.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : PPaywallSkippedReason.values[value];
       case 154:
-        return PErrorRedemptionResult.decode(readValue(buffer)!);
+        return PSuccessRedemptionResult.decode(readValue(buffer)!);
       case 155:
-        return PErrorInfo.decode(readValue(buffer)!);
+        return PErrorRedemptionResult.decode(readValue(buffer)!);
       case 156:
-        return PExpiredCodeRedemptionResult.decode(readValue(buffer)!);
+        return PErrorInfo.decode(readValue(buffer)!);
       case 157:
-        return PExpiredCodeInfo.decode(readValue(buffer)!);
+        return PExpiredCodeRedemptionResult.decode(readValue(buffer)!);
       case 158:
-        return PInvalidCodeRedemptionResult.decode(readValue(buffer)!);
+        return PExpiredCodeInfo.decode(readValue(buffer)!);
       case 159:
-        return PExpiredSubscriptionCode.decode(readValue(buffer)!);
+        return PInvalidCodeRedemptionResult.decode(readValue(buffer)!);
       case 160:
-        return PRedemptionInfo.decode(readValue(buffer)!);
+        return PExpiredSubscriptionCode.decode(readValue(buffer)!);
       case 161:
-        return PAppUserOwnership.decode(readValue(buffer)!);
+        return PRedemptionInfo.decode(readValue(buffer)!);
       case 162:
-        return PDeviceOwnership.decode(readValue(buffer)!);
+        return PAppUserOwnership.decode(readValue(buffer)!);
       case 163:
-        return PPurchaserInfo.decode(readValue(buffer)!);
+        return PDeviceOwnership.decode(readValue(buffer)!);
       case 164:
-        return PStripeStoreIdentifiers.decode(readValue(buffer)!);
+        return PPurchaserInfo.decode(readValue(buffer)!);
       case 165:
-        return PPaddleStoreIdentifiers.decode(readValue(buffer)!);
+        return PStripeStoreIdentifiers.decode(readValue(buffer)!);
       case 166:
-        return PUnknownStoreIdentifiers.decode(readValue(buffer)!);
+        return PPaddleStoreIdentifiers.decode(readValue(buffer)!);
       case 167:
-        return PRedemptionPaywallInfo.decode(readValue(buffer)!);
+        return PUnknownStoreIdentifiers.decode(readValue(buffer)!);
       case 168:
-        return PSuperwallOptions.decode(readValue(buffer)!);
+        return PRedemptionPaywallInfo.decode(readValue(buffer)!);
       case 169:
-        return PPaywallInfo.decode(readValue(buffer)!);
+        return PSuperwallOptions.decode(readValue(buffer)!);
       case 170:
-        return PProduct.decode(readValue(buffer)!);
+        return PAdConsent.decode(readValue(buffer)!);
       case 171:
-        return PLocalNotification.decode(readValue(buffer)!);
+        return PPaywallInfo.decode(readValue(buffer)!);
       case 172:
-        return PComputedPropertyRequest.decode(readValue(buffer)!);
+        return PProduct.decode(readValue(buffer)!);
       case 173:
-        return PSurvey.decode(readValue(buffer)!);
+        return PLocalNotification.decode(readValue(buffer)!);
       case 174:
-        return PSurveyOption.decode(readValue(buffer)!);
+        return PComputedPropertyRequest.decode(readValue(buffer)!);
       case 175:
-        return PPurchaseCancelled.decode(readValue(buffer)!);
+        return PSurvey.decode(readValue(buffer)!);
       case 176:
-        return PPurchasePurchased.decode(readValue(buffer)!);
+        return PSurveyOption.decode(readValue(buffer)!);
       case 177:
-        return PPurchasePending.decode(readValue(buffer)!);
+        return PPurchaseCancelled.decode(readValue(buffer)!);
       case 178:
-        return PPurchaseFailed.decode(readValue(buffer)!);
+        return PPurchasePurchased.decode(readValue(buffer)!);
       case 179:
-        return PRestorationRestored.decode(readValue(buffer)!);
+        return PPurchasePending.decode(readValue(buffer)!);
       case 180:
-        return PRestorationFailed.decode(readValue(buffer)!);
+        return PPurchaseFailed.decode(readValue(buffer)!);
       case 181:
-        return PViaPurchase.decode(readValue(buffer)!);
+        return PRestorationRestored.decode(readValue(buffer)!);
       case 182:
-        return PViaRestore.decode(readValue(buffer)!);
+        return PRestorationFailed.decode(readValue(buffer)!);
       case 183:
-        return PRestoreFailed.decode(readValue(buffer)!);
+        return PViaPurchase.decode(readValue(buffer)!);
       case 184:
-        return PLogging.decode(readValue(buffer)!);
+        return PViaRestore.decode(readValue(buffer)!);
       case 185:
-        return PStoreTransaction.decode(readValue(buffer)!);
+        return PRestoreFailed.decode(readValue(buffer)!);
       case 186:
-        return PStoreProduct.decode(readValue(buffer)!);
+        return PLogging.decode(readValue(buffer)!);
       case 187:
-        return POwnedInAppPurchase.decode(readValue(buffer)!);
+        return PStoreTransaction.decode(readValue(buffer)!);
       case 188:
-        return PPaywallOptions.decode(readValue(buffer)!);
+        return PStoreProduct.decode(readValue(buffer)!);
       case 189:
-        return POnBackPressedHost.decode(readValue(buffer)!);
+        return POwnedInAppPurchase.decode(readValue(buffer)!);
       case 190:
-        return PPurchaseControllerHost.decode(readValue(buffer)!);
+        return PPaywallOptions.decode(readValue(buffer)!);
       case 191:
-        return PConfigureCompletionHost.decode(readValue(buffer)!);
+        return POnBackPressedHost.decode(readValue(buffer)!);
       case 192:
-        return PPaywallPresentationHandlerHost.decode(readValue(buffer)!);
+        return PPurchaseControllerHost.decode(readValue(buffer)!);
       case 193:
-        return PFeatureHandlerHost.decode(readValue(buffer)!);
+        return PConfigureCompletionHost.decode(readValue(buffer)!);
       case 194:
-        return PCustomerCenterRestorePathType.decode(readValue(buffer)!);
+        return PPaywallPresentationHandlerHost.decode(readValue(buffer)!);
       case 195:
-        return PCustomerCenterManageSubscriptionPathType.decode(readValue(buffer)!);
+        return PFeatureHandlerHost.decode(readValue(buffer)!);
       case 196:
-        return PCustomerCenterRefundPathType.decode(readValue(buffer)!);
+        return PCustomerCenterRestorePathType.decode(readValue(buffer)!);
       case 197:
-        return PCustomerCenterChangePlanPathType.decode(readValue(buffer)!);
+        return PCustomerCenterManageSubscriptionPathType.decode(readValue(buffer)!);
       case 198:
-        return PCustomerCenterContactSupportPathType.decode(readValue(buffer)!);
+        return PCustomerCenterRefundPathType.decode(readValue(buffer)!);
       case 199:
-        return PCustomerCenterUrlPathType.decode(readValue(buffer)!);
+        return PCustomerCenterChangePlanPathType.decode(readValue(buffer)!);
       case 200:
-        return PCustomerCenterCustomPathType.decode(readValue(buffer)!);
+        return PCustomerCenterContactSupportPathType.decode(readValue(buffer)!);
       case 201:
-        return PCustomerCenterSurveyOption.decode(readValue(buffer)!);
+        return PCustomerCenterUrlPathType.decode(readValue(buffer)!);
       case 202:
-        return PCustomerCenterSurvey.decode(readValue(buffer)!);
+        return PCustomerCenterCustomPathType.decode(readValue(buffer)!);
       case 203:
-        return PCustomerCenterPath.decode(readValue(buffer)!);
+        return PCustomerCenterSurveyOption.decode(readValue(buffer)!);
       case 204:
-        return PCustomerCenterScreen.decode(readValue(buffer)!);
+        return PCustomerCenterSurvey.decode(readValue(buffer)!);
       case 205:
-        return PCustomerCenterSupport.decode(readValue(buffer)!);
+        return PCustomerCenterPath.decode(readValue(buffer)!);
       case 206:
-        return PCustomerCenterColorPair.decode(readValue(buffer)!);
+        return PCustomerCenterScreen.decode(readValue(buffer)!);
       case 207:
-        return PCustomerCenterConfiguration.decode(readValue(buffer)!);
+        return PCustomerCenterSupport.decode(readValue(buffer)!);
       case 208:
-        return PCustomerCenterRestoreAction.decode(readValue(buffer)!);
+        return PCustomerCenterColorPair.decode(readValue(buffer)!);
       case 209:
-        return PCustomerCenterManageSubscriptionAction.decode(readValue(buffer)!);
+        return PCustomerCenterConfiguration.decode(readValue(buffer)!);
       case 210:
-        return PCustomerCenterRefundAction.decode(readValue(buffer)!);
+        return PCustomerCenterRestoreAction.decode(readValue(buffer)!);
       case 211:
-        return PCustomerCenterChangePlanAction.decode(readValue(buffer)!);
+        return PCustomerCenterManageSubscriptionAction.decode(readValue(buffer)!);
       case 212:
-        return PCustomerCenterContactSupportAction.decode(readValue(buffer)!);
+        return PCustomerCenterRefundAction.decode(readValue(buffer)!);
       case 213:
-        return PCustomerCenterUrlAction.decode(readValue(buffer)!);
+        return PCustomerCenterChangePlanAction.decode(readValue(buffer)!);
       case 214:
-        return PCustomerCenterCustomAction.decode(readValue(buffer)!);
+        return PCustomerCenterContactSupportAction.decode(readValue(buffer)!);
       case 215:
-        return PCustomerCenterPurchase.decode(readValue(buffer)!);
+        return PCustomerCenterUrlAction.decode(readValue(buffer)!);
       case 216:
-        return PCustomerCenterDelegateHost.decode(readValue(buffer)!);
+        return PCustomerCenterCustomAction.decode(readValue(buffer)!);
       case 217:
-        return PCustomCallback.decode(readValue(buffer)!);
+        return PCustomerCenterPurchase.decode(readValue(buffer)!);
       case 218:
-        return PCustomCallbackResult.decode(readValue(buffer)!);
+        return PCustomerCenterDelegateHost.decode(readValue(buffer)!);
       case 219:
-        return PSubscriptionTransaction.decode(readValue(buffer)!);
+        return PCustomCallback.decode(readValue(buffer)!);
       case 220:
-        return PNonSubscriptionTransaction.decode(readValue(buffer)!);
+        return PCustomCallbackResult.decode(readValue(buffer)!);
       case 221:
-        return PEntitlement.decode(readValue(buffer)!);
+        return PSubscriptionTransaction.decode(readValue(buffer)!);
       case 222:
-        return PCustomerInfo.decode(readValue(buffer)!);
+        return PNonSubscriptionTransaction.decode(readValue(buffer)!);
       case 223:
-        return PEntitlements.decode(readValue(buffer)!);
+        return PEntitlement.decode(readValue(buffer)!);
       case 224:
-        return PActive.decode(readValue(buffer)!);
+        return PCustomerInfo.decode(readValue(buffer)!);
       case 225:
-        return PInactive.decode(readValue(buffer)!);
+        return PEntitlements.decode(readValue(buffer)!);
       case 226:
-        return PUnknown.decode(readValue(buffer)!);
+        return PActive.decode(readValue(buffer)!);
       case 227:
-        return PSuperwallEventInfo.decode(readValue(buffer)!);
+        return PInactive.decode(readValue(buffer)!);
       case 228:
-        return PStatusReasonDebuggerPresented.decode(readValue(buffer)!);
+        return PUnknown.decode(readValue(buffer)!);
       case 229:
-        return PStatusReasonPaywallAlreadyPresented.decode(readValue(buffer)!);
+        return PSuperwallEventInfo.decode(readValue(buffer)!);
       case 230:
-        return PStatusReasonHoldout.decode(readValue(buffer)!);
+        return PStatusReasonDebuggerPresented.decode(readValue(buffer)!);
       case 231:
-        return PStatusReasonNoAudienceMatch.decode(readValue(buffer)!);
+        return PStatusReasonPaywallAlreadyPresented.decode(readValue(buffer)!);
       case 232:
-        return PStatusReasonPlacementNotFound.decode(readValue(buffer)!);
+        return PStatusReasonHoldout.decode(readValue(buffer)!);
       case 233:
-        return PStatusReasonNoPaywallVc.decode(readValue(buffer)!);
+        return PStatusReasonNoAudienceMatch.decode(readValue(buffer)!);
       case 234:
-        return PStatusReasonNoPresenter.decode(readValue(buffer)!);
+        return PStatusReasonPlacementNotFound.decode(readValue(buffer)!);
       case 235:
-        return PStatusReasonNoConfig.decode(readValue(buffer)!);
+        return PStatusReasonNoPaywallVc.decode(readValue(buffer)!);
       case 236:
-        return PStatusReasonSubsStatusTimeout.decode(readValue(buffer)!);
+        return PStatusReasonNoPresenter.decode(readValue(buffer)!);
       case 237:
-        return PIdentityOptions.decode(readValue(buffer)!);
+        return PStatusReasonNoConfig.decode(readValue(buffer)!);
       case 238:
-        return PExperiment.decode(readValue(buffer)!);
+        return PStatusReasonSubsStatusTimeout.decode(readValue(buffer)!);
       case 239:
-        return PPlacementNotFoundTriggerResult.decode(readValue(buffer)!);
+        return PIdentityOptions.decode(readValue(buffer)!);
       case 240:
-        return PNoAudienceMatchTriggerResult.decode(readValue(buffer)!);
+        return PExperiment.decode(readValue(buffer)!);
       case 241:
-        return PPaywallTriggerResult.decode(readValue(buffer)!);
+        return PPlacementNotFoundTriggerResult.decode(readValue(buffer)!);
       case 242:
-        return PHoldoutTriggerResult.decode(readValue(buffer)!);
+        return PNoAudienceMatchTriggerResult.decode(readValue(buffer)!);
       case 243:
-        return PErrorTriggerResult.decode(readValue(buffer)!);
+        return PPaywallTriggerResult.decode(readValue(buffer)!);
       case 244:
-        return PVariant.decode(readValue(buffer)!);
+        return PHoldoutTriggerResult.decode(readValue(buffer)!);
       case 245:
-        return PConfirmedAssignment.decode(readValue(buffer)!);
+        return PErrorTriggerResult.decode(readValue(buffer)!);
       case 246:
-        return PPurchasedPaywallResult.decode(readValue(buffer)!);
+        return PVariant.decode(readValue(buffer)!);
       case 247:
-        return PDeclinedPaywallResult.decode(readValue(buffer)!);
+        return PConfirmedAssignment.decode(readValue(buffer)!);
       case 248:
-        return PRestoredPaywallResult.decode(readValue(buffer)!);
+        return PPurchasedPaywallResult.decode(readValue(buffer)!);
       case 249:
-        return PPlacementNotFoundPresentationResult.decode(readValue(buffer)!);
+        return PDeclinedPaywallResult.decode(readValue(buffer)!);
       case 250:
-        return PNoAudienceMatchPresentationResult.decode(readValue(buffer)!);
+        return PRestoredPaywallResult.decode(readValue(buffer)!);
       case 251:
-        return PPaywallPresentationResult.decode(readValue(buffer)!);
+        return PPlacementNotFoundPresentationResult.decode(readValue(buffer)!);
       case 252:
-        return PHoldoutPresentationResult.decode(readValue(buffer)!);
+        return PNoAudienceMatchPresentationResult.decode(readValue(buffer)!);
       case 253:
-        return PPaywallNotAvailablePresentationResult.decode(readValue(buffer)!);
+        return PPaywallPresentationResult.decode(readValue(buffer)!);
+      case 254:
+        return PHoldoutPresentationResult.decode(readValue(buffer)!);
+      case 255:
+        final _PigeonCodecOverflow wrapper = _PigeonCodecOverflow.decode(readValue(buffer)!);
+        return wrapper.unwrap();
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -6827,6 +6941,43 @@ class PSuperwallHostApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[localeIdentifier]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+    )
+    ;
+  }
+
+  Future<PAdConsent> getAdConsent() async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getAdConsent$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: false,
+    )
+    ;
+    return pigeonVar_replyValue! as PAdConsent;
+  }
+
+  Future<void> setAdConsent(PAdConsent adConsent) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setAdConsent$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[adConsent]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(

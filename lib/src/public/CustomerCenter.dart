@@ -6,8 +6,6 @@ import 'package:superwallkit_flutter/src/public/CustomerInfo.dart';
 ///
 /// Set the default via [SuperwallOptions.customerCenter] before calling
 /// `configure`, or pass one to `Superwall.shared.presentCustomerCenter()`.
-///
-/// Android only.
 class CustomerCenterConfiguration {
   /// The screen shown when the user has at least one subscription (active or
   /// expired) or purchase.
@@ -26,7 +24,8 @@ class CustomerCenterConfiguration {
   /// Defaults to `true`.
   final bool showsAccountDetails;
 
-  /// Warns when both a Google Play and a web subscription are active.
+  /// Warns when both a Google Play or App Store subscription and a web
+  /// subscription are active.
   /// Defaults to `true`.
   final bool warnsAboutDuplicateSubscriptions;
 
@@ -349,11 +348,19 @@ class CustomerCenterSupport {
   /// subscriptions.
   final String? webManagementUrl;
 
+  /// Whether to look the latest published version up from the App Store when
+  /// [latestAppVersion] isn't set. Defaults to `true`. The lookup is skipped
+  /// on TestFlight, sandbox and simulator builds.
+  ///
+  /// iOS only. Ignored on Android.
+  final bool checksAppStoreForUpdates;
+
   const CustomerCenterSupport({
     this.email,
     this.latestAppVersion,
     this.warnsAboutUpdates = true,
     this.webManagementUrl,
+    this.checksAppStoreForUpdates = true,
   });
 
   PCustomerCenterSupport toPigeon() => PCustomerCenterSupport(
@@ -361,6 +368,7 @@ class CustomerCenterSupport {
         latestAppVersion: latestAppVersion,
         warnsAboutUpdates: warnsAboutUpdates,
         webManagementUrl: webManagementUrl,
+        checksAppStoreForUpdates: checksAppStoreForUpdates,
       );
 }
 
@@ -441,9 +449,11 @@ class CustomerCenterActionCustom extends CustomerCenterAction {
 
 /// Outcome of a refund request made from the Customer Center.
 ///
-/// Google Play takes refund requests on its own pages, so the SDK can't see
-/// how one ends: [success] means the request was handed to Google Play,
-/// [error] that it couldn't be. [userCancelled] isn't reported on Android.
+/// On Android, Google Play takes refund requests on its own pages, so the SDK
+/// can't see how one ends: [success] means the request was handed to Google
+/// Play, [error] that it couldn't be. [userCancelled] isn't reported on
+/// Android. On iOS, the status is the outcome of the App Store's refund
+/// request sheet.
 enum CustomerCenterRefundStatus {
   success,
   userCancelled,
@@ -507,8 +517,6 @@ class CustomerCenterPurchase {
 ///
 /// Pass one to `Superwall.shared.presentCustomerCenter()`. It's only called
 /// while that Customer Center is presented.
-///
-/// Android only.
 abstract class CustomerCenterDelegate {
   /// Called before purchases are restored. Return `false` to cancel, for
   /// example after the user declines to sign in. The restore waits until the

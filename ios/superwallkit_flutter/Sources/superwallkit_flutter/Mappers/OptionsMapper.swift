@@ -107,6 +107,16 @@ extension PSuperwallOptions {
       options.maxConfigRetryCount = Int(maxConfigRetryCount)
     }
 
+    if let customerCenter = self.customerCenter {
+      options.customerCenter = customerCenter.toSdk()
+    }
+
+    // Only assign when set: assigning any value, even the default, stops the SDK
+    // from falling back to a consent banner's stored answer.
+    if let adConsent = self.adConsent {
+      options.adConsent = adConsent.toSdk()
+    }
+
     if let logging = self.logging {
       if let level = logging.level {
         switch level {

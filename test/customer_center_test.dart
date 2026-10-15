@@ -101,7 +101,9 @@ void main() {
               subtitle: 'Nothing here',
               paths: [CustomerCenterPath.contactSupport()]),
           support: const CustomerCenterSupport(
-              email: 'help@example.com', warnsAboutUpdates: false),
+              email: 'help@example.com',
+              warnsAboutUpdates: false,
+              checksAppStoreForUpdates: false),
           appearance: const CustomerCenterAppearance(
               accent:
                   CustomerCenterColorPair(light: '#FF0000', dark: '#00FF00')),
@@ -134,6 +136,7 @@ void main() {
           isA<PCustomerCenterContactSupportPathType>());
       expect(config.support.email, 'help@example.com');
       expect(config.support.warnsAboutUpdates, isFalse);
+      expect(config.support.checksAppStoreForUpdates, isFalse);
       expect(config.accent!.light, '#FF0000');
       expect(config.accent!.dark, '#00FF00');
       expect(config.showsAccountDetails, isFalse);
@@ -243,8 +246,17 @@ void main() {
       expect(ids, hasLength(2));
     });
 
-    test('throws UnsupportedError on iOS without calling native', () async {
+    test('iOS: calls native', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      final calls = mockHost('presentCustomerCenter');
+      await Superwall.shared.presentCustomerCenter();
+      expect(calls, hasLength(1));
+      expect(calls.single[1], isA<PCustomerCenterDelegateHost>());
+    });
+
+    test('throws UnsupportedError on other platforms without calling native',
+        () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       final calls = mockHost('presentCustomerCenter');
       expect(Superwall.shared.presentCustomerCenter(),
           throwsA(isA<UnsupportedError>()));
@@ -259,8 +271,16 @@ void main() {
       expect(calls, hasLength(1));
     });
 
-    test('throws UnsupportedError on iOS without calling native', () async {
+    test('iOS: calls native', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      final calls = mockHost('dismissCustomerCenter');
+      await Superwall.shared.dismissCustomerCenter();
+      expect(calls, hasLength(1));
+    });
+
+    test('throws UnsupportedError on other platforms without calling native',
+        () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       final calls = mockHost('dismissCustomerCenter');
       expect(Superwall.shared.dismissCustomerCenter(),
           throwsA(isA<UnsupportedError>()));
@@ -283,6 +303,7 @@ void main() {
 
     final options = calls.single[2] as PSuperwallOptions;
     expect(options.customerCenter!.support.email, 'help@example.com');
+    expect(options.customerCenter!.support.checksAppStoreForUpdates, isTrue);
     expect(options.customerCenter!.managementScreen.paths.single.type,
         isA<PCustomerCenterRestorePathType>());
   });

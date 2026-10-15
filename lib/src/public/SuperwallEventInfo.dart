@@ -100,26 +100,38 @@ enum EventType {
   permissionGranted,
   permissionDenied,
 
-  /// Android only. The Customer Center was presented. `params` include
-  /// `screen` (`management` or `no_purchases`).
+  /// The Customer Center was presented. `params` include `screen`
+  /// (`management` or `no_purchases`) and, on iOS, `presentation`.
   customerCenterOpen,
 
-  /// Android only. The Customer Center was dismissed.
+  /// The Customer Center was dismissed.
   customerCenterClose,
 
-  /// Android only. The user tapped a path in the Customer Center. `params`
-  /// include `action`, `path_id` and, when relevant, `product_id`, `url` and
+  /// The user tapped a path in the Customer Center. `params` include
+  /// `action`, `path_id` and, when relevant, `product_id`, `url` and
   /// `custom_identifier`.
   customerCenterAction,
 
-  /// Android only. The user answered a Customer Center survey. `params`
-  /// include `survey_id`, `option_id`, `action`, `path_id` and, when
-  /// relevant, `product_id`.
+  /// The user answered a Customer Center survey. `params` include
+  /// `survey_id`, `option_id`, `action`, `path_id` and, when relevant,
+  /// `product_id`.
   customerCenterSurveyResponse,
 
-  /// Android only. A refund request started from the Customer Center
-  /// completed. `params` include `product_id` and `status`.
-  customerCenterRefundRequest
+  /// A refund request started from the Customer Center completed. `params`
+  /// include `product_id` and `status`.
+  customerCenterRefundRequest,
+
+  /// iOS only. A paywall teleported the user to a web flow in the browser,
+  /// such as its checkout page. Carries the paywall's [SuperwallEvent.paywallInfo].
+  teleportOpen,
+
+  /// iOS only. A return link (`yourscheme://superwall/return` or
+  /// `https://<subdomain>.superwall.link/app-link/superwall/return`) brought
+  /// the user back to the app from a teleported web flow. Tracked instead of
+  /// [deepLink], and doesn't dismiss the presented paywall. Carries the
+  /// presented paywall's [SuperwallEvent.paywallInfo], if there is one, and
+  /// `params` may include `reason`.
+  teleportReturn
 }
 
 class SuperwallEvent {
@@ -409,6 +421,12 @@ class SuperwallEvent {
         break;
       case PEventType.customerCenterRefundRequest:
         type = EventType.customerCenterRefundRequest;
+        break;
+      case PEventType.teleportOpen:
+        type = EventType.teleportOpen;
+        break;
+      case PEventType.teleportReturn:
+        type = EventType.teleportReturn;
     }
 
     return SuperwallEvent._(
