@@ -7,6 +7,7 @@ import PExperiment
 import PLocalNotification
 import PPaywallInfo
 import PPaywallOptions
+import PPresentationHost
 import PProduct
 import PSuperwallOptions
 import PSurvey
@@ -161,6 +162,14 @@ fun PPaywallOptions.toSdkPaywallOptions(): PaywallOptions {
 
     this.overrideProductsByName?.let { hostOverrides ->
         sdkPaywallOptions.overrideProductsByName = hostOverrides
+    }
+
+    this.presentationHost?.let { hostPresentationHost ->
+        sdkPaywallOptions.presentationHost =
+            when (hostPresentationHost) {
+                PPresentationHost.ACTIVITY -> PaywallOptions.PresentationHost.ACTIVITY
+                PPresentationHost.IN_WINDOW -> PaywallOptions.PresentationHost.IN_WINDOW
+            }
     }
 
     return sdkPaywallOptions

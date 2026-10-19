@@ -133,12 +133,26 @@ class Superwall {
     generatedOptions.transactionBackgroundView =
         _convertTransactionBackgroundView(options.transactionBackgroundView);
 
+    generatedOptions.presentationHost =
+        _convertPresentationHost(options.presentationHost);
+
     // Set onBackPressedHost if callback is provided (Android only)
     if (hasOnBackPressed) {
       generatedOptions.onBackPressedHost = generated.POnBackPressedHost();
     }
 
     return generatedOptions;
+  }
+
+  // Helper method to convert PresentationHost (Android only)
+  static generated.PPresentationHost _convertPresentationHost(
+      PresentationHost host) {
+    switch (host) {
+      case PresentationHost.activity:
+        return generated.PPresentationHost.activity;
+      case PresentationHost.inWindow:
+        return generated.PPresentationHost.inWindow;
+    }
   }
 
   // Helper method to convert TransactionBackgroundView

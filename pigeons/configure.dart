@@ -683,6 +683,9 @@ class PPaywallOptions {
   /// Keys are raw `DeviceTier` values (e.g. `ultra_low`, `low`, `mid`,
   /// `high`, `ultra_high`, `unknown`).
   Map<String, bool>? preloadDeviceOverrides;
+
+  /// Android only. Where presented paywalls are hosted.
+  PPresentationHost? presentationHost;
 }
 
 class POnBackPressedHost {
@@ -1290,6 +1293,11 @@ enum PLogLevel { debug, info, warn, error, none }
 enum PTransactionBackgroundView {
   spinner,
   none,
+}
+
+enum PPresentationHost {
+  activity,
+  inWindow,
 }
 
 enum PLogScope {
