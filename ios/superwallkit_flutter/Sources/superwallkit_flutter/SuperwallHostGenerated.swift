@@ -293,6 +293,8 @@ enum PIntegrationAttribute: Int {
   case customerioId = 19
   /// The Appstack identifier.
   case appstackId = 20
+  /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`. Android only.
+  case airbridgeId = 21
 }
 
 enum PNetworkEnvironment: Int {

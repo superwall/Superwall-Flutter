@@ -66,7 +66,13 @@ enum IntegrationAttribute {
   customerioId,
 
   /// The Appstack identifier.
-  appstackId;
+  appstackId,
+
+  /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`.
+  ///
+  /// Android only. On iOS it is ignored, because the iOS SDK doesn't support
+  /// Airbridge yet.
+  airbridgeId;
 
   PIntegrationAttribute toPigeon() {
     switch (this) {
@@ -112,6 +118,8 @@ enum IntegrationAttribute {
         return PIntegrationAttribute.customerioId;
       case IntegrationAttribute.appstackId:
         return PIntegrationAttribute.appstackId;
+      case IntegrationAttribute.airbridgeId:
+        return PIntegrationAttribute.airbridgeId;
     }
   }
 }

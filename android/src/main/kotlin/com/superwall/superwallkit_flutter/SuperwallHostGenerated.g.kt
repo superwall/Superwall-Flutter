@@ -330,7 +330,9 @@ enum class PIntegrationAttribute(val raw: Int) {
   /** The Customer.io person's identifier (`id`). */
   CUSTOMERIO_ID(19),
   /** The Appstack identifier. */
-  APPSTACK_ID(20);
+  APPSTACK_ID(20),
+  /** The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`. Android only. */
+  AIRBRIDGE_ID(21);
 
   companion object {
     fun ofRaw(raw: Int): PIntegrationAttribute? {

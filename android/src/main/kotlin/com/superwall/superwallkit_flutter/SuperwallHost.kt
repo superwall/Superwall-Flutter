@@ -54,6 +54,7 @@ import StreamSubscriptionStatusStreamHandler
 import android.app.Activity
 import android.app.Application
 import com.superwall.sdk.Superwall
+import com.superwall.sdk.models.attribution.AttributionProvider
 import com.superwall.sdk.billing.BillingError
 import com.superwall.sdk.delegate.PurchaseResult
 import com.superwall.sdk.config.models.ConfigurationStatus
@@ -196,13 +197,34 @@ class SuperwallHost(
     }
 
     override fun setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
-        val attributeKey = attribute.toAttributeKey()
-        Superwall.instance.setUserAttributes(mapOf(attributeKey to value))
+        setIntegrationAttributes(mapOf(attribute to value))
     }
 
     override fun setIntegrationAttributes(attributes: Map<PIntegrationAttribute, String?>) {
-        val androidAttributes = attributes.mapKeys { it.key.toAttributeKey() }
-        Superwall.instance.setUserAttributes(androidAttributes)
+        val (providerAttributes, userAttributes) =
+            attributes.entries.partition { it.key.toAttributionProvider() != null }
+
+        if (userAttributes.isNotEmpty()) {
+            Superwall.instance.setUserAttributes(
+                userAttributes.associate { it.key.toAttributeKey() to it.value }
+            )
+        }
+
+        if (providerAttributes.isNotEmpty()) {
+            // The native call replaces every integration attribute, so merge into the current ones.
+            val merged = Superwall.instance.integrationAttributes
+                .mapNotNull { (rawName, value) ->
+                    AttributionProvider.values().firstOrNull { it.rawName == rawName }
+                        ?.let { it to value }
+                }
+                .toMap()
+                .toMutableMap()
+            providerAttributes.forEach { (attribute, value) ->
+                val provider = attribute.toAttributionProvider() ?: return@forEach
+                if (value == null) merged.remove(provider) else merged[provider] = value
+            }
+            Superwall.instance.setIntegrationAttributes(merged)
+        }
     }
 
     override fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit) {
@@ -571,6 +593,18 @@ private fun Throwable.isBillingError(): Boolean =
     generateSequence(this) { it.cause }.any { it is BillingError }
 
 // MARK: - PIntegrationAttribute Extension
+
+/**
+ * The native [AttributionProvider] for attributes that are set through
+ * `Superwall.setIntegrationAttributes` rather than as `$`-prefixed user attributes.
+ */
+fun PIntegrationAttribute.toAttributionProvider(): AttributionProvider? {
+    return when (this) {
+        PIntegrationAttribute.AIRBRIDGE_ID -> AttributionProvider.AIRBRIDGE_ID
+        else -> null
+    }
+}
+
 fun PIntegrationAttribute.toAttributeKey(): String {
     return when (this) {
         PIntegrationAttribute.ADJUST_ID -> "\$adjust_id"
@@ -594,5 +628,6 @@ fun PIntegrationAttribute.toAttributeKey(): String {
         PIntegrationAttribute.POSTHOG_USER_ID -> "\$posthog_user_id"
         PIntegrationAttribute.CUSTOMERIO_ID -> "\$customerio_id"
         PIntegrationAttribute.APPSTACK_ID -> "\$appstack_id"
+        PIntegrationAttribute.AIRBRIDGE_ID -> "\$airbridge_id"
     }
 }

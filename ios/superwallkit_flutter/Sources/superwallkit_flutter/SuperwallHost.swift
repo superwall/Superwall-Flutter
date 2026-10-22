@@ -131,13 +131,15 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
   }
 
   func setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
-    let swAttribute = attribute.toSwiftIntegrationAttribute()
+    // Attributes the iOS SDK doesn't support, such as Airbridge, are ignored.
+    guard let swAttribute = attribute.toSwiftIntegrationAttribute() else { return }
     Superwall.shared.setIntegrationAttribute(swAttribute, value)
   }
 
   func setIntegrationAttributes(attributes: [PIntegrationAttribute : String?]) {
     let swAttributes = attributes.reduce(into: [IntegrationAttribute: String?]()) { result, pair in
-      result[pair.key.toSwiftIntegrationAttribute()] = pair.value
+      guard let swAttribute = pair.key.toSwiftIntegrationAttribute() else { return }
+      result[swAttribute] = pair.value
     }
     Superwall.shared.setIntegrationAttributes(swAttributes)
   }
@@ -564,7 +566,8 @@ final class CustomerInfoStreamHandlerImpl: StreamCustomerInfoStreamHandler {
 
 // MARK: - PIntegrationAttribute Extension
 extension PIntegrationAttribute {
-  func toSwiftIntegrationAttribute() -> IntegrationAttribute {
+  /// Returns `nil` for attributes the iOS SDK doesn't support.
+  func toSwiftIntegrationAttribute() -> IntegrationAttribute? {
     switch self {
     case .adjustId:
       return .adjustId
@@ -608,6 +611,9 @@ extension PIntegrationAttribute {
       return .customerioId
     case .appstackId:
       return .appstackId
+    case .airbridgeId:
+      // Android only: the iOS SDK has no Airbridge attribute.
+      return nil
     }
   }
 }
