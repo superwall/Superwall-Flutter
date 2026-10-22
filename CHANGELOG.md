@@ -10,7 +10,7 @@ The iOS SDK 4.18.0 raises its minimum deployment target from iOS 13 to iOS 15 an
 
 ### Enhancements
 - Updates Android SDK to 2.8.7 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.8.7).
-- Updates iOS SDK to 4.18.0 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.18.0).
+- Updates iOS SDK to 4.18.1 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.18.1).
 - Adds the Customer Center on Android and iOS, a self-service screen where users can view and restore their purchases, manage, cancel or change a subscription, request a refund, manage a web subscription and contact support. Present it with `Superwall.shared.presentCustomerCenter()`, dismiss it with `Superwall.shared.dismissCustomerCenter()`, and configure it with `SuperwallOptions.customerCenter` or by passing a `CustomerCenterConfiguration` when presenting.
 - Adds `CustomerCenterDelegate`, passed to `presentCustomerCenter()`, to decide whether purchases are restored and to hear about selected actions, survey responses, refund requests and dismissal.
 - Adds `CustomerCenterSupport.checksAppStoreForUpdates` (iOS only) to turn off the App Store lookup for the Customer Center's update banner.
