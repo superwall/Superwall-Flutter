@@ -66,7 +66,12 @@ enum IntegrationAttribute {
   customerioId,
 
   /// The Appstack identifier.
-  appstackId;
+  appstackId,
+
+  /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`.
+  ///
+  /// On iOS, it is kept when you reset or identify a different user.
+  airbridgeId;
 
   PIntegrationAttribute toPigeon() {
     switch (this) {
@@ -112,6 +117,8 @@ enum IntegrationAttribute {
         return PIntegrationAttribute.customerioId;
       case IntegrationAttribute.appstackId:
         return PIntegrationAttribute.appstackId;
+      case IntegrationAttribute.airbridgeId:
+        return PIntegrationAttribute.airbridgeId;
     }
   }
 }

@@ -53,6 +53,17 @@ class PaywallOptions {
   /// Call `Superwall.shared.dismiss()` within the callback if you want to dismiss the paywall.
   /// Note: This is only supported on Android.
   void Function(PaywallInfo?)? onBackPressed;
+
+  /// **Experimental.** Where presented paywalls are hosted. Defaults to
+  /// [PresentationHost.activity].
+  ///
+  /// Set it to [PresentationHost.inWindow] to show paywalls as an overlay in
+  /// the presenting activity's own window instead of in a separate
+  /// `SuperwallPaywallActivity`. This may change or be removed in a future
+  /// release.
+  ///
+  /// Note: Android only. Has no effect on iOS.
+  PresentationHost presentationHost = PresentationHost.activity;
 }
 
 extension PaywallOptionsJson on PaywallOptions {
@@ -69,6 +80,7 @@ extension PaywallOptionsJson on PaywallOptions {
       'shouldShowWebRestorationAlert': shouldShowWebRestorationAlert,
       'overrideProductsByName': overrideProductsByName,
       'shouldShowWebPurchaseConfirmationAlert': shouldShowWebPurchaseConfirmationAlert,
+      'presentationHost': presentationHost.toJson(),
     };
   }
 }
@@ -137,6 +149,34 @@ extension DeviceTierJson on DeviceTier {
         return 'ultra_high';
       case DeviceTier.unknown:
         return 'unknown';
+    }
+  }
+}
+
+/// Where a presented paywall is hosted, used by
+/// [PaywallOptions.presentationHost].
+///
+/// Android only.
+enum PresentationHost {
+  /// The paywall is shown in its own `SuperwallPaywallActivity`. This is the
+  /// default.
+  activity,
+
+  /// **Experimental.** The paywall is shown as a view on top of the presenting
+  /// activity's window, so that activity is never covered or stopped by the
+  /// paywall itself. All presentation styles are supported. If the host
+  /// activity is destroyed while the paywall is shown, including by a
+  /// configuration change it doesn't handle itself, the paywall is dismissed.
+  inWindow,
+}
+
+extension PresentationHostJson on PresentationHost {
+  String toJson() {
+    switch (this) {
+      case PresentationHost.activity:
+        return 'activity';
+      case PresentationHost.inWindow:
+        return 'in_window';
     }
   }
 }
