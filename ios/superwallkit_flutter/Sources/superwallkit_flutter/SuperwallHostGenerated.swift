@@ -293,7 +293,7 @@ enum PIntegrationAttribute: Int {
   case customerioId = 19
   /// The Appstack identifier.
   case appstackId = 20
-  /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`. Android only.
+  /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`.
   case airbridgeId = 21
 }
 

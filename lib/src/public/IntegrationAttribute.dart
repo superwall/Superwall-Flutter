@@ -70,8 +70,7 @@ enum IntegrationAttribute {
 
   /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`.
   ///
-  /// Android only. On iOS it is ignored, because the iOS SDK doesn't support
-  /// Airbridge yet.
+  /// On iOS, it is kept when you reset or identify a different user.
   airbridgeId;
 
   PIntegrationAttribute toPigeon() {

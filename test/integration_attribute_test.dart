@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
@@ -49,6 +50,15 @@ void main() {
         PIntegrationAttribute.airbridgeId: 'abc',
         PIntegrationAttribute.adjustId: null,
       });
+    });
+
+    test('iOS: setIntegrationAttribute sends airbridgeId to native', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final calls = mockHost('setIntegrationAttribute');
+      await Superwall.shared
+          .setIntegrationAttribute(IntegrationAttribute.airbridgeId, 'abc');
+      expect(calls.single, [PIntegrationAttribute.airbridgeId, 'abc']);
     });
   });
 }

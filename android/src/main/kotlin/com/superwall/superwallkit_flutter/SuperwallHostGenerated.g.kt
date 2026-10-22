@@ -331,7 +331,7 @@ enum class PIntegrationAttribute(val raw: Int) {
   CUSTOMERIO_ID(19),
   /** The Appstack identifier. */
   APPSTACK_ID(20),
-  /** The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`. Android only. */
+  /** The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`. */
   AIRBRIDGE_ID(21);
 
   companion object {

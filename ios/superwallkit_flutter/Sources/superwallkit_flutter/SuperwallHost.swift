@@ -131,7 +131,7 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
   }
 
   func setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
-    // Attributes the iOS SDK doesn't support, such as Airbridge, are ignored.
+    // Attributes the iOS SDK doesn't support are ignored.
     guard let swAttribute = attribute.toSwiftIntegrationAttribute() else { return }
     Superwall.shared.setIntegrationAttribute(swAttribute, value)
   }
@@ -612,8 +612,7 @@ extension PIntegrationAttribute {
     case .appstackId:
       return .appstackId
     case .airbridgeId:
-      // Android only: the iOS SDK has no Airbridge attribute.
-      return nil
+      return .airbridgeId
     }
   }
 }

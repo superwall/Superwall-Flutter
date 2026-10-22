@@ -1019,7 +1019,7 @@ enum PIntegrationAttribute {
   /// The Appstack identifier.
   appstackId,
 
-  /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`. Android only.
+  /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`.
   airbridgeId,
 }
 
