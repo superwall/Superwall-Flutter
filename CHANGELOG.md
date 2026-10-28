@@ -2,6 +2,13 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## Unreleased
+
+### Fixes
+- Fixes Android `getCustomerInfo()` returning empty purchase and entitlement lists when the native SDK has customer info.
+- Fixes Android `customerInfoStream` throwing `MissingPluginException`, and forwards `customerInfoDidChange` delegate callbacks with the old and new customer info.
+- Preserves Android entitlement product IDs, activity, offer type, store, renewal and expiry details, and implements native product-to-entitlement lookup.
+
 ## 2.6.0
 
 ### Enhancements

@@ -542,7 +542,7 @@ class Superwall {
     _customerInfoStream ??= generated
         .streamCustomerInfo()
         .map((e) => CustomerInfo.fromPigeon(e));
-    return _customerInfoStream!.asBroadcastStream();
+    return _customerInfoStream!;
   }
 
   Future<PresentationResult> getPresentationResult(String placement,

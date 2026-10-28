@@ -24,8 +24,8 @@ class Entitlements {
   /// Returns all entitlements that contain any of the specified product IDs.
   ///
   /// This method calls the native SDK's byProductIds function to filter entitlements
-  /// by product IDs. On iOS, this uses the native implementation. On Android, it falls
-  /// back to local filtering since the Android SDK doesn't expose product IDs yet.
+  /// by product IDs on both iOS and Android, including Android base plan and offer
+  /// identifier matching.
   ///
   /// - Parameter productIds: A set of product identifiers to search for.
   /// - Returns: A future that resolves to a set of entitlements that contain any of the specified product IDs.
