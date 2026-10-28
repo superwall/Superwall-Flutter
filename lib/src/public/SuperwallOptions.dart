@@ -22,6 +22,10 @@ class SuperwallOptions {
   /// Defaults to `false`.
   bool isGameControllerEnabled = false;
 
+  /// Enables experimental device variables. These are subject to change.
+  /// Defaults to `false`. iOS only.
+  bool enableExperimentalDeviceVariables = false;
+
   /// The log scope and level to print to the console.
   Logging logging = Logging();
 
@@ -57,6 +61,7 @@ extension SuperwallOptionsJson on SuperwallOptions {
       'isExternalDataCollectionEnabled': isExternalDataCollectionEnabled,
       'localeIdentifier': localeIdentifier,
       'isGameControllerEnabled': isGameControllerEnabled,
+      'enableExperimentalDeviceVariables': enableExperimentalDeviceVariables,
       'logging': logging.toJson(),
       'passIdentifiersToPlayStore': passIdentifiersToPlayStore,
       'testModeBehavior': testModeBehavior.toJson(),

@@ -2,6 +2,11 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## Unreleased
+
+### Fixes
+- Exposes `SuperwallOptions.enableExperimentalDeviceVariables` on iOS, allowing Flutter apps to enable experimental device variables for campaign filters. Defaults to `false`.
+
 ## 2.6.0
 
 ### Enhancements

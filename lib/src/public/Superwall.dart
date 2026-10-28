@@ -86,6 +86,8 @@ class Superwall {
         options.isExternalDataCollectionEnabled;
     generatedOptions.localeIdentifier = options.localeIdentifier;
     generatedOptions.isGameControllerEnabled = options.isGameControllerEnabled;
+    generatedOptions.enableExperimentalDeviceVariables =
+        options.enableExperimentalDeviceVariables;
     generatedOptions.passIdentifiersToPlayStore =
         options.passIdentifiersToPlayStore;
 
