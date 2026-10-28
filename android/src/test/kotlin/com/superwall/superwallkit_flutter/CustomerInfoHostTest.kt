@@ -6,20 +6,22 @@ import com.superwall.sdk.models.customer.CustomerInfo
 import com.superwall.sdk.models.entitlements.Entitlement
 import com.superwall.sdk.store.Entitlements
 import io.flutter.plugin.common.BinaryMessenger
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.CALLS_REAL_METHODS
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class CustomerInfoHostTest {
-    private fun withSdk(test: (Superwall, SuperwallHost, BinaryMessenger) -> Unit) {
+    private fun withSdk(realMethods: Boolean = false, test: (Superwall, SuperwallHost, BinaryMessenger) -> Unit) {
         val instanceField = Superwall::class.java.getDeclaredField("_instance").apply { isAccessible = true }
         val previous = instanceField.get(null)
-        val sdk = mock(Superwall::class.java)
+        val sdk = if (realMethods) mock(Superwall::class.java, CALLS_REAL_METHODS) else mock(Superwall::class.java)
         instanceField.set(null, sdk)
         val messenger = mock(BinaryMessenger::class.java)
         val host = SuperwallHost(context = { error("No Application needed for customer-info reads") }, binaryMessenger = { messenger })
@@ -32,9 +34,13 @@ class CustomerInfoHostTest {
     }
 
     @Test
-    fun getterReturnsNativeSnapshotInsteadOfPlaceholder() = withSdk { sdk, host, _ ->
+    fun getterReturnsNativeSnapshotInsteadOfPlaceholder() = withSdk(realMethods = true) { sdk, host, _ ->
         val entitlement = Entitlement(id = "expired", isActive = false, productIds = setOf("monthly"))
-        `when`(sdk.getCustomerInfo()).thenReturn(CustomerInfo(emptyList(), emptyList(), "customer", listOf(entitlement)))
+        val snapshot = CustomerInfo(emptyList(), emptyList(), "customer", listOf(entitlement))
+        // The property getter and snapshot method share a JVM name. Exercise the
+        // real snapshot getter instead of mocking its return-type-only overload.
+        Superwall::class.java.getDeclaredField("_customerInfo").apply { isAccessible = true }
+            .set(sdk, MutableStateFlow(snapshot))
         var result: PCustomerInfo? = null
         host.getCustomerInfo { result = it.getOrThrow() }
         assertEquals("customer", result!!.userId)
