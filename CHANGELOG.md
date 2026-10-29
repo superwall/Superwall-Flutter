@@ -9,7 +9,7 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 The iOS SDK 4.18.0 raises its minimum deployment target from iOS 13 to iOS 15 and requires Xcode 26 (Swift 6.2) or later to build. The plugin's minimum iOS version goes from 14.0 to 15.0 to match, so set `platform :ios, '15.0'` in your `ios/Podfile` and `IPHONEOS_DEPLOYMENT_TARGET` to 15.0 in your Xcode project.
 
 ### Enhancements
-- Updates Android SDK to 2.8.8 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.8.8).
+- Updates Android SDK to 2.9.0 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.9.0).
 - Updates iOS SDK to 4.18.3 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.18.3).
 - Adds the Customer Center on Android and iOS, a self-service screen where users can view and restore their purchases, manage, cancel or change a subscription, request a refund, manage a web subscription and contact support. Present it with `Superwall.shared.presentCustomerCenter()`, dismiss it with `Superwall.shared.dismissCustomerCenter()`, and configure it with `SuperwallOptions.customerCenter` or by passing a `CustomerCenterConfiguration` when presenting.
 - Adds `CustomerCenterDelegate`, passed to `presentCustomerCenter()`, to decide whether purchases are restored and to hear about selected actions, survey responses, refund requests and dismissal.
