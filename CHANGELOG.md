@@ -25,6 +25,9 @@ The iOS SDK 4.18.0 raises its minimum deployment target from iOS 13 to iOS 15 an
 
 ### Fixes
 - Android: a paywall whose webview can't load, because every URL and retry has been used up, is now dismissed as declined with the `PaywallCloseReason.webViewFailedToLoad` close reason, matching iOS. The `registerPlacement` handler gets `onDismiss` and then the feature block for a non-gated placement, or `onError` for a gated one.
+- Fixes Android `getCustomerInfo()` returning empty purchase and entitlement lists when the native SDK has customer info.
+- Fixes Android `customerInfoStream` throwing `MissingPluginException`, and forwards `customerInfoDidChange` delegate callbacks with the old and new customer info.
+- Preserves Android entitlement product IDs, activity, offer type, store, renewal and expiry details, and implements native product-to-entitlement lookup.
 
 ## 2.6.0
 

@@ -96,6 +96,8 @@ When adding new methods to the SDK, follow this workflow:
 ## Native Platform Details
 
 ### Android
+- Customer-info getters, streams and delegate callbacks share `utils/CustomerInfoMapper.kt`. Preserve native nullable details and epoch-millisecond dates; use native `entitlements.byProductIds` for Android base-plan/offer matching.
+- `CustomerInfoStreamHandlerImpl` owns its collector independently of the subscription-status stream. Cancel collectors on channel cancellation and dispose the host on engine detachment.
 - **Min SDK**: 26 (Android 8.0)
 - **Compile SDK**: 34
 - **Language**: Kotlin
