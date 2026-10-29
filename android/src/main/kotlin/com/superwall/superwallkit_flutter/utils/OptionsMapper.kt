@@ -7,6 +7,7 @@ import PExperiment
 import PLocalNotification
 import PPaywallInfo
 import PPaywallOptions
+import PPresentationHost
 import PProduct
 import PSuperwallOptions
 import PSurvey
@@ -16,6 +17,7 @@ import com.superwall.sdk.analytics.Tier
 import com.superwall.sdk.billing.DecomposedProductIds
 import com.superwall.sdk.config.options.PaywallOptions
 import PTestModeBehavior
+import com.superwall.superwallkit_flutter.utils.CustomerCenterMapper.toSdk
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.store.testmode.TestModeBehavior
 import com.superwall.sdk.logger.LogLevel
@@ -65,6 +67,7 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
 
     this.shouldObservePurchases?.let { sdkOptions.shouldObservePurchases = it }
     this.useMockReviews?.let { sdkOptions.useMockReviews = it }
+    this.customerCenter?.let { sdkOptions.customerCenter = it.toSdk() }
 
     this.logging?.let { hostLogging ->
         hostLogging.level?.let { hostLevel ->
@@ -159,6 +162,14 @@ fun PPaywallOptions.toSdkPaywallOptions(): PaywallOptions {
 
     this.overrideProductsByName?.let { hostOverrides ->
         sdkPaywallOptions.overrideProductsByName = hostOverrides
+    }
+
+    this.presentationHost?.let { hostPresentationHost ->
+        sdkPaywallOptions.presentationHost =
+            when (hostPresentationHost) {
+                PPresentationHost.ACTIVITY -> PaywallOptions.PresentationHost.ACTIVITY
+                PPresentationHost.IN_WINDOW -> PaywallOptions.PresentationHost.IN_WINDOW
+            }
     }
 
     return sdkPaywallOptions

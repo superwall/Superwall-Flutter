@@ -38,6 +38,7 @@ class SuperwallkitFlutterPlugin :
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        host?.dispose()
         host = null
     }
 

@@ -422,6 +422,28 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         eventType: .permissionDenied,
         params: params
       )
+    case .teleportOpen(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .teleportOpen,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .teleportReturn(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .teleportReturn,
+        params: params,
+        paywallInfo: paywallInfo?.pigeonify()
+      )
+    case .customerCenterOpen:
+      pEventInfo = PSuperwallEventInfo(eventType: .customerCenterOpen, params: params)
+    case .customerCenterClose:
+      pEventInfo = PSuperwallEventInfo(eventType: .customerCenterClose, params: params)
+    case .customerCenterAction:
+      pEventInfo = PSuperwallEventInfo(eventType: .customerCenterAction, params: params)
+    case .customerCenterSurveyResponse:
+      pEventInfo = PSuperwallEventInfo(eventType: .customerCenterSurveyResponse, params: params)
+    case .customerCenterRefundRequest:
+      pEventInfo = PSuperwallEventInfo(eventType: .customerCenterRefundRequest, params: params)
     @unknown default:
       pEventInfo = PSuperwallEventInfo(
         eventType: .customPlacement,

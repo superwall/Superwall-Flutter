@@ -47,6 +47,30 @@ class SuperwallOptions {
   /// Enable mock review functionality. Defaults to `false`.
   /// Android only.
   bool useMockReviews = false;
+
+  /// Configures the Customer Center presented via
+  /// `Superwall.shared.presentCustomerCenter()`. `null` (the default) uses
+  /// [CustomerCenterConfiguration.defaultConfiguration].
+  CustomerCenterConfiguration? customerCenter;
+
+  /// The user's consent for how their data is used for advertising, which
+  /// Superwall passes on with the conversions it uploads to Google Ads and
+  /// Meta.
+  ///
+  /// `null` (the default) leaves it unset: the SDK then uses the consent
+  /// stored by an IAB TCF consent banner when GDPR applies, and otherwise
+  /// defaults to granted. Apps with users in the EEA, UK or Switzerland that
+  /// don't use a TCF banner should set it from their consent flow. Where the
+  /// values came from is reported in the `adConsentSource` device attribute
+  /// (`developer`, `tcf` or `default`).
+  ///
+  /// Both are reported as denied while event tracking is off, and
+  /// personalization is reported as denied when the user has denied App
+  /// Tracking Transparency or it's restricted, unless you set this yourself.
+  ///
+  /// You can also change it at runtime via `Superwall.shared.setAdConsent()`.
+  /// iOS only.
+  AdConsent? adConsent;
 }
 
 extension SuperwallOptionsJson on SuperwallOptions {

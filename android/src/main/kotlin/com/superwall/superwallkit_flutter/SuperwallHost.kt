@@ -5,6 +5,11 @@ import PConfigurationStatus
 import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
+import FlutterError
+import PAdConsent
+import PCustomerCenterConfiguration
+import PCustomerCenterDelegateGenerated
+import PCustomerCenterDelegateHost
 import PCustomerInfo
 import PEntitlement
 import PExperiment
@@ -46,16 +51,17 @@ import PVariant
 import PVariantType
 import PigeonEventSink
 import StreamSubscriptionStatusStreamHandler
+import StreamCustomerInfoStreamHandler
 import android.app.Activity
 import android.app.Application
 import com.superwall.sdk.Superwall
+import com.superwall.sdk.models.attribution.AttributionProvider
 import com.superwall.sdk.billing.BillingError
 import com.superwall.sdk.delegate.PurchaseResult
 import com.superwall.sdk.config.models.ConfigurationStatus
 import com.superwall.sdk.identity.IdentityOptions
 import com.superwall.sdk.identity.identify
 import com.superwall.sdk.identity.setUserAttributes
-import com.superwall.sdk.models.entitlements.Entitlement
 import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.models.triggers.Experiment
 import com.superwall.sdk.store.abstractions.product.StoreProduct
@@ -71,9 +77,11 @@ import toJson
 import androidx.core.net.toUri
 import com.superwall.sdk.paywall.presentation.register
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
+import com.superwall.superwallkit_flutter.utils.CustomerCenterMapper.toSdk
+import com.superwall.superwallkit_flutter.utils.CustomerInfoMapper
 import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
-import android.util.Log
+import io.flutter.plugin.common.EventChannel
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.delegate.RestorationResult
 import com.superwall.sdk.logger.LogLevel
@@ -83,6 +91,7 @@ import com.superwall.sdk.paywall.presentation.result.PresentationResult
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.fromPigeon
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.toPigeon
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.collectLatest
@@ -92,15 +101,35 @@ class SuperwallHost(
     val binaryMessenger: () -> BinaryMessenger
 ) : PSuperwallHostApi, StreamSubscriptionStatusStreamHandler() {
 
-    init {
-        setUp(binaryMessenger = binaryMessenger(), this)
-        register(binaryMessenger(), this)
-    }
-
     private val mainScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
     private var latestStreamJob: Job? = null
     private val inAppPurchaseQuery = InAppPurchaseQuery(context)
+    private val customerInfoStreamHandler = CustomerInfoStreamHandlerImpl()
+    private var delegateHost: SuperwallDelegateHost? = null
+
+    init {
+        setUp(binaryMessenger = binaryMessenger(), this)
+        register(binaryMessenger(), this)
+        StreamCustomerInfoStreamHandler.register(binaryMessenger(), customerInfoStreamHandler)
+    }
+
+    fun dispose() {
+        customerInfoStreamHandler.dispose()
+        mainScope.cancel()
+        ioScope.cancel()
+        delegateHost?.let {
+            val sdk = runCatching { Superwall.instance }.getOrNull()
+            if (sdk != null && sdk.delegate === it) sdk.delegate = null
+            it.dispose()
+        }
+        delegateHost = null
+        setUp(binaryMessenger = binaryMessenger(), api = null)
+        EventChannel(binaryMessenger(), "dev.flutter.pigeon.superwallkit_flutter.SuperwallEventStreams.streamCustomerInfo")
+            .setStreamHandler(null)
+        EventChannel(binaryMessenger(), "dev.flutter.pigeon.superwallkit_flutter.SuperwallEventStreams.streamSubscriptionStatus")
+            .setStreamHandler(null)
+    }
     override fun configure(
         apiKey: String,
         purchaseController: PPurchaseControllerHost?,
@@ -146,11 +175,11 @@ class SuperwallHost(
     }
 
     override fun setDelegate(hasDelegate: Boolean) {
-        Superwall.instance.delegate =
-            if (hasDelegate)
-                SuperwallDelegateHost({
-                    PSuperwallDelegateGenerated(binaryMessenger())
-                }) else null
+        delegateHost?.dispose()
+        delegateHost = if (hasDelegate) {
+            SuperwallDelegateHost { PSuperwallDelegateGenerated(binaryMessenger()) }
+        } else null
+        Superwall.instance.delegate = delegateHost
     }
 
     override fun confirmAllAssignments(callback: (Result<List<PConfirmedAssignment>>) -> Unit) {
@@ -190,13 +219,34 @@ class SuperwallHost(
     }
 
     override fun setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
-        val attributeKey = attribute.toAttributeKey()
-        Superwall.instance.setUserAttributes(mapOf(attributeKey to value))
+        setIntegrationAttributes(mapOf(attribute to value))
     }
 
     override fun setIntegrationAttributes(attributes: Map<PIntegrationAttribute, String?>) {
-        val androidAttributes = attributes.mapKeys { it.key.toAttributeKey() }
-        Superwall.instance.setUserAttributes(androidAttributes)
+        val (providerAttributes, userAttributes) =
+            attributes.entries.partition { it.key.toAttributionProvider() != null }
+
+        if (userAttributes.isNotEmpty()) {
+            Superwall.instance.setUserAttributes(
+                userAttributes.associate { it.key.toAttributeKey() to it.value }
+            )
+        }
+
+        if (providerAttributes.isNotEmpty()) {
+            // The native call replaces every integration attribute, so merge into the current ones.
+            val merged = Superwall.instance.integrationAttributes
+                .mapNotNull { (rawName, value) ->
+                    AttributionProvider.values().firstOrNull { it.rawName == rawName }
+                        ?.let { it to value }
+                }
+                .toMap()
+                .toMutableMap()
+            providerAttributes.forEach { (attribute, value) ->
+                val provider = attribute.toAttributionProvider() ?: return@forEach
+                if (value == null) merged.remove(provider) else merged[provider] = value
+            }
+            Superwall.instance.setIntegrationAttributes(merged)
+        }
     }
 
     override fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit) {
@@ -215,6 +265,15 @@ class SuperwallHost(
 
     override fun setLocaleIdentifier(localeIdentifier: String?) {
         Superwall.instance.localeIdentifier = localeIdentifier
+    }
+
+    // Ad consent is iOS only. The Dart API doesn't call these on Android.
+    override fun getAdConsent(): PAdConsent {
+        throw FlutterError("unsupported", "getAdConsent is only available on iOS.")
+    }
+
+    override fun setAdConsent(adConsent: PAdConsent) {
+        // No-op: the Android SDK has no ad consent API.
     }
 
     override fun getUserId(): String {
@@ -238,55 +297,21 @@ class SuperwallHost(
     }
 
     override fun getEntitlements(): PEntitlements {
-        fun mapEntitlement(entitlement: Entitlement): PEntitlement {
-            return PEntitlement(
-                id = entitlement.id,
-                type = PEntitlementType.SERVICE_LEVEL,
-                isActive = true,
-                productIds = emptyList()
-            )
-        }
-
         return PEntitlements(
-            active = Superwall.instance.entitlements.active.map { mapEntitlement(it) },
-            inactive = Superwall.instance.entitlements.inactive.map { mapEntitlement(it) },
-            all = Superwall.instance.entitlements.all.map { mapEntitlement(it) },
-            web = Superwall.instance.entitlements.web.map { mapEntitlement(it) }
+            active = Superwall.instance.entitlements.active.map { CustomerInfoMapper.toPigeon(it) },
+            inactive = Superwall.instance.entitlements.inactive.map { CustomerInfoMapper.toPigeon(it) },
+            all = Superwall.instance.entitlements.all.map { CustomerInfoMapper.toPigeon(it) },
+            web = Superwall.instance.entitlements.web.map { CustomerInfoMapper.toPigeon(it) }
         )
     }
 
     override fun getEntitlementsByProductIds(productIds: List<String>): List<PEntitlement> {
-        // TODO: Android SDK doesn't have byProductIds method yet
-        // For now, implement filtering locally
-        fun mapEntitlement(entitlement: Entitlement): PEntitlement {
-            return PEntitlement(
-                id = entitlement.id,
-                type = PEntitlementType.SERVICE_LEVEL,
-                isActive = true,
-                productIds = emptyList()
-            )
-        }
-
-        val productIdSet = productIds.toSet()
-        val allEntitlements = Superwall.instance.entitlements.all
-
-        // Since Android SDK's Entitlement doesn't expose productIds yet,
-        // we can't filter by productIds. Return empty list for now.
-        // This will need to be updated when Android SDK supports product IDs in entitlements.
-        Log.w("SuperwallHost", "getEntitlementsByProductIds: Android SDK doesn't expose productIds in Entitlement yet, returning empty list")
-        return emptyList()
+        return Superwall.instance.entitlements.byProductIds(productIds.toSet())
+            .map { CustomerInfoMapper.toPigeon(it) }
     }
 
     override fun getCustomerInfo(callback: (Result<PCustomerInfo>) -> Unit) {
-        // TODO: Implement customerInfo from Android SDK when available
-        // For now, return minimal data based on current user
-        val customerInfo = PCustomerInfo(
-            subscriptions = emptyList(),
-            nonSubscriptions = emptyList(),
-            entitlements = emptyList(),
-            userId = Superwall.instance.userId
-        )
-        callback(Result.success(customerInfo))
+        callback(runCatching { CustomerInfoMapper.toPigeon(Superwall.instance.getCustomerInfo()) })
     }
 
     override fun getSubscriptionStatus(): PSubscriptionStatus {
@@ -419,6 +444,38 @@ class SuperwallHost(
         }
     }
 
+    override fun presentCustomerCenter(
+        configuration: PCustomerCenterConfiguration?,
+        delegate: PCustomerCenterDelegateHost?,
+        callback: (Result<Unit>) -> Unit
+    ) {
+        val host = delegate?.let {
+            CustomerCenterDelegateHost(
+                PCustomerCenterDelegateGenerated(binaryMessenger(), it.hostId ?: "")
+            )
+        }
+        mainScope.launch {
+            val result = runCatching {
+                Superwall.instance.presentCustomerCenter(
+                    configuration = configuration?.toSdk(),
+                    delegate = host,
+                    onDismiss = host?.let { { it.onDismiss() } },
+                )
+            }
+            callback(result)
+        }
+    }
+
+    override fun dismissCustomerCenter(callback: (Result<Unit>) -> Unit) {
+        mainScope.launch {
+            try {
+                Superwall.instance.dismissCustomerCenter { callback(Result.success(Unit)) }
+            } catch (e: Throwable) {
+                callback(Result.failure(e))
+            }
+        }
+    }
+
     override fun getOverrideProductsByName(): Map<String, String>? {
         return Superwall.instance.overrideProductsByName
     }
@@ -524,6 +581,18 @@ private fun Throwable.isBillingError(): Boolean =
     generateSequence(this) { it.cause }.any { it is BillingError }
 
 // MARK: - PIntegrationAttribute Extension
+
+/**
+ * The native [AttributionProvider] for attributes that are set through
+ * `Superwall.setIntegrationAttributes` rather than as `$`-prefixed user attributes.
+ */
+fun PIntegrationAttribute.toAttributionProvider(): AttributionProvider? {
+    return when (this) {
+        PIntegrationAttribute.AIRBRIDGE_ID -> AttributionProvider.AIRBRIDGE_ID
+        else -> null
+    }
+}
+
 fun PIntegrationAttribute.toAttributeKey(): String {
     return when (this) {
         PIntegrationAttribute.ADJUST_ID -> "\$adjust_id"
@@ -547,5 +616,6 @@ fun PIntegrationAttribute.toAttributeKey(): String {
         PIntegrationAttribute.POSTHOG_USER_ID -> "\$posthog_user_id"
         PIntegrationAttribute.CUSTOMERIO_ID -> "\$customerio_id"
         PIntegrationAttribute.APPSTACK_ID -> "\$appstack_id"
+        PIntegrationAttribute.AIRBRIDGE_ID -> "\$airbridge_id"
     }
 }

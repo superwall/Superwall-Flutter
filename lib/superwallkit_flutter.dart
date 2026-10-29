@@ -1,8 +1,10 @@
 library superwallkit_flutter;
 
+export 'src/public/AdConsent.dart';
 export 'src/public/ComputedPropertyRequest.dart';
 export 'src/public/ConfirmedAssignments.dart';
 export 'src/public/CustomCallback.dart';
+export 'src/public/CustomerCenter.dart';
 export 'src/public/ConfigurationStatus.dart';
 export 'src/public/Experiment.dart';
 export 'src/public/FeatureGatingBehavior.dart';
