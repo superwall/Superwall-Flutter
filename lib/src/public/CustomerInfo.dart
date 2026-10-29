@@ -110,9 +110,15 @@ class SubscriptionTransaction {
   final bool isInBillingRetryPeriod;
 
   /// Indicates whether the subscription is active.
+  ///
+  /// On iOS, this is `true` during a billing grace period, when Apple keeps
+  /// the subscriber's access even though the renewal payment failed.
   final bool isActive;
 
   /// The date that the subscription expires, null if non-renewing.
+  ///
+  /// On iOS, during a billing grace period, this is the date the grace period
+  /// ends.
   final DateTime? expirationDate;
 
   /// The type of offer that applies to the subscription transaction.

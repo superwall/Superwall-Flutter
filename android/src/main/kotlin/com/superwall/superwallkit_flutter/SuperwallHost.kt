@@ -68,6 +68,8 @@ import com.superwall.sdk.store.abstractions.product.StoreProduct
 import com.superwall.sdk.paywall.presentation.dismiss
 import com.superwall.superwallkit_flutter.json.JsonExtensions
 import com.superwall.superwallkit_flutter.utils.toSdkOptions
+import com.superwall.superwallkit_flutter.utils.toSdk
+import com.superwall.superwallkit_flutter.utils.toPigeon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -267,13 +269,13 @@ class SuperwallHost(
         Superwall.instance.localeIdentifier = localeIdentifier
     }
 
-    // Ad consent is iOS only. The Dart API doesn't call these on Android.
+    // Unspecified is reported as the default, both granted, like iOS.
     override fun getAdConsent(): PAdConsent {
-        throw FlutterError("unsupported", "getAdConsent is only available on iOS.")
+        return Superwall.instance.adConsent.toPigeon()
     }
 
     override fun setAdConsent(adConsent: PAdConsent) {
-        // No-op: the Android SDK has no ad consent API.
+        Superwall.instance.adConsent = adConsent.toSdk()
     }
 
     override fun getUserId(): String {

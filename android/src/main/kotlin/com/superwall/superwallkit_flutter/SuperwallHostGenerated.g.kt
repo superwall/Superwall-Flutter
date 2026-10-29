@@ -512,7 +512,8 @@ enum class PEventType(val raw: Int) {
   CUSTOMER_CENTER_SURVEY_RESPONSE(76),
   CUSTOMER_CENTER_REFUND_REQUEST(77),
   TELEPORT_OPEN(78),
-  TELEPORT_RETURN(79);
+  TELEPORT_RETURN(79),
+  ATTRIBUTION_MATCH(80);
 
   companion object {
     fun ofRaw(raw: Int): PEventType? {
@@ -563,6 +564,22 @@ enum class PPaywallSkippedReason(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): PPaywallSkippedReason? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/**
+ * How the store should charge when a purchase replaces an existing
+ * subscription. Android only.
+ */
+enum class PProductReplacementMode(val raw: Int) {
+  STORE_DEFAULT(0),
+  CHARGE_PRORATED(1),
+  CHARGE_FULL_PRICE(2);
+
+  companion object {
+    fun ofRaw(raw: Int): PProductReplacementMode? {
       return values().firstOrNull { it.raw == raw }
     }
   }
@@ -1138,7 +1155,6 @@ data class PSuperwallOptions (
   /**
    * The user's ad consent. `null` leaves it unset, so the native SDK falls
    * back to a TCF banner's stored consent or the default.
-   * iOS only.
    */
   val adConsent: PAdConsent? = null
 )
@@ -4363,6 +4379,44 @@ data class PPaywallNotAvailablePresentationResult (
 
   override fun hashCode(): Int = toList().hashCode()
 }
+
+/**
+ * The existing subscription a purchase replaces. Android only.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PProductReplacement (
+  val mode: PProductReplacementMode,
+  val oldProductId: String? = null,
+  val oldPurchaseToken: String? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PProductReplacement {
+      val mode = pigeonVar_list[0] as PProductReplacementMode
+      val oldProductId = pigeonVar_list[1] as String?
+      val oldPurchaseToken = pigeonVar_list[2] as String?
+      return PProductReplacement(mode, oldProductId, oldPurchaseToken)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      mode,
+      oldProductId,
+      oldPurchaseToken,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PProductReplacement) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
 private data class SuperwallHostGeneratedPigeonInternalCodecOverflow (
   val type: Long,
   val wrapped: Any? = null
@@ -4391,9 +4445,13 @@ private data class SuperwallHostGeneratedPigeonInternalCodecOverflow (
         
     when (type.toInt()) {
       0 ->
-        return PHoldoutPresentationResult.fromList(wrapped as List<Any?>)
+        return PPaywallPresentationResult.fromList(wrapped as List<Any?>)
       1 ->
+        return PHoldoutPresentationResult.fromList(wrapped as List<Any?>)
+      2 ->
         return PPaywallNotAvailablePresentationResult.fromList(wrapped as List<Any?>)
+      3 ->
+        return PProductReplacement.fromList(wrapped as List<Any?>)
     }
     return null
   }
@@ -4532,503 +4590,503 @@ private open class SuperwallHostGeneratedPigeonCodec : StandardMessageCodec() {
         }
       }
       155.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PSuccessRedemptionResult.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PProductReplacementMode.ofRaw(it.toInt())
         }
       }
       156.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PErrorRedemptionResult.fromList(it)
+          PSuccessRedemptionResult.fromList(it)
         }
       }
       157.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PErrorInfo.fromList(it)
+          PErrorRedemptionResult.fromList(it)
         }
       }
       158.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExpiredCodeRedemptionResult.fromList(it)
+          PErrorInfo.fromList(it)
         }
       }
       159.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExpiredCodeInfo.fromList(it)
+          PExpiredCodeRedemptionResult.fromList(it)
         }
       }
       160.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PInvalidCodeRedemptionResult.fromList(it)
+          PExpiredCodeInfo.fromList(it)
         }
       }
       161.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExpiredSubscriptionCode.fromList(it)
+          PInvalidCodeRedemptionResult.fromList(it)
         }
       }
       162.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRedemptionInfo.fromList(it)
+          PExpiredSubscriptionCode.fromList(it)
         }
       }
       163.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PAppUserOwnership.fromList(it)
+          PRedemptionInfo.fromList(it)
         }
       }
       164.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PDeviceOwnership.fromList(it)
+          PAppUserOwnership.fromList(it)
         }
       }
       165.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaserInfo.fromList(it)
+          PDeviceOwnership.fromList(it)
         }
       }
       166.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStripeStoreIdentifiers.fromList(it)
+          PPurchaserInfo.fromList(it)
         }
       }
       167.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaddleStoreIdentifiers.fromList(it)
+          PStripeStoreIdentifiers.fromList(it)
         }
       }
       168.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PUnknownStoreIdentifiers.fromList(it)
+          PPaddleStoreIdentifiers.fromList(it)
         }
       }
       169.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRedemptionPaywallInfo.fromList(it)
+          PUnknownStoreIdentifiers.fromList(it)
         }
       }
       170.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallOptions.fromList(it)
+          PRedemptionPaywallInfo.fromList(it)
         }
       }
       171.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PAdConsent.fromList(it)
+          PSuperwallOptions.fromList(it)
         }
       }
       172.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallInfo.fromList(it)
+          PAdConsent.fromList(it)
         }
       }
       173.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PProduct.fromList(it)
+          PPaywallInfo.fromList(it)
         }
       }
       174.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PLocalNotification.fromList(it)
+          PProduct.fromList(it)
         }
       }
       175.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PComputedPropertyRequest.fromList(it)
+          PLocalNotification.fromList(it)
         }
       }
       176.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSurvey.fromList(it)
+          PComputedPropertyRequest.fromList(it)
         }
       }
       177.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSurveyOption.fromList(it)
+          PSurvey.fromList(it)
         }
       }
       178.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseCancelled.fromList(it)
+          PSurveyOption.fromList(it)
         }
       }
       179.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasePurchased.fromList(it)
+          PPurchaseCancelled.fromList(it)
         }
       }
       180.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasePending.fromList(it)
+          PPurchasePurchased.fromList(it)
         }
       }
       181.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseFailed.fromList(it)
+          PPurchasePending.fromList(it)
         }
       }
       182.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestorationRestored.fromList(it)
+          PPurchaseFailed.fromList(it)
         }
       }
       183.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestorationFailed.fromList(it)
+          PRestorationRestored.fromList(it)
         }
       }
       184.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PViaPurchase.fromList(it)
+          PRestorationFailed.fromList(it)
         }
       }
       185.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PViaRestore.fromList(it)
+          PViaPurchase.fromList(it)
         }
       }
       186.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestoreFailed.fromList(it)
+          PViaRestore.fromList(it)
         }
       }
       187.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PLogging.fromList(it)
+          PRestoreFailed.fromList(it)
         }
       }
       188.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStoreTransaction.fromList(it)
+          PLogging.fromList(it)
         }
       }
       189.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStoreProduct.fromList(it)
+          PStoreTransaction.fromList(it)
         }
       }
       190.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          POwnedInAppPurchase.fromList(it)
+          PStoreProduct.fromList(it)
         }
       }
       191.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallOptions.fromList(it)
+          POwnedInAppPurchase.fromList(it)
         }
       }
       192.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          POnBackPressedHost.fromList(it)
+          PPaywallOptions.fromList(it)
         }
       }
       193.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseControllerHost.fromList(it)
+          POnBackPressedHost.fromList(it)
         }
       }
       194.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfigureCompletionHost.fromList(it)
+          PPurchaseControllerHost.fromList(it)
         }
       }
       195.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallPresentationHandlerHost.fromList(it)
+          PConfigureCompletionHost.fromList(it)
         }
       }
       196.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PFeatureHandlerHost.fromList(it)
+          PPaywallPresentationHandlerHost.fromList(it)
         }
       }
       197.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterRestorePathType.fromList(it)
+          PFeatureHandlerHost.fromList(it)
         }
       }
       198.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterManageSubscriptionPathType.fromList(it)
+          PCustomerCenterRestorePathType.fromList(it)
         }
       }
       199.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterRefundPathType.fromList(it)
+          PCustomerCenterManageSubscriptionPathType.fromList(it)
         }
       }
       200.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterChangePlanPathType.fromList(it)
+          PCustomerCenterRefundPathType.fromList(it)
         }
       }
       201.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterContactSupportPathType.fromList(it)
+          PCustomerCenterChangePlanPathType.fromList(it)
         }
       }
       202.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterUrlPathType.fromList(it)
+          PCustomerCenterContactSupportPathType.fromList(it)
         }
       }
       203.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterCustomPathType.fromList(it)
+          PCustomerCenterUrlPathType.fromList(it)
         }
       }
       204.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterSurveyOption.fromList(it)
+          PCustomerCenterCustomPathType.fromList(it)
         }
       }
       205.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterSurvey.fromList(it)
+          PCustomerCenterSurveyOption.fromList(it)
         }
       }
       206.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterPath.fromList(it)
+          PCustomerCenterSurvey.fromList(it)
         }
       }
       207.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterScreen.fromList(it)
+          PCustomerCenterPath.fromList(it)
         }
       }
       208.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterSupport.fromList(it)
+          PCustomerCenterScreen.fromList(it)
         }
       }
       209.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterColorPair.fromList(it)
+          PCustomerCenterSupport.fromList(it)
         }
       }
       210.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterConfiguration.fromList(it)
+          PCustomerCenterColorPair.fromList(it)
         }
       }
       211.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterRestoreAction.fromList(it)
+          PCustomerCenterConfiguration.fromList(it)
         }
       }
       212.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterManageSubscriptionAction.fromList(it)
+          PCustomerCenterRestoreAction.fromList(it)
         }
       }
       213.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterRefundAction.fromList(it)
+          PCustomerCenterManageSubscriptionAction.fromList(it)
         }
       }
       214.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterChangePlanAction.fromList(it)
+          PCustomerCenterRefundAction.fromList(it)
         }
       }
       215.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterContactSupportAction.fromList(it)
+          PCustomerCenterChangePlanAction.fromList(it)
         }
       }
       216.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterUrlAction.fromList(it)
+          PCustomerCenterContactSupportAction.fromList(it)
         }
       }
       217.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterCustomAction.fromList(it)
+          PCustomerCenterUrlAction.fromList(it)
         }
       }
       218.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterPurchase.fromList(it)
+          PCustomerCenterCustomAction.fromList(it)
         }
       }
       219.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerCenterDelegateHost.fromList(it)
+          PCustomerCenterPurchase.fromList(it)
         }
       }
       220.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomCallback.fromList(it)
+          PCustomerCenterDelegateHost.fromList(it)
         }
       }
       221.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomCallbackResult.fromList(it)
+          PCustomCallback.fromList(it)
         }
       }
       222.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSubscriptionTransaction.fromList(it)
+          PCustomCallbackResult.fromList(it)
         }
       }
       223.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PNonSubscriptionTransaction.fromList(it)
+          PSubscriptionTransaction.fromList(it)
         }
       }
       224.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PEntitlement.fromList(it)
+          PNonSubscriptionTransaction.fromList(it)
         }
       }
       225.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerInfo.fromList(it)
+          PEntitlement.fromList(it)
         }
       }
       226.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PEntitlements.fromList(it)
+          PCustomerInfo.fromList(it)
         }
       }
       227.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PActive.fromList(it)
+          PEntitlements.fromList(it)
         }
       }
       228.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PInactive.fromList(it)
+          PActive.fromList(it)
         }
       }
       229.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PUnknown.fromList(it)
+          PInactive.fromList(it)
         }
       }
       230.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallEventInfo.fromList(it)
+          PUnknown.fromList(it)
         }
       }
       231.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonDebuggerPresented.fromList(it)
+          PSuperwallEventInfo.fromList(it)
         }
       }
       232.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonPaywallAlreadyPresented.fromList(it)
+          PStatusReasonDebuggerPresented.fromList(it)
         }
       }
       233.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonHoldout.fromList(it)
+          PStatusReasonPaywallAlreadyPresented.fromList(it)
         }
       }
       234.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonNoAudienceMatch.fromList(it)
+          PStatusReasonHoldout.fromList(it)
         }
       }
       235.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonPlacementNotFound.fromList(it)
+          PStatusReasonNoAudienceMatch.fromList(it)
         }
       }
       236.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonNoPaywallVc.fromList(it)
+          PStatusReasonPlacementNotFound.fromList(it)
         }
       }
       237.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonNoPresenter.fromList(it)
+          PStatusReasonNoPaywallVc.fromList(it)
         }
       }
       238.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonNoConfig.fromList(it)
+          PStatusReasonNoPresenter.fromList(it)
         }
       }
       239.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonSubsStatusTimeout.fromList(it)
+          PStatusReasonNoConfig.fromList(it)
         }
       }
       240.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PIdentityOptions.fromList(it)
+          PStatusReasonSubsStatusTimeout.fromList(it)
         }
       }
       241.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExperiment.fromList(it)
+          PIdentityOptions.fromList(it)
         }
       }
       242.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPlacementNotFoundTriggerResult.fromList(it)
+          PExperiment.fromList(it)
         }
       }
       243.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PNoAudienceMatchTriggerResult.fromList(it)
+          PPlacementNotFoundTriggerResult.fromList(it)
         }
       }
       244.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallTriggerResult.fromList(it)
+          PNoAudienceMatchTriggerResult.fromList(it)
         }
       }
       245.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PHoldoutTriggerResult.fromList(it)
+          PPaywallTriggerResult.fromList(it)
         }
       }
       246.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PErrorTriggerResult.fromList(it)
+          PHoldoutTriggerResult.fromList(it)
         }
       }
       247.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PVariant.fromList(it)
+          PErrorTriggerResult.fromList(it)
         }
       }
       248.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfirmedAssignment.fromList(it)
+          PVariant.fromList(it)
         }
       }
       249.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasedPaywallResult.fromList(it)
+          PConfirmedAssignment.fromList(it)
         }
       }
       250.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PDeclinedPaywallResult.fromList(it)
+          PPurchasedPaywallResult.fromList(it)
         }
       }
       251.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestoredPaywallResult.fromList(it)
+          PDeclinedPaywallResult.fromList(it)
         }
       }
       252.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPlacementNotFoundPresentationResult.fromList(it)
+          PRestoredPaywallResult.fromList(it)
         }
       }
       253.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PNoAudienceMatchPresentationResult.fromList(it)
+          PPlacementNotFoundPresentationResult.fromList(it)
         }
       }
       254.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallPresentationResult.fromList(it)
+          PNoAudienceMatchPresentationResult.fromList(it)
         }
       }
       255.toByte() -> {
@@ -5145,413 +5203,423 @@ private open class SuperwallHostGeneratedPigeonCodec : StandardMessageCodec() {
         stream.write(154)
         writeValue(stream, value.raw.toLong())
       }
-      is PSuccessRedemptionResult -> {
+      is PProductReplacementMode -> {
         stream.write(155)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw.toLong())
       }
-      is PErrorRedemptionResult -> {
+      is PSuccessRedemptionResult -> {
         stream.write(156)
         writeValue(stream, value.toList())
       }
-      is PErrorInfo -> {
+      is PErrorRedemptionResult -> {
         stream.write(157)
         writeValue(stream, value.toList())
       }
-      is PExpiredCodeRedemptionResult -> {
+      is PErrorInfo -> {
         stream.write(158)
         writeValue(stream, value.toList())
       }
-      is PExpiredCodeInfo -> {
+      is PExpiredCodeRedemptionResult -> {
         stream.write(159)
         writeValue(stream, value.toList())
       }
-      is PInvalidCodeRedemptionResult -> {
+      is PExpiredCodeInfo -> {
         stream.write(160)
         writeValue(stream, value.toList())
       }
-      is PExpiredSubscriptionCode -> {
+      is PInvalidCodeRedemptionResult -> {
         stream.write(161)
         writeValue(stream, value.toList())
       }
-      is PRedemptionInfo -> {
+      is PExpiredSubscriptionCode -> {
         stream.write(162)
         writeValue(stream, value.toList())
       }
-      is PAppUserOwnership -> {
+      is PRedemptionInfo -> {
         stream.write(163)
         writeValue(stream, value.toList())
       }
-      is PDeviceOwnership -> {
+      is PAppUserOwnership -> {
         stream.write(164)
         writeValue(stream, value.toList())
       }
-      is PPurchaserInfo -> {
+      is PDeviceOwnership -> {
         stream.write(165)
         writeValue(stream, value.toList())
       }
-      is PStripeStoreIdentifiers -> {
+      is PPurchaserInfo -> {
         stream.write(166)
         writeValue(stream, value.toList())
       }
-      is PPaddleStoreIdentifiers -> {
+      is PStripeStoreIdentifiers -> {
         stream.write(167)
         writeValue(stream, value.toList())
       }
-      is PUnknownStoreIdentifiers -> {
+      is PPaddleStoreIdentifiers -> {
         stream.write(168)
         writeValue(stream, value.toList())
       }
-      is PRedemptionPaywallInfo -> {
+      is PUnknownStoreIdentifiers -> {
         stream.write(169)
         writeValue(stream, value.toList())
       }
-      is PSuperwallOptions -> {
+      is PRedemptionPaywallInfo -> {
         stream.write(170)
         writeValue(stream, value.toList())
       }
-      is PAdConsent -> {
+      is PSuperwallOptions -> {
         stream.write(171)
         writeValue(stream, value.toList())
       }
-      is PPaywallInfo -> {
+      is PAdConsent -> {
         stream.write(172)
         writeValue(stream, value.toList())
       }
-      is PProduct -> {
+      is PPaywallInfo -> {
         stream.write(173)
         writeValue(stream, value.toList())
       }
-      is PLocalNotification -> {
+      is PProduct -> {
         stream.write(174)
         writeValue(stream, value.toList())
       }
-      is PComputedPropertyRequest -> {
+      is PLocalNotification -> {
         stream.write(175)
         writeValue(stream, value.toList())
       }
-      is PSurvey -> {
+      is PComputedPropertyRequest -> {
         stream.write(176)
         writeValue(stream, value.toList())
       }
-      is PSurveyOption -> {
+      is PSurvey -> {
         stream.write(177)
         writeValue(stream, value.toList())
       }
-      is PPurchaseCancelled -> {
+      is PSurveyOption -> {
         stream.write(178)
         writeValue(stream, value.toList())
       }
-      is PPurchasePurchased -> {
+      is PPurchaseCancelled -> {
         stream.write(179)
         writeValue(stream, value.toList())
       }
-      is PPurchasePending -> {
+      is PPurchasePurchased -> {
         stream.write(180)
         writeValue(stream, value.toList())
       }
-      is PPurchaseFailed -> {
+      is PPurchasePending -> {
         stream.write(181)
         writeValue(stream, value.toList())
       }
-      is PRestorationRestored -> {
+      is PPurchaseFailed -> {
         stream.write(182)
         writeValue(stream, value.toList())
       }
-      is PRestorationFailed -> {
+      is PRestorationRestored -> {
         stream.write(183)
         writeValue(stream, value.toList())
       }
-      is PViaPurchase -> {
+      is PRestorationFailed -> {
         stream.write(184)
         writeValue(stream, value.toList())
       }
-      is PViaRestore -> {
+      is PViaPurchase -> {
         stream.write(185)
         writeValue(stream, value.toList())
       }
-      is PRestoreFailed -> {
+      is PViaRestore -> {
         stream.write(186)
         writeValue(stream, value.toList())
       }
-      is PLogging -> {
+      is PRestoreFailed -> {
         stream.write(187)
         writeValue(stream, value.toList())
       }
-      is PStoreTransaction -> {
+      is PLogging -> {
         stream.write(188)
         writeValue(stream, value.toList())
       }
-      is PStoreProduct -> {
+      is PStoreTransaction -> {
         stream.write(189)
         writeValue(stream, value.toList())
       }
-      is POwnedInAppPurchase -> {
+      is PStoreProduct -> {
         stream.write(190)
         writeValue(stream, value.toList())
       }
-      is PPaywallOptions -> {
+      is POwnedInAppPurchase -> {
         stream.write(191)
         writeValue(stream, value.toList())
       }
-      is POnBackPressedHost -> {
+      is PPaywallOptions -> {
         stream.write(192)
         writeValue(stream, value.toList())
       }
-      is PPurchaseControllerHost -> {
+      is POnBackPressedHost -> {
         stream.write(193)
         writeValue(stream, value.toList())
       }
-      is PConfigureCompletionHost -> {
+      is PPurchaseControllerHost -> {
         stream.write(194)
         writeValue(stream, value.toList())
       }
-      is PPaywallPresentationHandlerHost -> {
+      is PConfigureCompletionHost -> {
         stream.write(195)
         writeValue(stream, value.toList())
       }
-      is PFeatureHandlerHost -> {
+      is PPaywallPresentationHandlerHost -> {
         stream.write(196)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterRestorePathType -> {
+      is PFeatureHandlerHost -> {
         stream.write(197)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterManageSubscriptionPathType -> {
+      is PCustomerCenterRestorePathType -> {
         stream.write(198)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterRefundPathType -> {
+      is PCustomerCenterManageSubscriptionPathType -> {
         stream.write(199)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterChangePlanPathType -> {
+      is PCustomerCenterRefundPathType -> {
         stream.write(200)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterContactSupportPathType -> {
+      is PCustomerCenterChangePlanPathType -> {
         stream.write(201)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterUrlPathType -> {
+      is PCustomerCenterContactSupportPathType -> {
         stream.write(202)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterCustomPathType -> {
+      is PCustomerCenterUrlPathType -> {
         stream.write(203)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterSurveyOption -> {
+      is PCustomerCenterCustomPathType -> {
         stream.write(204)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterSurvey -> {
+      is PCustomerCenterSurveyOption -> {
         stream.write(205)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterPath -> {
+      is PCustomerCenterSurvey -> {
         stream.write(206)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterScreen -> {
+      is PCustomerCenterPath -> {
         stream.write(207)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterSupport -> {
+      is PCustomerCenterScreen -> {
         stream.write(208)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterColorPair -> {
+      is PCustomerCenterSupport -> {
         stream.write(209)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterConfiguration -> {
+      is PCustomerCenterColorPair -> {
         stream.write(210)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterRestoreAction -> {
+      is PCustomerCenterConfiguration -> {
         stream.write(211)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterManageSubscriptionAction -> {
+      is PCustomerCenterRestoreAction -> {
         stream.write(212)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterRefundAction -> {
+      is PCustomerCenterManageSubscriptionAction -> {
         stream.write(213)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterChangePlanAction -> {
+      is PCustomerCenterRefundAction -> {
         stream.write(214)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterContactSupportAction -> {
+      is PCustomerCenterChangePlanAction -> {
         stream.write(215)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterUrlAction -> {
+      is PCustomerCenterContactSupportAction -> {
         stream.write(216)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterCustomAction -> {
+      is PCustomerCenterUrlAction -> {
         stream.write(217)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterPurchase -> {
+      is PCustomerCenterCustomAction -> {
         stream.write(218)
         writeValue(stream, value.toList())
       }
-      is PCustomerCenterDelegateHost -> {
+      is PCustomerCenterPurchase -> {
         stream.write(219)
         writeValue(stream, value.toList())
       }
-      is PCustomCallback -> {
+      is PCustomerCenterDelegateHost -> {
         stream.write(220)
         writeValue(stream, value.toList())
       }
-      is PCustomCallbackResult -> {
+      is PCustomCallback -> {
         stream.write(221)
         writeValue(stream, value.toList())
       }
-      is PSubscriptionTransaction -> {
+      is PCustomCallbackResult -> {
         stream.write(222)
         writeValue(stream, value.toList())
       }
-      is PNonSubscriptionTransaction -> {
+      is PSubscriptionTransaction -> {
         stream.write(223)
         writeValue(stream, value.toList())
       }
-      is PEntitlement -> {
+      is PNonSubscriptionTransaction -> {
         stream.write(224)
         writeValue(stream, value.toList())
       }
-      is PCustomerInfo -> {
+      is PEntitlement -> {
         stream.write(225)
         writeValue(stream, value.toList())
       }
-      is PEntitlements -> {
+      is PCustomerInfo -> {
         stream.write(226)
         writeValue(stream, value.toList())
       }
-      is PActive -> {
+      is PEntitlements -> {
         stream.write(227)
         writeValue(stream, value.toList())
       }
-      is PInactive -> {
+      is PActive -> {
         stream.write(228)
         writeValue(stream, value.toList())
       }
-      is PUnknown -> {
+      is PInactive -> {
         stream.write(229)
         writeValue(stream, value.toList())
       }
-      is PSuperwallEventInfo -> {
+      is PUnknown -> {
         stream.write(230)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonDebuggerPresented -> {
+      is PSuperwallEventInfo -> {
         stream.write(231)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonPaywallAlreadyPresented -> {
+      is PStatusReasonDebuggerPresented -> {
         stream.write(232)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonHoldout -> {
+      is PStatusReasonPaywallAlreadyPresented -> {
         stream.write(233)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonNoAudienceMatch -> {
+      is PStatusReasonHoldout -> {
         stream.write(234)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonPlacementNotFound -> {
+      is PStatusReasonNoAudienceMatch -> {
         stream.write(235)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonNoPaywallVc -> {
+      is PStatusReasonPlacementNotFound -> {
         stream.write(236)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonNoPresenter -> {
+      is PStatusReasonNoPaywallVc -> {
         stream.write(237)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonNoConfig -> {
+      is PStatusReasonNoPresenter -> {
         stream.write(238)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonSubsStatusTimeout -> {
+      is PStatusReasonNoConfig -> {
         stream.write(239)
         writeValue(stream, value.toList())
       }
-      is PIdentityOptions -> {
+      is PStatusReasonSubsStatusTimeout -> {
         stream.write(240)
         writeValue(stream, value.toList())
       }
-      is PExperiment -> {
+      is PIdentityOptions -> {
         stream.write(241)
         writeValue(stream, value.toList())
       }
-      is PPlacementNotFoundTriggerResult -> {
+      is PExperiment -> {
         stream.write(242)
         writeValue(stream, value.toList())
       }
-      is PNoAudienceMatchTriggerResult -> {
+      is PPlacementNotFoundTriggerResult -> {
         stream.write(243)
         writeValue(stream, value.toList())
       }
-      is PPaywallTriggerResult -> {
+      is PNoAudienceMatchTriggerResult -> {
         stream.write(244)
         writeValue(stream, value.toList())
       }
-      is PHoldoutTriggerResult -> {
+      is PPaywallTriggerResult -> {
         stream.write(245)
         writeValue(stream, value.toList())
       }
-      is PErrorTriggerResult -> {
+      is PHoldoutTriggerResult -> {
         stream.write(246)
         writeValue(stream, value.toList())
       }
-      is PVariant -> {
+      is PErrorTriggerResult -> {
         stream.write(247)
         writeValue(stream, value.toList())
       }
-      is PConfirmedAssignment -> {
+      is PVariant -> {
         stream.write(248)
         writeValue(stream, value.toList())
       }
-      is PPurchasedPaywallResult -> {
+      is PConfirmedAssignment -> {
         stream.write(249)
         writeValue(stream, value.toList())
       }
-      is PDeclinedPaywallResult -> {
+      is PPurchasedPaywallResult -> {
         stream.write(250)
         writeValue(stream, value.toList())
       }
-      is PRestoredPaywallResult -> {
+      is PDeclinedPaywallResult -> {
         stream.write(251)
         writeValue(stream, value.toList())
       }
-      is PPlacementNotFoundPresentationResult -> {
+      is PRestoredPaywallResult -> {
         stream.write(252)
         writeValue(stream, value.toList())
       }
-      is PNoAudienceMatchPresentationResult -> {
+      is PPlacementNotFoundPresentationResult -> {
         stream.write(253)
         writeValue(stream, value.toList())
       }
-      is PPaywallPresentationResult -> {
+      is PNoAudienceMatchPresentationResult -> {
         stream.write(254)
         writeValue(stream, value.toList())
       }
-      is PHoldoutPresentationResult -> {
+      is PPaywallPresentationResult -> {
         val wrap = SuperwallHostGeneratedPigeonInternalCodecOverflow(type = 0, wrapped = value.toList())
         stream.write(255)
         writeValue(stream, wrap.toList())
       }
-      is PPaywallNotAvailablePresentationResult -> {
+      is PHoldoutPresentationResult -> {
         val wrap = SuperwallHostGeneratedPigeonInternalCodecOverflow(type = 1, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is PPaywallNotAvailablePresentationResult -> {
+        val wrap = SuperwallHostGeneratedPigeonInternalCodecOverflow(type = 2, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is PProductReplacement -> {
+        val wrap = SuperwallHostGeneratedPigeonInternalCodecOverflow(type = 3, wrapped = value.toList())
         stream.write(255)
         writeValue(stream, wrap.toList())
       }
@@ -6676,12 +6744,12 @@ class PPurchaseControllerGenerated(private val binaryMessenger: BinaryMessenger,
       } 
     }
   }
-  fun purchaseFromGooglePlay(productIdArg: String, basePlanIdArg: String?, offerIdArg: String?, callback: (Result<PPurchaseResult>) -> Unit)
+  fun purchaseFromGooglePlay(productIdArg: String, basePlanIdArg: String?, offerIdArg: String?, replacementArg: PProductReplacement?, callback: (Result<PPurchaseResult>) -> Unit)
 {
     val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
     val channelName = "dev.flutter.pigeon.superwallkit_flutter.PPurchaseControllerGenerated.purchaseFromGooglePlay$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(productIdArg, basePlanIdArg, offerIdArg)) {
+    channel.send(listOf(productIdArg, basePlanIdArg, offerIdArg, replacementArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))

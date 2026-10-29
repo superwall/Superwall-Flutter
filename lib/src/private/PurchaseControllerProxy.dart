@@ -26,10 +26,12 @@ class PurchaseControllerProxy implements PPurchaseControllerGenerated {
   }
 
   @override
-  Future<PPurchaseResult> purchaseFromGooglePlay(
-      String productId, String? basePlanId, String? offerId) async {
-    final result =
-        await controller.purchaseFromGooglePlay(productId, basePlanId, offerId);
+  Future<PPurchaseResult> purchaseFromGooglePlay(String productId,
+      String? basePlanId, String? offerId, PProductReplacement? replacement) async {
+    final result = replacement == null
+        ? await controller.purchaseFromGooglePlay(productId, basePlanId, offerId)
+        : await controller.purchaseFromGooglePlayWithReplacement(productId,
+            basePlanId, offerId, ProductReplacement.fromPigeon(replacement));
     return PurchaseResult.toPPurchaseResult(result);
   }
 

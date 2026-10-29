@@ -33,8 +33,6 @@ enum AdConsentStatus {
 /// Meta. Both values default to [AdConsentStatus.granted].
 ///
 /// Set it with [SuperwallOptions.adConsent] or `Superwall.shared.setAdConsent()`.
-///
-/// iOS only.
 class AdConsent {
   /// Consent to send user data to ad networks for advertising.
   final AdConsentStatus adUserData;

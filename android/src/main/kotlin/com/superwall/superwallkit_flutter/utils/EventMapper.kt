@@ -2,6 +2,7 @@ package com.superwall.superwallkit_flutter.utils
 
 import PSuperwallEventInfo
 import PSurveyOption
+import com.superwall.sdk.analytics.superwall.AttributionMatchInfo
 import com.superwall.sdk.analytics.superwall.SuperwallEvent
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.superwallkit_flutter.json.pigeonify
@@ -325,6 +326,12 @@ class EventMapper {
                 is SuperwallEvent.CustomerCenterSurveyResponse -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_SURVEY_RESPONSE, params = params)
                 is SuperwallEvent.CustomerCenterRefundRequest -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_REFUND_REQUEST, params = params)
 
+                is SuperwallEvent.AttributionMatch ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.ATTRIBUTION_MATCH,
+                        params = (params ?: emptyMap()) + attributionMatchParams(event.info),
+                    )
+
                 else -> PSuperwallEventInfo(
                     eventType = PEventType.CUSTOM_PLACEMENT,
                     name = event.rawName,
@@ -332,6 +339,22 @@ class EventMapper {
                 )
             }
         }
+
+        /**
+         * The match result as the native SDK tracks it, so Dart gets it whatever
+         * the event's own params contain.
+         */
+        private fun attributionMatchParams(info: AttributionMatchInfo): Map<String, Object> =
+            mapParamsForDart(
+                listOfNotNull(
+                    "provider" to info.provider.rawName,
+                    "matched" to info.matched,
+                    info.source?.let { "source" to it },
+                    info.confidence?.let { "confidence" to it.rawName },
+                    info.matchScore?.let { "match_score" to it },
+                    info.reason?.let { "reason" to it },
+                ).toMap(),
+            ) ?: emptyMap()
 
         /**
          * Maps Map<String, Any?> to Map<String, Object> for use in Dart

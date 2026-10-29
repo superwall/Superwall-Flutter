@@ -1,5 +1,7 @@
 package com.superwall.superwallkit_flutter.utils
 
+import PAdConsent
+import PAdConsentStatus
 import PComputedPropertyRequest
 import PEntitlement
 import PEntitlementType
@@ -15,6 +17,8 @@ import PSurveyOption
 import PVariant
 import com.superwall.sdk.analytics.Tier
 import com.superwall.sdk.billing.DecomposedProductIds
+import com.superwall.sdk.config.options.AdConsent
+import com.superwall.sdk.config.options.AdConsentStatus
 import com.superwall.sdk.config.options.PaywallOptions
 import PTestModeBehavior
 import com.superwall.superwallkit_flutter.utils.CustomerCenterMapper.toSdk
@@ -68,6 +72,7 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
     this.shouldObservePurchases?.let { sdkOptions.shouldObservePurchases = it }
     this.useMockReviews?.let { sdkOptions.useMockReviews = it }
     this.customerCenter?.let { sdkOptions.customerCenter = it.toSdk() }
+    this.adConsent?.let { sdkOptions.adConsent = it.toSdk() }
 
     this.logging?.let { hostLogging ->
         hostLogging.level?.let { hostLevel ->
@@ -121,6 +126,33 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
 
     return sdkOptions
 }
+
+fun PAdConsent.toSdk(): AdConsent.Custom =
+    AdConsent.Custom(
+        adUserData = adUserData.toSdk(),
+        adPersonalization = adPersonalization.toSdk(),
+    )
+
+private fun PAdConsentStatus.toSdk(): AdConsentStatus =
+    when (this) {
+        PAdConsentStatus.GRANTED -> AdConsentStatus.Granted
+        PAdConsentStatus.DENIED -> AdConsentStatus.Denied
+    }
+
+/** [AdConsent.Unspecified] maps to the default, both granted. */
+fun AdConsent.toPigeon(): PAdConsent {
+    val consent = this as? AdConsent.Custom ?: AdConsent.Custom()
+    return PAdConsent(
+        adUserData = consent.adUserData.toPigeon(),
+        adPersonalization = consent.adPersonalization.toPigeon(),
+    )
+}
+
+private fun AdConsentStatus.toPigeon(): PAdConsentStatus =
+    when (this) {
+        AdConsentStatus.Granted -> PAdConsentStatus.GRANTED
+        AdConsentStatus.Denied -> PAdConsentStatus.DENIED
+    }
 
 /**
  * Maps a Host's PaywallOptions to the SDK's PaywallOptions
