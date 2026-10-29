@@ -64,12 +64,11 @@ class SuperwallOptions {
   /// values came from is reported in the `adConsentSource` device attribute
   /// (`developer`, `tcf` or `default`).
   ///
-  /// Both are reported as denied while event tracking is off, and
-  /// personalization is reported as denied when the user has denied App
+  /// Both are reported as denied while event tracking is off. On iOS,
+  /// personalization is also reported as denied when the user has denied App
   /// Tracking Transparency or it's restricted, unless you set this yourself.
   ///
   /// You can also change it at runtime via `Superwall.shared.setAdConsent()`.
-  /// iOS only.
   AdConsent? adConsent;
 }
 

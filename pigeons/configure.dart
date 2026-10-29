@@ -248,7 +248,6 @@ class PSuperwallOptions {
 
   /// The user's ad consent. `null` leaves it unset, so the native SDK falls
   /// back to a TCF banner's stored consent or the default.
-  /// iOS only.
   PAdConsent? adConsent;
 }
 
@@ -1411,7 +1410,8 @@ enum PEventType {
   customerCenterSurveyResponse,
   customerCenterRefundRequest,
   teleportOpen,
-  teleportReturn
+  teleportReturn,
+  attributionMatch
 }
 
 // SubscriptionStatus enum
@@ -1739,6 +1739,18 @@ abstract class PSuperwallDelegateGenerated {
   void userAttributesDidChange(Map<String, Object> newAttributes);
 }
 
+/// How the store should charge when a purchase replaces an existing
+/// subscription. Android only.
+enum PProductReplacementMode { storeDefault, chargeProrated, chargeFullPrice }
+
+/// The existing subscription a purchase replaces. Android only.
+class PProductReplacement {
+  PProductReplacementMode mode;
+  String? oldProductId;
+  String? oldPurchaseToken;
+  PProductReplacement(this.mode, this.oldProductId, this.oldPurchaseToken);
+}
+
 // ============= FLUTTER APIs =============
 
 @FlutterApi()
@@ -1747,8 +1759,8 @@ abstract class PPurchaseControllerGenerated {
   PPurchaseResult purchaseFromAppStore(String productId);
 
   @async
-  PPurchaseResult purchaseFromGooglePlay(
-      String productId, String? basePlanId, String? offerId);
+  PPurchaseResult purchaseFromGooglePlay(String productId, String? basePlanId,
+      String? offerId, PProductReplacement? replacement);
 
   @async
   PRestorationResult restorePurchases();

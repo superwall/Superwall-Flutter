@@ -131,7 +131,13 @@ enum EventType {
   /// [deepLink], and doesn't dismiss the presented paywall. Carries the
   /// presented paywall's [SuperwallEvent.paywallInfo], if there is one, and
   /// `params` may include `reason`.
-  teleportReturn
+  teleportReturn,
+
+  /// Android only. Install attribution was matched to an ad click, or failed
+  /// to match. `params` include `provider` (`mmp`) and `matched`, and may
+  /// include `source`, `confidence` (`high`, `medium` or `low`),
+  /// `match_score` and `reason`.
+  attributionMatch
 }
 
 class SuperwallEvent {
@@ -427,6 +433,9 @@ class SuperwallEvent {
         break;
       case PEventType.teleportReturn:
         type = EventType.teleportReturn;
+        break;
+      case PEventType.attributionMatch:
+        type = EventType.attributionMatch;
     }
 
     return SuperwallEvent._(

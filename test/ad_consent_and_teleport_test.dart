@@ -62,18 +62,24 @@ void main() {
               adPersonalization: AdConsentStatus.granted));
     });
 
-    test('Android: setAdConsent does nothing', () async {
+    test('Android: setAdConsent calls native', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       final calls = mockHost('setAdConsent');
-      await Superwall.shared.setAdConsent(const AdConsent());
-      expect(calls, isEmpty);
+      await Superwall.shared.setAdConsent(
+          const AdConsent(adUserData: AdConsentStatus.denied));
+      final sent = calls.single[0] as PAdConsent;
+      expect(sent.adUserData, PAdConsentStatus.denied);
+      expect(sent.adPersonalization, PAdConsentStatus.granted);
     });
 
-    test('Android: getAdConsent throws UnsupportedError', () async {
+    test('Android: getAdConsent returns the native value', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      final calls = mockHost('getAdConsent');
-      expect(Superwall.shared.getAdConsent(), throwsA(isA<UnsupportedError>()));
-      expect(calls, isEmpty);
+      mockHost('getAdConsent',
+          reply: PAdConsent(
+              adUserData: PAdConsentStatus.granted,
+              adPersonalization: PAdConsentStatus.denied));
+      expect(await Superwall.shared.getAdConsent(),
+          const AdConsent(adPersonalization: AdConsentStatus.denied));
     });
 
     test('SuperwallOptions.adConsent is passed to configure only when set',
@@ -104,5 +110,14 @@ void main() {
     expect(returned.event.type, EventType.teleportReturn);
     expect(returned.event.paywallInfo, isNull);
     expect(returned.params, {'reason': 'purchased'});
+  });
+
+  test('maps attribution match events', () {
+    final info = SuperwallEventInfo.fromPEventInfo(PSuperwallEventInfo(
+        eventType: PEventType.attributionMatch,
+        params: {'provider': 'mmp', 'matched': true, 'confidence': 'high'}));
+    expect(info.event.type, EventType.attributionMatch);
+    expect(info.params,
+        {'provider': 'mmp', 'matched': true, 'confidence': 'high'});
   });
 }

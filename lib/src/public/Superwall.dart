@@ -380,29 +380,19 @@ class Superwall {
     await hostApi.setLocaleIdentifier(localeIdentifier);
   }
 
-  /// iOS only. Gets the user's ad consent, as set via [setAdConsent] or
+  /// Gets the user's ad consent, as set via [setAdConsent] or
   /// [SuperwallOptions.adConsent]. If neither was set, this is the default
   /// (both granted), even when the SDK reports a TCF consent banner's stored
   /// answer instead.
-  ///
-  /// Throws an [UnsupportedError] on other platforms.
   Future<AdConsent> getAdConsent() async {
-    if (defaultTargetPlatform != TargetPlatform.iOS) {
-      throw UnsupportedError('getAdConsent is only available on iOS.');
-    }
     return AdConsent.fromPigeon(await hostApi.getAdConsent());
   }
 
-  /// iOS only. Sets the user's consent for how their data is used for
-  /// advertising, which Superwall passes on with the conversions it uploads
-  /// to Google Ads and Meta. Call it from your consent flow whenever the
-  /// user's choice changes. See [SuperwallOptions.adConsent].
-  ///
-  /// Does nothing on other platforms.
+  /// Sets the user's consent for how their data is used for advertising,
+  /// which Superwall passes on with the conversions it uploads to Google Ads
+  /// and Meta. Call it from your consent flow whenever the user's choice
+  /// changes. See [SuperwallOptions.adConsent].
   Future<void> setAdConsent(AdConsent adConsent) async {
-    if (defaultTargetPlatform != TargetPlatform.iOS) {
-      return;
-    }
     await hostApi.setAdConsent(adConsent.toPigeon());
   }
 
