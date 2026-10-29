@@ -28,6 +28,8 @@ The iOS SDK 4.18.0 raises its minimum deployment target from iOS 13 to iOS 15 an
 - Fixes Android `getCustomerInfo()` returning empty purchase and entitlement lists when the native SDK has customer info.
 - Fixes Android `customerInfoStream` throwing `MissingPluginException`, and forwards `customerInfoDidChange` delegate callbacks with the old and new customer info.
 - Preserves Android entitlement product IDs, activity, offer type, store, renewal and expiry details, and implements native product-to-entitlement lookup.
+- iOS: fixes entitlements becoming inactive while an App Store subscription is in a billing grace period, when using StoreKit 2. During the grace period, a subscription transaction's `isActive` stays `true` and its `expirationDate` is when the grace period ends.
+- iOS: moves the SDK's database out of the root of Application Support into its own folder. Existing data is moved over on first launch.
 
 ## 2.6.0
 
