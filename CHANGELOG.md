@@ -2,9 +2,29 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
-## Unreleased
+## 2.7.0
+
+### ⚠️ iOS: minimum deployment target is now iOS 15
+
+The iOS SDK 4.18.0 raises its minimum deployment target from iOS 13 to iOS 15 and requires Xcode 26 (Swift 6.2) or later to build. The plugin's minimum iOS version goes from 14.0 to 15.0 to match, so set `platform :ios, '15.0'` in your `ios/Podfile` and `IPHONEOS_DEPLOYMENT_TARGET` to 15.0 in your Xcode project.
+
+### Enhancements
+- Updates Android SDK to 2.8.8 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.8.8).
+- Updates iOS SDK to 4.18.2 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.18.2).
+- Adds the Customer Center on Android and iOS, a self-service screen where users can view and restore their purchases, manage, cancel or change a subscription, request a refund, manage a web subscription and contact support. Present it with `Superwall.shared.presentCustomerCenter()`, dismiss it with `Superwall.shared.dismissCustomerCenter()`, and configure it with `SuperwallOptions.customerCenter` or by passing a `CustomerCenterConfiguration` when presenting.
+- Adds `CustomerCenterDelegate`, passed to `presentCustomerCenter()`, to decide whether purchases are restored and to hear about selected actions, survey responses, refund requests and dismissal.
+- Adds `CustomerCenterSupport.checksAppStoreForUpdates` (iOS only) to turn off the App Store lookup for the Customer Center's update banner.
+- Adds the `customerCenterOpen`, `customerCenterClose`, `customerCenterAction`, `customerCenterSurveyResponse` and `customerCenterRefundRequest` event types, delivered to `SuperwallDelegate.handleSuperwallEvent` with their details in `params`.
+- Adds `SuperwallOptions.adConsent`, `Superwall.shared.setAdConsent()` and `Superwall.shared.getAdConsent()` (iOS only) to report a user's ad consent (`AdConsent`, with `adUserData` and `adPersonalization`, each an `AdConsentStatus` of `granted` or `denied`), which Superwall passes on with the conversions it uploads to Google Ads and Meta. If it's never set, the iOS SDK uses the consent stored by an IAB TCF consent banner when GDPR applies, and otherwise defaults to granted; apps with users in the EEA, UK or Switzerland that don't use a TCF banner should set it from their consent flow. `setAdConsent()` does nothing on Android and `getAdConsent()` throws an `UnsupportedError` there.
+- Adds the iOS-only `teleportOpen` event type, tracked with the paywall's info when a paywall sends the user to a web flow such as its checkout page, and `teleportReturn`, tracked instead of `deepLink` when a return link brings the user back to the app.
+- iOS: adds return links, `yourscheme://superwall/return` and `https://<subdomain>.superwall.link/app-link/superwall/return`, which bring the user back to your app from a Superwall web flow and leave the paywall open. To open your app from a teleported web flow without the Open in App alert, add `applinks:<subdomain>.superwall.link` to your app's associated domains. Pass the link to `Superwall.shared.handleDeepLink()` as usual.
+- iOS: a web purchase from a paywall's checkout page now finishes like an App Store purchase: once the code is redeemed, the paywall runs the purchase button's after-purchase actions, and it's dismissed as purchased only when those actions close it.
+- Adds `PaywallOptions.presentationHost` (Android only, experimental). Set it to `PresentationHost.inWindow` to show paywalls as an overlay in the presenting activity's own window instead of launching a separate `SuperwallPaywallActivity`. All presentation styles, back handling, surveys, trial reminder notifications, permission requests and web checkout work in this mode. If the activity is destroyed while the paywall is showing, including by a configuration change it doesn't handle itself, the paywall is dismissed. The default stays `PresentationHost.activity`. It has no effect on iOS.
+- Adds `IntegrationAttribute.airbridgeId` for the Airbridge Device ID from `Airbridge.fetchDeviceUUID`, on both Android and iOS. Set it with `Superwall.shared.setIntegrationAttribute()` or `setIntegrationAttributes()`. On iOS, it is kept when you reset or identify a different user.
+- iOS: adds best-effort public IPv4 and IPv6 device attributes for apps using the Superwall MMP, and the IPv4 attribute for apps that set an AppsFlyer ID. Apps that use the MMP or set an AppsFlyer ID should declare IP address collection in their privacy manifest.
 
 ### Fixes
+- Android: a paywall whose webview can't load, because every URL and retry has been used up, is now dismissed as declined with the `PaywallCloseReason.webViewFailedToLoad` close reason, matching iOS. The `registerPlacement` handler gets `onDismiss` and then the feature block for a non-gated placement, or `onError` for a gated one.
 - Fixes Android `getCustomerInfo()` returning empty purchase and entitlement lists when the native SDK has customer info.
 - Fixes Android `customerInfoStream` throwing `MissingPluginException`, and forwards `customerInfoDidChange` delegate callbacks with the old and new customer info.
 - Preserves Android entitlement product IDs, activity, offer type, store, renewal and expiry details, and implements native product-to-entitlement lookup.

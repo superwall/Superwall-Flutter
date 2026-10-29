@@ -6,6 +6,7 @@ import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart'
     as generated;
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/src/private/ConfigureCompletionProxy.dart';
+import 'package:superwallkit_flutter/src/private/CustomerCenterDelegateProxy.dart';
 import 'package:superwallkit_flutter/src/private/FeatureBlockProxy.dart';
 import 'package:superwallkit_flutter/src/private/OnBackPressedProxy.dart';
 import 'package:superwallkit_flutter/src/private/PaywallPresentationHandlerProxy.dart';
@@ -96,6 +97,8 @@ class Superwall {
         options.shouldBypassAppTransactionCheck;
     generatedOptions.maxConfigRetryCount = options.maxConfigRetryCount;
     generatedOptions.useMockReviews = options.useMockReviews;
+    generatedOptions.customerCenter = options.customerCenter?.toPigeon();
+    generatedOptions.adConsent = options.adConsent?.toPigeon();
 
     // Convert Logging if available
     generatedOptions.logging = _convertLogging(options.logging);
@@ -130,12 +133,26 @@ class Superwall {
     generatedOptions.transactionBackgroundView =
         _convertTransactionBackgroundView(options.transactionBackgroundView);
 
+    generatedOptions.presentationHost =
+        _convertPresentationHost(options.presentationHost);
+
     // Set onBackPressedHost if callback is provided (Android only)
     if (hasOnBackPressed) {
       generatedOptions.onBackPressedHost = generated.POnBackPressedHost();
     }
 
     return generatedOptions;
+  }
+
+  // Helper method to convert PresentationHost (Android only)
+  static generated.PPresentationHost _convertPresentationHost(
+      PresentationHost host) {
+    switch (host) {
+      case PresentationHost.activity:
+        return generated.PPresentationHost.activity;
+      case PresentationHost.inWindow:
+        return generated.PPresentationHost.inWindow;
+    }
   }
 
   // Helper method to convert TransactionBackgroundView
@@ -361,6 +378,32 @@ class Superwall {
   // Sets the locale identifier
   Future<void> setLocaleIdentifier(String? localeIdentifier) async {
     await hostApi.setLocaleIdentifier(localeIdentifier);
+  }
+
+  /// iOS only. Gets the user's ad consent, as set via [setAdConsent] or
+  /// [SuperwallOptions.adConsent]. If neither was set, this is the default
+  /// (both granted), even when the SDK reports a TCF consent banner's stored
+  /// answer instead.
+  ///
+  /// Throws an [UnsupportedError] on other platforms.
+  Future<AdConsent> getAdConsent() async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) {
+      throw UnsupportedError('getAdConsent is only available on iOS.');
+    }
+    return AdConsent.fromPigeon(await hostApi.getAdConsent());
+  }
+
+  /// iOS only. Sets the user's consent for how their data is used for
+  /// advertising, which Superwall passes on with the conversions it uploads
+  /// to Google Ads and Meta. Call it from your consent flow whenever the
+  /// user's choice changes. See [SuperwallOptions.adConsent].
+  ///
+  /// Does nothing on other platforms.
+  Future<void> setAdConsent(AdConsent adConsent) async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) {
+      return;
+    }
+    await hostApi.setAdConsent(adConsent.toPigeon());
   }
 
   // Gets the current user's ID
@@ -593,6 +636,55 @@ class Superwall {
     final purchases = await hostApi.queryInAppPurchases();
     return purchases.map(OwnedInAppPurchase.fromPigeon).toList();
   }
+
+  /// Presents the Customer Center, a self-service screen where users can
+  /// view and restore their purchases, manage, cancel or change a
+  /// subscription, request a refund, manage a web subscription and contact
+  /// support. Available on Android and iOS.
+  ///
+  /// Only one Customer Center can be presented at a time; calling this while
+  /// one is already presented does nothing.
+  ///
+  /// - [configuration] overrides [SuperwallOptions.customerCenter] for this
+  ///   presentation. `null` uses the configured value.
+  /// - [delegate] receives Customer Center events while it's presented.
+  /// - [onDismiss] is called after the Customer Center is dismissed, or if it
+  ///   couldn't be presented.
+  ///
+  /// The returned future completes once presentation has been requested, not
+  /// when the Customer Center is dismissed.
+  ///
+  /// Throws an [UnsupportedError] on other platforms.
+  Future<void> presentCustomerCenter({
+    CustomerCenterConfiguration? configuration,
+    CustomerCenterDelegate? delegate,
+    void Function()? onDismiss,
+  }) async {
+    if (!_supportsCustomerCenter) {
+      throw UnsupportedError(
+          'presentCustomerCenter is only available on Android and iOS.');
+    }
+    final hostId = CustomerCenterDelegateProxy.register(delegate, onDismiss);
+    await hostApi.presentCustomerCenter(configuration?.toPigeon(),
+        generated.PCustomerCenterDelegateHost(hostId: hostId));
+  }
+
+  /// Dismisses a Customer Center presented via [presentCustomerCenter]. Does
+  /// nothing if none is presented. The returned future completes once it has
+  /// been dismissed.
+  ///
+  /// Throws an [UnsupportedError] on platforms other than Android and iOS.
+  Future<void> dismissCustomerCenter() async {
+    if (!_supportsCustomerCenter) {
+      throw UnsupportedError(
+          'dismissCustomerCenter is only available on Android and iOS.');
+    }
+    await hostApi.dismissCustomerCenter();
+  }
+
+  bool get _supportsCustomerCenter =>
+      defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS;
 
   // Set override products by name globally across all paywalls
   set overrideProductsByName(Map<String, String>? overrideProducts) {

@@ -5,6 +5,11 @@ import PConfigurationStatus
 import PConfigureCompletionGenerated
 import PConfigureCompletionHost
 import PConfirmedAssignment
+import FlutterError
+import PAdConsent
+import PCustomerCenterConfiguration
+import PCustomerCenterDelegateGenerated
+import PCustomerCenterDelegateHost
 import PCustomerInfo
 import PEntitlement
 import PExperiment
@@ -50,6 +55,7 @@ import StreamCustomerInfoStreamHandler
 import android.app.Activity
 import android.app.Application
 import com.superwall.sdk.Superwall
+import com.superwall.sdk.models.attribution.AttributionProvider
 import com.superwall.sdk.billing.BillingError
 import com.superwall.sdk.delegate.PurchaseResult
 import com.superwall.sdk.config.models.ConfigurationStatus
@@ -71,6 +77,7 @@ import toJson
 import androidx.core.net.toUri
 import com.superwall.sdk.paywall.presentation.register
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
+import com.superwall.superwallkit_flutter.utils.CustomerCenterMapper.toSdk
 import com.superwall.superwallkit_flutter.utils.CustomerInfoMapper
 import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
@@ -212,13 +219,34 @@ class SuperwallHost(
     }
 
     override fun setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
-        val attributeKey = attribute.toAttributeKey()
-        Superwall.instance.setUserAttributes(mapOf(attributeKey to value))
+        setIntegrationAttributes(mapOf(attribute to value))
     }
 
     override fun setIntegrationAttributes(attributes: Map<PIntegrationAttribute, String?>) {
-        val androidAttributes = attributes.mapKeys { it.key.toAttributeKey() }
-        Superwall.instance.setUserAttributes(androidAttributes)
+        val (providerAttributes, userAttributes) =
+            attributes.entries.partition { it.key.toAttributionProvider() != null }
+
+        if (userAttributes.isNotEmpty()) {
+            Superwall.instance.setUserAttributes(
+                userAttributes.associate { it.key.toAttributeKey() to it.value }
+            )
+        }
+
+        if (providerAttributes.isNotEmpty()) {
+            // The native call replaces every integration attribute, so merge into the current ones.
+            val merged = Superwall.instance.integrationAttributes
+                .mapNotNull { (rawName, value) ->
+                    AttributionProvider.values().firstOrNull { it.rawName == rawName }
+                        ?.let { it to value }
+                }
+                .toMap()
+                .toMutableMap()
+            providerAttributes.forEach { (attribute, value) ->
+                val provider = attribute.toAttributionProvider() ?: return@forEach
+                if (value == null) merged.remove(provider) else merged[provider] = value
+            }
+            Superwall.instance.setIntegrationAttributes(merged)
+        }
     }
 
     override fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit) {
@@ -237,6 +265,15 @@ class SuperwallHost(
 
     override fun setLocaleIdentifier(localeIdentifier: String?) {
         Superwall.instance.localeIdentifier = localeIdentifier
+    }
+
+    // Ad consent is iOS only. The Dart API doesn't call these on Android.
+    override fun getAdConsent(): PAdConsent {
+        throw FlutterError("unsupported", "getAdConsent is only available on iOS.")
+    }
+
+    override fun setAdConsent(adConsent: PAdConsent) {
+        // No-op: the Android SDK has no ad consent API.
     }
 
     override fun getUserId(): String {
@@ -407,6 +444,38 @@ class SuperwallHost(
         }
     }
 
+    override fun presentCustomerCenter(
+        configuration: PCustomerCenterConfiguration?,
+        delegate: PCustomerCenterDelegateHost?,
+        callback: (Result<Unit>) -> Unit
+    ) {
+        val host = delegate?.let {
+            CustomerCenterDelegateHost(
+                PCustomerCenterDelegateGenerated(binaryMessenger(), it.hostId ?: "")
+            )
+        }
+        mainScope.launch {
+            val result = runCatching {
+                Superwall.instance.presentCustomerCenter(
+                    configuration = configuration?.toSdk(),
+                    delegate = host,
+                    onDismiss = host?.let { { it.onDismiss() } },
+                )
+            }
+            callback(result)
+        }
+    }
+
+    override fun dismissCustomerCenter(callback: (Result<Unit>) -> Unit) {
+        mainScope.launch {
+            try {
+                Superwall.instance.dismissCustomerCenter { callback(Result.success(Unit)) }
+            } catch (e: Throwable) {
+                callback(Result.failure(e))
+            }
+        }
+    }
+
     override fun getOverrideProductsByName(): Map<String, String>? {
         return Superwall.instance.overrideProductsByName
     }
@@ -512,6 +581,18 @@ private fun Throwable.isBillingError(): Boolean =
     generateSequence(this) { it.cause }.any { it is BillingError }
 
 // MARK: - PIntegrationAttribute Extension
+
+/**
+ * The native [AttributionProvider] for attributes that are set through
+ * `Superwall.setIntegrationAttributes` rather than as `$`-prefixed user attributes.
+ */
+fun PIntegrationAttribute.toAttributionProvider(): AttributionProvider? {
+    return when (this) {
+        PIntegrationAttribute.AIRBRIDGE_ID -> AttributionProvider.AIRBRIDGE_ID
+        else -> null
+    }
+}
+
 fun PIntegrationAttribute.toAttributeKey(): String {
     return when (this) {
         PIntegrationAttribute.ADJUST_ID -> "\$adjust_id"
@@ -535,5 +616,6 @@ fun PIntegrationAttribute.toAttributeKey(): String {
         PIntegrationAttribute.POSTHOG_USER_ID -> "\$posthog_user_id"
         PIntegrationAttribute.CUSTOMERIO_ID -> "\$customerio_id"
         PIntegrationAttribute.APPSTACK_ID -> "\$appstack_id"
+        PIntegrationAttribute.AIRBRIDGE_ID -> "\$airbridge_id"
     }
 }

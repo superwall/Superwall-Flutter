@@ -98,6 +98,18 @@ enum class PTestModeBehavior(val raw: Int) {
   }
 }
 
+/** Whether a user has granted or denied consent for an advertising purpose. */
+enum class PAdConsentStatus(val raw: Int) {
+  GRANTED(0),
+  DENIED(1);
+
+  companion object {
+    fun ofRaw(raw: Int): PAdConsentStatus? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 enum class PFeatureGatingBehavior(val raw: Int) {
   GATED(0),
   NON_GATED(1);
@@ -177,6 +189,31 @@ enum class PSurveyShowCondition(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): PSurveyShowCondition? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/** How a URL path in the Customer Center opens. */
+enum class PCustomerCenterOpenMethod(val raw: Int) {
+  IN_APP(0),
+  EXTERNAL(1);
+
+  companion object {
+    fun ofRaw(raw: Int): PCustomerCenterOpenMethod? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/** Outcome of a refund request made from the Customer Center. */
+enum class PCustomerCenterRefundStatus(val raw: Int) {
+  SUCCESS(0),
+  USER_CANCELLED(1),
+  ERROR(2);
+
+  companion object {
+    fun ofRaw(raw: Int): PCustomerCenterRefundStatus? {
       return values().firstOrNull { it.raw == raw }
     }
   }
@@ -293,7 +330,9 @@ enum class PIntegrationAttribute(val raw: Int) {
   /** The Customer.io person's identifier (`id`). */
   CUSTOMERIO_ID(19),
   /** The Appstack identifier. */
-  APPSTACK_ID(20);
+  APPSTACK_ID(20),
+  /** The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`. */
+  AIRBRIDGE_ID(21);
 
   companion object {
     fun ofRaw(raw: Int): PIntegrationAttribute? {
@@ -334,6 +373,17 @@ enum class PTransactionBackgroundView(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): PTransactionBackgroundView? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class PPresentationHost(val raw: Int) {
+  ACTIVITY(0),
+  IN_WINDOW(1);
+
+  companion object {
+    fun ofRaw(raw: Int): PPresentationHost? {
       return values().firstOrNull { it.raw == raw }
     }
   }
@@ -455,7 +505,14 @@ enum class PEventType(val raw: Int) {
   REVIEW_REQUESTED(69),
   PERMISSION_REQUESTED(70),
   PERMISSION_GRANTED(71),
-  PERMISSION_DENIED(72);
+  PERMISSION_DENIED(72),
+  CUSTOMER_CENTER_OPEN(73),
+  CUSTOMER_CENTER_CLOSE(74),
+  CUSTOMER_CENTER_ACTION(75),
+  CUSTOMER_CENTER_SURVEY_RESPONSE(76),
+  CUSTOMER_CENTER_REFUND_REQUEST(77),
+  TELEPORT_OPEN(78),
+  TELEPORT_RETURN(79);
 
   companion object {
     fun ofRaw(raw: Int): PEventType? {
@@ -1075,7 +1132,15 @@ data class PSuperwallOptions (
    * Enable mock review functionality. Defaults to `false`.
    * Android only.
    */
-  val useMockReviews: Boolean? = null
+  val useMockReviews: Boolean? = null,
+  /** Configures the Customer Center. `null` uses the native default. */
+  val customerCenter: PCustomerCenterConfiguration? = null,
+  /**
+   * The user's ad consent. `null` leaves it unset, so the native SDK falls
+   * back to a TCF banner's stored consent or the default.
+   * iOS only.
+   */
+  val adConsent: PAdConsent? = null
 )
  {
   companion object {
@@ -1093,7 +1158,9 @@ data class PSuperwallOptions (
       val shouldBypassAppTransactionCheck = pigeonVar_list[10] as Boolean?
       val maxConfigRetryCount = pigeonVar_list[11] as Long?
       val useMockReviews = pigeonVar_list[12] as Boolean?
-      return PSuperwallOptions(paywalls, networkEnvironment, isExternalDataCollectionEnabled, localeIdentifier, isGameControllerEnabled, enableExperimentalDeviceVariables, logging, passIdentifiersToPlayStore, testModeBehavior, shouldObservePurchases, shouldBypassAppTransactionCheck, maxConfigRetryCount, useMockReviews)
+      val customerCenter = pigeonVar_list[13] as PCustomerCenterConfiguration?
+      val adConsent = pigeonVar_list[14] as PAdConsent?
+      return PSuperwallOptions(paywalls, networkEnvironment, isExternalDataCollectionEnabled, localeIdentifier, isGameControllerEnabled, enableExperimentalDeviceVariables, logging, passIdentifiersToPlayStore, testModeBehavior, shouldObservePurchases, shouldBypassAppTransactionCheck, maxConfigRetryCount, useMockReviews, customerCenter, adConsent)
     }
   }
   fun toList(): List<Any?> {
@@ -1111,10 +1178,47 @@ data class PSuperwallOptions (
       shouldBypassAppTransactionCheck,
       maxConfigRetryCount,
       useMockReviews,
+      customerCenter,
+      adConsent,
     )
   }
   override fun equals(other: Any?): Boolean {
     if (other !is PSuperwallOptions) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * A user's consent for how their data is used for advertising.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PAdConsent (
+  val adUserData: PAdConsentStatus,
+  val adPersonalization: PAdConsentStatus
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PAdConsent {
+      val adUserData = pigeonVar_list[0] as PAdConsentStatus
+      val adPersonalization = pigeonVar_list[1] as PAdConsentStatus
+      return PAdConsent(adUserData, adPersonalization)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      adUserData,
+      adPersonalization,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PAdConsent) {
       return false
     }
     if (this === other) {
@@ -2011,7 +2115,9 @@ data class PPaywallOptions (
    * Keys are raw `DeviceTier` values (e.g. `ultra_low`, `low`, `mid`,
    * `high`, `ultra_high`, `unknown`).
    */
-  val preloadDeviceOverrides: Map<String, Boolean>? = null
+  val preloadDeviceOverrides: Map<String, Boolean>? = null,
+  /** Android only. Where presented paywalls are hosted. */
+  val presentationHost: PPresentationHost? = null
 )
  {
   companion object {
@@ -2027,7 +2133,8 @@ data class PPaywallOptions (
       val shouldShowWebPurchaseConfirmationAlert = pigeonVar_list[8] as Boolean?
       val onBackPressedHost = pigeonVar_list[9] as POnBackPressedHost?
       val preloadDeviceOverrides = pigeonVar_list[10] as Map<String, Boolean>?
-      return PPaywallOptions(isHapticFeedbackEnabled, restoreFailed, shouldShowPurchaseFailureAlert, shouldPreload, automaticallyDismiss, shouldShowWebRestorationAlert, transactionBackgroundView, overrideProductsByName, shouldShowWebPurchaseConfirmationAlert, onBackPressedHost, preloadDeviceOverrides)
+      val presentationHost = pigeonVar_list[11] as PPresentationHost?
+      return PPaywallOptions(isHapticFeedbackEnabled, restoreFailed, shouldShowPurchaseFailureAlert, shouldPreload, automaticallyDismiss, shouldShowWebRestorationAlert, transactionBackgroundView, overrideProductsByName, shouldShowWebPurchaseConfirmationAlert, onBackPressedHost, preloadDeviceOverrides, presentationHost)
     }
   }
   fun toList(): List<Any?> {
@@ -2043,6 +2150,7 @@ data class PPaywallOptions (
       shouldShowWebPurchaseConfirmationAlert,
       onBackPressedHost,
       preloadDeviceOverrides,
+      presentationHost,
     )
   }
   override fun equals(other: Any?): Boolean {
@@ -2187,6 +2295,740 @@ data class PFeatureHandlerHost (
   }
   override fun equals(other: Any?): Boolean {
     if (other !is PFeatureHandlerHost) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * Generated class from Pigeon that represents data sent in messages.
+ * This class should not be extended by any user class outside of the generated file.
+ */
+sealed class PCustomerCenterPathType 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterRestorePathType (
+  val ignore: Boolean? = null
+) : PCustomerCenterPathType()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterRestorePathType {
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PCustomerCenterRestorePathType(ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterRestorePathType) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterManageSubscriptionPathType (
+  val ignore: Boolean? = null
+) : PCustomerCenterPathType()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterManageSubscriptionPathType {
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PCustomerCenterManageSubscriptionPathType(ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterManageSubscriptionPathType) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterRefundPathType (
+  val windowMillis: Long? = null
+) : PCustomerCenterPathType()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterRefundPathType {
+      val windowMillis = pigeonVar_list[0] as Long?
+      return PCustomerCenterRefundPathType(windowMillis)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      windowMillis,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterRefundPathType) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterChangePlanPathType (
+  val productIds: List<String>? = null
+) : PCustomerCenterPathType()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterChangePlanPathType {
+      val productIds = pigeonVar_list[0] as List<String>?
+      return PCustomerCenterChangePlanPathType(productIds)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      productIds,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterChangePlanPathType) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterContactSupportPathType (
+  val ignore: Boolean? = null
+) : PCustomerCenterPathType()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterContactSupportPathType {
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PCustomerCenterContactSupportPathType(ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterContactSupportPathType) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterUrlPathType (
+  val url: String,
+  val openMethod: PCustomerCenterOpenMethod
+) : PCustomerCenterPathType()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterUrlPathType {
+      val url = pigeonVar_list[0] as String
+      val openMethod = pigeonVar_list[1] as PCustomerCenterOpenMethod
+      return PCustomerCenterUrlPathType(url, openMethod)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      url,
+      openMethod,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterUrlPathType) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterCustomPathType (
+  val identifier: String
+) : PCustomerCenterPathType()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterCustomPathType {
+      val identifier = pigeonVar_list[0] as String
+      return PCustomerCenterCustomPathType(identifier)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      identifier,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterCustomPathType) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterSurveyOption (
+  val id: String,
+  val title: String? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterSurveyOption {
+      val id = pigeonVar_list[0] as String
+      val title = pigeonVar_list[1] as String?
+      return PCustomerCenterSurveyOption(id, title)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      title,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterSurveyOption) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterSurvey (
+  val id: String,
+  val title: String? = null,
+  val options: List<PCustomerCenterSurveyOption>
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterSurvey {
+      val id = pigeonVar_list[0] as String
+      val title = pigeonVar_list[1] as String?
+      val options = pigeonVar_list[2] as List<PCustomerCenterSurveyOption>
+      return PCustomerCenterSurvey(id, title, options)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      id,
+      title,
+      options,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterSurvey) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterPath (
+  val type: PCustomerCenterPathType,
+  val title: String? = null,
+  val survey: PCustomerCenterSurvey? = null,
+  /** `null` uses the native default ID for [type]. */
+  val id: String? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterPath {
+      val type = pigeonVar_list[0] as PCustomerCenterPathType
+      val title = pigeonVar_list[1] as String?
+      val survey = pigeonVar_list[2] as PCustomerCenterSurvey?
+      val id = pigeonVar_list[3] as String?
+      return PCustomerCenterPath(type, title, survey, id)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      type,
+      title,
+      survey,
+      id,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterPath) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterScreen (
+  val title: String? = null,
+  val subtitle: String? = null,
+  val paths: List<PCustomerCenterPath>
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterScreen {
+      val title = pigeonVar_list[0] as String?
+      val subtitle = pigeonVar_list[1] as String?
+      val paths = pigeonVar_list[2] as List<PCustomerCenterPath>
+      return PCustomerCenterScreen(title, subtitle, paths)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      title,
+      subtitle,
+      paths,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterScreen) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterSupport (
+  val email: String? = null,
+  val latestAppVersion: String? = null,
+  val warnsAboutUpdates: Boolean,
+  val webManagementUrl: String? = null,
+  /**
+   * Whether to look the latest version up from the App Store when
+   * [latestAppVersion] isn't set. iOS only.
+   */
+  val checksAppStoreForUpdates: Boolean
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterSupport {
+      val email = pigeonVar_list[0] as String?
+      val latestAppVersion = pigeonVar_list[1] as String?
+      val warnsAboutUpdates = pigeonVar_list[2] as Boolean
+      val webManagementUrl = pigeonVar_list[3] as String?
+      val checksAppStoreForUpdates = pigeonVar_list[4] as Boolean
+      return PCustomerCenterSupport(email, latestAppVersion, warnsAboutUpdates, webManagementUrl, checksAppStoreForUpdates)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      email,
+      latestAppVersion,
+      warnsAboutUpdates,
+      webManagementUrl,
+      checksAppStoreForUpdates,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterSupport) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterColorPair (
+  val light: String,
+  val dark: String
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterColorPair {
+      val light = pigeonVar_list[0] as String
+      val dark = pigeonVar_list[1] as String
+      return PCustomerCenterColorPair(light, dark)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      light,
+      dark,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterColorPair) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterConfiguration (
+  val managementScreen: PCustomerCenterScreen,
+  val noPurchasesScreen: PCustomerCenterScreen,
+  val support: PCustomerCenterSupport,
+  val accent: PCustomerCenterColorPair? = null,
+  val showsAccountDetails: Boolean,
+  val warnsAboutDuplicateSubscriptions: Boolean
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterConfiguration {
+      val managementScreen = pigeonVar_list[0] as PCustomerCenterScreen
+      val noPurchasesScreen = pigeonVar_list[1] as PCustomerCenterScreen
+      val support = pigeonVar_list[2] as PCustomerCenterSupport
+      val accent = pigeonVar_list[3] as PCustomerCenterColorPair?
+      val showsAccountDetails = pigeonVar_list[4] as Boolean
+      val warnsAboutDuplicateSubscriptions = pigeonVar_list[5] as Boolean
+      return PCustomerCenterConfiguration(managementScreen, noPurchasesScreen, support, accent, showsAccountDetails, warnsAboutDuplicateSubscriptions)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      managementScreen,
+      noPurchasesScreen,
+      support,
+      accent,
+      showsAccountDetails,
+      warnsAboutDuplicateSubscriptions,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterConfiguration) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * An action the user selected in the Customer Center.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ * This class should not be extended by any user class outside of the generated file.
+ */
+sealed class PCustomerCenterAction 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterRestoreAction (
+  val ignore: Boolean? = null
+) : PCustomerCenterAction()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterRestoreAction {
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PCustomerCenterRestoreAction(ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterRestoreAction) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterManageSubscriptionAction (
+  val ignore: Boolean? = null
+) : PCustomerCenterAction()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterManageSubscriptionAction {
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PCustomerCenterManageSubscriptionAction(ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterManageSubscriptionAction) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterRefundAction (
+  val ignore: Boolean? = null
+) : PCustomerCenterAction()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterRefundAction {
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PCustomerCenterRefundAction(ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterRefundAction) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterChangePlanAction (
+  val ignore: Boolean? = null
+) : PCustomerCenterAction()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterChangePlanAction {
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PCustomerCenterChangePlanAction(ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterChangePlanAction) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterContactSupportAction (
+  val ignore: Boolean? = null
+) : PCustomerCenterAction()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterContactSupportAction {
+      val ignore = pigeonVar_list[0] as Boolean?
+      return PCustomerCenterContactSupportAction(ignore)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      ignore,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterContactSupportAction) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterUrlAction (
+  val url: String
+) : PCustomerCenterAction()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterUrlAction {
+      val url = pigeonVar_list[0] as String
+      return PCustomerCenterUrlAction(url)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      url,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterUrlAction) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterCustomAction (
+  val identifier: String
+) : PCustomerCenterAction()
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterCustomAction {
+      val identifier = pigeonVar_list[0] as String
+      return PCustomerCenterCustomAction(identifier)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      identifier,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterCustomAction) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * The purchase a Customer Center action applies to.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class PCustomerCenterPurchase (
+  val productId: String? = null,
+  val store: PProductStore,
+  val entitlements: List<PEntitlement>,
+  val subscription: PSubscriptionTransaction? = null,
+  val nonSubscription: PNonSubscriptionTransaction? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterPurchase {
+      val productId = pigeonVar_list[0] as String?
+      val store = pigeonVar_list[1] as PProductStore
+      val entitlements = pigeonVar_list[2] as List<PEntitlement>
+      val subscription = pigeonVar_list[3] as PSubscriptionTransaction?
+      val nonSubscription = pigeonVar_list[4] as PNonSubscriptionTransaction?
+      return PCustomerCenterPurchase(productId, store, entitlements, subscription, nonSubscription)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      productId,
+      store,
+      entitlements,
+      subscription,
+      nonSubscription,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterPurchase) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return SuperwallHostGeneratedPigeonUtils.deepEquals(toList(), other.toList())  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class PCustomerCenterDelegateHost (
+  val hostId: String? = null
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): PCustomerCenterDelegateHost {
+      val hostId = pigeonVar_list[0] as String?
+      return PCustomerCenterDelegateHost(hostId)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      hostId,
+    )
+  }
+  override fun equals(other: Any?): Boolean {
+    if (other !is PCustomerCenterDelegateHost) {
       return false
     }
     if (this === other) {
@@ -3521,6 +4363,41 @@ data class PPaywallNotAvailablePresentationResult (
 
   override fun hashCode(): Int = toList().hashCode()
 }
+private data class SuperwallHostGeneratedPigeonInternalCodecOverflow (
+  val type: Long,
+  val wrapped: Any? = null
+)
+ {
+  fun toList(): List<Any?> {
+    return listOf(
+      type,
+      wrapped,
+    )
+  }
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): Any? {
+      val wrapper = SuperwallHostGeneratedPigeonInternalCodecOverflow(
+        type = pigeonVar_list[0] as Long,
+        wrapped = pigeonVar_list[1],
+      );
+      return wrapper.unwrap()
+    }
+  }
+
+  fun unwrap(): Any? {
+    if (wrapped == null) {
+      return null
+    }
+        
+    when (type.toInt()) {
+      0 ->
+        return PHoldoutPresentationResult.fromList(wrapped as List<Any?>)
+      1 ->
+        return PPaywallNotAvailablePresentationResult.fromList(wrapped as List<Any?>)
+    }
+    return null
+  }
+}
 private open class SuperwallHostGeneratedPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -3531,497 +4408,632 @@ private open class SuperwallHostGeneratedPigeonCodec : StandardMessageCodec() {
       }
       130.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PFeatureGatingBehavior.ofRaw(it.toInt())
+          PAdConsentStatus.ofRaw(it.toInt())
         }
       }
       131.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PPaywallCloseReason.ofRaw(it.toInt())
+          PFeatureGatingBehavior.ofRaw(it.toInt())
         }
       }
       132.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PLocalNotificationType.ofRaw(it.toInt())
+          PPaywallCloseReason.ofRaw(it.toInt())
         }
       }
       133.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PComputedPropertyRequestType.ofRaw(it.toInt())
+          PLocalNotificationType.ofRaw(it.toInt())
         }
       }
       134.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PSurveyShowCondition.ofRaw(it.toInt())
+          PComputedPropertyRequestType.ofRaw(it.toInt())
         }
       }
       135.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PCustomCallbackResultStatus.ofRaw(it.toInt())
+          PSurveyShowCondition.ofRaw(it.toInt())
         }
       }
       136.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PProductStore.ofRaw(it.toInt())
+          PCustomerCenterOpenMethod.ofRaw(it.toInt())
         }
       }
       137.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PEntitlementType.ofRaw(it.toInt())
+          PCustomerCenterRefundStatus.ofRaw(it.toInt())
         }
       }
       138.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PLatestSubscriptionState.ofRaw(it.toInt())
+          PCustomCallbackResultStatus.ofRaw(it.toInt())
         }
       }
       139.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PLatestSubscriptionOfferType.ofRaw(it.toInt())
+          PProductStore.ofRaw(it.toInt())
         }
       }
       140.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PIntegrationAttribute.ofRaw(it.toInt())
+          PEntitlementType.ofRaw(it.toInt())
         }
       }
       141.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PNetworkEnvironment.ofRaw(it.toInt())
+          PLatestSubscriptionState.ofRaw(it.toInt())
         }
       }
       142.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PLogLevel.ofRaw(it.toInt())
+          PLatestSubscriptionOfferType.ofRaw(it.toInt())
         }
       }
       143.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PTransactionBackgroundView.ofRaw(it.toInt())
+          PIntegrationAttribute.ofRaw(it.toInt())
         }
       }
       144.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PLogScope.ofRaw(it.toInt())
+          PNetworkEnvironment.ofRaw(it.toInt())
         }
       }
       145.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PConfigurationStatus.ofRaw(it.toInt())
+          PLogLevel.ofRaw(it.toInt())
         }
       }
       146.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PEventType.ofRaw(it.toInt())
+          PTransactionBackgroundView.ofRaw(it.toInt())
         }
       }
       147.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PSubscriptionStatusType.ofRaw(it.toInt())
+          PPresentationHost.ofRaw(it.toInt())
         }
       }
       148.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PPaywallPresentationRequestStatusType.ofRaw(it.toInt())
+          PLogScope.ofRaw(it.toInt())
         }
       }
       149.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PVariantType.ofRaw(it.toInt())
+          PConfigurationStatus.ofRaw(it.toInt())
         }
       }
       150.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          PPaywallSkippedReason.ofRaw(it.toInt())
+          PEventType.ofRaw(it.toInt())
         }
       }
       151.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PSuccessRedemptionResult.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PSubscriptionStatusType.ofRaw(it.toInt())
         }
       }
       152.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PErrorRedemptionResult.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PPaywallPresentationRequestStatusType.ofRaw(it.toInt())
         }
       }
       153.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PErrorInfo.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PVariantType.ofRaw(it.toInt())
         }
       }
       154.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PExpiredCodeRedemptionResult.fromList(it)
+        return (readValue(buffer) as Long?)?.let {
+          PPaywallSkippedReason.ofRaw(it.toInt())
         }
       }
       155.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExpiredCodeInfo.fromList(it)
+          PSuccessRedemptionResult.fromList(it)
         }
       }
       156.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PInvalidCodeRedemptionResult.fromList(it)
+          PErrorRedemptionResult.fromList(it)
         }
       }
       157.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExpiredSubscriptionCode.fromList(it)
+          PErrorInfo.fromList(it)
         }
       }
       158.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRedemptionInfo.fromList(it)
+          PExpiredCodeRedemptionResult.fromList(it)
         }
       }
       159.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PAppUserOwnership.fromList(it)
+          PExpiredCodeInfo.fromList(it)
         }
       }
       160.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PDeviceOwnership.fromList(it)
+          PInvalidCodeRedemptionResult.fromList(it)
         }
       }
       161.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaserInfo.fromList(it)
+          PExpiredSubscriptionCode.fromList(it)
         }
       }
       162.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStripeStoreIdentifiers.fromList(it)
+          PRedemptionInfo.fromList(it)
         }
       }
       163.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaddleStoreIdentifiers.fromList(it)
+          PAppUserOwnership.fromList(it)
         }
       }
       164.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PUnknownStoreIdentifiers.fromList(it)
+          PDeviceOwnership.fromList(it)
         }
       }
       165.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRedemptionPaywallInfo.fromList(it)
+          PPurchaserInfo.fromList(it)
         }
       }
       166.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallOptions.fromList(it)
+          PStripeStoreIdentifiers.fromList(it)
         }
       }
       167.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallInfo.fromList(it)
+          PPaddleStoreIdentifiers.fromList(it)
         }
       }
       168.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PProduct.fromList(it)
+          PUnknownStoreIdentifiers.fromList(it)
         }
       }
       169.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PLocalNotification.fromList(it)
+          PRedemptionPaywallInfo.fromList(it)
         }
       }
       170.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PComputedPropertyRequest.fromList(it)
+          PSuperwallOptions.fromList(it)
         }
       }
       171.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSurvey.fromList(it)
+          PAdConsent.fromList(it)
         }
       }
       172.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSurveyOption.fromList(it)
+          PPaywallInfo.fromList(it)
         }
       }
       173.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseCancelled.fromList(it)
+          PProduct.fromList(it)
         }
       }
       174.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasePurchased.fromList(it)
+          PLocalNotification.fromList(it)
         }
       }
       175.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasePending.fromList(it)
+          PComputedPropertyRequest.fromList(it)
         }
       }
       176.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseFailed.fromList(it)
+          PSurvey.fromList(it)
         }
       }
       177.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestorationRestored.fromList(it)
+          PSurveyOption.fromList(it)
         }
       }
       178.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestorationFailed.fromList(it)
+          PPurchaseCancelled.fromList(it)
         }
       }
       179.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PViaPurchase.fromList(it)
+          PPurchasePurchased.fromList(it)
         }
       }
       180.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PViaRestore.fromList(it)
+          PPurchasePending.fromList(it)
         }
       }
       181.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestoreFailed.fromList(it)
+          PPurchaseFailed.fromList(it)
         }
       }
       182.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PLogging.fromList(it)
+          PRestorationRestored.fromList(it)
         }
       }
       183.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStoreTransaction.fromList(it)
+          PRestorationFailed.fromList(it)
         }
       }
       184.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStoreProduct.fromList(it)
+          PViaPurchase.fromList(it)
         }
       }
       185.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          POwnedInAppPurchase.fromList(it)
+          PViaRestore.fromList(it)
         }
       }
       186.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallOptions.fromList(it)
+          PRestoreFailed.fromList(it)
         }
       }
       187.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          POnBackPressedHost.fromList(it)
+          PLogging.fromList(it)
         }
       }
       188.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchaseControllerHost.fromList(it)
+          PStoreTransaction.fromList(it)
         }
       }
       189.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfigureCompletionHost.fromList(it)
+          PStoreProduct.fromList(it)
         }
       }
       190.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallPresentationHandlerHost.fromList(it)
+          POwnedInAppPurchase.fromList(it)
         }
       }
       191.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PFeatureHandlerHost.fromList(it)
+          PPaywallOptions.fromList(it)
         }
       }
       192.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomCallback.fromList(it)
+          POnBackPressedHost.fromList(it)
         }
       }
       193.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomCallbackResult.fromList(it)
+          PPurchaseControllerHost.fromList(it)
         }
       }
       194.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSubscriptionTransaction.fromList(it)
+          PConfigureCompletionHost.fromList(it)
         }
       }
       195.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PNonSubscriptionTransaction.fromList(it)
+          PPaywallPresentationHandlerHost.fromList(it)
         }
       }
       196.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PEntitlement.fromList(it)
+          PFeatureHandlerHost.fromList(it)
         }
       }
       197.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PCustomerInfo.fromList(it)
+          PCustomerCenterRestorePathType.fromList(it)
         }
       }
       198.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PEntitlements.fromList(it)
+          PCustomerCenterManageSubscriptionPathType.fromList(it)
         }
       }
       199.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PActive.fromList(it)
+          PCustomerCenterRefundPathType.fromList(it)
         }
       }
       200.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PInactive.fromList(it)
+          PCustomerCenterChangePlanPathType.fromList(it)
         }
       }
       201.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PUnknown.fromList(it)
+          PCustomerCenterContactSupportPathType.fromList(it)
         }
       }
       202.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PSuperwallEventInfo.fromList(it)
+          PCustomerCenterUrlPathType.fromList(it)
         }
       }
       203.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonDebuggerPresented.fromList(it)
+          PCustomerCenterCustomPathType.fromList(it)
         }
       }
       204.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonPaywallAlreadyPresented.fromList(it)
+          PCustomerCenterSurveyOption.fromList(it)
         }
       }
       205.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonHoldout.fromList(it)
+          PCustomerCenterSurvey.fromList(it)
         }
       }
       206.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonNoAudienceMatch.fromList(it)
+          PCustomerCenterPath.fromList(it)
         }
       }
       207.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonPlacementNotFound.fromList(it)
+          PCustomerCenterScreen.fromList(it)
         }
       }
       208.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonNoPaywallVc.fromList(it)
+          PCustomerCenterSupport.fromList(it)
         }
       }
       209.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonNoPresenter.fromList(it)
+          PCustomerCenterColorPair.fromList(it)
         }
       }
       210.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonNoConfig.fromList(it)
+          PCustomerCenterConfiguration.fromList(it)
         }
       }
       211.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PStatusReasonSubsStatusTimeout.fromList(it)
+          PCustomerCenterRestoreAction.fromList(it)
         }
       }
       212.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PIdentityOptions.fromList(it)
+          PCustomerCenterManageSubscriptionAction.fromList(it)
         }
       }
       213.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PExperiment.fromList(it)
+          PCustomerCenterRefundAction.fromList(it)
         }
       }
       214.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPlacementNotFoundTriggerResult.fromList(it)
+          PCustomerCenterChangePlanAction.fromList(it)
         }
       }
       215.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PNoAudienceMatchTriggerResult.fromList(it)
+          PCustomerCenterContactSupportAction.fromList(it)
         }
       }
       216.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallTriggerResult.fromList(it)
+          PCustomerCenterUrlAction.fromList(it)
         }
       }
       217.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PHoldoutTriggerResult.fromList(it)
+          PCustomerCenterCustomAction.fromList(it)
         }
       }
       218.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PErrorTriggerResult.fromList(it)
+          PCustomerCenterPurchase.fromList(it)
         }
       }
       219.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PVariant.fromList(it)
+          PCustomerCenterDelegateHost.fromList(it)
         }
       }
       220.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PConfirmedAssignment.fromList(it)
+          PCustomCallback.fromList(it)
         }
       }
       221.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPurchasedPaywallResult.fromList(it)
+          PCustomCallbackResult.fromList(it)
         }
       }
       222.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PDeclinedPaywallResult.fromList(it)
+          PSubscriptionTransaction.fromList(it)
         }
       }
       223.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PRestoredPaywallResult.fromList(it)
+          PNonSubscriptionTransaction.fromList(it)
         }
       }
       224.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPlacementNotFoundPresentationResult.fromList(it)
+          PEntitlement.fromList(it)
         }
       }
       225.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PNoAudienceMatchPresentationResult.fromList(it)
+          PCustomerInfo.fromList(it)
         }
       }
       226.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallPresentationResult.fromList(it)
+          PEntitlements.fromList(it)
         }
       }
       227.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PHoldoutPresentationResult.fromList(it)
+          PActive.fromList(it)
         }
       }
       228.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PPaywallNotAvailablePresentationResult.fromList(it)
+          PInactive.fromList(it)
+        }
+      }
+      229.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PUnknown.fromList(it)
+        }
+      }
+      230.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PSuperwallEventInfo.fromList(it)
+        }
+      }
+      231.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PStatusReasonDebuggerPresented.fromList(it)
+        }
+      }
+      232.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PStatusReasonPaywallAlreadyPresented.fromList(it)
+        }
+      }
+      233.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PStatusReasonHoldout.fromList(it)
+        }
+      }
+      234.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PStatusReasonNoAudienceMatch.fromList(it)
+        }
+      }
+      235.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PStatusReasonPlacementNotFound.fromList(it)
+        }
+      }
+      236.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PStatusReasonNoPaywallVc.fromList(it)
+        }
+      }
+      237.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PStatusReasonNoPresenter.fromList(it)
+        }
+      }
+      238.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PStatusReasonNoConfig.fromList(it)
+        }
+      }
+      239.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PStatusReasonSubsStatusTimeout.fromList(it)
+        }
+      }
+      240.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PIdentityOptions.fromList(it)
+        }
+      }
+      241.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PExperiment.fromList(it)
+        }
+      }
+      242.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PPlacementNotFoundTriggerResult.fromList(it)
+        }
+      }
+      243.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PNoAudienceMatchTriggerResult.fromList(it)
+        }
+      }
+      244.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PPaywallTriggerResult.fromList(it)
+        }
+      }
+      245.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PHoldoutTriggerResult.fromList(it)
+        }
+      }
+      246.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PErrorTriggerResult.fromList(it)
+        }
+      }
+      247.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PVariant.fromList(it)
+        }
+      }
+      248.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PConfirmedAssignment.fromList(it)
+        }
+      }
+      249.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PPurchasedPaywallResult.fromList(it)
+        }
+      }
+      250.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PDeclinedPaywallResult.fromList(it)
+        }
+      }
+      251.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PRestoredPaywallResult.fromList(it)
+        }
+      }
+      252.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PPlacementNotFoundPresentationResult.fromList(it)
+        }
+      }
+      253.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PNoAudienceMatchPresentationResult.fromList(it)
+        }
+      }
+      254.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PPaywallPresentationResult.fromList(it)
+        }
+      }
+      255.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          SuperwallHostGeneratedPigeonInternalCodecOverflow.fromList(it)
         }
       }
       else -> super.readValueOfType(type, buffer)
@@ -4033,401 +5045,515 @@ private open class SuperwallHostGeneratedPigeonCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.raw.toLong())
       }
-      is PFeatureGatingBehavior -> {
+      is PAdConsentStatus -> {
         stream.write(130)
         writeValue(stream, value.raw.toLong())
       }
-      is PPaywallCloseReason -> {
+      is PFeatureGatingBehavior -> {
         stream.write(131)
         writeValue(stream, value.raw.toLong())
       }
-      is PLocalNotificationType -> {
+      is PPaywallCloseReason -> {
         stream.write(132)
         writeValue(stream, value.raw.toLong())
       }
-      is PComputedPropertyRequestType -> {
+      is PLocalNotificationType -> {
         stream.write(133)
         writeValue(stream, value.raw.toLong())
       }
-      is PSurveyShowCondition -> {
+      is PComputedPropertyRequestType -> {
         stream.write(134)
         writeValue(stream, value.raw.toLong())
       }
-      is PCustomCallbackResultStatus -> {
+      is PSurveyShowCondition -> {
         stream.write(135)
         writeValue(stream, value.raw.toLong())
       }
-      is PProductStore -> {
+      is PCustomerCenterOpenMethod -> {
         stream.write(136)
         writeValue(stream, value.raw.toLong())
       }
-      is PEntitlementType -> {
+      is PCustomerCenterRefundStatus -> {
         stream.write(137)
         writeValue(stream, value.raw.toLong())
       }
-      is PLatestSubscriptionState -> {
+      is PCustomCallbackResultStatus -> {
         stream.write(138)
         writeValue(stream, value.raw.toLong())
       }
-      is PLatestSubscriptionOfferType -> {
+      is PProductStore -> {
         stream.write(139)
         writeValue(stream, value.raw.toLong())
       }
-      is PIntegrationAttribute -> {
+      is PEntitlementType -> {
         stream.write(140)
         writeValue(stream, value.raw.toLong())
       }
-      is PNetworkEnvironment -> {
+      is PLatestSubscriptionState -> {
         stream.write(141)
         writeValue(stream, value.raw.toLong())
       }
-      is PLogLevel -> {
+      is PLatestSubscriptionOfferType -> {
         stream.write(142)
         writeValue(stream, value.raw.toLong())
       }
-      is PTransactionBackgroundView -> {
+      is PIntegrationAttribute -> {
         stream.write(143)
         writeValue(stream, value.raw.toLong())
       }
-      is PLogScope -> {
+      is PNetworkEnvironment -> {
         stream.write(144)
         writeValue(stream, value.raw.toLong())
       }
-      is PConfigurationStatus -> {
+      is PLogLevel -> {
         stream.write(145)
         writeValue(stream, value.raw.toLong())
       }
-      is PEventType -> {
+      is PTransactionBackgroundView -> {
         stream.write(146)
         writeValue(stream, value.raw.toLong())
       }
-      is PSubscriptionStatusType -> {
+      is PPresentationHost -> {
         stream.write(147)
         writeValue(stream, value.raw.toLong())
       }
-      is PPaywallPresentationRequestStatusType -> {
+      is PLogScope -> {
         stream.write(148)
         writeValue(stream, value.raw.toLong())
       }
-      is PVariantType -> {
+      is PConfigurationStatus -> {
         stream.write(149)
         writeValue(stream, value.raw.toLong())
       }
-      is PPaywallSkippedReason -> {
+      is PEventType -> {
         stream.write(150)
         writeValue(stream, value.raw.toLong())
       }
-      is PSuccessRedemptionResult -> {
+      is PSubscriptionStatusType -> {
         stream.write(151)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw.toLong())
       }
-      is PErrorRedemptionResult -> {
+      is PPaywallPresentationRequestStatusType -> {
         stream.write(152)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw.toLong())
       }
-      is PErrorInfo -> {
+      is PVariantType -> {
         stream.write(153)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw.toLong())
       }
-      is PExpiredCodeRedemptionResult -> {
+      is PPaywallSkippedReason -> {
         stream.write(154)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw.toLong())
       }
-      is PExpiredCodeInfo -> {
+      is PSuccessRedemptionResult -> {
         stream.write(155)
         writeValue(stream, value.toList())
       }
-      is PInvalidCodeRedemptionResult -> {
+      is PErrorRedemptionResult -> {
         stream.write(156)
         writeValue(stream, value.toList())
       }
-      is PExpiredSubscriptionCode -> {
+      is PErrorInfo -> {
         stream.write(157)
         writeValue(stream, value.toList())
       }
-      is PRedemptionInfo -> {
+      is PExpiredCodeRedemptionResult -> {
         stream.write(158)
         writeValue(stream, value.toList())
       }
-      is PAppUserOwnership -> {
+      is PExpiredCodeInfo -> {
         stream.write(159)
         writeValue(stream, value.toList())
       }
-      is PDeviceOwnership -> {
+      is PInvalidCodeRedemptionResult -> {
         stream.write(160)
         writeValue(stream, value.toList())
       }
-      is PPurchaserInfo -> {
+      is PExpiredSubscriptionCode -> {
         stream.write(161)
         writeValue(stream, value.toList())
       }
-      is PStripeStoreIdentifiers -> {
+      is PRedemptionInfo -> {
         stream.write(162)
         writeValue(stream, value.toList())
       }
-      is PPaddleStoreIdentifiers -> {
+      is PAppUserOwnership -> {
         stream.write(163)
         writeValue(stream, value.toList())
       }
-      is PUnknownStoreIdentifiers -> {
+      is PDeviceOwnership -> {
         stream.write(164)
         writeValue(stream, value.toList())
       }
-      is PRedemptionPaywallInfo -> {
+      is PPurchaserInfo -> {
         stream.write(165)
         writeValue(stream, value.toList())
       }
-      is PSuperwallOptions -> {
+      is PStripeStoreIdentifiers -> {
         stream.write(166)
         writeValue(stream, value.toList())
       }
-      is PPaywallInfo -> {
+      is PPaddleStoreIdentifiers -> {
         stream.write(167)
         writeValue(stream, value.toList())
       }
-      is PProduct -> {
+      is PUnknownStoreIdentifiers -> {
         stream.write(168)
         writeValue(stream, value.toList())
       }
-      is PLocalNotification -> {
+      is PRedemptionPaywallInfo -> {
         stream.write(169)
         writeValue(stream, value.toList())
       }
-      is PComputedPropertyRequest -> {
+      is PSuperwallOptions -> {
         stream.write(170)
         writeValue(stream, value.toList())
       }
-      is PSurvey -> {
+      is PAdConsent -> {
         stream.write(171)
         writeValue(stream, value.toList())
       }
-      is PSurveyOption -> {
+      is PPaywallInfo -> {
         stream.write(172)
         writeValue(stream, value.toList())
       }
-      is PPurchaseCancelled -> {
+      is PProduct -> {
         stream.write(173)
         writeValue(stream, value.toList())
       }
-      is PPurchasePurchased -> {
+      is PLocalNotification -> {
         stream.write(174)
         writeValue(stream, value.toList())
       }
-      is PPurchasePending -> {
+      is PComputedPropertyRequest -> {
         stream.write(175)
         writeValue(stream, value.toList())
       }
-      is PPurchaseFailed -> {
+      is PSurvey -> {
         stream.write(176)
         writeValue(stream, value.toList())
       }
-      is PRestorationRestored -> {
+      is PSurveyOption -> {
         stream.write(177)
         writeValue(stream, value.toList())
       }
-      is PRestorationFailed -> {
+      is PPurchaseCancelled -> {
         stream.write(178)
         writeValue(stream, value.toList())
       }
-      is PViaPurchase -> {
+      is PPurchasePurchased -> {
         stream.write(179)
         writeValue(stream, value.toList())
       }
-      is PViaRestore -> {
+      is PPurchasePending -> {
         stream.write(180)
         writeValue(stream, value.toList())
       }
-      is PRestoreFailed -> {
+      is PPurchaseFailed -> {
         stream.write(181)
         writeValue(stream, value.toList())
       }
-      is PLogging -> {
+      is PRestorationRestored -> {
         stream.write(182)
         writeValue(stream, value.toList())
       }
-      is PStoreTransaction -> {
+      is PRestorationFailed -> {
         stream.write(183)
         writeValue(stream, value.toList())
       }
-      is PStoreProduct -> {
+      is PViaPurchase -> {
         stream.write(184)
         writeValue(stream, value.toList())
       }
-      is POwnedInAppPurchase -> {
+      is PViaRestore -> {
         stream.write(185)
         writeValue(stream, value.toList())
       }
-      is PPaywallOptions -> {
+      is PRestoreFailed -> {
         stream.write(186)
         writeValue(stream, value.toList())
       }
-      is POnBackPressedHost -> {
+      is PLogging -> {
         stream.write(187)
         writeValue(stream, value.toList())
       }
-      is PPurchaseControllerHost -> {
+      is PStoreTransaction -> {
         stream.write(188)
         writeValue(stream, value.toList())
       }
-      is PConfigureCompletionHost -> {
+      is PStoreProduct -> {
         stream.write(189)
         writeValue(stream, value.toList())
       }
-      is PPaywallPresentationHandlerHost -> {
+      is POwnedInAppPurchase -> {
         stream.write(190)
         writeValue(stream, value.toList())
       }
-      is PFeatureHandlerHost -> {
+      is PPaywallOptions -> {
         stream.write(191)
         writeValue(stream, value.toList())
       }
-      is PCustomCallback -> {
+      is POnBackPressedHost -> {
         stream.write(192)
         writeValue(stream, value.toList())
       }
-      is PCustomCallbackResult -> {
+      is PPurchaseControllerHost -> {
         stream.write(193)
         writeValue(stream, value.toList())
       }
-      is PSubscriptionTransaction -> {
+      is PConfigureCompletionHost -> {
         stream.write(194)
         writeValue(stream, value.toList())
       }
-      is PNonSubscriptionTransaction -> {
+      is PPaywallPresentationHandlerHost -> {
         stream.write(195)
         writeValue(stream, value.toList())
       }
-      is PEntitlement -> {
+      is PFeatureHandlerHost -> {
         stream.write(196)
         writeValue(stream, value.toList())
       }
-      is PCustomerInfo -> {
+      is PCustomerCenterRestorePathType -> {
         stream.write(197)
         writeValue(stream, value.toList())
       }
-      is PEntitlements -> {
+      is PCustomerCenterManageSubscriptionPathType -> {
         stream.write(198)
         writeValue(stream, value.toList())
       }
-      is PActive -> {
+      is PCustomerCenterRefundPathType -> {
         stream.write(199)
         writeValue(stream, value.toList())
       }
-      is PInactive -> {
+      is PCustomerCenterChangePlanPathType -> {
         stream.write(200)
         writeValue(stream, value.toList())
       }
-      is PUnknown -> {
+      is PCustomerCenterContactSupportPathType -> {
         stream.write(201)
         writeValue(stream, value.toList())
       }
-      is PSuperwallEventInfo -> {
+      is PCustomerCenterUrlPathType -> {
         stream.write(202)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonDebuggerPresented -> {
+      is PCustomerCenterCustomPathType -> {
         stream.write(203)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonPaywallAlreadyPresented -> {
+      is PCustomerCenterSurveyOption -> {
         stream.write(204)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonHoldout -> {
+      is PCustomerCenterSurvey -> {
         stream.write(205)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonNoAudienceMatch -> {
+      is PCustomerCenterPath -> {
         stream.write(206)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonPlacementNotFound -> {
+      is PCustomerCenterScreen -> {
         stream.write(207)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonNoPaywallVc -> {
+      is PCustomerCenterSupport -> {
         stream.write(208)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonNoPresenter -> {
+      is PCustomerCenterColorPair -> {
         stream.write(209)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonNoConfig -> {
+      is PCustomerCenterConfiguration -> {
         stream.write(210)
         writeValue(stream, value.toList())
       }
-      is PStatusReasonSubsStatusTimeout -> {
+      is PCustomerCenterRestoreAction -> {
         stream.write(211)
         writeValue(stream, value.toList())
       }
-      is PIdentityOptions -> {
+      is PCustomerCenterManageSubscriptionAction -> {
         stream.write(212)
         writeValue(stream, value.toList())
       }
-      is PExperiment -> {
+      is PCustomerCenterRefundAction -> {
         stream.write(213)
         writeValue(stream, value.toList())
       }
-      is PPlacementNotFoundTriggerResult -> {
+      is PCustomerCenterChangePlanAction -> {
         stream.write(214)
         writeValue(stream, value.toList())
       }
-      is PNoAudienceMatchTriggerResult -> {
+      is PCustomerCenterContactSupportAction -> {
         stream.write(215)
         writeValue(stream, value.toList())
       }
-      is PPaywallTriggerResult -> {
+      is PCustomerCenterUrlAction -> {
         stream.write(216)
         writeValue(stream, value.toList())
       }
-      is PHoldoutTriggerResult -> {
+      is PCustomerCenterCustomAction -> {
         stream.write(217)
         writeValue(stream, value.toList())
       }
-      is PErrorTriggerResult -> {
+      is PCustomerCenterPurchase -> {
         stream.write(218)
         writeValue(stream, value.toList())
       }
-      is PVariant -> {
+      is PCustomerCenterDelegateHost -> {
         stream.write(219)
         writeValue(stream, value.toList())
       }
-      is PConfirmedAssignment -> {
+      is PCustomCallback -> {
         stream.write(220)
         writeValue(stream, value.toList())
       }
-      is PPurchasedPaywallResult -> {
+      is PCustomCallbackResult -> {
         stream.write(221)
         writeValue(stream, value.toList())
       }
-      is PDeclinedPaywallResult -> {
+      is PSubscriptionTransaction -> {
         stream.write(222)
         writeValue(stream, value.toList())
       }
-      is PRestoredPaywallResult -> {
+      is PNonSubscriptionTransaction -> {
         stream.write(223)
         writeValue(stream, value.toList())
       }
-      is PPlacementNotFoundPresentationResult -> {
+      is PEntitlement -> {
         stream.write(224)
         writeValue(stream, value.toList())
       }
-      is PNoAudienceMatchPresentationResult -> {
+      is PCustomerInfo -> {
         stream.write(225)
         writeValue(stream, value.toList())
       }
-      is PPaywallPresentationResult -> {
+      is PEntitlements -> {
         stream.write(226)
         writeValue(stream, value.toList())
       }
-      is PHoldoutPresentationResult -> {
+      is PActive -> {
         stream.write(227)
         writeValue(stream, value.toList())
       }
-      is PPaywallNotAvailablePresentationResult -> {
+      is PInactive -> {
         stream.write(228)
         writeValue(stream, value.toList())
+      }
+      is PUnknown -> {
+        stream.write(229)
+        writeValue(stream, value.toList())
+      }
+      is PSuperwallEventInfo -> {
+        stream.write(230)
+        writeValue(stream, value.toList())
+      }
+      is PStatusReasonDebuggerPresented -> {
+        stream.write(231)
+        writeValue(stream, value.toList())
+      }
+      is PStatusReasonPaywallAlreadyPresented -> {
+        stream.write(232)
+        writeValue(stream, value.toList())
+      }
+      is PStatusReasonHoldout -> {
+        stream.write(233)
+        writeValue(stream, value.toList())
+      }
+      is PStatusReasonNoAudienceMatch -> {
+        stream.write(234)
+        writeValue(stream, value.toList())
+      }
+      is PStatusReasonPlacementNotFound -> {
+        stream.write(235)
+        writeValue(stream, value.toList())
+      }
+      is PStatusReasonNoPaywallVc -> {
+        stream.write(236)
+        writeValue(stream, value.toList())
+      }
+      is PStatusReasonNoPresenter -> {
+        stream.write(237)
+        writeValue(stream, value.toList())
+      }
+      is PStatusReasonNoConfig -> {
+        stream.write(238)
+        writeValue(stream, value.toList())
+      }
+      is PStatusReasonSubsStatusTimeout -> {
+        stream.write(239)
+        writeValue(stream, value.toList())
+      }
+      is PIdentityOptions -> {
+        stream.write(240)
+        writeValue(stream, value.toList())
+      }
+      is PExperiment -> {
+        stream.write(241)
+        writeValue(stream, value.toList())
+      }
+      is PPlacementNotFoundTriggerResult -> {
+        stream.write(242)
+        writeValue(stream, value.toList())
+      }
+      is PNoAudienceMatchTriggerResult -> {
+        stream.write(243)
+        writeValue(stream, value.toList())
+      }
+      is PPaywallTriggerResult -> {
+        stream.write(244)
+        writeValue(stream, value.toList())
+      }
+      is PHoldoutTriggerResult -> {
+        stream.write(245)
+        writeValue(stream, value.toList())
+      }
+      is PErrorTriggerResult -> {
+        stream.write(246)
+        writeValue(stream, value.toList())
+      }
+      is PVariant -> {
+        stream.write(247)
+        writeValue(stream, value.toList())
+      }
+      is PConfirmedAssignment -> {
+        stream.write(248)
+        writeValue(stream, value.toList())
+      }
+      is PPurchasedPaywallResult -> {
+        stream.write(249)
+        writeValue(stream, value.toList())
+      }
+      is PDeclinedPaywallResult -> {
+        stream.write(250)
+        writeValue(stream, value.toList())
+      }
+      is PRestoredPaywallResult -> {
+        stream.write(251)
+        writeValue(stream, value.toList())
+      }
+      is PPlacementNotFoundPresentationResult -> {
+        stream.write(252)
+        writeValue(stream, value.toList())
+      }
+      is PNoAudienceMatchPresentationResult -> {
+        stream.write(253)
+        writeValue(stream, value.toList())
+      }
+      is PPaywallPresentationResult -> {
+        stream.write(254)
+        writeValue(stream, value.toList())
+      }
+      is PHoldoutPresentationResult -> {
+        val wrap = SuperwallHostGeneratedPigeonInternalCodecOverflow(type = 0, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is PPaywallNotAvailablePresentationResult -> {
+        val wrap = SuperwallHostGeneratedPigeonInternalCodecOverflow(type = 1, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
       }
       else -> super.writeValue(stream, value)
     }
@@ -4457,6 +5583,8 @@ interface PSuperwallHostApi {
   fun queryInAppPurchases(callback: (Result<List<POwnedInAppPurchase>>) -> Unit)
   fun getLocaleIdentifier(): String?
   fun setLocaleIdentifier(localeIdentifier: String?)
+  fun getAdConsent(): PAdConsent
+  fun setAdConsent(adConsent: PAdConsent)
   fun getUserId(): String
   fun getIsLoggedIn(): Boolean
   fun getIsInitialized(): Boolean
@@ -4477,6 +5605,8 @@ interface PSuperwallHostApi {
   fun getLatestPaywallInfo(): PPaywallInfo?
   fun registerPlacement(placement: String, params: Map<String, Any>?, handler: PPaywallPresentationHandlerHost?, feature: PFeatureHandlerHost?, callback: (Result<Unit>) -> Unit)
   fun dismiss()
+  fun presentCustomerCenter(configuration: PCustomerCenterConfiguration?, delegate: PCustomerCenterDelegateHost?, callback: (Result<Unit>) -> Unit)
+  fun dismissCustomerCenter(callback: (Result<Unit>) -> Unit)
   fun getOverrideProductsByName(): Map<String, String>?
   fun setOverrideProductsByName(overrideProducts: Map<String, String>?)
 
@@ -4803,6 +5933,39 @@ interface PSuperwallHostApi {
             val localeIdentifierArg = args[0] as String?
             val wrapped: List<Any?> = try {
               api.setLocaleIdentifier(localeIdentifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              SuperwallHostGeneratedPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getAdConsent$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> = try {
+              listOf(api.getAdConsent())
+            } catch (exception: Throwable) {
+              SuperwallHostGeneratedPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setAdConsent$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val adConsentArg = args[0] as PAdConsent
+            val wrapped: List<Any?> = try {
+              api.setAdConsent(adConsentArg)
               listOf(null)
             } catch (exception: Throwable) {
               SuperwallHostGeneratedPigeonUtils.wrapError(exception)
@@ -5143,6 +6306,43 @@ interface PSuperwallHostApi {
               SuperwallHostGeneratedPigeonUtils.wrapError(exception)
             }
             reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.presentCustomerCenter$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val configurationArg = args[0] as PCustomerCenterConfiguration?
+            val delegateArg = args[1] as PCustomerCenterDelegateHost?
+            api.presentCustomerCenter(configurationArg, delegateArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(SuperwallHostGeneratedPigeonUtils.wrapError(error))
+              } else {
+                reply.reply(SuperwallHostGeneratedPigeonUtils.wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.dismissCustomerCenter$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.dismissCustomerCenter{ result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(SuperwallHostGeneratedPigeonUtils.wrapError(error))
+              } else {
+                reply.reply(SuperwallHostGeneratedPigeonUtils.wrapResult(null))
+              }
+            }
           }
         } else {
           channel.setMessageHandler(null)
@@ -5637,6 +6837,120 @@ class PPaywallPresentationHandlerGenerated(private val binaryMessenger: BinaryMe
         } else {
           val output = it[0] as PCustomCallbackResult
           callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(SuperwallHostGeneratedPigeonUtils.createConnectionError(channelName)))
+      } 
+    }
+  }
+}
+/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
+class PCustomerCenterDelegateGenerated(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+  companion object {
+    /** The codec used by PCustomerCenterDelegateGenerated. */
+    val codec: MessageCodec<Any?> by lazy {
+      SuperwallHostGeneratedPigeonCodec()
+    }
+  }
+  fun shouldRestorePurchases(callback: (Result<Boolean>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.shouldRestorePurchases$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(null) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+        } else {
+          val output = it[0] as Boolean
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(SuperwallHostGeneratedPigeonUtils.createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun didSelectAction(actionArg: PCustomerCenterAction, pathIdArg: String, purchaseArg: PCustomerCenterPurchase?, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.didSelectAction$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(actionArg, pathIdArg, purchaseArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(SuperwallHostGeneratedPigeonUtils.createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun didCompleteSurvey(surveyIdArg: String, optionIdArg: String, actionArg: PCustomerCenterAction, pathIdArg: String, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.didCompleteSurvey$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(surveyIdArg, optionIdArg, actionArg, pathIdArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(SuperwallHostGeneratedPigeonUtils.createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun didCompleteRefundRequest(productIdArg: String, statusArg: PCustomerCenterRefundStatus, callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.didCompleteRefundRequest$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(productIdArg, statusArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(SuperwallHostGeneratedPigeonUtils.createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun didDismiss(callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.didDismiss$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(null) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(SuperwallHostGeneratedPigeonUtils.createConnectionError(channelName)))
+      } 
+    }
+  }
+  fun onDismiss(callback: (Result<Unit>) -> Unit)
+{
+    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName = "dev.flutter.pigeon.superwallkit_flutter.PCustomerCenterDelegateGenerated.onDismiss$separatedMessageChannelSuffix"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(null) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
       } else {
         callback(Result.failure(SuperwallHostGeneratedPigeonUtils.createConnectionError(channelName)))
