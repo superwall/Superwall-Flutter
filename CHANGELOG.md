@@ -2,6 +2,24 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.8.0
+
+### Enhancements
+- Updates Android SDK to 2.9.0 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.9.0).
+- Updates iOS SDK to 4.18.3 [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.18.3).
+- Adds Android support for `SuperwallOptions.adConsent`, `Superwall.shared.setAdConsent()` and `Superwall.shared.getAdConsent()`, previously iOS only, to report a user's ad consent (`AdConsent`, with `adUserData` and `adPersonalization`, each an `AdConsentStatus` of `granted` or `denied`), which Superwall passes on with the conversions it uploads to Google Ads and Meta. If it's never set, the SDK uses the consent stored by an IAB TCF consent banner when GDPR applies, and otherwise defaults to granted; apps with users in the EEA, UK or Switzerland that don't use a TCF banner should set it from their consent flow. Both are reported as denied while event tracking is off.
+- Android: adds best-effort public IPv4 and IPv6 device attributes for apps using the Superwall MMP, and the IPv4 attribute for apps that set an AppsFlyer ID. Apps that use the MMP or set an AppsFlyer ID should declare IP address collection in their Play Console data safety form.
+- Android: adds install attribution matching. If the app has performance marketing integrations set up on the Superwall dashboard, the SDK matches the install to the ad click that led to it, once per install within 7 days of install, and adds the resulting `acquisition_*` attributes to user attributes for use in charts and audiences. The result is delivered to `SuperwallDelegate.handleSuperwallEvent` as the new `attributionMatch` event type, with `provider`, `matched` and, when available, `source`, `confidence`, `match_score` and `reason` in `params`.
+- Android: adds subscription replacement. When a paywall's Purchase action is set to replace an existing subscription, the purchase upgrades, downgrades or switches the user's active Google Play subscription that shares an entitlement with the new product instead of buying a second one.
+- Android: adds `PurchaseController.purchaseFromGooglePlayWithReplacement(productId, basePlanId, offerId, replacement)`, called instead of `purchaseFromGooglePlay` when a purchase replaces an existing subscription. Its `ProductReplacement` carries the `ProductReplacementMode` (`storeDefault`, `chargeProrated` or `chargeFullPrice`) and the old product's ID and purchase token, so a custom purchase controller can perform the replacement. The default implementation calls `purchaseFromGooglePlay`, so purchase controllers that extend `PurchaseController` keep working; ones that `implements` it need to add the method.
+
+### Fixes
+- iOS: fixes entitlements becoming inactive while an App Store subscription is in a billing grace period, when using StoreKit 2. During the grace period, a subscription transaction's `isActive` stays `true` and its `expirationDate` is when the grace period ends.
+- iOS: moves the SDK's database out of the root of Application Support into its own folder. Existing data is moved over on first launch.
+- Android: fixes paywalls not running post-purchase actions, such as navigating to a thank-you page, after a one-time product purchase.
+- Android: fixes web checkout codes passed through the Play install referrer never being redeemed. A code is now redeemed once, on the first launch after install.
+- Android: fixes a band of the host window showing beside the display cutout around a Fullscreen, Push or no-animation paywall shown with `PresentationHost.inWindow`.
+
 ## 2.7.0
 
 ### ⚠️ iOS: minimum deployment target is now iOS 15

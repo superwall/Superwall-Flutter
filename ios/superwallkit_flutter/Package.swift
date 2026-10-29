@@ -13,8 +13,8 @@ let package = Package(
     ],
     dependencies: [
         // Pinned to match the version declared in the podspec
-        // (s.dependency 'SuperwallKit', '4.18.2').
-        .package(url: "https://github.com/superwall/Superwall-iOS.git", exact: "4.18.2")
+        // (s.dependency 'SuperwallKit', '4.18.3').
+        .package(url: "https://github.com/superwall/Superwall-iOS.git", exact: "4.18.3")
     ],
     targets: [
         .target(

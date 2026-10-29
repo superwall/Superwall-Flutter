@@ -1,3 +1,4 @@
+import 'package:superwallkit_flutter/src/public/ProductReplacement.dart';
 import 'package:superwallkit_flutter/src/public/PurchaseResult.dart';
 import 'package:superwallkit_flutter/src/public/RestorationResult.dart';
 
@@ -35,6 +36,30 @@ abstract class PurchaseController {
   ///
   /// - Returns: A `PurchaseResult` object, which is the result of your purchase logic.
   Future<PurchaseResult> purchaseFromGooglePlay(String productId, String? basePlanId, String? offerId);
+
+  /// Called when the user initiates purchasing of a product from Android that
+  /// should replace one of their existing subscriptions, e.g. an upgrade,
+  /// downgrade or plan switch.
+  ///
+  /// [replacement] is set only when the paywall's Purchase action is set to
+  /// replace an existing subscription and the user has an active Google Play
+  /// subscription that shares an entitlement with the product. Pass its
+  /// [ProductReplacement.oldPurchaseToken] and [ProductReplacement.mode] to
+  /// your billing flow's subscription update parameters (or the equivalent in
+  /// your billing library, such as RevenueCat's `GoogleProductChangeInfo`).
+  ///
+  /// The default implementation ignores [replacement] and calls
+  /// [purchaseFromGooglePlay], so existing implementations keep working.
+  ///
+  /// Android only.
+  Future<PurchaseResult> purchaseFromGooglePlayWithReplacement(
+    String productId,
+    String? basePlanId,
+    String? offerId,
+    ProductReplacement replacement,
+  ) {
+    return purchaseFromGooglePlay(productId, basePlanId, offerId);
+  }
 
   /// Called when the user initiates a restore.
   ///
