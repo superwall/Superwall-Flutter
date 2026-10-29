@@ -537,7 +537,7 @@ final class CustomerInfoStreamHandlerImpl: StreamCustomerInfoStreamHandler {
 
     // Use the SDK's customerInfoStream which already has proper deduplication
     if #available(iOS 15.0, *) {
-      streamTask = Task { [weak self] in
+      streamTask = Task { @MainActor [weak self] in
         for await customerInfo in Superwall.shared.customerInfoStream {
           guard let self = self else { return }
           self.eventSink?.success(customerInfo.pigeonify())
