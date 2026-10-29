@@ -46,6 +46,7 @@ import PVariant
 import PVariantType
 import PigeonEventSink
 import StreamSubscriptionStatusStreamHandler
+import StreamCustomerInfoStreamHandler
 import android.app.Activity
 import android.app.Application
 import com.superwall.sdk.Superwall
@@ -55,7 +56,6 @@ import com.superwall.sdk.config.models.ConfigurationStatus
 import com.superwall.sdk.identity.IdentityOptions
 import com.superwall.sdk.identity.identify
 import com.superwall.sdk.identity.setUserAttributes
-import com.superwall.sdk.models.entitlements.Entitlement
 import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.models.triggers.Experiment
 import com.superwall.sdk.store.abstractions.product.StoreProduct
@@ -71,9 +71,10 @@ import toJson
 import androidx.core.net.toUri
 import com.superwall.sdk.paywall.presentation.register
 import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
+import com.superwall.superwallkit_flutter.utils.CustomerInfoMapper
 import io.flutter.FlutterInjector
 import io.flutter.plugin.common.BinaryMessenger
-import android.util.Log
+import io.flutter.plugin.common.EventChannel
 import com.superwall.sdk.config.options.SuperwallOptions
 import com.superwall.sdk.delegate.RestorationResult
 import com.superwall.sdk.logger.LogLevel
@@ -83,6 +84,7 @@ import com.superwall.sdk.paywall.presentation.result.PresentationResult
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.fromPigeon
 import com.superwall.superwallkit_flutter.utils.SubscriptionStatusMapper.toPigeon
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.collectLatest
@@ -92,15 +94,35 @@ class SuperwallHost(
     val binaryMessenger: () -> BinaryMessenger
 ) : PSuperwallHostApi, StreamSubscriptionStatusStreamHandler() {
 
-    init {
-        setUp(binaryMessenger = binaryMessenger(), this)
-        register(binaryMessenger(), this)
-    }
-
     private val mainScope = CoroutineScope(Dispatchers.Main)
     private val ioScope = CoroutineScope(Dispatchers.IO)
     private var latestStreamJob: Job? = null
     private val inAppPurchaseQuery = InAppPurchaseQuery(context)
+    private val customerInfoStreamHandler = CustomerInfoStreamHandlerImpl()
+    private var delegateHost: SuperwallDelegateHost? = null
+
+    init {
+        setUp(binaryMessenger = binaryMessenger(), this)
+        register(binaryMessenger(), this)
+        StreamCustomerInfoStreamHandler.register(binaryMessenger(), customerInfoStreamHandler)
+    }
+
+    fun dispose() {
+        customerInfoStreamHandler.dispose()
+        mainScope.cancel()
+        ioScope.cancel()
+        delegateHost?.let {
+            val sdk = runCatching { Superwall.instance }.getOrNull()
+            if (sdk != null && sdk.delegate === it) sdk.delegate = null
+            it.dispose()
+        }
+        delegateHost = null
+        setUp(binaryMessenger = binaryMessenger(), api = null)
+        EventChannel(binaryMessenger(), "dev.flutter.pigeon.superwallkit_flutter.SuperwallEventStreams.streamCustomerInfo")
+            .setStreamHandler(null)
+        EventChannel(binaryMessenger(), "dev.flutter.pigeon.superwallkit_flutter.SuperwallEventStreams.streamSubscriptionStatus")
+            .setStreamHandler(null)
+    }
     override fun configure(
         apiKey: String,
         purchaseController: PPurchaseControllerHost?,
@@ -146,11 +168,11 @@ class SuperwallHost(
     }
 
     override fun setDelegate(hasDelegate: Boolean) {
-        Superwall.instance.delegate =
-            if (hasDelegate)
-                SuperwallDelegateHost({
-                    PSuperwallDelegateGenerated(binaryMessenger())
-                }) else null
+        delegateHost?.dispose()
+        delegateHost = if (hasDelegate) {
+            SuperwallDelegateHost { PSuperwallDelegateGenerated(binaryMessenger()) }
+        } else null
+        Superwall.instance.delegate = delegateHost
     }
 
     override fun confirmAllAssignments(callback: (Result<List<PConfirmedAssignment>>) -> Unit) {
@@ -238,55 +260,21 @@ class SuperwallHost(
     }
 
     override fun getEntitlements(): PEntitlements {
-        fun mapEntitlement(entitlement: Entitlement): PEntitlement {
-            return PEntitlement(
-                id = entitlement.id,
-                type = PEntitlementType.SERVICE_LEVEL,
-                isActive = true,
-                productIds = emptyList()
-            )
-        }
-
         return PEntitlements(
-            active = Superwall.instance.entitlements.active.map { mapEntitlement(it) },
-            inactive = Superwall.instance.entitlements.inactive.map { mapEntitlement(it) },
-            all = Superwall.instance.entitlements.all.map { mapEntitlement(it) },
-            web = Superwall.instance.entitlements.web.map { mapEntitlement(it) }
+            active = Superwall.instance.entitlements.active.map { CustomerInfoMapper.toPigeon(it) },
+            inactive = Superwall.instance.entitlements.inactive.map { CustomerInfoMapper.toPigeon(it) },
+            all = Superwall.instance.entitlements.all.map { CustomerInfoMapper.toPigeon(it) },
+            web = Superwall.instance.entitlements.web.map { CustomerInfoMapper.toPigeon(it) }
         )
     }
 
     override fun getEntitlementsByProductIds(productIds: List<String>): List<PEntitlement> {
-        // TODO: Android SDK doesn't have byProductIds method yet
-        // For now, implement filtering locally
-        fun mapEntitlement(entitlement: Entitlement): PEntitlement {
-            return PEntitlement(
-                id = entitlement.id,
-                type = PEntitlementType.SERVICE_LEVEL,
-                isActive = true,
-                productIds = emptyList()
-            )
-        }
-
-        val productIdSet = productIds.toSet()
-        val allEntitlements = Superwall.instance.entitlements.all
-
-        // Since Android SDK's Entitlement doesn't expose productIds yet,
-        // we can't filter by productIds. Return empty list for now.
-        // This will need to be updated when Android SDK supports product IDs in entitlements.
-        Log.w("SuperwallHost", "getEntitlementsByProductIds: Android SDK doesn't expose productIds in Entitlement yet, returning empty list")
-        return emptyList()
+        return Superwall.instance.entitlements.byProductIds(productIds.toSet())
+            .map { CustomerInfoMapper.toPigeon(it) }
     }
 
     override fun getCustomerInfo(callback: (Result<PCustomerInfo>) -> Unit) {
-        // TODO: Implement customerInfo from Android SDK when available
-        // For now, return minimal data based on current user
-        val customerInfo = PCustomerInfo(
-            subscriptions = emptyList(),
-            nonSubscriptions = emptyList(),
-            entitlements = emptyList(),
-            userId = Superwall.instance.userId
-        )
-        callback(Result.success(customerInfo))
+        callback(runCatching { CustomerInfoMapper.toPigeon(Superwall.instance.getCustomerInfo()) })
     }
 
     override fun getSubscriptionStatus(): PSubscriptionStatus {
