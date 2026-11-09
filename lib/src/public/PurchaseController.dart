@@ -32,7 +32,9 @@ abstract class PurchaseController {
   /// - Parameters:
   ///   - productId: The product id of the product the user would like to purchase.
   ///   - basePlanId: An optional base plan identifier of the product that's being purchased. Default is `null`.
-  ///   - offerId: An optional offer identifier of the product that's being purchased. Default is `null`.
+  ///   - offerId: The identifier of the offer to buy, already chosen by the SDK from the
+  ///     paywall's product (including `sw-auto` resolution). `null` means buy the base plan
+  ///     with no offer: don't pick a free trial or other offer yourself.
   ///
   /// - Returns: A `PurchaseResult` object, which is the result of your purchase logic.
   Future<PurchaseResult> purchaseFromGooglePlay(String productId, String? basePlanId, String? offerId);
@@ -47,6 +49,10 @@ abstract class PurchaseController {
   /// [ProductReplacement.oldPurchaseToken] and [ProductReplacement.mode] to
   /// your billing flow's subscription update parameters (or the equivalent in
   /// your billing library, such as RevenueCat's `GoogleProductChangeInfo`).
+  ///
+  /// [basePlanId] and [offerId] have the same meaning as in
+  /// [purchaseFromGooglePlay]: a `null` [offerId] means buy the base plan with
+  /// no offer.
   ///
   /// The default implementation ignores [replacement] and calls
   /// [purchaseFromGooglePlay], so existing implementations keep working.

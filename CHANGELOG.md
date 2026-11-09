@@ -7,6 +7,10 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 ### Enhancements
 - Updates Android SDK to 2.10.1 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.10.1).
 
+### Fixes
+- Android: fixes a `:sw-none` product being bought with a free trial (or, for one-time products, a discount offer) when no `PurchaseController` is set. If you use a `PurchaseController`, a `null` `offerId` in `purchaseFromGooglePlay` and `purchaseFromGooglePlayWithReplacement` means buy the base plan with no offer; don't pick a free trial or other offer yourself.
+- Android: keeps paywall content clear of side navigation bars in landscape for drawer, modal and fullscreen presentations.
+
 ## 2.8.0
 
 ### Enhancements
