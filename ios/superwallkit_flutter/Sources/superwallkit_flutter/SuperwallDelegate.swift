@@ -159,9 +159,9 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         params: params,
         paywallInfo: paywallInfo.pigeonify(),
         transaction: transaction?.pigeonify(),
-        product: product.pigeonify()
+        product: product.pigeonify(),
+        transactionType: type.pigeonify()
       )
-      // TODO: Add type
     case .subscriptionStart(let product, let paywallInfo):
       pEventInfo = PSuperwallEventInfo(
         eventType: .subscriptionStart,
@@ -178,7 +178,7 @@ final class SuperwallDelegateHost: SuperwallDelegate {
       )
     case .transactionRestore(let restoreType, let paywallInfo):
       pEventInfo = PSuperwallEventInfo(
-        eventType: .transactionComplete,
+        eventType: .transactionRestore,
         params: params,
         paywallInfo: paywallInfo.pigeonify(),
         restoreType: restoreType.pigeonify()
@@ -195,6 +195,8 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         params: params,
         userAttributes: attributes
       )
+    case .attributionMatch:
+      pEventInfo = PSuperwallEventInfo(eventType: .attributionMatch, params: params)
     case .nonRecurringProductPurchase(let product, let paywallInfo):
       pEventInfo = PSuperwallEventInfo(
         eventType: .nonRecurringProductPurchase,
@@ -277,15 +279,17 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         params: params,
         triggeredPlacementName: triggeredPlacementName
       )
-    case .paywallPreloadStart:
+    case .paywallPreloadStart(let paywallCount):
       pEventInfo = PSuperwallEventInfo(
         eventType: .paywallPreloadStart,
-        params: params
+        params: params,
+        paywallCount: Int64(paywallCount)
       )
-    case .paywallPreloadComplete:
+    case .paywallPreloadComplete(let paywallCount):
       pEventInfo = PSuperwallEventInfo(
         eventType: .paywallPreloadComplete,
-        params: params
+        params: params,
+        paywallCount: Int64(paywallCount)
       )
     case let .paywallProductsLoadRetry(triggeredPlacementName, paywallInfo, attempt):
       pEventInfo = PSuperwallEventInfo(
@@ -407,20 +411,26 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         params: params,
         reviewRequestedCount: Int64(count)
       )
-    case .permissionRequested:
+    case let .permissionRequested(permissionName, paywallIdentifier):
       pEventInfo = PSuperwallEventInfo(
         eventType: .permissionRequested,
-        params: params
+        params: params,
+        permissionName: permissionName,
+        paywallIdentifier: paywallIdentifier
       )
-    case .permissionGranted:
+    case let .permissionGranted(permissionName, paywallIdentifier):
       pEventInfo = PSuperwallEventInfo(
         eventType: .permissionGranted,
-        params: params
+        params: params,
+        permissionName: permissionName,
+        paywallIdentifier: paywallIdentifier
       )
-    case .permissionDenied:
+    case let .permissionDenied(permissionName, paywallIdentifier):
       pEventInfo = PSuperwallEventInfo(
         eventType: .permissionDenied,
-        params: params
+        params: params,
+        permissionName: permissionName,
+        paywallIdentifier: paywallIdentifier
       )
     case .teleportOpen(let paywallInfo):
       pEventInfo = PSuperwallEventInfo(
@@ -444,6 +454,50 @@ final class SuperwallDelegateHost: SuperwallDelegate {
       pEventInfo = PSuperwallEventInfo(eventType: .customerCenterSurveyResponse, params: params)
     case .customerCenterRefundRequest:
       pEventInfo = PSuperwallEventInfo(eventType: .customerCenterRefundRequest, params: params)
+    case .stripeCheckoutStart(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .stripeCheckoutStart,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .stripeCheckoutSubmit(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .stripeCheckoutSubmit,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .stripeCheckoutComplete(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .stripeCheckoutComplete,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .stripeCheckoutFail(let paywallInfo):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .stripeCheckoutFail,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify()
+      )
+    case .testModeModalOpen:
+      pEventInfo = PSuperwallEventInfo(eventType: .testModeModalOpen, params: params)
+    case .testModeModalClose:
+      pEventInfo = PSuperwallEventInfo(eventType: .testModeModalClose, params: params)
+    case let .paywallPageView(paywallInfo, data):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .paywallPageView,
+        params: params,
+        paywallInfo: paywallInfo.pigeonify(),
+        pageViewData: PPageViewData(
+          pageNodeId: data.pageNodeId,
+          flowPosition: Int64(data.flowPosition),
+          pageName: data.pageName,
+          navigationNodeId: data.navigationNodeId,
+          previousPageNodeId: data.previousPageNodeId,
+          previousFlowPosition: data.previousFlowPosition.map { Int64($0) },
+          navigationType: data.navigationType,
+          timeOnPreviousPageMs: data.timeOnPreviousPageMs.map { Int64($0) }
+        )
+      )
     @unknown default:
       pEventInfo = PSuperwallEventInfo(
         eventType: .customPlacement,
@@ -578,6 +632,21 @@ final class SuperwallDelegateHost: SuperwallDelegate {
   func userAttributesDidChange(newAttributes: [String: Any]) {
     flutterDelegate().userAttributesDidChange(newAttributes: newAttributes) { _ in
       // NO-OP
+    }
+  }
+}
+
+extension TransactionType {
+  func pigeonify() -> PTransactionType {
+    switch self {
+    case .nonRecurringProductPurchase:
+      return .nonRecurringProductPurchase
+    case .freeTrialStart:
+      return .freeTrialStart
+    case .subscriptionStart:
+      return .subscriptionStart
+    @unknown default:
+      return .nonRecurringProductPurchase
     }
   }
 }

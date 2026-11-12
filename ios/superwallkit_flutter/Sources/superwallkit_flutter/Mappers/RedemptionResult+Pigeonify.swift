@@ -63,7 +63,9 @@ extension RedemptionResult.RedemptionInfo {
         placementName: paywallInfo.placementName,
         placementParams: paywallInfo.placementParams,
         variantId: paywallInfo.variantId,
-        experimentId: paywallInfo.experimentId
+        experimentId: paywallInfo.experimentId,
+        // `productIdentifier` is deprecated, but older redemptions have it and no `product`.
+        productIdentifier: paywallInfo.product?.identifier ?? paywallInfo.productIdentifier
       )
     }
 
@@ -72,7 +74,8 @@ extension RedemptionResult.RedemptionInfo {
       ownership: ownership,
       purchaserInfo: purchaseInfo,
       paywallInfo: paywallRedemptionInfo,
-      entitlements: entitlements
+      entitlements: entitlements,
+      userAttributes: userAttributes
     )
   }
 }

@@ -22,21 +22,22 @@ final class PaywallPresentationHandlerHost {
       )
     }
 
+    // The host is only removed once `onDismiss` has been delivered, so it's
+    // still alive here.
+    handler.onWillDismiss { [weak self] paywallInfo, result in
+      self?.flutterHandler.onWillDismiss(
+        paywallInfo: paywallInfo.pigeonify(),
+        paywallResult: PaywallPresentationHandlerHost.pigeonify(result),
+        completion: { result in
+          // NO-OP
+        }
+      )
+    }
+
     handler.onDismiss { [weak self] paywallInfo, result in
-      let pResult: PPaywallResult
-
-      switch result {
-      case .purchased(let product):
-        pResult = PPurchasedPaywallResult(productId: product.productIdentifier)
-      case .restored:
-        pResult = PRestoredPaywallResult(ignore: false)
-      case .declined:
-        pResult = PDeclinedPaywallResult(ignore: false)
-      }
-
       self?.flutterHandler.onDismiss(
         paywallInfo: paywallInfo.pigeonify(),
-        paywallResult: pResult,
+        paywallResult: PaywallPresentationHandlerHost.pigeonify(result),
         completion: { [weak self] result in
           if paywallInfo.closeReason != .none {
             if let self = self {
@@ -104,6 +105,17 @@ final class PaywallPresentationHandlerHost {
       }
 
       return result
+    }
+  }
+
+  private static func pigeonify(_ result: PaywallResult) -> PPaywallResult {
+    switch result {
+    case .purchased(let product):
+      return PPurchasedPaywallResult(productId: product.productIdentifier)
+    case .restored:
+      return PRestoredPaywallResult(ignore: false)
+    case .declined:
+      return PDeclinedPaywallResult(ignore: false)
     }
   }
 }

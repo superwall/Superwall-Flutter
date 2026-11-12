@@ -55,6 +55,24 @@ extension PSuperwallOptions {
       if let shouldShowWebPurchaseConfirmationAlert = paywalls.shouldShowWebPurchaseConfirmationAlert {
         options.paywalls.shouldShowWebPurchaseConfirmationAlert = shouldShowWebPurchaseConfirmationAlert
       }
+
+      if let notificationPermissionsDenied = paywalls.notificationPermissionsDenied {
+        // Fields left out keep the SDK's default text.
+        let sdkNotificationPermissionsDenied = PaywallOptions.NotificationPermissionsDenied()
+        if let title = notificationPermissionsDenied.title {
+          sdkNotificationPermissionsDenied.title = title
+        }
+        if let message = notificationPermissionsDenied.message {
+          sdkNotificationPermissionsDenied.message = message
+        }
+        if let actionButtonTitle = notificationPermissionsDenied.actionButtonTitle {
+          sdkNotificationPermissionsDenied.actionButtonTitle = actionButtonTitle
+        }
+        if let closeButtonTitle = notificationPermissionsDenied.closeButtonTitle {
+          sdkNotificationPermissionsDenied.closeButtonTitle = closeButtonTitle
+        }
+        options.paywalls.notificationPermissionsDenied = sdkNotificationPermissionsDenied
+      }
     }
     
     if let enableExperimentalDeviceVariables = self.enableExperimentalDeviceVariables {
@@ -72,8 +90,27 @@ extension PSuperwallOptions {
       }
     }
     
-    if let isExternalDataCollectionEnabled = self.isExternalDataCollectionEnabled {
+    if let eventTrackingBehavior = self.eventTrackingBehavior {
+      options.eventTrackingBehavior = eventTrackingBehavior.toSdk()
+      // The deprecated flag's setter turns `true` into `.all`, which would undo
+      // the behavior set above, and `true` is also the flag's default. So only
+      // `false` is applied on top: it lowers `.all` to `.superwallOnly` and
+      // leaves `.none` alone.
+      if self.isExternalDataCollectionEnabled == false {
+        options.isExternalDataCollectionEnabled = false
+      }
+    } else if let isExternalDataCollectionEnabled = self.isExternalDataCollectionEnabled {
       options.isExternalDataCollectionEnabled = isExternalDataCollectionEnabled
+    }
+
+    // Only assign when set: the SDK picks its default from the Info.plist and OS version.
+    if let storeKitVersion = self.storeKitVersion {
+      switch storeKitVersion {
+      case .storeKit1:
+        options.storeKitVersion = .storeKit1
+      case .storeKit2:
+        options.storeKitVersion = .storeKit2
+      }
     }
     
     options.localeIdentifier = self.localeIdentifier
@@ -179,6 +216,17 @@ extension PSuperwallOptions {
             sdkScopes.insert(.paywallViewController)
           case .cache:
             sdkScopes.insert(.cache)
+          case .analytics:
+            sdkScopes.insert(.analytics)
+          case .webEntitlements:
+            sdkScopes.insert(.webEntitlements)
+          case .grantedEntitlements:
+            sdkScopes.insert(.grantedEntitlements)
+          case .customerCenter:
+            sdkScopes.insert(.customerCenter)
+          case .customerInfo, .jsEvaluator, .paywallTransactions, .nativePurchaseController, .deepLinks:
+            // Android only.
+            break
           case .all:
             sdkScopes.insert(.all)
           }

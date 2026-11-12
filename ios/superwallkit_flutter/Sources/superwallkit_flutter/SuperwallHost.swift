@@ -3,6 +3,7 @@ import SuperwallKit
 import UIKit
 import Foundation
 import Combine
+import UserNotifications
 
 final class SuperwallHost : NSObject, PSuperwallHostApi {
   private let flutterBinaryMessenger: FlutterBinaryMessenger
@@ -79,18 +80,39 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
   func confirmAllAssignments(completion: @escaping (Result<[PConfirmedAssignment], Error>) -> Void) {
     Task {
       let result = await Superwall.shared.confirmAllAssignments()
-      let mappedResult = result.map { assignment in
-        PConfirmedAssignment(
-          experimentId: assignment.experimentId,
-          variant: PVariant(
-            id: assignment.variant.id,
-            type: assignment.variant.type == .treatment ? .treatment : .holdout,
-            paywallId: assignment.variant.paywallId
-          )
-        )
-      }
+      let mappedResult = result.map { $0.pigeonify() }
       completion(.success(mappedResult))
     }
+  }
+
+  func getAssignments() -> [PConfirmedAssignment] {
+    return Superwall.shared.getAssignments().map { $0.pigeonify() }
+  }
+
+  func refreshConfiguration() {
+    Superwall.shared.refreshConfiguration(completion: nil)
+  }
+
+  func getEventTrackingBehavior() -> PEventTrackingBehavior {
+    return Superwall.shared.eventTrackingBehavior.pigeonify()
+  }
+
+  func setEventTrackingBehavior(behavior: PEventTrackingBehavior) {
+    Superwall.shared.eventTrackingBehavior = behavior.toSdk()
+  }
+
+  func setInterfaceStyle(interfaceStyle: PInterfaceStyle?) {
+    let style: InterfaceStyle?
+    switch interfaceStyle {
+    case .light:
+      style = .light
+    case .dark:
+      style = .dark
+    case nil:
+      // Follows the system interface style.
+      style = nil
+    }
+    Superwall.shared.setInterfaceStyle(to: style)
   }
 
   func getLogLevel() -> String {
@@ -126,7 +148,7 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
     return Superwall.shared.userAttributes
   }
 
-  func setUserAttributes(userAttributes: [String : Any]) {
+  func setUserAttributes(userAttributes: [String : Any?]) {
     Superwall.shared.setUserAttributes(userAttributes)
   }
 
@@ -142,6 +164,10 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
       result[swAttribute] = pair.value
     }
     Superwall.shared.setIntegrationAttributes(swAttributes)
+  }
+
+  func getIntegrationAttributes() -> [String : String] {
+    return Superwall.shared.integrationAttributes
   }
 
   func getLocaleIdentifier() -> String? {
@@ -498,6 +524,20 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
   func setAdConsent(adConsent: PAdConsent) {
     Superwall.shared.adConsent = adConsent.toSdk()
   }
+
+  // Push tokens and notification opens are only reported by the Android SDK,
+  // so these do nothing on iOS.
+  func setPushToken(token: String) {}
+
+  func optOutOfNotifications() {}
+
+  func optInToNotifications() {}
+
+  func handleNotificationOpen(data: [String : String]) {}
+
+  func cancelAllScheduledNotifications() {
+    UNUserNotificationCenter.current().removeAllPendingSuperwallNotificationRequests()
+  }
 }
 
 final class SubscriptionStatusStreamHandlerImpl: StreamSubscriptionStatusStreamHandler {
@@ -613,6 +653,56 @@ extension PIntegrationAttribute {
       return .appstackId
     case .airbridgeId:
       return .airbridgeId
+    case .firebaseInstallationId:
+      return .firebaseInstallationId
+    case .singularDeviceId:
+      return .singularDeviceId
+    case .meta, .amplitude, .mixpanel, .googleAds, .googleAppSetId, .custom:
+      // Android only.
+      return nil
+    }
+  }
+}
+
+// MARK: - Assignment Extension
+extension Assignment {
+  func pigeonify() -> PConfirmedAssignment {
+    return PConfirmedAssignment(
+      experimentId: experimentId,
+      variant: PVariant(
+        id: variant.id,
+        type: variant.type == .treatment ? .treatment : .holdout,
+        paywallId: variant.paywallId
+      )
+    )
+  }
+}
+
+// MARK: - EventTrackingBehavior Extensions
+extension EventTrackingBehavior {
+  func pigeonify() -> PEventTrackingBehavior {
+    switch self {
+    case .all:
+      return .all
+    case .superwallOnly:
+      return .superwallOnly
+    case .none:
+      return .none
+    @unknown default:
+      return .all
+    }
+  }
+}
+
+extension PEventTrackingBehavior {
+  func toSdk() -> EventTrackingBehavior {
+    switch self {
+    case .all:
+      return .all
+    case .superwallOnly:
+      return .superwallOnly
+    case .none:
+      return .none
     }
   }
 }

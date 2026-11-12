@@ -52,9 +52,27 @@ extension StoreProduct {
       currencyCode: currencyCode,
       isFamilyShareable: familyShareable,
       regionCode: regionCode,
-      price: Double(truncating: price as NSNumber)
-      
+      price: Double(truncating: price as NSNumber),
+      subscriptionPeriod: subscriptionPeriod?.pigeonify()
     )
+  }
+}
+
+extension SubscriptionPeriod {
+  func pigeonify() -> PSubscriptionPeriod {
+    let pUnit: PSubscriptionPeriodUnit
+    switch unit {
+    case .day:
+      pUnit = .day
+    case .week:
+      pUnit = .week
+    case .month:
+      pUnit = .month
+    case .year:
+      pUnit = .year
+    }
+
+    return PSubscriptionPeriod(value: Int64(value), unit: pUnit)
   }
 }
 
