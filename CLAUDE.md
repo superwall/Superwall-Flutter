@@ -53,6 +53,7 @@ cd test_app && flutter test integration_test/sdk_methods_test.dart
 
 # Manual Maestro tests
 maestro test -e PLATFORM_ID=com.superwall.Advanced test_app/maestro/handler/flow.yaml
+maestro test -e PLATFORM_ID=com.superwall.superapp test_app/maestro/embedded/flow.yaml
 maestro test -e PLATFORM_ID=com.superwall.superapp test_app/maestro/purchasecontroller/no_pc_purchases.yaml
 ```
 

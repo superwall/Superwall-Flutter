@@ -52,6 +52,7 @@ echo "Running Maestro tests for $PLATFORM..."
 maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/handler/flow.yaml
 maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/flow.yaml
 maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/delegate/flow.yaml
+maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/embedded/flow.yaml
 if [ "$PLATFORM" = "ios" ]; then
     maestro test -e "PLATFORM_ID=$APP_ID" test_app/maestro/purchasecontroller/test_pc_purchases.yaml
 fi
