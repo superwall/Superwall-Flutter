@@ -14,6 +14,8 @@ import 'package:superwallkit_flutter/src/private/PurchaseControllerProxy.dart';
 import 'package:superwallkit_flutter/src/public/ConfigurationStatus.dart';
 import 'package:superwallkit_flutter/src/public/ConfirmedAssignments.dart';
 import 'package:superwallkit_flutter/src/public/PresentationResult.dart';
+import 'package:superwallkit_flutter/src/public/SuperwallOptions.dart'
+    show SuperwallOptionsInternal;
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 
 // The primary class for integrating Superwall into your application.
@@ -83,8 +85,15 @@ class Superwall {
         _convertNetworkEnvironment(options.networkEnvironment);
 
     // Copy primitive values
-    generatedOptions.isExternalDataCollectionEnabled =
-        options.isExternalDataCollectionEnabled;
+    // The deprecated isExternalDataCollectionEnabled is only sent when it was
+    // set, and never alongside its replacement, eventTrackingBehavior.
+    generatedOptions.eventTrackingBehavior =
+        options.eventTrackingBehavior?.toPigeon();
+    if (options.eventTrackingBehavior == null) {
+      generatedOptions.isExternalDataCollectionEnabled =
+          options.isExternalDataCollectionEnabledIfSet;
+    }
+    generatedOptions.storeKitVersion = options.storeKitVersion?.toPigeon();
     generatedOptions.localeIdentifier = options.localeIdentifier;
     generatedOptions.isGameControllerEnabled = options.isGameControllerEnabled;
     generatedOptions.passIdentifiersToPlayStore =
@@ -135,6 +144,18 @@ class Superwall {
 
     generatedOptions.presentationHost =
         _convertPresentationHost(options.presentationHost);
+
+    final notificationPermissionsDenied = options.notificationPermissionsDenied;
+    if (notificationPermissionsDenied != null) {
+      generatedOptions.notificationPermissionsDenied =
+          generated.PNotificationPermissionsDenied()
+            ..title = notificationPermissionsDenied.title
+            ..message = notificationPermissionsDenied.message
+            ..actionButtonTitle = notificationPermissionsDenied.actionButtonTitle
+            ..closeButtonTitle = notificationPermissionsDenied.closeButtonTitle;
+    }
+    generatedOptions.optimisticLoading = options.optimisticLoading;
+    generatedOptions.timeoutAfterMillis = options.timeoutAfter?.inMilliseconds;
 
     // Set onBackPressedHost if callback is provided (Android only)
     if (hasOnBackPressed) {
@@ -270,6 +291,24 @@ class Superwall {
         return generated.PLogScope.paywallViewController;
       case LogScope.cache:
         return generated.PLogScope.cache;
+      case LogScope.analytics:
+        return generated.PLogScope.analytics;
+      case LogScope.webEntitlements:
+        return generated.PLogScope.webEntitlements;
+      case LogScope.grantedEntitlements:
+        return generated.PLogScope.grantedEntitlements;
+      case LogScope.customerCenter:
+        return generated.PLogScope.customerCenter;
+      case LogScope.customerInfo:
+        return generated.PLogScope.customerInfo;
+      case LogScope.jsEvaluator:
+        return generated.PLogScope.jsEvaluator;
+      case LogScope.paywallTransactions:
+        return generated.PLogScope.paywallTransactions;
+      case LogScope.nativePurchaseController:
+        return generated.PLogScope.nativePurchaseController;
+      case LogScope.deepLinks:
+        return generated.PLogScope.deepLinks;
       case LogScope.all:
         return generated.PLogScope.all;
     }
@@ -302,6 +341,41 @@ class Superwall {
     return assignments.map((e) => ConfirmedAssignment.fromPigeon(e)).toSet();
   }
 
+  /// Gets the assignments made so far, without confirming the rest.
+  ///
+  /// Unlike [confirmAllAssignments], this doesn't confirm any assignments or
+  /// make a network request.
+  Future<Set<ConfirmedAssignment>> getAssignments() async {
+    final assignments = await hostApi.getAssignments();
+    return assignments.map((e) => ConfirmedAssignment.fromPigeon(e)).toSet();
+  }
+
+  /// Fetches the Superwall configuration again.
+  ///
+  /// Use this to pick up changes made on the Superwall dashboard without
+  /// restarting the app, for example while testing.
+  Future<void> refreshConfiguration() async {
+    await hostApi.refreshConfiguration();
+  }
+
+  /// Gets which events the SDK sends to Superwall's servers.
+  Future<EventTrackingBehavior> getEventTrackingBehavior() async {
+    return EventTrackingBehavior.fromPigeon(
+        await hostApi.getEventTrackingBehavior());
+  }
+
+  /// Sets which events the SDK sends to Superwall's servers. See
+  /// [SuperwallOptions.eventTrackingBehavior].
+  Future<void> setEventTrackingBehavior(EventTrackingBehavior behavior) async {
+    await hostApi.setEventTrackingBehavior(behavior.toPigeon());
+  }
+
+  /// Overrides the interface style paywalls are shown with. Pass `null` to
+  /// follow the system's interface style.
+  Future<void> setInterfaceStyle(InterfaceStyle? interfaceStyle) async {
+    await hostApi.setInterfaceStyle(interfaceStyle?.toPigeon());
+  }
+
   // Gets the log level
   Future<LogLevel> getLogLevel() async {
     final logLevelJson = await hostApi.getLogLevel();
@@ -321,8 +395,8 @@ class Superwall {
     return await hostApi.getUserAttributes();
   }
 
-  // Sets the user attributes
-  Future<void> setUserAttributes(Map<String, Object> userAttributes) async {
+  // Sets the user attributes. A `null` value removes the attribute.
+  Future<void> setUserAttributes(Map<String, Object?> userAttributes) async {
     await hostApi.setUserAttributes(userAttributes);
   }
 
@@ -368,6 +442,13 @@ class Superwall {
     final pigeonAttributes =
         attributes.map((key, value) => MapEntry(key.toPigeon(), value));
     await hostApi.setIntegrationAttributes(pigeonAttributes);
+  }
+
+  /// Gets the attributes set for third-party integrations via
+  /// [setIntegrationAttribute] and [setIntegrationAttributes], keyed by the
+  /// integration's attribute name.
+  Future<Map<String, String>> getIntegrationAttributes() async {
+    return await hostApi.getIntegrationAttributes();
   }
 
   // Gets the locale identifier
@@ -675,6 +756,46 @@ class Superwall {
   bool get _supportsCustomerCenter =>
       defaultTargetPlatform == TargetPlatform.android ||
       defaultTargetPlatform == TargetPlatform.iOS;
+
+  /// Android only. Passes the device's Firebase Cloud Messaging token to
+  /// Superwall, so it can send push notifications to the user. Call it
+  /// whenever the token changes.
+  ///
+  /// Does nothing on iOS.
+  Future<void> setPushToken(String token) async {
+    await hostApi.setPushToken(token);
+  }
+
+  /// Android only. Opts the user out of push notifications sent by
+  /// Superwall.
+  ///
+  /// Does nothing on iOS.
+  Future<void> optOutOfNotifications() async {
+    await hostApi.optOutOfNotifications();
+  }
+
+  /// Android only. Opts the user back in to push notifications sent by
+  /// Superwall, after [optOutOfNotifications].
+  ///
+  /// Does nothing on iOS.
+  Future<void> optInToNotifications() async {
+    await hostApi.optInToNotifications();
+  }
+
+  /// Android only. Tells Superwall that the user opened a push notification.
+  /// Pass the notification's data payload as [data]; payloads that didn't
+  /// come from Superwall are ignored.
+  ///
+  /// Does nothing on iOS.
+  Future<void> handleNotificationOpen(Map<String, String> data) async {
+    await hostApi.handleNotificationOpen(data);
+  }
+
+  /// Cancels the local notifications Superwall scheduled, such as free trial
+  /// reminders.
+  Future<void> cancelAllScheduledNotifications() async {
+    await hostApi.cancelAllScheduledNotifications();
+  }
 
   // Set override products by name globally across all paywalls
   set overrideProductsByName(Map<String, String>? overrideProducts) {

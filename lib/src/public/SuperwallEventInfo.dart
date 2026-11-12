@@ -137,7 +137,41 @@ enum EventType {
   /// to match. `params` include `provider` (`mmp`) and `matched`, and may
   /// include `source`, `confidence` (`high`, `medium` or `low`),
   /// `match_score` and `reason`.
-  attributionMatch
+  attributionMatch,
+
+  /// Android only. The user was shown the review prompt after a paywall asked
+  /// for a review.
+  reviewGranted,
+
+  /// Android only. The review prompt couldn't be shown after a paywall asked
+  /// for a review.
+  reviewDenied,
+
+  /// iOS only. The user started a Stripe checkout from a paywall. Carries the
+  /// paywall's [SuperwallEvent.paywallInfo].
+  stripeCheckoutStart,
+
+  /// iOS only. The user submitted a Stripe checkout. Carries the paywall's
+  /// [SuperwallEvent.paywallInfo].
+  stripeCheckoutSubmit,
+
+  /// iOS only. A Stripe checkout completed. Carries the paywall's
+  /// [SuperwallEvent.paywallInfo].
+  stripeCheckoutComplete,
+
+  /// iOS only. A Stripe checkout failed. Carries the paywall's
+  /// [SuperwallEvent.paywallInfo].
+  stripeCheckoutFail,
+
+  /// The test mode modal was shown.
+  testModeModalOpen,
+
+  /// The test mode modal was closed.
+  testModeModalClose,
+
+  /// The user viewed a page of a multi-page paywall. Carries the paywall's
+  /// [SuperwallEvent.paywallInfo] and the page's [SuperwallEvent.pageViewData].
+  paywallPageView
 }
 
 class SuperwallEvent {
@@ -165,6 +199,26 @@ class SuperwallEvent {
   final Map<dynamic, dynamic>? userAttributes;
   final String? token;
 
+  /// Describes the page that was viewed, for [EventType.paywallPageView].
+  final PageViewData? pageViewData;
+
+  /// The name of the permission, for [EventType.permissionRequested],
+  /// [EventType.permissionGranted] and [EventType.permissionDenied].
+  final String? permissionName;
+
+  /// The identifier of the paywall that asked for the permission, for
+  /// [EventType.permissionRequested], [EventType.permissionGranted] and
+  /// [EventType.permissionDenied].
+  final String? paywallIdentifier;
+
+  /// The number of paywalls being preloaded, for
+  /// [EventType.paywallPreloadStart] and [EventType.paywallPreloadComplete].
+  final int? paywallCount;
+
+  /// The kind of transaction that completed, for
+  /// [EventType.transactionComplete]. iOS only.
+  final TransactionType? transactionType;
+
   SuperwallEvent._(
       {required this.type,
       this.placementName,
@@ -186,7 +240,12 @@ class SuperwallEvent {
       this.reason,
       this.restoreType,
       this.userAttributes,
-      this.token});
+      this.token,
+      this.pageViewData,
+      this.permissionName,
+      this.paywallIdentifier,
+      this.paywallCount,
+      this.transactionType});
 
   factory SuperwallEvent.fromPEventType(PSuperwallEventInfo eventInfo) {
     EventType type;
@@ -436,6 +495,33 @@ class SuperwallEvent {
         break;
       case PEventType.attributionMatch:
         type = EventType.attributionMatch;
+        break;
+      case PEventType.reviewGranted:
+        type = EventType.reviewGranted;
+        break;
+      case PEventType.reviewDenied:
+        type = EventType.reviewDenied;
+        break;
+      case PEventType.stripeCheckoutStart:
+        type = EventType.stripeCheckoutStart;
+        break;
+      case PEventType.stripeCheckoutSubmit:
+        type = EventType.stripeCheckoutSubmit;
+        break;
+      case PEventType.stripeCheckoutComplete:
+        type = EventType.stripeCheckoutComplete;
+        break;
+      case PEventType.stripeCheckoutFail:
+        type = EventType.stripeCheckoutFail;
+        break;
+      case PEventType.testModeModalOpen:
+        type = EventType.testModeModalOpen;
+        break;
+      case PEventType.testModeModalClose:
+        type = EventType.testModeModalClose;
+        break;
+      case PEventType.paywallPageView:
+        type = EventType.paywallPageView;
     }
 
     return SuperwallEvent._(
@@ -478,6 +564,15 @@ class SuperwallEvent {
           : null,
       userAttributes: eventInfo.userAttributes,
       token: eventInfo.token,
+      pageViewData: eventInfo.pageViewData != null
+          ? PageViewData.fromPigeon(eventInfo.pageViewData!)
+          : null,
+      permissionName: eventInfo.permissionName,
+      paywallIdentifier: eventInfo.paywallIdentifier,
+      paywallCount: eventInfo.paywallCount,
+      transactionType: eventInfo.transactionType != null
+          ? TransactionType.fromPigeon(eventInfo.transactionType!)
+          : null,
     );
   }
 }

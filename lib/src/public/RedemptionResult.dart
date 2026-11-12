@@ -118,11 +118,15 @@ class RedemptionInfo {
   /// The entitlements array.
   final Set<Entitlement> entitlements;
 
+  /// The user attributes saved with the purchase. iOS only.
+  final Map<String, Object>? userAttributes;
+
   RedemptionInfo({
     required this.ownership,
     required this.purchaserInfo,
     this.paywallInfo,
     required this.entitlements,
+    this.userAttributes,
   });
 
   static RedemptionInfo fromPigeon(PRedemptionInfo pInfo) {
@@ -142,12 +146,7 @@ class RedemptionInfo {
     RedemptionPaywallInfo? paywallInfo;
 
     if (pInfo.paywallInfo != null) {
-      paywallInfo = RedemptionPaywallInfo(
-          identifier: pInfo.paywallInfo!.identifier,
-          placementName: pInfo.paywallInfo!.placementName,
-          placementParams: pInfo.paywallInfo!.placementParams,
-          variantId: pInfo.paywallInfo!.variantId,
-          experimentId: pInfo.paywallInfo!.experimentId);
+      paywallInfo = RedemptionPaywallInfo.fromPigeon(pInfo.paywallInfo!);
     }
 
     final entitlements =
@@ -157,7 +156,8 @@ class RedemptionInfo {
         ownership: ownership,
         purchaserInfo: purchaserInfo,
         paywallInfo: paywallInfo,
-        entitlements: entitlements);
+        entitlements: entitlements,
+        userAttributes: pInfo.userAttributes);
   }
 }
 
@@ -290,12 +290,16 @@ class RedemptionPaywallInfo {
   /// The ID of the experiment that the paywall belongs to.
   final String experimentId;
 
+  /// The identifier of the product that was purchased.
+  final String? productIdentifier;
+
   RedemptionPaywallInfo({
     required this.identifier,
     required this.placementName,
     required this.placementParams,
     required this.variantId,
     required this.experimentId,
+    this.productIdentifier,
   });
 
   static RedemptionPaywallInfo fromPigeon(PRedemptionPaywallInfo info) {
@@ -304,6 +308,7 @@ class RedemptionPaywallInfo {
         placementName: info.placementName,
         placementParams: info.placementParams,
         variantId: info.variantId,
-        experimentId: info.experimentId);
+        experimentId: info.experimentId,
+        productIdentifier: info.productIdentifier);
   }
 }

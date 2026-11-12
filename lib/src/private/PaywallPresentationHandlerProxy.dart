@@ -28,6 +28,14 @@ class PaywallPresentationHandlerProxy
   }
 
   @override
+  void onWillDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult) {
+    if (handler.onWillDismissHandler != null) {
+      handler.onWillDismissHandler!(PaywallInfo.fromPigeon(paywallInfo)!,
+          PaywallResult.fromPigeon(paywallResult)!);
+    }
+  }
+
+  @override
   void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult) {
     if (handler.onDismissHandler != null) {
       handler.onDismissHandler!(PaywallInfo.fromPigeon(paywallInfo)!!,

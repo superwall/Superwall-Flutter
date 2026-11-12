@@ -8,7 +8,10 @@ enum ProductStore {
   paddle,
   playStore,
   superwall,
-  other;
+  other,
+
+  /// A custom store, where products are bought through your own checkout.
+  custom;
 
   static ProductStore fromPigeon(PProductStore pigeon) {
     switch (pigeon) {
@@ -24,6 +27,27 @@ enum ProductStore {
         return ProductStore.superwall;
       case PProductStore.other:
         return ProductStore.other;
+      case PProductStore.custom:
+        return ProductStore.custom;
+    }
+  }
+
+  PProductStore toPigeon() {
+    switch (this) {
+      case ProductStore.appStore:
+        return PProductStore.appStore;
+      case ProductStore.stripe:
+        return PProductStore.stripe;
+      case ProductStore.paddle:
+        return PProductStore.paddle;
+      case ProductStore.playStore:
+        return PProductStore.playStore;
+      case ProductStore.superwall:
+        return PProductStore.superwall;
+      case ProductStore.other:
+        return PProductStore.other;
+      case ProductStore.custom:
+        return PProductStore.custom;
     }
   }
 }
@@ -252,6 +276,16 @@ class Entitlement {
   /// The type of offer that applies to the last subscription transaction.
   final LatestSubscriptionOfferType? offerType;
 
+  /// Indicates whether the last transaction was revoked.
+  final bool? isRevoked;
+
+  /// The date the last subscription transaction renews.
+  final DateTime? renewsAt;
+
+  /// Indicates whether the last subscription transaction is in a billing
+  /// grace period.
+  final bool? isInGracePeriod;
+
   Entitlement({
     required this.id,
     this.type = EntitlementType.serviceLevel,
@@ -266,6 +300,9 @@ class Entitlement {
     this.willRenew,
     this.state,
     this.offerType,
+    this.isRevoked,
+    this.renewsAt,
+    this.isInGracePeriod,
   });
 
   factory Entitlement.fromPigeon(PEntitlement pigeon) {
@@ -294,6 +331,11 @@ class Entitlement {
       offerType: pigeon.offerType != null
           ? LatestSubscriptionOfferType.fromPigeon(pigeon.offerType!)
           : null,
+      isRevoked: pigeon.isRevoked,
+      renewsAt: pigeon.renewsAt != null
+          ? DateTime.fromMillisecondsSinceEpoch(pigeon.renewsAt!.toInt())
+          : null,
+      isInGracePeriod: pigeon.isInGracePeriod,
     );
   }
 
@@ -312,6 +354,9 @@ class Entitlement {
       willRenew: willRenew,
       state: state != null ? _toPLatestSubscriptionState(state!) : null,
       offerType: offerType != null ? _toPLatestSubscriptionOfferType(offerType!) : null,
+      isRevoked: isRevoked,
+      renewsAt: renewsAt?.millisecondsSinceEpoch,
+      isInGracePeriod: isInGracePeriod,
     );
   }
 
@@ -387,20 +432,7 @@ class Entitlement {
   }
 
   static PProductStore _toPProductStore(ProductStore store) {
-    switch (store) {
-      case ProductStore.appStore:
-        return PProductStore.appStore;
-      case ProductStore.stripe:
-        return PProductStore.stripe;
-      case ProductStore.paddle:
-        return PProductStore.paddle;
-      case ProductStore.playStore:
-        return PProductStore.playStore;
-      case ProductStore.superwall:
-        return PProductStore.superwall;
-      case ProductStore.other:
-        return PProductStore.other;
-    }
+    return store.toPigeon();
   }
 
   static PLatestSubscriptionState _toPLatestSubscriptionState(LatestSubscriptionState state) {

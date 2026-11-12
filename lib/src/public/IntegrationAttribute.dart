@@ -71,7 +71,45 @@ enum IntegrationAttribute {
   /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`.
   ///
   /// On iOS, it is kept when you reset or identify a different user.
-  airbridgeId;
+  airbridgeId,
+
+  /// The Firebase installation identifier.
+  ///
+  /// iOS only. Ignored on Android.
+  firebaseInstallationId,
+
+  /// The Singular device identifier.
+  singularDeviceId,
+
+  /// The Meta identifier.
+  ///
+  /// Android only. Ignored on iOS.
+  meta,
+
+  /// The Amplitude identifier.
+  ///
+  /// Android only. Ignored on iOS.
+  amplitude,
+
+  /// The Mixpanel identifier.
+  ///
+  /// Android only. Ignored on iOS.
+  mixpanel,
+
+  /// The Google Ads identifier.
+  ///
+  /// Android only. Ignored on iOS.
+  googleAds,
+
+  /// The Google App Set identifier.
+  ///
+  /// Android only. Ignored on iOS.
+  googleAppSetId,
+
+  /// A custom attribution identifier.
+  ///
+  /// Android only. Ignored on iOS.
+  custom;
 
   PIntegrationAttribute toPigeon() {
     switch (this) {
@@ -119,6 +157,22 @@ enum IntegrationAttribute {
         return PIntegrationAttribute.appstackId;
       case IntegrationAttribute.airbridgeId:
         return PIntegrationAttribute.airbridgeId;
+      case IntegrationAttribute.firebaseInstallationId:
+        return PIntegrationAttribute.firebaseInstallationId;
+      case IntegrationAttribute.singularDeviceId:
+        return PIntegrationAttribute.singularDeviceId;
+      case IntegrationAttribute.meta:
+        return PIntegrationAttribute.meta;
+      case IntegrationAttribute.amplitude:
+        return PIntegrationAttribute.amplitude;
+      case IntegrationAttribute.mixpanel:
+        return PIntegrationAttribute.mixpanel;
+      case IntegrationAttribute.googleAds:
+        return PIntegrationAttribute.googleAds;
+      case IntegrationAttribute.googleAppSetId:
+        return PIntegrationAttribute.googleAppSetId;
+      case IntegrationAttribute.custom:
+        return PIntegrationAttribute.custom;
     }
   }
 }

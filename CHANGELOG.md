@@ -2,6 +2,39 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
+## 2.9.0
+
+### Enhancements
+- Updates Android SDK to 2.10.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.10.2).
+- Adds `Superwall.shared.getAssignments()`, which returns the experiment assignments made so far without confirming the rest.
+- Adds `Superwall.shared.refreshConfiguration()` to fetch the Superwall configuration again without restarting the app.
+- Adds `EventTrackingBehavior` (`all`, `superwallOnly` or `none`) to choose which events the SDK sends to Superwall. Set it with `SuperwallOptions.eventTrackingBehavior` when configuring, or at runtime with `Superwall.shared.setEventTrackingBehavior()`, and read it with `Superwall.shared.getEventTrackingBehavior()`.
+- Deprecates `SuperwallOptions.isExternalDataCollectionEnabled` in favour of `SuperwallOptions.eventTrackingBehavior`. It keeps working, and is ignored when `eventTrackingBehavior` is set.
+- Adds `Superwall.shared.setInterfaceStyle()` to show paywalls in `InterfaceStyle.light` or `InterfaceStyle.dark`. Pass `null` to follow the system.
+- Adds `Superwall.shared.getIntegrationAttributes()` to read the attributes set with `setIntegrationAttribute()` and `setIntegrationAttributes()`.
+- `Superwall.shared.setUserAttributes()` now takes a `Map<String, Object?>`. A `null` value removes the attribute.
+- Adds `Superwall.shared.cancelAllScheduledNotifications()` to cancel the local notifications Superwall scheduled, such as free trial reminders.
+- Android: adds `Superwall.shared.setPushToken()`, `optOutOfNotifications()`, `optInToNotifications()` and `handleNotificationOpen()` for push notifications sent by Superwall. They do nothing on iOS.
+- Adds `SuperwallOptions.storeKitVersion` (iOS only) to choose between `StoreKitVersion.storeKit1` and `StoreKitVersion.storeKit2`.
+- Adds `PaywallOptions.notificationPermissionsDenied` (iOS only), the alert shown when a paywall asks for notification permissions the user has denied. It's `null` by default, which shows no alert.
+- Adds `PaywallOptions.optimisticLoading` and `PaywallOptions.timeoutAfter` (Android only) to show a paywall before its products have loaded, and to fail a presentation when the paywall takes too long to load.
+- Adds `PaywallPresentationHandler.onWillDismiss()` (iOS only), called when a paywall is about to be dismissed.
+- Adds the `reviewGranted` and `reviewDenied` (Android only), `stripeCheckoutStart`, `stripeCheckoutSubmit`, `stripeCheckoutComplete` and `stripeCheckoutFail` (iOS only), `testModeModalOpen`, `testModeModalClose` and `paywallPageView` event types, delivered to `SuperwallDelegate.handleSuperwallEvent`.
+- Adds `SuperwallEvent.pageViewData` (a `PageViewData`) for `paywallPageView`, `permissionName` and `paywallIdentifier` for the permission events, `paywallCount` for the paywall preload events, and `transactionType` (a `TransactionType`, iOS only) for `transactionComplete`.
+- Adds `cacheKey`, `buildId`, `shimmerLoadStartTime`, `shimmerLoadCompleteTime`, `presentation` (a `PaywallPresentationInfo` with the `PaywallPresentationStyle`, delay and drawer or popup dimensions), `isScrollEnabled` and `presentationId` to `PaywallInfo`, plus the iOS-only `isLocal` and `introOfferEligibility` (an `IntroOfferEligibility`).
+- Adds `Product.store` to the products in `PaywallInfo.products`, and `ProductStore.custom` for products bought through your own checkout.
+- Adds `isRevoked`, `renewsAt` and `isInGracePeriod` to `Entitlement`.
+- Adds `state` (a `StoreTransactionState`), `payment` (a `StorePayment`) and `appAccountToken` to `StoreTransaction`, plus the Android-only `purchaseToken` and `signature`.
+- Adds `subscriptionPeriod` (a `SubscriptionPeriod`) to `StoreProduct`, plus the Android-only `fullIdentifier`, `productType`, `storeFrontCountryCode`, `isCustomProduct` and `customTransactionId`.
+- Adds `IntegrationAttribute.singularDeviceId`, the iOS-only `firebaseInstallationId`, and the Android-only `meta`, `amplitude`, `mixpanel`, `googleAds`, `googleAppSetId` and `custom`.
+- Adds the `analytics`, `webEntitlements`, `grantedEntitlements` and `customerCenter` (iOS only) and `customerInfo`, `jsEvaluator`, `paywallTransactions`, `nativePurchaseController` and `deepLinks` (Android only) cases to `LogScope`.
+- Adds `RedemptionInfo.userAttributes` (iOS only) and `RedemptionPaywallInfo.productIdentifier` to the result of redeeming a web checkout code.
+
+### Fixes
+- iOS: fixes `transactionRestore` events being delivered to `SuperwallDelegate.handleSuperwallEvent` as `transactionComplete`, and `attributionMatch` events being delivered as `customPlacement`. If you relied on either, update your event handling.
+- Android: fixes the `integrationAttributes`, `reviewRequested`, `customerInfoDidChange`, `enrichmentStart`, `enrichmentComplete` and `enrichmentFail` events being delivered as `customPlacement`.
+- Android: fixes integration attributes set with `setIntegrationAttribute()` and `setIntegrationAttributes()` being dropped. They were sent as `$`-prefixed user attributes, which the Android SDK ignores, and are now set through its integration attributes API.
+
 ## 2.8.0
 
 ### Enhancements

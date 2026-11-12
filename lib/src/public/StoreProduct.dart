@@ -1,4 +1,5 @@
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+import 'package:superwallkit_flutter/src/public/SubscriptionPeriod.dart';
 
 /// A wrapper around a store product.
 class StoreProduct {
@@ -113,6 +114,27 @@ class StoreProduct {
   // The price of the product in the local currency.
   final double price;
 
+  /// The product's subscription period. `null` if the product isn't a
+  /// subscription.
+  final SubscriptionPeriod? subscriptionPeriod;
+
+  /// The product identifier including the base plan and offer. Android only.
+  final String? fullIdentifier;
+
+  /// The Google Play product type, `subs` or `inapp`. Android only.
+  final String? productType;
+
+  /// The country code of the user's storefront. Android only.
+  final String? storeFrontCountryCode;
+
+  /// Whether this is a custom store product, bought through your own
+  /// checkout. Android only.
+  final bool? isCustomProduct;
+
+  /// The transaction ID the SDK made for a custom store product purchase.
+  /// Android only.
+  final String? customTransactionId;
+
   // Constructor
   StoreProduct({
     required this.productIdentifier,
@@ -152,6 +174,12 @@ class StoreProduct {
     required this.isFamilyShareable,
     this.regionCode,
     required this.price,
+    this.subscriptionPeriod,
+    this.fullIdentifier,
+    this.productType,
+    this.storeFrontCountryCode,
+    this.isCustomProduct,
+    this.customTransactionId,
   });
 
   factory StoreProduct.fromPigeon(PStoreProduct product) {
@@ -193,6 +221,14 @@ class StoreProduct {
       regionCode: product.regionCode,
       price: product.price,
       trialPeriodEndDate: _parseDate(product.trialPeriodEndDate),
+      subscriptionPeriod: product.subscriptionPeriod != null
+          ? SubscriptionPeriod.fromPigeon(product.subscriptionPeriod!)
+          : null,
+      fullIdentifier: product.fullIdentifier,
+      productType: product.productType,
+      storeFrontCountryCode: product.storeFrontCountryCode,
+      isCustomProduct: product.isCustomProduct,
+      customTransactionId: product.customTransactionId,
     );
   }
 
