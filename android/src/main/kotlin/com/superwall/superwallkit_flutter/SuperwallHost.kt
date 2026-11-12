@@ -12,6 +12,7 @@ import PCustomerCenterDelegateGenerated
 import PCustomerCenterDelegateHost
 import PCustomerInfo
 import PEntitlement
+import PEventTrackingBehavior
 import PExperiment
 import PEntitlements
 import PFeatureHandlerGenerated
@@ -19,6 +20,7 @@ import PFeatureHandlerHost
 import PIdentityOptions
 import PIntegrationAttribute
 import PInactive
+import PInterfaceStyle
 import PPaywallInfo
 import PPaywallPresentationHandlerGenerated
 import PPaywallPresentationHandlerHost
@@ -59,11 +61,13 @@ import com.superwall.sdk.models.attribution.AttributionProvider
 import com.superwall.sdk.billing.BillingError
 import com.superwall.sdk.delegate.PurchaseResult
 import com.superwall.sdk.config.models.ConfigurationStatus
+import com.superwall.sdk.config.options.EventTrackingBehavior
 import com.superwall.sdk.identity.IdentityOptions
 import com.superwall.sdk.identity.identify
 import com.superwall.sdk.identity.setUserAttributes
 import com.superwall.sdk.models.entitlements.SubscriptionStatus
 import com.superwall.sdk.models.triggers.Experiment
+import com.superwall.sdk.network.device.InterfaceStyle
 import com.superwall.sdk.store.abstractions.product.StoreProduct
 import com.superwall.sdk.paywall.presentation.dismiss
 import com.superwall.superwallkit_flutter.json.JsonExtensions
@@ -109,6 +113,9 @@ class SuperwallHost(
     private val inAppPurchaseQuery = InAppPurchaseQuery(context)
     private val customerInfoStreamHandler = CustomerInfoStreamHandlerImpl()
     private var delegateHost: SuperwallDelegateHost? = null
+    // The native SDK applies integration attributes after a delay, so its getter can lag behind
+    // the last map set here. Attributes set in quick succession are merged into this instead.
+    private var latestIntegrationAttributes: Map<AttributionProvider, String>? = null
 
     init {
         setUp(binaryMessenger = binaryMessenger(), this)
@@ -202,6 +209,48 @@ class SuperwallHost(
         }
     }
 
+    override fun getAssignments(): List<PConfirmedAssignment> {
+        return Superwall.instance.getAssignments().getOrThrow().map {
+            PConfirmedAssignment(
+                it.experimentId,
+                PVariant(
+                    id = it.variant.id,
+                    paywallId = it.variant.paywallId,
+                    type = when (it.variant.type) {
+                        Experiment.Variant.VariantType.TREATMENT -> PVariantType.TREATMENT
+                        Experiment.Variant.VariantType.HOLDOUT -> PVariantType.HOLDOUT
+                    }
+                )
+            )
+        }
+    }
+
+    override fun refreshConfiguration() {
+        Superwall.instance.refreshConfiguration()
+    }
+
+    override fun getEventTrackingBehavior(): PEventTrackingBehavior {
+        return when (Superwall.instance.eventTrackingBehavior) {
+            EventTrackingBehavior.ALL -> PEventTrackingBehavior.ALL
+            EventTrackingBehavior.SUPERWALL_ONLY -> PEventTrackingBehavior.SUPERWALL_ONLY
+            EventTrackingBehavior.NONE -> PEventTrackingBehavior.NONE
+        }
+    }
+
+    override fun setEventTrackingBehavior(behavior: PEventTrackingBehavior) {
+        Superwall.instance.eventTrackingBehavior = behavior.toSdk()
+    }
+
+    override fun setInterfaceStyle(interfaceStyle: PInterfaceStyle?) {
+        Superwall.instance.setInterfaceStyle(
+            when (interfaceStyle) {
+                PInterfaceStyle.LIGHT -> InterfaceStyle.LIGHT
+                PInterfaceStyle.DARK -> InterfaceStyle.DARK
+                null -> null
+            }
+        )
+    }
+
     override fun getLogLevel(): String {
         return Superwall.instance.logLevel.toJson()
     }
@@ -216,7 +265,7 @@ class SuperwallHost(
         return Superwall.instance.userAttributes
     }
 
-    override fun setUserAttributes(userAttributes: Map<String, Any>) {
+    override fun setUserAttributes(userAttributes: Map<String, Any?>) {
         Superwall.instance.setUserAttributes(userAttributes)
     }
 
@@ -225,30 +274,30 @@ class SuperwallHost(
     }
 
     override fun setIntegrationAttributes(attributes: Map<PIntegrationAttribute, String?>) {
-        val (providerAttributes, userAttributes) =
-            attributes.entries.partition { it.key.toAttributionProvider() != null }
-
-        if (userAttributes.isNotEmpty()) {
-            Superwall.instance.setUserAttributes(
-                userAttributes.associate { it.key.toAttributeKey() to it.value }
-            )
-        }
-
-        if (providerAttributes.isNotEmpty()) {
-            // The native call replaces every integration attribute, so merge into the current ones.
-            val merged = Superwall.instance.integrationAttributes
-                .mapNotNull { (rawName, value) ->
-                    AttributionProvider.values().firstOrNull { it.rawName == rawName }
-                        ?.let { it to value }
-                }
-                .toMap()
-                .toMutableMap()
-            providerAttributes.forEach { (attribute, value) ->
-                val provider = attribute.toAttributionProvider() ?: return@forEach
-                if (value == null) merged.remove(provider) else merged[provider] = value
+        // Attributes without a native provider are ignored.
+        val providerAttributes =
+            attributes.entries.mapNotNull { (attribute, value) ->
+                attribute.toAttributionProvider()?.let { it to value }
             }
-            Superwall.instance.setIntegrationAttributes(merged)
+        if (providerAttributes.isEmpty()) return
+
+        // The native call replaces every integration attribute, so merge into the current ones.
+        val current = latestIntegrationAttributes ?: Superwall.instance.integrationAttributes
+            .mapNotNull { (rawName, value) ->
+                AttributionProvider.values().firstOrNull { it.rawName == rawName }
+                    ?.let { it to value }
+            }
+            .toMap()
+        val merged = current.toMutableMap()
+        providerAttributes.forEach { (provider, value) ->
+            if (value == null) merged.remove(provider) else merged[provider] = value
         }
+        latestIntegrationAttributes = merged
+        Superwall.instance.setIntegrationAttributes(merged)
+    }
+
+    override fun getIntegrationAttributes(): Map<String, String> {
+        return Superwall.instance.integrationAttributes
     }
 
     override fun getDeviceAttributes(callback: (Result<Map<String, Any>>) -> Unit) {
@@ -486,6 +535,26 @@ class SuperwallHost(
         Superwall.instance.overrideProductsByName = overrideProducts?:emptyMap()
     }
 
+    override fun setPushToken(token: String) {
+        Superwall.instance.setPushToken(token)
+    }
+
+    override fun optOutOfNotifications() {
+        Superwall.instance.optOutOfNotifications()
+    }
+
+    override fun optInToNotifications() {
+        Superwall.instance.optInToNotifications()
+    }
+
+    override fun handleNotificationOpen(data: Map<String, String>) {
+        Superwall.instance.handleNotificationOpen(data)
+    }
+
+    override fun cancelAllScheduledNotifications() {
+        Superwall.instance.cancelAllScheduledNotifications()
+    }
+
     override fun consume(purchaseToken: String, callback: (Result<String>) -> Unit) {
         ioScope.launch {
             callback(Superwall.instance.consume(purchaseToken))
@@ -585,39 +654,42 @@ private fun Throwable.isBillingError(): Boolean =
 // MARK: - PIntegrationAttribute Extension
 
 /**
- * The native [AttributionProvider] for attributes that are set through
- * `Superwall.setIntegrationAttributes` rather than as `$`-prefixed user attributes.
+ * The native [AttributionProvider] to set through `Superwall.setIntegrationAttributes`, or
+ * `null` when the Android SDK has none. They can't go through `setUserAttributes` as
+ * `$`-prefixed keys: the native SDK drops every user attribute whose key starts with `$`.
  */
 fun PIntegrationAttribute.toAttributionProvider(): AttributionProvider? {
     return when (this) {
+        PIntegrationAttribute.ADJUST_ID -> AttributionProvider.ADJUST_ID
+        PIntegrationAttribute.AMPLITUDE_DEVICE_ID -> AttributionProvider.AMPLITUDE_DEVICE_ID
+        PIntegrationAttribute.AMPLITUDE_USER_ID -> AttributionProvider.AMPLITUDE_USER_ID
+        PIntegrationAttribute.APPSFLYER_ID -> AttributionProvider.APPSFLYER_ID
+        PIntegrationAttribute.BRAZE_ALIAS_NAME -> AttributionProvider.BRAZE_ALIAS_NAME
+        PIntegrationAttribute.BRAZE_ALIAS_LABEL -> AttributionProvider.BRAZE_ALIAS_LABEL
+        PIntegrationAttribute.ONESIGNAL_ID -> AttributionProvider.ONESIGNAL_ID
+        PIntegrationAttribute.FB_ANON_ID -> AttributionProvider.FB_ANON_ID
+        PIntegrationAttribute.FIREBASE_APP_INSTANCE_ID -> AttributionProvider.FIREBASE_APP_INSTANCE_ID
+        PIntegrationAttribute.ITERABLE_USER_ID -> AttributionProvider.ITERABLE_USER_ID
+        PIntegrationAttribute.ITERABLE_CAMPAIGN_ID -> AttributionProvider.ITERABLE_CAMPAIGN_ID
+        PIntegrationAttribute.ITERABLE_TEMPLATE_ID -> AttributionProvider.ITERABLE_TEMPLATE_ID
+        PIntegrationAttribute.MIXPANEL_DISTINCT_ID -> AttributionProvider.MIXPANEL_DISTINCT_ID
+        PIntegrationAttribute.MPARTICLE_ID -> AttributionProvider.MPARTICLE_ID
+        PIntegrationAttribute.CLEVERTAP_ID -> AttributionProvider.CLEVERTAP_ID
+        PIntegrationAttribute.AIRSHIP_CHANNEL_ID -> AttributionProvider.AIRSHIP_CHANNEL_ID
+        PIntegrationAttribute.KOCHAVA_DEVICE_ID -> AttributionProvider.KOCHAVA_DEVICE_ID
+        PIntegrationAttribute.TENJIN_ID -> AttributionProvider.TENJIN_ID
+        PIntegrationAttribute.POSTHOG_USER_ID -> AttributionProvider.POSTHOG_USER_ID
+        PIntegrationAttribute.CUSTOMERIO_ID -> AttributionProvider.CUSTOMERIO_ID
+        PIntegrationAttribute.APPSTACK_ID -> AttributionProvider.APPSTACK
         PIntegrationAttribute.AIRBRIDGE_ID -> AttributionProvider.AIRBRIDGE_ID
-        else -> null
-    }
-}
-
-fun PIntegrationAttribute.toAttributeKey(): String {
-    return when (this) {
-        PIntegrationAttribute.ADJUST_ID -> "\$adjust_id"
-        PIntegrationAttribute.AMPLITUDE_DEVICE_ID -> "\$amplitude_device_id"
-        PIntegrationAttribute.AMPLITUDE_USER_ID -> "\$amplitude_user_id"
-        PIntegrationAttribute.APPSFLYER_ID -> "\$appsflyer_id"
-        PIntegrationAttribute.BRAZE_ALIAS_NAME -> "\$braze_alias_name"
-        PIntegrationAttribute.BRAZE_ALIAS_LABEL -> "\$braze_alias_label"
-        PIntegrationAttribute.ONESIGNAL_ID -> "\$onesignal_id"
-        PIntegrationAttribute.FB_ANON_ID -> "\$fb_anon_id"
-        PIntegrationAttribute.FIREBASE_APP_INSTANCE_ID -> "\$firebase_app_instance_id"
-        PIntegrationAttribute.ITERABLE_USER_ID -> "\$iterable_user_id"
-        PIntegrationAttribute.ITERABLE_CAMPAIGN_ID -> "\$iterable_campaign_id"
-        PIntegrationAttribute.ITERABLE_TEMPLATE_ID -> "\$iterable_template_id"
-        PIntegrationAttribute.MIXPANEL_DISTINCT_ID -> "\$mixpanel_distinct_id"
-        PIntegrationAttribute.MPARTICLE_ID -> "\$mparticle_id"
-        PIntegrationAttribute.CLEVERTAP_ID -> "\$clevertap_id"
-        PIntegrationAttribute.AIRSHIP_CHANNEL_ID -> "\$airship_channel_id"
-        PIntegrationAttribute.KOCHAVA_DEVICE_ID -> "\$kochava_device_id"
-        PIntegrationAttribute.TENJIN_ID -> "\$tenjin_id"
-        PIntegrationAttribute.POSTHOG_USER_ID -> "\$posthog_user_id"
-        PIntegrationAttribute.CUSTOMERIO_ID -> "\$customerio_id"
-        PIntegrationAttribute.APPSTACK_ID -> "\$appstack_id"
-        PIntegrationAttribute.AIRBRIDGE_ID -> "\$airbridge_id"
+        PIntegrationAttribute.SINGULAR_DEVICE_ID -> AttributionProvider.SINGULAR_DEVICE_ID
+        PIntegrationAttribute.META -> AttributionProvider.META
+        PIntegrationAttribute.AMPLITUDE -> AttributionProvider.AMPLITUDE
+        PIntegrationAttribute.MIXPANEL -> AttributionProvider.MIXPANEL
+        PIntegrationAttribute.GOOGLE_ADS -> AttributionProvider.GOOGLE_ADS
+        PIntegrationAttribute.GOOGLE_APP_SET_ID -> AttributionProvider.GOOGLE_APP_SET
+        PIntegrationAttribute.CUSTOM -> AttributionProvider.CUSTOM
+        // iOS only.
+        PIntegrationAttribute.FIREBASE_INSTALLATION_ID -> null
     }
 }

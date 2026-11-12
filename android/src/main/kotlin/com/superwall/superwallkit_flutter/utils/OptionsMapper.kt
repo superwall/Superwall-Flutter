@@ -5,10 +5,13 @@ import PAdConsentStatus
 import PComputedPropertyRequest
 import PEntitlement
 import PEntitlementType
+import PEventTrackingBehavior
 import PExperiment
 import PLocalNotification
 import PPaywallInfo
 import PPaywallOptions
+import PPaywallPresentationInfo
+import PPaywallPresentationStyle
 import PPresentationHost
 import PProduct
 import PSuperwallOptions
@@ -19,6 +22,7 @@ import com.superwall.sdk.analytics.Tier
 import com.superwall.sdk.billing.DecomposedProductIds
 import com.superwall.sdk.config.options.AdConsent
 import com.superwall.sdk.config.options.AdConsentStatus
+import com.superwall.sdk.config.options.EventTrackingBehavior
 import com.superwall.sdk.config.options.PaywallOptions
 import PTestModeBehavior
 import com.superwall.superwallkit_flutter.utils.CustomerCenterMapper.toSdk
@@ -28,12 +32,14 @@ import com.superwall.sdk.logger.LogLevel
 import com.superwall.sdk.logger.LogScope
 import com.superwall.sdk.models.config.ComputedPropertyRequest.*
 import com.superwall.sdk.models.entitlements.Entitlement
+import com.superwall.sdk.models.paywall.PaywallPresentationStyle
 import com.superwall.sdk.models.product.Offer
 import com.superwall.sdk.models.product.PlayStoreProduct
 import com.superwall.sdk.models.product.ProductItem
 import com.superwall.sdk.models.triggers.Experiment
 import com.superwall.sdk.store.abstractions.product.OfferType
 import java.util.EnumSet
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Maps a Host's SuperwallOptions (generated) to the SDK's SuperwallOptions
@@ -55,7 +61,18 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
             }
     }
 
-    this.isExternalDataCollectionEnabled?.let { sdkOptions.isExternalDataCollectionEnabled = it }
+    val hostEventTrackingBehavior = this.eventTrackingBehavior
+    if (hostEventTrackingBehavior != null) {
+        sdkOptions.eventTrackingBehavior = hostEventTrackingBehavior.toSdk()
+        // The deprecated flag's setter turns `true` into `ALL`, which would undo the behavior
+        // set above, and `true` is also the flag's default. So only `false` is applied on top:
+        // it lowers `ALL` to `SUPERWALL_ONLY` and leaves `NONE` alone.
+        if (this.isExternalDataCollectionEnabled == false) {
+            sdkOptions.isExternalDataCollectionEnabled = false
+        }
+    } else {
+        this.isExternalDataCollectionEnabled?.let { sdkOptions.isExternalDataCollectionEnabled = it }
+    }
     this.localeIdentifier?.let { sdkOptions.localeIdentifier = it }
     this.isGameControllerEnabled?.let { sdkOptions.isGameControllerEnabled = it }
     this.passIdentifiersToPlayStore?.let { sdkOptions.passIdentifiersToPlayStore = it }
@@ -113,7 +130,15 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
                     PLogScope.TRANSACTIONS -> sdkScopes.add(LogScope.transactions)
                     PLogScope.PAYWALL_VIEW_CONTROLLER -> sdkScopes.add(LogScope.paywallView)
                     PLogScope.CACHE -> sdkScopes.add(LogScope.cache)
+                    PLogScope.WEB_ENTITLEMENTS -> sdkScopes.add(LogScope.webEntitlements)
+                    PLogScope.CUSTOMER_CENTER -> sdkScopes.add(LogScope.customerCenter)
+                    PLogScope.CUSTOMER_INFO -> sdkScopes.add(LogScope.customerInfo)
+                    PLogScope.JS_EVALUATOR -> sdkScopes.add(LogScope.jsEvaluator)
+                    PLogScope.PAYWALL_TRANSACTIONS -> sdkScopes.add(LogScope.paywallTransactions)
+                    PLogScope.NATIVE_PURCHASE_CONTROLLER -> sdkScopes.add(LogScope.nativePurchaseController)
+                    PLogScope.DEEP_LINKS -> sdkScopes.add(LogScope.deepLinks)
                     PLogScope.ALL -> sdkScopes.add(LogScope.all)
+                    // `ANALYTICS` and `GRANTED_ENTITLEMENTS` are iOS only.
                     else -> {}
                 }
             }
@@ -132,6 +157,13 @@ fun PAdConsent.toSdk(): AdConsent.Custom =
         adUserData = adUserData.toSdk(),
         adPersonalization = adPersonalization.toSdk(),
     )
+
+fun PEventTrackingBehavior.toSdk(): EventTrackingBehavior =
+    when (this) {
+        PEventTrackingBehavior.ALL -> EventTrackingBehavior.ALL
+        PEventTrackingBehavior.SUPERWALL_ONLY -> EventTrackingBehavior.SUPERWALL_ONLY
+        PEventTrackingBehavior.NONE -> EventTrackingBehavior.NONE
+    }
 
 private fun PAdConsentStatus.toSdk(): AdConsentStatus =
     when (this) {
@@ -203,6 +235,9 @@ fun PPaywallOptions.toSdkPaywallOptions(): PaywallOptions {
                 PPresentationHost.IN_WINDOW -> PaywallOptions.PresentationHost.IN_WINDOW
             }
     }
+
+    this.optimisticLoading?.let { sdkPaywallOptions.optimisticLoading = it }
+    this.timeoutAfterMillis?.let { sdkPaywallOptions.timeoutAfter = it.milliseconds }
 
     return sdkPaywallOptions
 }
@@ -428,6 +463,17 @@ class PaywallInfoMapper {
                                     productIds = emptyList()
                                 )
                             },
+                        store =
+                            CustomerInfoMapper.toPigeon(
+                                when (val type = product.type) {
+                                    is ProductItem.StoreProductType.PlayStore -> type.product.store
+                                    is ProductItem.StoreProductType.AppStore -> type.product.store
+                                    is ProductItem.StoreProductType.Stripe -> type.product.store
+                                    is ProductItem.StoreProductType.Paddle -> type.product.store
+                                    is ProductItem.StoreProductType.Custom -> type.product.store
+                                    is ProductItem.StoreProductType.Other -> type.product.store
+                                },
+                            ),
                     )
                 }
 
@@ -538,7 +584,46 @@ class PaywallInfoMapper {
                 computedPropertyRequests = computedPropertyRequests,
                 surveys = surveys,
                 state = paywallInfo.state.mapValues { it.value as Object }.ifEmpty { null },
+                cacheKey = paywallInfo.cacheKey,
+                buildId = paywallInfo.buildId,
+                shimmerLoadStartTime = paywallInfo.shimmerLoadStartTime,
+                shimmerLoadCompleteTime = paywallInfo.shimmerLoadCompleteTime,
+                presentation = toPPaywallPresentationInfo(paywallInfo.presentation),
+                isScrollEnabled = paywallInfo.isScrollEnabled,
+                presentationId = paywallInfo.presentationId,
+            )
+        }
+
+        private fun toPPaywallPresentationInfo(
+            presentation: com.superwall.sdk.models.paywall.PaywallPresentationInfo,
+        ): PPaywallPresentationInfo {
+            val style = presentation.style
+            return PPaywallPresentationInfo(
+                style =
+                    when (style) {
+                        is PaywallPresentationStyle.Modal -> PPaywallPresentationStyle.MODAL
+                        is PaywallPresentationStyle.Fullscreen -> PPaywallPresentationStyle.FULLSCREEN
+                        is PaywallPresentationStyle.FullscreenNoAnimation -> PPaywallPresentationStyle.FULLSCREEN_NO_ANIMATION
+                        is PaywallPresentationStyle.Push -> PPaywallPresentationStyle.PUSH
+                        is PaywallPresentationStyle.Drawer -> PPaywallPresentationStyle.DRAWER
+                        is PaywallPresentationStyle.Popup -> PPaywallPresentationStyle.POPUP
+                        is PaywallPresentationStyle.None -> PPaywallPresentationStyle.NONE
+                    },
+                delay = presentation.delay,
+                height =
+                    when (style) {
+                        is PaywallPresentationStyle.Drawer -> style.height
+                        is PaywallPresentationStyle.Popup -> style.height
+                        else -> null
+                    },
+                width = (style as? PaywallPresentationStyle.Popup)?.width,
+                cornerRadius =
+                    when (style) {
+                        is PaywallPresentationStyle.Drawer -> style.cornerRadius
+                        is PaywallPresentationStyle.Popup -> style.cornerRadius
+                        else -> null
+                    },
             )
         }
     }
-} 
+}

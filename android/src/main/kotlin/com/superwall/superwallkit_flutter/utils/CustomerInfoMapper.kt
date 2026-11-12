@@ -42,6 +42,9 @@ object CustomerInfoMapper {
             willRenew = entitlement.willRenew,
             state = entitlement.state?.let(::toPigeon),
             offerType = entitlement.offerType?.let(::toPigeon),
+            isRevoked = entitlement.isRevoked,
+            renewsAt = entitlement.renewsAt?.time,
+            isInGracePeriod = entitlement.isInGracePeriod,
         )
 
     private fun toPigeon(transaction: SubscriptionTransaction): PSubscriptionTransaction =
@@ -70,14 +73,15 @@ object CustomerInfoMapper {
             store = toPigeon(transaction.store),
         )
 
-    private fun toPigeon(store: Store): PProductStore =
+    fun toPigeon(store: Store): PProductStore =
         when (store) {
             Store.APP_STORE -> PProductStore.APP_STORE
             Store.PLAY_STORE -> PProductStore.PLAY_STORE
             Store.STRIPE -> PProductStore.STRIPE
             Store.PADDLE -> PProductStore.PADDLE
             Store.SUPERWALL -> PProductStore.SUPERWALL
-            Store.CUSTOM, Store.OTHER -> PProductStore.OTHER
+            Store.CUSTOM -> PProductStore.CUSTOM
+            Store.OTHER -> PProductStore.OTHER
         }
 
     private fun toPigeon(state: LatestSubscriptionState): PLatestSubscriptionState? =

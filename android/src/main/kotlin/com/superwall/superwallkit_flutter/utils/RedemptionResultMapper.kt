@@ -119,6 +119,7 @@ object RedemptionResultMapper {
             placementParams = convertJsonMapToAnyMap(paywallInfo.placementParams),
             variantId = paywallInfo.variantId,
             experimentId = paywallInfo.experimentId,
+            productIdentifier = paywallInfo.productIdentifier,
         )
 
     private fun mapEntitlement(entitlement: Entitlement): PEntitlement {

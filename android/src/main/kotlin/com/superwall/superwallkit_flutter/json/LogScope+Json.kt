@@ -25,6 +25,12 @@ fun JsonExtensions.Companion.logScopeFromJson(json: String): LogScope? =
         "paywallviewcontroller" -> LogScope.paywallView
         "nativepurchasecontroller" -> LogScope.nativePurchaseController
         "cache" -> LogScope.cache
+        "webentitlements" -> LogScope.webEntitlements
+        "customerinfo" -> LogScope.customerInfo
+        "jsevaluator" -> LogScope.jsEvaluator
+        "paywalltransactions" -> LogScope.paywallTransactions
+        "deeplinks" -> LogScope.deepLinks
+        "customercenter" -> LogScope.customerCenter
         "all" -> LogScope.all
         else -> null
     }

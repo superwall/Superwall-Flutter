@@ -1,4 +1,6 @@
+import com.superwall.sdk.store.abstractions.transactions.StorePayment
 import com.superwall.sdk.store.abstractions.transactions.StoreTransaction
+import com.superwall.sdk.store.abstractions.transactions.StoreTransactionState
 import com.superwall.sdk.store.abstractions.transactions.StoreTransactionType
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -27,6 +29,11 @@ fun StoreTransaction.pigeonify(): PStoreTransaction {
         expirationDate = expirationDate?.toIsoString(),
         offerId = offerId,
         revocationDate = revocationDate?.toIsoString(),
+        state = state.pigeonify(),
+        payment = payment?.pigeonify(),
+        appAccountToken = appAccountToken,
+        purchaseToken = purchaseToken,
+        signature = signature,
     )
 }
 
@@ -53,5 +60,26 @@ fun StoreTransactionType.pigeonify(): PStoreTransaction {
         expirationDate = expirationDate?.toIsoString(),
         offerId = offerId,
         revocationDate = revocationDate?.toIsoString(),
+        state = state.pigeonify(),
+        payment = payment?.pigeonify(),
+        appAccountToken = appAccountToken,
+        purchaseToken = purchaseToken,
+        signature = signature,
     )
 }
+
+private fun StoreTransactionState.pigeonify(): PStoreTransactionState =
+    when (this) {
+        is StoreTransactionState.Purchasing -> PStoreTransactionState.PURCHASING
+        is StoreTransactionState.Purchased -> PStoreTransactionState.PURCHASED
+        is StoreTransactionState.Failed -> PStoreTransactionState.FAILED
+        is StoreTransactionState.Restored -> PStoreTransactionState.RESTORED
+        is StoreTransactionState.Deferred -> PStoreTransactionState.DEFERRED
+    }
+
+private fun StorePayment.pigeonify(): PStorePayment =
+    PStorePayment(
+        productIdentifier = productIdentifier,
+        quantity = quantity.toLong(),
+        discountIdentifier = discountIdentifier,
+    )
