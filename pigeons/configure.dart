@@ -2315,6 +2315,49 @@ abstract class PPaywallPresentationHandlerGenerated {
   PCustomCallbackResult onCustomCallback(PCustomCallback callback);
 }
 
+/// The loading state of an embedded paywall.
+enum PPaywallLoadingState {
+  unknown,
+  loadingPurchase,
+  loadingUrl,
+  manualLoading,
+  ready,
+}
+
+/// The callbacks of one embedded `PaywallView`.
+///
+/// The view is a platform view with the type
+/// `superwallkit_flutter/paywall_view`. Its creation params are a map with
+/// `hostId` (String), `placement` (String) and `params` (Map, optional).
+/// The message channel suffix of this API is that `hostId`.
+@FlutterApi()
+abstract class PPaywallViewCallbackGenerated {
+  /// The paywall for the placement started loading.
+  void onLoadStart();
+
+  /// The paywall was retrieved and added to the view.
+  void onPresent(PPaywallInfo paywallInfo);
+
+  /// The paywall finished with [result]. When [shouldDismiss] is `true` the
+  /// paywall has been removed from the view and the app should remove the
+  /// view itself.
+  void onFinished(
+      PPaywallInfo paywallInfo, PPaywallResult result, bool shouldDismiss);
+
+  /// No paywall is shown. [experiment] is set when [reason] is `holdout`.
+  void onSkip(PPaywallSkippedReason reason, PExperiment? experiment);
+
+  /// The paywall couldn't be retrieved.
+  void onError(String error);
+
+  /// The paywall's loading state changed. iOS only.
+  void onLoadingStateChanged(PPaywallLoadingState state);
+
+  /// Called when the paywall requests a custom callback. iOS only.
+  @async
+  PCustomCallbackResult onCustomCallback(PCustomCallback callback);
+}
+
 @FlutterApi()
 abstract class PCustomerCenterDelegateGenerated {
   @async
