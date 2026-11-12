@@ -93,11 +93,15 @@ class PRedemptionInfo {
   /// The entitlements array.
   final List<PEntitlement> entitlements;
 
+  /// The user attributes saved with the purchase. iOS only.
+  final Map<String, Object>? userAttributes;
+
   PRedemptionInfo({
     required this.ownership,
     required this.purchaserInfo,
     this.paywallInfo,
     required this.entitlements,
+    this.userAttributes,
   });
 }
 
@@ -189,12 +193,16 @@ class PRedemptionPaywallInfo {
   /// The ID of the experiment that the paywall belongs to.
   final String experimentId;
 
+  /// The identifier of the product that was purchased.
+  final String? productIdentifier;
+
   PRedemptionPaywallInfo({
     required this.identifier,
     required this.placementName,
     required this.placementParams,
     required this.variantId,
     required this.experimentId,
+    this.productIdentifier,
   });
 }
 
@@ -212,6 +220,24 @@ enum PTestModeBehavior {
   /// Test mode is always activated, regardless of configuration.
   always,
 }
+
+/// Which events the SDK sends to Superwall's servers.
+enum PEventTrackingBehavior {
+  /// All events are tracked.
+  all,
+
+  /// Only the events Superwall needs to work are tracked.
+  superwallOnly,
+
+  /// No events are tracked.
+  none,
+}
+
+/// The StoreKit version the SDK uses. iOS only.
+enum PStoreKitVersion { storeKit1, storeKit2 }
+
+/// Overrides the interface style paywalls are shown with.
+enum PInterfaceStyle { light, dark }
 
 // Options for configuring Superwall
 class PSuperwallOptions {
@@ -249,6 +275,14 @@ class PSuperwallOptions {
   /// The user's ad consent. `null` leaves it unset, so the native SDK falls
   /// back to a TCF banner's stored consent or the default.
   PAdConsent? adConsent;
+
+  /// Which events the SDK sends to Superwall. `null` uses the native
+  /// default (`all`). Replaces [isExternalDataCollectionEnabled].
+  PEventTrackingBehavior? eventTrackingBehavior;
+
+  /// The StoreKit version the SDK uses. `null` uses the native default.
+  /// iOS only.
+  PStoreKitVersion? storeKitVersion;
 }
 
 /// Whether a user has granted or denied consent for an advertising purpose.
@@ -295,6 +329,15 @@ class PPaywallInfo {
     this.computedPropertyRequests,
     this.surveys,
     this.state,
+    this.cacheKey,
+    this.buildId,
+    this.shimmerLoadStartTime,
+    this.shimmerLoadCompleteTime,
+    this.presentation,
+    this.isScrollEnabled,
+    this.presentationId,
+    this.isLocal,
+    this.introOfferEligibility,
   });
 
   String? identifier;
@@ -330,7 +373,68 @@ class PPaywallInfo {
 
   /// The current state of the paywall as key-value pairs.
   Map<String, Object>? state;
+
+  /// The key the paywall is cached under.
+  String? cacheKey;
+
+  /// The build ID of the Superwall configuration.
+  String? buildId;
+
+  /// An ISO date string of when the shimmer view started showing.
+  String? shimmerLoadStartTime;
+
+  /// An ISO date string of when the shimmer view stopped showing.
+  String? shimmerLoadCompleteTime;
+
+  /// How the paywall is presented.
+  PPaywallPresentationInfo? presentation;
+
+  /// Whether scrolling is enabled in the paywall's webview.
+  bool? isScrollEnabled;
+
+  /// Identifies one presentation of the paywall.
+  String? presentationId;
+
+  /// Whether the paywall was loaded from local resources. iOS only.
+  bool? isLocal;
+
+  /// How intro offer eligibility is decided for the paywall. iOS only.
+  PIntroOfferEligibility? introOfferEligibility;
 }
+
+/// The presentation style of a paywall.
+enum PPaywallPresentationStyle {
+  modal,
+  fullscreen,
+  fullscreenNoAnimation,
+  push,
+  drawer,
+  popup,
+  none,
+}
+
+/// How a paywall is presented.
+class PPaywallPresentationInfo {
+  PPaywallPresentationStyle style;
+
+  /// The delay before the paywall is presented, in milliseconds.
+  int delay;
+
+  /// The height of a `drawer` or `popup`.
+  double? height;
+
+  /// The width of a `popup`.
+  double? width;
+
+  /// The corner radius of a `drawer` or `popup`.
+  double? cornerRadius;
+
+  PPaywallPresentationInfo(
+      this.style, this.delay, this.height, this.width, this.cornerRadius);
+}
+
+/// How intro offer eligibility is decided for a paywall. iOS only.
+enum PIntroOfferEligibility { eligible, ineligible, automatic }
 
 // Product class for paywall products
 class PProduct {
@@ -338,10 +442,14 @@ class PProduct {
   String? name;
   List<PEntitlement>? entitlements;
 
+  /// The store the product belongs to.
+  PProductStore? store;
+
   PProduct({
     this.id,
     this.name,
     this.entitlements,
+    this.store,
   });
 }
 
@@ -535,6 +643,22 @@ class PLogging {
   List<PLogScope>? scopes;
 }
 
+enum PStoreTransactionState {
+  purchasing,
+  purchased,
+  failed,
+  restored,
+  deferred,
+}
+
+/// The payment of a transaction.
+class PStorePayment {
+  String productIdentifier;
+  int quantity;
+  String? discountIdentifier;
+  PStorePayment(this.productIdentifier, this.quantity, this.discountIdentifier);
+}
+
 class PStoreTransaction {
   String configRequestId;
   String appSessionId;
@@ -549,6 +673,15 @@ class PStoreTransaction {
   String? expirationDate;
   String? offerId;
   String? revocationDate;
+  PStoreTransactionState? state;
+  PStorePayment? payment;
+  String? appAccountToken;
+
+  /// The Google Play purchase token. Android only.
+  String? purchaseToken;
+
+  /// The Google Play purchase signature. Android only.
+  String? signature;
 
   PStoreTransaction(
       this.configRequestId,
@@ -564,6 +697,15 @@ class PStoreTransaction {
       this.expirationDate,
       this.offerId,
       this.revocationDate);
+}
+
+enum PSubscriptionPeriodUnit { day, week, month, year }
+
+/// The length of a subscription period.
+class PSubscriptionPeriod {
+  int value;
+  PSubscriptionPeriodUnit unit;
+  PSubscriptionPeriod(this.value, this.unit);
 }
 
 class PStoreProduct {
@@ -608,6 +750,24 @@ class PStoreProduct {
   bool isFamilyShareable;
   String? regionCode;
   double price;
+  PSubscriptionPeriod? subscriptionPeriod;
+
+  /// The product identifier including base plan and offer. Android only.
+  String? fullIdentifier;
+
+  /// The Google Play product type, `subs` or `inapp`. Android only.
+  String? productType;
+
+  /// The country code of the user's storefront. Android only.
+  String? storeFrontCountryCode;
+
+  /// Whether this is a custom store product, bought through your own
+  /// checkout. Android only.
+  bool? isCustomProduct;
+
+  /// The transaction ID the SDK made for a custom store product purchase.
+  /// Android only.
+  String? customTransactionId;
 
   PStoreProduct(
       this.entitlements,
@@ -685,6 +845,24 @@ class PPaywallOptions {
 
   /// Android only. Where presented paywalls are hosted.
   PPresentationHost? presentationHost;
+
+  /// iOS only. The alert shown when a paywall asks for notification
+  /// permissions the user has denied. `null` shows no alert.
+  PNotificationPermissionsDenied? notificationPermissionsDenied;
+
+  /// Android only. Shows the paywall before its products have loaded.
+  bool? optimisticLoading;
+
+  /// Android only. How long to wait for a paywall to load before the
+  /// presentation fails, in milliseconds. `null` waits without limit.
+  int? timeoutAfterMillis;
+}
+
+class PNotificationPermissionsDenied {
+  String? title;
+  String? message;
+  String? actionButtonTitle;
+  String? closeButtonTitle;
 }
 
 class POnBackPressedHost {
@@ -929,6 +1107,7 @@ enum PProductStore {
   playStore,
   superwall,
   other,
+  custom,
 }
 
 /// An enum specifying the entitlement type.
@@ -1020,6 +1199,30 @@ enum PIntegrationAttribute {
 
   /// The Airbridge Device ID, from `Airbridge.fetchDeviceUUID`.
   airbridgeId,
+
+  /// The Firebase installation identifier. iOS only.
+  firebaseInstallationId,
+
+  /// The Singular device identifier.
+  singularDeviceId,
+
+  /// The Meta identifier. Android only.
+  meta,
+
+  /// The Amplitude identifier. Android only.
+  amplitude,
+
+  /// The Mixpanel identifier. Android only.
+  mixpanel,
+
+  /// The Google Ads identifier. Android only.
+  googleAds,
+
+  /// The Google App Set identifier. Android only.
+  googleAppSetId,
+
+  /// A custom attribution identifier. Android only.
+  custom,
 }
 
 /// A subscription transaction.
@@ -1147,6 +1350,15 @@ class PEntitlement {
   /// The type of offer that applies to the last subscription transaction.
   final PLatestSubscriptionOfferType? offerType;
 
+  /// Indicates whether the last transaction was revoked.
+  final bool? isRevoked;
+
+  /// The date the last subscription transaction renews (milliseconds since epoch).
+  final int? renewsAt;
+
+  /// Indicates whether the last subscription transaction is in a billing grace period.
+  final bool? isInGracePeriod;
+
   PEntitlement({
     required this.id,
     required this.type,
@@ -1161,6 +1373,9 @@ class PEntitlement {
     this.willRenew,
     this.state,
     this.offerType,
+    this.isRevoked,
+    this.renewsAt,
+    this.isInGracePeriod,
   });
 }
 
@@ -1245,6 +1460,13 @@ class PSuperwallEventInfo {
   Map<String, Object>? integrationAttributes;
   int? reviewRequestedCount;
   List<String>? missingProductIdentifiers;
+  PPageViewData? pageViewData;
+  String? permissionName;
+  String? paywallIdentifier;
+  int? paywallCount;
+
+  /// The kind of transaction that completed. iOS only.
+  PTransactionType? transactionType;
 
   PSuperwallEventInfo(
       {required this.eventType,
@@ -1273,7 +1495,41 @@ class PSuperwallEventInfo {
       this.message,
       this.integrationAttributes,
       this.reviewRequestedCount,
-      this.missingProductIdentifiers});
+      this.missingProductIdentifiers,
+      this.pageViewData,
+      this.permissionName,
+      this.paywallIdentifier,
+      this.paywallCount,
+      this.transactionType});
+}
+
+/// The kind of transaction that completed.
+enum PTransactionType {
+  nonRecurringProductPurchase,
+  freeTrialStart,
+  subscriptionStart,
+}
+
+/// Describes a page view in a multi-page paywall.
+class PPageViewData {
+  String pageNodeId;
+  int flowPosition;
+  String pageName;
+  String navigationNodeId;
+  String? previousPageNodeId;
+  int? previousFlowPosition;
+  String navigationType;
+  int? timeOnPreviousPageMs;
+
+  PPageViewData(
+      this.pageNodeId,
+      this.flowPosition,
+      this.pageName,
+      this.navigationNodeId,
+      this.previousPageNodeId,
+      this.previousFlowPosition,
+      this.navigationType,
+      this.timeOnPreviousPageMs);
 }
 
 // Enums
@@ -1324,6 +1580,15 @@ enum PLogScope {
   transactions,
   paywallViewController,
   cache,
+  analytics,
+  webEntitlements,
+  grantedEntitlements,
+  customerCenter,
+  customerInfo,
+  jsEvaluator,
+  paywallTransactions,
+  nativePurchaseController,
+  deepLinks,
   all
 }
 
@@ -1411,7 +1676,16 @@ enum PEventType {
   customerCenterRefundRequest,
   teleportOpen,
   teleportReturn,
-  attributionMatch
+  attributionMatch,
+  reviewGranted,
+  reviewDenied,
+  stripeCheckoutStart,
+  stripeCheckoutSubmit,
+  stripeCheckoutComplete,
+  stripeCheckoutFail,
+  testModeModalOpen,
+  testModeModalClose,
+  paywallPageView
 }
 
 // SubscriptionStatus enum
@@ -1623,6 +1897,18 @@ abstract class PSuperwallHostApi {
   @async
   List<PConfirmedAssignment> confirmAllAssignments();
 
+  // The assignments made so far, without confirming the rest.
+  List<PConfirmedAssignment> getAssignments();
+
+  // Fetches the configuration again.
+  void refreshConfiguration();
+
+  PEventTrackingBehavior getEventTrackingBehavior();
+  void setEventTrackingBehavior(PEventTrackingBehavior behavior);
+
+  // `null` follows the system interface style.
+  void setInterfaceStyle(PInterfaceStyle? interfaceStyle);
+
   @async
   PRestorationResult restorePurchases();
 
@@ -1632,11 +1918,13 @@ abstract class PSuperwallHostApi {
 
   // User attributes methods
   Map<String, Object> getUserAttributes();
-  void setUserAttributes(Map<String, Object> userAttributes);
+  // A `null` value removes the attribute.
+  void setUserAttributes(Map<String, Object?> userAttributes);
 
   // Integration attributes methods
   void setIntegrationAttribute(PIntegrationAttribute attribute, String? value);
   void setIntegrationAttributes(Map<PIntegrationAttribute, String?> attributes);
+  Map<String, String> getIntegrationAttributes();
 
   @async
   Map<String, Object> getDeviceAttributes();
@@ -1715,6 +2003,16 @@ abstract class PSuperwallHostApi {
   // Override products by name globally - getter and setter
   Map<String, String>? getOverrideProductsByName();
   void setOverrideProductsByName(Map<String, String>? overrideProducts);
+
+  // Push notifications (Android only)
+  void setPushToken(String token);
+  void optOutOfNotifications();
+  void optInToNotifications();
+  void handleNotificationOpen(Map<String, String> data);
+
+  // Cancels the local notifications Superwall scheduled, such as trial
+  // reminders.
+  void cancelAllScheduledNotifications();
 }
 
 @FlutterApi()
@@ -1774,6 +2072,9 @@ abstract class PConfigureCompletionGenerated {
 @FlutterApi()
 abstract class PPaywallPresentationHandlerGenerated {
   void onPresent(PPaywallInfo paywallInfo);
+
+  /// Called when the paywall is about to be dismissed. iOS only.
+  void onWillDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult);
   void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult);
   void onError(String error);
   void onSkip(PPaywallSkippedReason reason);
