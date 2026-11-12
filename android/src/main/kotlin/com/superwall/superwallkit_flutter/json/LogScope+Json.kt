@@ -31,6 +31,7 @@ fun JsonExtensions.Companion.logScopeFromJson(json: String): LogScope? =
         "paywalltransactions" -> LogScope.paywallTransactions
         "deeplinks" -> LogScope.deepLinks
         "customercenter" -> LogScope.customerCenter
+        "billing" -> LogScope.billing
         "all" -> LogScope.all
         else -> null
     }

@@ -12,7 +12,7 @@ This is the **Superwall Flutter SDK v2.9.0** - a Flutter plugin that wraps nativ
 - **Flutter Plugin**: Uses Pigeon for type-safe communication between Flutter and native platforms
 - **Native SDKs**:
   - Android: SuperwallKit Android SDK v2.10.2 (Kotlin)
-  - iOS: SuperwallKit iOS SDK v4.18.3 (Swift)
+  - iOS: SuperwallKit iOS SDK v4.18.3 with CocoaPods, v4.19.1 with Swift Package Manager (Swift)
 - **Code Generation**: Pigeon generates Dart, Kotlin, and Swift interfaces from `pigeons/configure.dart`
 
 ### Communication Flow
@@ -106,7 +106,7 @@ When adding new methods to the SDK, follow this workflow:
 ### iOS  
 - **Min Version**: iOS 15.0
 - **Language**: Swift 5.0
-- **Dependencies**: SuperwallKit iOS v4.18.3
+- **Dependencies**: SuperwallKit iOS v4.18.3 in the podspec, v4.19.1 in `Package.swift`. 4.19 isn't on CocoaPods trunk, so the same sources build against both: wrap API that needs 4.19 in `#if SWIFT_PACKAGE` with a 4.18.3 fallback
 - **Build**: Uses CocoaPods for dependency management. SuperwallKit 4.18.3 requires Xcode 26 (Swift 6.2) or later
 
 ## Testing Strategy

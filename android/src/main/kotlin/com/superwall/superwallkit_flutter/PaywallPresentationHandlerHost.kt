@@ -4,6 +4,7 @@ import PCustomCallback
 import PCustomCallbackResult
 import PCustomCallbackResultStatus
 import PDeclinedPaywallResult
+import PExperiment
 import PPaywallPresentationHandlerGenerated
 import PPaywallSkippedReason
 import PPurchasedPaywallResult
@@ -18,6 +19,7 @@ import com.superwall.superwallkit_flutter.utils.PaywallInfoMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
+import pigeonify
 import kotlin.coroutines.suspendCoroutine
 
 class PaywallPresentationHandlerHost(
@@ -49,8 +51,9 @@ class PaywallPresentationHandlerHost(
                         is PaywallSkippedReason.Holdout -> PPaywallSkippedReason.HOLDOUT
                         is PaywallSkippedReason.NoAudienceMatch -> PPaywallSkippedReason.NO_AUDIENCE_MATCH
                         is PaywallSkippedReason.PlacementNotFound -> PPaywallSkippedReason.PLACEMENT_NOT_FOUND
-                        else -> PPaywallSkippedReason.NO_AUDIENCE_MATCH
+                        is PaywallSkippedReason.UserIsSubscribed -> PPaywallSkippedReason.USER_IS_SUBSCRIBED
                     },
+                    (it as? PaywallSkippedReason.Holdout)?.experiment?.pigeonify(),
                     {},
                 )
             }

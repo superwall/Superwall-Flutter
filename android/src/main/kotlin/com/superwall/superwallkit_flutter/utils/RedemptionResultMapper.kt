@@ -14,6 +14,7 @@ import POwnership
 import PPurchaserInfo
 import PRedemptionInfo
 import PRedemptionPaywallInfo
+import PRedemptionPaywallProduct
 import PRedemptionResult
 import PStoreIdentifiers
 import PStripeStoreIdentifiers
@@ -120,6 +121,42 @@ object RedemptionResultMapper {
             variantId = paywallInfo.variantId,
             experimentId = paywallInfo.experimentId,
             productIdentifier = paywallInfo.productIdentifier,
+            product = paywallInfo.product?.let { mapPaywallProduct(it) },
+        )
+
+    private fun mapPaywallProduct(product: RedemptionResult.PaywallInfo.PaywallProduct): PRedemptionPaywallProduct =
+        PRedemptionPaywallProduct(
+            identifier = product.identifier,
+            languageCode = product.languageCode,
+            locale = product.locale,
+            currencyCode = product.currencyCode,
+            currencySymbol = product.currencySymbol,
+            period = product.period,
+            periodly = product.periodly,
+            localizedPeriod = product.localizedPeriod,
+            periodAlt = product.periodAlt,
+            periodDays = product.periodDays.toLong(),
+            periodWeeks = product.periodWeeks.toLong(),
+            periodMonths = product.periodMonths.toLong(),
+            periodYears = product.periodYears.toLong(),
+            rawPrice = product.rawPrice,
+            price = product.price,
+            dailyPrice = product.dailyPrice,
+            weeklyPrice = product.weeklyPrice,
+            monthlyPrice = product.monthlyPrice,
+            yearlyPrice = product.yearlyPrice,
+            rawTrialPeriodPrice = product.rawTrialPeriodPrice,
+            trialPeriodPrice = product.trialPeriodPrice,
+            trialPeriodDailyPrice = product.trialPeriodDailyPrice,
+            trialPeriodWeeklyPrice = product.trialPeriodWeeklyPrice,
+            trialPeriodMonthlyPrice = product.trialPeriodMonthlyPrice,
+            trialPeriodYearlyPrice = product.trialPeriodYearlyPrice,
+            trialPeriodDays = product.trialPeriodDays.toLong(),
+            trialPeriodWeeks = product.trialPeriodWeeks.toLong(),
+            trialPeriodMonths = product.trialPeriodMonths.toLong(),
+            trialPeriodYears = product.trialPeriodYears.toLong(),
+            trialPeriodText = product.trialPeriodText,
+            trialPeriodEndDate = product.trialPeriodEndDate,
         )
 
     private fun mapEntitlement(entitlement: Entitlement): PEntitlement {

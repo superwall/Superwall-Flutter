@@ -1,12 +1,16 @@
 package com.superwall.superwallkit_flutter.utils
 
+import PAttributionMatchInfo
+import PCustomerCenterScreenType
 import PPageViewData
 import PSuperwallEventInfo
 import PSurveyOption
 import com.superwall.sdk.analytics.superwall.AttributionMatchInfo
+import com.superwall.sdk.customercenter.CustomerCenterScreenType
 import com.superwall.sdk.analytics.superwall.SuperwallEvent
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.superwallkit_flutter.json.pigeonify
+import com.superwall.superwallkit_flutter.utils.CustomerCenterMapper.toPigeon
 import pigeonify
 
 /**
@@ -292,6 +296,7 @@ class EventMapper {
                     PSuperwallEventInfo(
                         eventType = PEventType.PAYWALL_RESOURCE_LOAD_FAIL,
                         error = event.error,
+                        resourceUrl = event.url,
                         params = params,
                     )
 
@@ -333,6 +338,8 @@ class EventMapper {
                 is SuperwallEvent.ShimmerViewComplete ->
                     PSuperwallEventInfo(
                         eventType = PEventType.SHIMMER_VIEW_COMPLETE,
+                        // The native SDK reports this value in milliseconds already.
+                        shimmerDuration = event.duration,
                         params = params,
                     )
 
@@ -376,7 +383,14 @@ class EventMapper {
                         params = params,
                     )
 
-                is SuperwallEvent.CustomerInfoDidChange -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_INFO_DID_CHANGE, params = params)
+                is SuperwallEvent.CustomerInfoDidChange ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_INFO_DID_CHANGE,
+                        fromCustomerInfo = CustomerInfoMapper.toPigeon(event.from),
+                        toCustomerInfo = CustomerInfoMapper.toPigeon(event.to),
+                        params = params,
+                    )
+
                 is SuperwallEvent.TestModeModalOpen -> PSuperwallEventInfo(eventType = PEventType.TEST_MODE_MODAL_OPEN, params = params)
                 is SuperwallEvent.TestModeModalClose -> PSuperwallEventInfo(eventType = PEventType.TEST_MODE_MODAL_CLOSE, params = params)
                 is SuperwallEvent.PermissionRequested ->
@@ -403,15 +417,59 @@ class EventMapper {
                         params = params,
                     )
 
-                is SuperwallEvent.CustomerCenterOpen -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_OPEN, params = params)
+                is SuperwallEvent.CustomerCenterOpen ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_CENTER_OPEN,
+                        customerCenterScreen =
+                            when (event.screen) {
+                                CustomerCenterScreenType.MANAGEMENT -> PCustomerCenterScreenType.MANAGEMENT
+                                CustomerCenterScreenType.NO_PURCHASES -> PCustomerCenterScreenType.NO_PURCHASES
+                            },
+                        params = params,
+                    )
+
                 is SuperwallEvent.CustomerCenterClose -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_CLOSE, params = params)
-                is SuperwallEvent.CustomerCenterAction -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_ACTION, params = params)
-                is SuperwallEvent.CustomerCenterSurveyResponse -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_SURVEY_RESPONSE, params = params)
-                is SuperwallEvent.CustomerCenterRefundRequest -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_REFUND_REQUEST, params = params)
+                is SuperwallEvent.CustomerCenterAction ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_CENTER_ACTION,
+                        customerCenterAction = event.action.toPigeon(),
+                        customerCenterPathId = event.pathId,
+                        customerCenterProductId = event.productId,
+                        params = params,
+                    )
+
+                is SuperwallEvent.CustomerCenterSurveyResponse ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_CENTER_SURVEY_RESPONSE,
+                        customerCenterAction = event.action.toPigeon(),
+                        customerCenterPathId = event.pathId,
+                        customerCenterProductId = event.productId,
+                        customerCenterSurveyId = event.surveyId,
+                        customerCenterSurveyOptionId = event.optionId,
+                        params = params,
+                    )
+
+                is SuperwallEvent.CustomerCenterRefundRequest ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_CENTER_REFUND_REQUEST,
+                        customerCenterProductId = event.productId,
+                        customerCenterRefundStatus = event.status.toPigeon(),
+                        params = params,
+                    )
+
 
                 is SuperwallEvent.AttributionMatch ->
                     PSuperwallEventInfo(
                         eventType = PEventType.ATTRIBUTION_MATCH,
+                        attributionMatchInfo =
+                            PAttributionMatchInfo(
+                                provider = event.info.provider.rawName,
+                                matched = event.info.matched,
+                                source = event.info.source,
+                                confidence = event.info.confidence?.rawName,
+                                matchScore = event.info.matchScore,
+                                reason = event.info.reason,
+                            ),
                         params = (params ?: emptyMap()) + attributionMatchParams(event.info),
                     )
 

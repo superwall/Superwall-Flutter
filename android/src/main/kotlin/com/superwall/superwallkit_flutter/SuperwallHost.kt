@@ -56,6 +56,7 @@ import StreamSubscriptionStatusStreamHandler
 import StreamCustomerInfoStreamHandler
 import android.app.Activity
 import android.app.Application
+import android.net.Uri
 import com.superwall.sdk.Superwall
 import com.superwall.sdk.models.attribution.AttributionProvider
 import com.superwall.sdk.billing.BillingError
@@ -70,6 +71,8 @@ import com.superwall.sdk.models.triggers.Experiment
 import com.superwall.sdk.network.device.InterfaceStyle
 import com.superwall.sdk.store.abstractions.product.StoreProduct
 import com.superwall.sdk.paywall.presentation.dismiss
+import com.superwall.sdk.paywall.view.webview.PaywallResource
+import com.superwall.sdk.web.openRestoreOnWeb
 import com.superwall.superwallkit_flutter.json.JsonExtensions
 import com.superwall.superwallkit_flutter.utils.toSdkOptions
 import com.superwall.superwallkit_flutter.utils.toSdk
@@ -101,6 +104,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.collectLatest
+import java.io.File
+import java.util.concurrent.atomic.AtomicBoolean
 
 class SuperwallHost(
     val context: () -> Application,
@@ -147,8 +152,6 @@ class SuperwallHost(
         callback: (Result<Unit>) -> Unit,
     ) {
         val sdkOptions = (options?.toSdkOptions() ?: SuperwallOptions()).apply {
-            logging.level = LogLevel.debug
-
             // Set up onBackPressed callback if provided
             options?.paywalls?.onBackPressedHost?.let {
                 val onBackPressedHost = OnBackPressedHost {
@@ -177,6 +180,14 @@ class SuperwallHost(
                 }
             } else null
         )
+        // The native SDK takes local resources on the instance, not in its options.
+        options?.localResources?.let { resources ->
+            Superwall.instance.localResources = resources.mapValues { (_, value) ->
+                val uri = Uri.parse(value)
+                // A bare path has no scheme.
+                PaywallResource.FromUri(if (uri.scheme == null) Uri.fromFile(File(value)) else uri)
+            }
+        }
     }
 
     override fun reset() {
@@ -363,6 +374,11 @@ class SuperwallHost(
 
     override fun getCustomerInfo(callback: (Result<PCustomerInfo>) -> Unit) {
         callback(runCatching { CustomerInfoMapper.toPigeon(Superwall.instance.getCustomerInfo()) })
+    }
+
+    // Android has no native refresh, so this returns the current customer info.
+    override fun refreshCustomerInfo(callback: (Result<PCustomerInfo>) -> Unit) {
+        getCustomerInfo(callback)
     }
 
     override fun getSubscriptionStatus(): PSubscriptionStatus {
@@ -553,6 +569,68 @@ class SuperwallHost(
 
     override fun cancelAllScheduledNotifications() {
         Superwall.instance.cancelAllScheduledNotifications()
+    }
+
+    override fun showAlert(
+        title: String?,
+        message: String?,
+        actionTitle: String?,
+        closeActionTitle: String?,
+        callback: (Result<Boolean>) -> Unit
+    ) {
+        val completed = AtomicBoolean(false)
+        fun complete(result: Result<Boolean>) {
+            if (completed.compareAndSet(false, true)) {
+                mainScope.launch { callback(result) }
+            }
+        }
+        val action = { complete(Result.success(true)) }
+        val onClose = { complete(Result.success(false)) }
+        try {
+            // The SDK shows the alert over the presented paywall and calls
+            // neither callback when there isn't one.
+            if (Superwall.instance.paywallView == null) {
+                complete(Result.success(false))
+                return
+            }
+            if (closeActionTitle != null) {
+                Superwall.instance.showAlert(
+                    title = title,
+                    message = message,
+                    actionTitle = actionTitle,
+                    closeActionTitle = closeActionTitle,
+                    action = action,
+                    onClose = onClose,
+                )
+            } else {
+                Superwall.instance.showAlert(
+                    title = title,
+                    message = message,
+                    actionTitle = actionTitle,
+                    action = action,
+                    onClose = onClose,
+                )
+            }
+        } catch (e: Throwable) {
+            complete(Result.failure(e))
+        }
+    }
+
+    override fun openRestoreOnWeb() {
+        Superwall.instance.openRestoreOnWeb()
+    }
+
+    override fun getExternalAccountId(): String? {
+        return Superwall.instance.externalAccountId
+    }
+
+    // Granted entitlements are iOS only.
+    override fun getGrantedEntitlements(): List<PEntitlement> {
+        return emptyList()
+    }
+
+    override fun setGrantedEntitlements(entitlements: List<PEntitlement>) {
+        // Granted entitlements are iOS only, so there's nothing to set.
     }
 
     override fun consume(purchaseToken: String, callback: (Result<String>) -> Unit) {

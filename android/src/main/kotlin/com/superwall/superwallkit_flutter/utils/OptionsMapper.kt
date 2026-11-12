@@ -137,6 +137,7 @@ fun PSuperwallOptions.toSdkOptions(): SuperwallOptions {
                     PLogScope.PAYWALL_TRANSACTIONS -> sdkScopes.add(LogScope.paywallTransactions)
                     PLogScope.NATIVE_PURCHASE_CONTROLLER -> sdkScopes.add(LogScope.nativePurchaseController)
                     PLogScope.DEEP_LINKS -> sdkScopes.add(LogScope.deepLinks)
+                    PLogScope.BILLING -> sdkScopes.add(LogScope.billing)
                     PLogScope.ALL -> sdkScopes.add(LogScope.all)
                     // `ANALYTICS` and `GRANTED_ENTITLEMENTS` are iOS only.
                     else -> {}
