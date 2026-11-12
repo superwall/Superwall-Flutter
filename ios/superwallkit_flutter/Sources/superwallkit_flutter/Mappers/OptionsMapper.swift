@@ -114,6 +114,21 @@ extension PSuperwallOptions {
     }
     
     options.localeIdentifier = self.localeIdentifier
+
+    if let localResources = self.localResources {
+      var sdkLocalResources: [String: AssetResource] = [:]
+      for (resourceId, location) in localResources {
+        // A value is either a `file://` URL or a bare file path.
+        if location.hasPrefix("file://") {
+          // `URL(string:)` fails for unescaped characters such as spaces.
+          sdkLocalResources[resourceId] = URL(string: location)
+            ?? URL(fileURLWithPath: String(location.dropFirst("file://".count)))
+        } else {
+          sdkLocalResources[resourceId] = URL(fileURLWithPath: location)
+        }
+      }
+      options.localResources = sdkLocalResources
+    }
     
     if let isGameControllerEnabled = self.isGameControllerEnabled {
       options.isGameControllerEnabled = isGameControllerEnabled
@@ -224,7 +239,7 @@ extension PSuperwallOptions {
             sdkScopes.insert(.grantedEntitlements)
           case .customerCenter:
             sdkScopes.insert(.customerCenter)
-          case .customerInfo, .jsEvaluator, .paywallTransactions, .nativePurchaseController, .deepLinks:
+          case .customerInfo, .jsEvaluator, .paywallTransactions, .nativePurchaseController, .deepLinks, .billing:
             // Android only.
             break
           case .all:

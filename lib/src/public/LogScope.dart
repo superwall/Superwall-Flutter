@@ -48,6 +48,9 @@ enum LogScope {
 
   /// Android only.
   deepLinks,
+
+  /// Android only.
+  billing,
   all
 }
 
@@ -114,6 +117,8 @@ extension LogScopeJson on LogScope {
         return 'nativePurchaseController';
       case LogScope.deepLinks:
         return 'deepLinks';
+      case LogScope.billing:
+        return 'billing';
       case LogScope.all:
         return 'all';
     }

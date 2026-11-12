@@ -195,8 +195,19 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         params: params,
         userAttributes: attributes
       )
-    case .attributionMatch:
-      pEventInfo = PSuperwallEventInfo(eventType: .attributionMatch, params: params)
+    case .attributionMatch(let info):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .attributionMatch,
+        params: params,
+        attributionMatchInfo: PAttributionMatchInfo(
+          provider: info.provider.rawValue,
+          matched: info.matched,
+          source: info.source,
+          confidence: info.confidence?.rawValue,
+          matchScore: info.matchScore,
+          reason: info.reason
+        )
+      )
     case .nonRecurringProductPurchase(let product, let paywallInfo):
       pEventInfo = PSuperwallEventInfo(
         eventType: .nonRecurringProductPurchase,
@@ -444,16 +455,58 @@ final class SuperwallDelegateHost: SuperwallDelegate {
         params: params,
         paywallInfo: paywallInfo?.pigeonify()
       )
-    case .customerCenterOpen:
-      pEventInfo = PSuperwallEventInfo(eventType: .customerCenterOpen, params: params)
+    case let .customerCenterOpen(screen, presentation):
+      let pScreen: PCustomerCenterScreenType
+      switch screen {
+      case .management:
+        pScreen = .management
+      case .noPurchases:
+        pScreen = .noPurchases
+      }
+
+      let pPresentation: PCustomerCenterPresentationStyle
+      switch presentation {
+      case .sheet:
+        pPresentation = .sheet
+      case .embedded:
+        pPresentation = .embedded
+      @unknown default:
+        pPresentation = .sheet
+      }
+
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .customerCenterOpen,
+        params: params,
+        customerCenterScreen: pScreen,
+        customerCenterPresentationStyle: pPresentation
+      )
     case .customerCenterClose:
       pEventInfo = PSuperwallEventInfo(eventType: .customerCenterClose, params: params)
-    case .customerCenterAction:
-      pEventInfo = PSuperwallEventInfo(eventType: .customerCenterAction, params: params)
-    case .customerCenterSurveyResponse:
-      pEventInfo = PSuperwallEventInfo(eventType: .customerCenterSurveyResponse, params: params)
-    case .customerCenterRefundRequest:
-      pEventInfo = PSuperwallEventInfo(eventType: .customerCenterRefundRequest, params: params)
+    case let .customerCenterAction(action, pathId, productId):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .customerCenterAction,
+        params: params,
+        customerCenterAction: action.pigeonify(),
+        customerCenterPathId: pathId,
+        customerCenterProductId: productId
+      )
+    case let .customerCenterSurveyResponse(surveyId, optionId, action, pathId, productId):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .customerCenterSurveyResponse,
+        params: params,
+        customerCenterAction: action.pigeonify(),
+        customerCenterPathId: pathId,
+        customerCenterProductId: productId,
+        customerCenterSurveyId: surveyId,
+        customerCenterSurveyOptionId: optionId
+      )
+    case let .customerCenterRefundRequest(productId, status):
+      pEventInfo = PSuperwallEventInfo(
+        eventType: .customerCenterRefundRequest,
+        params: params,
+        customerCenterProductId: productId,
+        customerCenterRefundStatus: status.pigeonify()
+      )
     case .stripeCheckoutStart(let paywallInfo):
       pEventInfo = PSuperwallEventInfo(
         eventType: .stripeCheckoutStart,

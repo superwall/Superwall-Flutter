@@ -11,6 +11,13 @@ extension StoreProduct {
       familyShareable = false
     }
 
+    #if SWIFT_PACKAGE
+    let customTransactionId = self.customTransactionId
+    #else
+    // CocoaPods builds use SuperwallKit 4.18.3, which doesn't expose this.
+    let customTransactionId: String? = nil
+    #endif
+
     return PStoreProduct(
       entitlements: entitlements.map { $0.pigeonify() },
       productIdentifier: productIdentifier,
@@ -53,8 +60,63 @@ extension StoreProduct {
       isFamilyShareable: familyShareable,
       regionCode: regionCode,
       price: Double(truncating: price as NSNumber),
-      subscriptionPeriod: subscriptionPeriod?.pigeonify()
+      subscriptionPeriod: subscriptionPeriod?.pigeonify(),
+      customTransactionId: customTransactionId,
+      introductoryDiscount: introductoryDiscount?.pigeonify(),
+      discounts: discounts.map { $0.pigeonify() },
+      billingPlanType: billingPlanType?.pigeonify(),
+      isBillingPlanAvailable: isBillingPlanAvailable
     )
+  }
+}
+
+extension StoreProductDiscount {
+  func pigeonify() -> PStoreProductDiscount {
+    let pPaymentMode: PStoreProductDiscountPaymentMode
+    switch paymentMode {
+    case .payAsYouGo:
+      pPaymentMode = .payAsYouGo
+    case .payUpFront:
+      pPaymentMode = .payUpFront
+    case .freeTrial:
+      pPaymentMode = .freeTrial
+    @unknown default:
+      pPaymentMode = .payAsYouGo
+    }
+
+    let pType: PStoreProductDiscountType
+    switch self.type {
+    case .introductory:
+      pType = .introductory
+    case .promotional:
+      pType = .promotional
+    @unknown default:
+      pType = .introductory
+    }
+
+    return PStoreProductDiscount(
+      offerIdentifier: offerIdentifier,
+      currencyCode: currencyCode,
+      price: Double(truncating: price as NSNumber),
+      localizedPriceString: localizedPriceString,
+      paymentMode: pPaymentMode,
+      subscriptionPeriod: subscriptionPeriod.pigeonify(),
+      numberOfPeriods: Int64(numberOfPeriods),
+      type: pType
+    )
+  }
+}
+
+extension AppStoreProduct.BillingPlanType {
+  func pigeonify() -> PBillingPlanType {
+    switch self {
+    case .upFront:
+      return .upFront
+    case .monthly:
+      return .monthly
+    @unknown default:
+      return .upFront
+    }
   }
 }
 

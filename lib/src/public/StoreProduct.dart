@@ -1,4 +1,5 @@
 import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
+import 'package:superwallkit_flutter/src/public/StoreProductDiscount.dart';
 import 'package:superwallkit_flutter/src/public/SubscriptionPeriod.dart';
 
 /// A wrapper around a store product.
@@ -132,8 +133,22 @@ class StoreProduct {
   final bool? isCustomProduct;
 
   /// The transaction ID the SDK made for a custom store product purchase.
-  /// Android only.
+  /// Available on Android, and on iOS only when the plugin is built with
+  /// Swift Package Manager.
   final String? customTransactionId;
+
+  /// The introductory offer of the product. iOS only.
+  final StoreProductDiscount? introductoryDiscount;
+
+  /// The promotional and introductory offers of the product. iOS only.
+  final List<StoreProductDiscount>? discounts;
+
+  /// The billing plan the product is bought with. iOS only.
+  final BillingPlanType? billingPlanType;
+
+  /// Whether the product's billing plan is available on this device.
+  /// iOS only.
+  final bool? isBillingPlanAvailable;
 
   // Constructor
   StoreProduct({
@@ -180,6 +195,10 @@ class StoreProduct {
     this.storeFrontCountryCode,
     this.isCustomProduct,
     this.customTransactionId,
+    this.introductoryDiscount,
+    this.discounts,
+    this.billingPlanType,
+    this.isBillingPlanAvailable,
   });
 
   factory StoreProduct.fromPigeon(PStoreProduct product) {
@@ -229,6 +248,15 @@ class StoreProduct {
       storeFrontCountryCode: product.storeFrontCountryCode,
       isCustomProduct: product.isCustomProduct,
       customTransactionId: product.customTransactionId,
+      introductoryDiscount: product.introductoryDiscount != null
+          ? StoreProductDiscount.fromPigeon(product.introductoryDiscount!)
+          : null,
+      discounts:
+          product.discounts?.map(StoreProductDiscount.fromPigeon).toList(),
+      billingPlanType: product.billingPlanType != null
+          ? BillingPlanType.fromPigeon(product.billingPlanType!)
+          : null,
+      isBillingPlanAvailable: product.isBillingPlanAvailable,
     );
   }
 

@@ -232,6 +232,29 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
     }
   }
 
+  func refreshCustomerInfo(completion: @escaping (Result<PCustomerInfo, Error>) -> Void) {
+    Task {
+      #if SWIFT_PACKAGE
+      let customerInfo = await Superwall.shared.refreshCustomerInfo()
+      #else
+      // CocoaPods builds use SuperwallKit 4.18.3, which can't force a refresh,
+      // so this returns the cached customer info.
+      let customerInfo = await Superwall.shared.getCustomerInfo()
+      #endif
+      completion(.success(customerInfo.pigeonify()))
+    }
+  }
+
+  func getGrantedEntitlements() -> [PEntitlement] {
+    return Superwall.shared.grantedEntitlements.map { $0.pigeonify() }
+  }
+
+  func setGrantedEntitlements(entitlements: [PEntitlement]) {
+    Superwall.shared.grantedEntitlements = Set<Entitlement>(entitlements.map {
+      return Entitlement(id: $0.id)
+    })
+  }
+
   func getSubscriptionStatus() -> PSubscriptionStatus {
     let swStatus = Superwall.shared.subscriptionStatus
 
@@ -534,6 +557,25 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
   func optInToNotifications() {}
 
   func handleNotificationOpen(data: [String : String]) {}
+
+  // The iOS SDK has no public alert API, so no alert is shown.
+  func showAlert(
+    title: String?,
+    message: String?,
+    actionTitle: String?,
+    closeActionTitle: String?,
+    completion: @escaping (Result<Bool, Error>) -> Void
+  ) {
+    completion(.success(false))
+  }
+
+  // Android only.
+  func openRestoreOnWeb() {}
+
+  // The external account ID is a Google Play concept, so there's none on iOS.
+  func getExternalAccountId() -> String? {
+    return nil
+  }
 
   func cancelAllScheduledNotifications() {
     UNUserNotificationCenter.current().removeAllPendingSuperwallNotificationRequests()

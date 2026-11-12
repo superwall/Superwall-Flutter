@@ -57,6 +57,7 @@ enum EventType {
   paywallResponseLoadStart,
   paywallResponseLoadNotFound,
   paywallResponseLoadFail,
+  paywallResourceLoadFail,
   paywallResponseLoadComplete,
   paywallWebviewLoadStart,
   paywallWebviewLoadFail,
@@ -219,6 +220,56 @@ class SuperwallEvent {
   /// [EventType.transactionComplete]. iOS only.
   final TransactionType? transactionType;
 
+  /// The result of the install attribution match, for
+  /// [EventType.attributionMatch].
+  final AttributionMatchInfo? attributionMatchInfo;
+
+  /// The Customer Center action, for [EventType.customerCenterAction] and
+  /// [EventType.customerCenterSurveyResponse].
+  final CustomerCenterAction? customerCenterAction;
+
+  /// The ID of the Customer Center path the user selected.
+  final String? customerCenterPathId;
+
+  /// The ID of the product a Customer Center event is about.
+  final String? customerCenterProductId;
+
+  /// The ID of the Customer Center survey that was answered, for
+  /// [EventType.customerCenterSurveyResponse].
+  final String? customerCenterSurveyId;
+
+  /// The ID of the option selected in a Customer Center survey, for
+  /// [EventType.customerCenterSurveyResponse].
+  final String? customerCenterSurveyOptionId;
+
+  /// The outcome of a refund request made from the Customer Center, for
+  /// [EventType.customerCenterRefundRequest].
+  final CustomerCenterRefundStatus? customerCenterRefundStatus;
+
+  /// The Customer Center screen that opened, for
+  /// [EventType.customerCenterOpen].
+  final CustomerCenterScreenType? customerCenterScreen;
+
+  /// How the Customer Center was presented, for
+  /// [EventType.customerCenterOpen]. iOS only.
+  final CustomerCenterPresentationStyle? customerCenterPresentationStyle;
+
+  /// The customer info before the change, for
+  /// [EventType.customerInfoDidChange]. Android only.
+  final CustomerInfo? fromCustomerInfo;
+
+  /// The customer info after the change, for
+  /// [EventType.customerInfoDidChange]. Android only.
+  final CustomerInfo? toCustomerInfo;
+
+  /// The URL of the resource that failed to load, when a paywall resource
+  /// fails to load. Android only.
+  final String? resourceUrl;
+
+  /// How long the shimmer view was shown, for
+  /// [EventType.shimmerViewComplete]. Android only.
+  final Duration? shimmerDuration;
+
   SuperwallEvent._(
       {required this.type,
       this.placementName,
@@ -245,7 +296,20 @@ class SuperwallEvent {
       this.permissionName,
       this.paywallIdentifier,
       this.paywallCount,
-      this.transactionType});
+      this.transactionType,
+      this.attributionMatchInfo,
+      this.customerCenterAction,
+      this.customerCenterPathId,
+      this.customerCenterProductId,
+      this.customerCenterSurveyId,
+      this.customerCenterSurveyOptionId,
+      this.customerCenterRefundStatus,
+      this.customerCenterScreen,
+      this.customerCenterPresentationStyle,
+      this.fromCustomerInfo,
+      this.toCustomerInfo,
+      this.resourceUrl,
+      this.shimmerDuration});
 
   factory SuperwallEvent.fromPEventType(PSuperwallEventInfo eventInfo) {
     EventType type;
@@ -379,8 +443,7 @@ class SuperwallEvent {
         type = EventType.paywallPreloadComplete;
         break;
       case PEventType.paywallResourceLoadFail:
-        // No exact match in EventType, using closest equivalent
-        type = EventType.paywallResponseLoadFail;
+        type = EventType.paywallResourceLoadFail;
         break;
       case PEventType.surveyResponse:
         type = EventType.surveyResponse;
@@ -572,6 +635,38 @@ class SuperwallEvent {
       paywallCount: eventInfo.paywallCount,
       transactionType: eventInfo.transactionType != null
           ? TransactionType.fromPigeon(eventInfo.transactionType!)
+          : null,
+      attributionMatchInfo: eventInfo.attributionMatchInfo != null
+          ? AttributionMatchInfo.fromPigeon(eventInfo.attributionMatchInfo!)
+          : null,
+      customerCenterAction: eventInfo.customerCenterAction != null
+          ? CustomerCenterAction.fromPigeon(eventInfo.customerCenterAction!)
+          : null,
+      customerCenterPathId: eventInfo.customerCenterPathId,
+      customerCenterProductId: eventInfo.customerCenterProductId,
+      customerCenterSurveyId: eventInfo.customerCenterSurveyId,
+      customerCenterSurveyOptionId: eventInfo.customerCenterSurveyOptionId,
+      customerCenterRefundStatus: eventInfo.customerCenterRefundStatus != null
+          ? CustomerCenterRefundStatus.fromPigeon(
+              eventInfo.customerCenterRefundStatus!)
+          : null,
+      customerCenterScreen: eventInfo.customerCenterScreen != null
+          ? CustomerCenterScreenType.fromPigeon(eventInfo.customerCenterScreen!)
+          : null,
+      customerCenterPresentationStyle:
+          eventInfo.customerCenterPresentationStyle != null
+              ? CustomerCenterPresentationStyle.fromPigeon(
+                  eventInfo.customerCenterPresentationStyle!)
+              : null,
+      fromCustomerInfo: eventInfo.fromCustomerInfo != null
+          ? CustomerInfo.fromPigeon(eventInfo.fromCustomerInfo!)
+          : null,
+      toCustomerInfo: eventInfo.toCustomerInfo != null
+          ? CustomerInfo.fromPigeon(eventInfo.toCustomerInfo!)
+          : null,
+      resourceUrl: eventInfo.resourceUrl,
+      shimmerDuration: eventInfo.shimmerDuration != null
+          ? Duration(microseconds: (eventInfo.shimmerDuration! * 1000).round())
           : null,
     );
   }

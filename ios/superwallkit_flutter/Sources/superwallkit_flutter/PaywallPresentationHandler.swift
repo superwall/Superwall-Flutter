@@ -59,10 +59,12 @@ final class PaywallPresentationHandlerHost {
 
     handler.onSkip { [weak self] reason in
       let pReason: PPaywallSkippedReason
+      var pExperiment: PExperiment? = nil
 
       switch reason {
-      case .holdout:
+      case .holdout(let experiment):
         pReason = .holdout
+        pExperiment = experiment.pigeonify()
       case .noAudienceMatch:
         pReason = .noAudienceMatch
       case .placementNotFound:
@@ -71,6 +73,7 @@ final class PaywallPresentationHandlerHost {
 
       self?.flutterHandler.onSkip(
         reason: pReason,
+        experiment: pExperiment,
         completion: { result in
           // NO-OP
           if let self = self {

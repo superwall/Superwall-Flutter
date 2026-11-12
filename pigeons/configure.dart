@@ -196,6 +196,9 @@ class PRedemptionPaywallInfo {
   /// The identifier of the product that was purchased.
   final String? productIdentifier;
 
+  /// The product that was purchased, with its pricing details.
+  final PRedemptionPaywallProduct? product;
+
   PRedemptionPaywallInfo({
     required this.identifier,
     required this.placementName,
@@ -203,7 +206,76 @@ class PRedemptionPaywallInfo {
     required this.variantId,
     required this.experimentId,
     this.productIdentifier,
+    this.product,
   });
+}
+
+/// The product purchased from a paywall during a web checkout.
+class PRedemptionPaywallProduct {
+  String identifier;
+  String languageCode;
+  String locale;
+  String currencyCode;
+  String currencySymbol;
+  String period;
+  String periodly;
+  String localizedPeriod;
+  String periodAlt;
+  int periodDays;
+  int periodWeeks;
+  int periodMonths;
+  int periodYears;
+  double rawPrice;
+  String price;
+  String dailyPrice;
+  String weeklyPrice;
+  String monthlyPrice;
+  String yearlyPrice;
+  double rawTrialPeriodPrice;
+  String trialPeriodPrice;
+  String trialPeriodDailyPrice;
+  String trialPeriodWeeklyPrice;
+  String trialPeriodMonthlyPrice;
+  String trialPeriodYearlyPrice;
+  int trialPeriodDays;
+  int trialPeriodWeeks;
+  int trialPeriodMonths;
+  int trialPeriodYears;
+  String trialPeriodText;
+  String trialPeriodEndDate;
+
+  PRedemptionPaywallProduct(
+      this.identifier,
+      this.languageCode,
+      this.locale,
+      this.currencyCode,
+      this.currencySymbol,
+      this.period,
+      this.periodly,
+      this.localizedPeriod,
+      this.periodAlt,
+      this.periodDays,
+      this.periodWeeks,
+      this.periodMonths,
+      this.periodYears,
+      this.rawPrice,
+      this.price,
+      this.dailyPrice,
+      this.weeklyPrice,
+      this.monthlyPrice,
+      this.yearlyPrice,
+      this.rawTrialPeriodPrice,
+      this.trialPeriodPrice,
+      this.trialPeriodDailyPrice,
+      this.trialPeriodWeeklyPrice,
+      this.trialPeriodMonthlyPrice,
+      this.trialPeriodYearlyPrice,
+      this.trialPeriodDays,
+      this.trialPeriodWeeks,
+      this.trialPeriodMonths,
+      this.trialPeriodYears,
+      this.trialPeriodText,
+      this.trialPeriodEndDate);
 }
 
 /// Controls when the SDK enters test mode.
@@ -283,6 +355,11 @@ class PSuperwallOptions {
   /// The StoreKit version the SDK uses. `null` uses the native default.
   /// iOS only.
   PStoreKitVersion? storeKitVersion;
+
+  /// Local files paywalls can load instead of downloading them, keyed by
+  /// the resource ID set in the paywall editor. Each value is a file path
+  /// or a `file://` or `content://` URI.
+  Map<String, String>? localResources;
 }
 
 /// Whether a user has granted or denied consent for an advertising purpose.
@@ -708,6 +785,37 @@ class PSubscriptionPeriod {
   PSubscriptionPeriod(this.value, this.unit);
 }
 
+/// How an App Store subscription is billed. iOS only.
+enum PBillingPlanType { upFront, monthly }
+
+/// How the price of a discount is charged. iOS only.
+enum PStoreProductDiscountPaymentMode { payAsYouGo, payUpFront, freeTrial }
+
+/// The kind of discount. iOS only.
+enum PStoreProductDiscountType { introductory, promotional }
+
+/// An introductory or promotional offer of a product. iOS only.
+class PStoreProductDiscount {
+  String? offerIdentifier;
+  String? currencyCode;
+  double price;
+  String localizedPriceString;
+  PStoreProductDiscountPaymentMode paymentMode;
+  PSubscriptionPeriod subscriptionPeriod;
+  int numberOfPeriods;
+  PStoreProductDiscountType type;
+
+  PStoreProductDiscount(
+      this.offerIdentifier,
+      this.currencyCode,
+      this.price,
+      this.localizedPriceString,
+      this.paymentMode,
+      this.subscriptionPeriod,
+      this.numberOfPeriods,
+      this.type);
+}
+
 class PStoreProduct {
   List<PEntitlement> entitlements;
   String productIdentifier;
@@ -766,8 +874,22 @@ class PStoreProduct {
   bool? isCustomProduct;
 
   /// The transaction ID the SDK made for a custom store product purchase.
-  /// Android only.
+  /// On iOS this needs SDK 4.19.0, which is only used when the plugin is
+  /// built with Swift Package Manager.
   String? customTransactionId;
+
+  /// The introductory offer of the product. iOS only.
+  PStoreProductDiscount? introductoryDiscount;
+
+  /// The promotional and introductory offers of the product. iOS only.
+  List<PStoreProductDiscount>? discounts;
+
+  /// The billing plan the product is bought with. iOS only.
+  PBillingPlanType? billingPlanType;
+
+  /// Whether the product's billing plan is available on this device.
+  /// iOS only.
+  bool? isBillingPlanAvailable;
 
   PStoreProduct(
       this.entitlements,
@@ -1468,6 +1590,48 @@ class PSuperwallEventInfo {
   /// The kind of transaction that completed. iOS only.
   PTransactionType? transactionType;
 
+  /// The result of an install attribution match, for `attributionMatch`.
+  PAttributionMatchInfo? attributionMatchInfo;
+
+  /// The Customer Center action, for `customerCenterAction` and
+  /// `customerCenterSurveyResponse`.
+  PCustomerCenterAction? customerCenterAction;
+
+  /// The ID of the Customer Center path the user selected.
+  String? customerCenterPathId;
+
+  /// The ID of the product a Customer Center event is about.
+  String? customerCenterProductId;
+
+  /// The ID of the Customer Center survey that was answered.
+  String? customerCenterSurveyId;
+
+  /// The ID of the option selected in a Customer Center survey.
+  String? customerCenterSurveyOptionId;
+
+  /// The outcome of a refund request made from the Customer Center.
+  PCustomerCenterRefundStatus? customerCenterRefundStatus;
+
+  /// The Customer Center screen that opened.
+  PCustomerCenterScreenType? customerCenterScreen;
+
+  /// How the Customer Center was presented. iOS only.
+  PCustomerCenterPresentationStyle? customerCenterPresentationStyle;
+
+  /// The customer info before a `customerInfoDidChange` event. Android only.
+  PCustomerInfo? fromCustomerInfo;
+
+  /// The customer info after a `customerInfoDidChange` event. Android only.
+  PCustomerInfo? toCustomerInfo;
+
+  /// The URL of the resource that failed to load, for
+  /// `paywallResourceLoadFail`. Android only.
+  String? resourceUrl;
+
+  /// How long the shimmer view was shown, in milliseconds, for
+  /// `shimmerViewComplete`. Android only.
+  double? shimmerDuration;
+
   PSuperwallEventInfo(
       {required this.eventType,
       this.params,
@@ -1500,7 +1664,42 @@ class PSuperwallEventInfo {
       this.permissionName,
       this.paywallIdentifier,
       this.paywallCount,
-      this.transactionType});
+      this.transactionType,
+      this.attributionMatchInfo,
+      this.customerCenterAction,
+      this.customerCenterPathId,
+      this.customerCenterProductId,
+      this.customerCenterSurveyId,
+      this.customerCenterSurveyOptionId,
+      this.customerCenterRefundStatus,
+      this.customerCenterScreen,
+      this.customerCenterPresentationStyle,
+      this.fromCustomerInfo,
+      this.toCustomerInfo,
+      this.resourceUrl,
+      this.shimmerDuration});
+}
+
+/// The Customer Center screen that was opened.
+enum PCustomerCenterScreenType { management, noPurchases }
+
+/// How the Customer Center was presented.
+enum PCustomerCenterPresentationStyle { sheet, embedded }
+
+/// The result of matching an install to the ad click that led to it.
+class PAttributionMatchInfo {
+  /// The provider that made the match, such as `mmp` or `apple_search_ads`.
+  String provider;
+  bool matched;
+  String? source;
+
+  /// `high`, `medium` or `low`.
+  String? confidence;
+  double? matchScore;
+  String? reason;
+
+  PAttributionMatchInfo(this.provider, this.matched, this.source,
+      this.confidence, this.matchScore, this.reason);
 }
 
 /// The kind of transaction that completed.
@@ -1589,6 +1788,7 @@ enum PLogScope {
   paywallTransactions,
   nativePurchaseController,
   deepLinks,
+  billing,
   all
 }
 
@@ -1830,6 +2030,9 @@ enum PPaywallSkippedReason {
   holdout,
   noAudienceMatch,
   placementNotFound,
+
+  /// The user is already subscribed. Android only.
+  userIsSubscribed,
 }
 
 sealed class PPaywallResult {
@@ -1965,6 +2168,13 @@ abstract class PSuperwallHostApi {
   @async
   PCustomerInfo getCustomerInfo();
 
+  // Fetches the latest customer info from the store and Superwall instead
+  // of returning the cached value. Needs iOS SDK 4.19.0, which is only
+  // used when the plugin is built with Swift Package Manager; otherwise,
+  // and on Android, this returns the same as getCustomerInfo.
+  @async
+  PCustomerInfo refreshCustomerInfo();
+
   // Subscription status methods
   PSubscriptionStatus getSubscriptionStatus();
   void setSubscriptionStatus(PSubscriptionStatus subscriptionStatus);
@@ -2013,6 +2223,25 @@ abstract class PSuperwallHostApi {
   // Cancels the local notifications Superwall scheduled, such as trial
   // reminders.
   void cancelAllScheduledNotifications();
+
+  // Shows an alert over the presented paywall. Completes with `true` when
+  // the action button was tapped and `false` when the alert was closed.
+  // Android only.
+  @async
+  bool showAlert(String? title, String? message, String? actionTitle,
+      String? closeActionTitle);
+
+  // Opens the page where the user restores their web purchases.
+  // Android only.
+  void openRestoreOnWeb();
+
+  // The ID purchases are attributed to in Google Play. Android only.
+  String? getExternalAccountId();
+
+  // Entitlements granted outside of the store, such as by your own
+  // server. iOS only.
+  List<PEntitlement> getGrantedEntitlements();
+  void setGrantedEntitlements(List<PEntitlement> entitlements);
 }
 
 @FlutterApi()
@@ -2077,7 +2306,8 @@ abstract class PPaywallPresentationHandlerGenerated {
   void onWillDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult);
   void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult);
   void onError(String error);
-  void onSkip(PPaywallSkippedReason reason);
+  /// [experiment] is set when [reason] is `holdout`.
+  void onSkip(PPaywallSkippedReason reason, PExperiment? experiment);
 
   /// Called when the paywall requests a custom callback.
   /// Returns a result indicating success/failure with optional data.

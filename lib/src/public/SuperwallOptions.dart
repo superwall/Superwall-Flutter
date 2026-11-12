@@ -44,6 +44,11 @@ class SuperwallOptions {
   /// iOS only.
   StoreKitVersion? storeKitVersion;
 
+  /// Local files that paywalls can load instead of downloading them, keyed
+  /// by the resource ID set in the paywall editor. Each value is a file path
+  /// or a `file://` or `content://` URI.
+  Map<String, String>? localResources;
+
   /// Sets the device locale identifier to use when evaluating rules.
   String? localeIdentifier;
 
@@ -118,6 +123,7 @@ extension SuperwallOptionsJson on SuperwallOptions {
           _isExternalDataCollectionEnabled ?? true,
       'eventTrackingBehavior': eventTrackingBehavior?.toJson(),
       'storeKitVersion': storeKitVersion?.toJson(),
+      'localResources': localResources,
       'localeIdentifier': localeIdentifier,
       'isGameControllerEnabled': isGameControllerEnabled,
       'logging': logging.toJson(),

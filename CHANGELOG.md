@@ -6,6 +6,7 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 
 ### Enhancements
 - Updates Android SDK to 2.10.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.10.2).
+- Updates iOS SDK to 4.19.1 when the plugin is built with Swift Package Manager [View iOS SDK release notes](https://github.com/superwall/Superwall-iOS/releases/tag/4.19.1). CocoaPods builds stay on 4.18.3 until 4.19 is published to CocoaPods.
 - Adds `Superwall.shared.getAssignments()`, which returns the experiment assignments made so far without confirming the rest.
 - Adds `Superwall.shared.refreshConfiguration()` to fetch the Superwall configuration again without restarting the app.
 - Adds `EventTrackingBehavior` (`all`, `superwallOnly` or `none`) to choose which events the SDK sends to Superwall. Set it with `SuperwallOptions.eventTrackingBehavior` when configuring, or at runtime with `Superwall.shared.setEventTrackingBehavior()`, and read it with `Superwall.shared.getEventTrackingBehavior()`.
@@ -29,11 +30,22 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - Adds `IntegrationAttribute.singularDeviceId`, the iOS-only `firebaseInstallationId`, and the Android-only `meta`, `amplitude`, `mixpanel`, `googleAds`, `googleAppSetId` and `custom`.
 - Adds the `analytics`, `webEntitlements`, `grantedEntitlements` and `customerCenter` (iOS only) and `customerInfo`, `jsEvaluator`, `paywallTransactions`, `nativePurchaseController` and `deepLinks` (Android only) cases to `LogScope`.
 - Adds `RedemptionInfo.userAttributes` (iOS only) and `RedemptionPaywallInfo.productIdentifier` to the result of redeeming a web checkout code.
+- Adds `Superwall.shared.refreshCustomerInfo()`, which fetches fresh customer info on iOS when the plugin is built with Swift Package Manager. In CocoaPods builds and on Android it returns the same as `getCustomerInfo()`.
+- Adds `Superwall.shared.getGrantedEntitlements()` and `setGrantedEntitlements()` (iOS only) for entitlements granted outside of the store, such as by your own server. They persist across `reset()` and `identify()`, and each call to `setGrantedEntitlements()` replaces the previous set.
+- Android: adds `Superwall.shared.showAlert()` to show an alert over the presented paywall, completing with `true` when its action button was tapped, `Superwall.shared.openRestoreOnWeb()` to open the page where the user restores their web purchases, and `Superwall.shared.getExternalAccountId()`, the ID purchases are attributed to in Google Play. On iOS, `showAlert()` completes with `false`, `openRestoreOnWeb()` does nothing and `getExternalAccountId()` returns `null`.
+- Adds `SuperwallOptions.localResources`, local files that paywalls can load instead of downloading them, keyed by the resource ID set in the paywall editor.
+- Adds `LogScope.billing` (Android only).
+- `PaywallSkippedReasonHoldout` now has the `experiment` the user is in a holdout of, and adds `PaywallSkippedReasonUserIsSubscribed` (Android only).
+- Adds `RedemptionPaywallInfo.product`, a `RedemptionPaywallProduct` with the pricing details of the product bought in a web checkout.
+- Adds `introductoryDiscount` and `discounts` (each a `StoreProductDiscount`), `billingPlanType` (a `BillingPlanType`) and `isBillingPlanAvailable` to `StoreProduct` (iOS only). `StoreProduct.customTransactionId` is also available on iOS when the plugin is built with Swift Package Manager.
+- Adds typed event details to `SuperwallEvent`: `attributionMatchInfo` (an `AttributionMatchInfo`) for `attributionMatch`; `customerCenterAction`, `customerCenterPathId`, `customerCenterProductId`, `customerCenterSurveyId`, `customerCenterSurveyOptionId`, `customerCenterRefundStatus`, `customerCenterScreen` (a `CustomerCenterScreenType`) and the iOS-only `customerCenterPresentationStyle` (a `CustomerCenterPresentationStyle`) for the Customer Center events; and the Android-only `fromCustomerInfo` and `toCustomerInfo` for `customerInfoDidChange`, `resourceUrl` for a paywall resource that failed to load, and `shimmerDuration` for `shimmerViewComplete`.
 
 ### Fixes
 - iOS: fixes `transactionRestore` events being delivered to `SuperwallDelegate.handleSuperwallEvent` as `transactionComplete`, and `attributionMatch` events being delivered as `customPlacement`. If you relied on either, update your event handling.
+- Fixes a paywall resource that failed to load being delivered to `SuperwallDelegate.handleSuperwallEvent` as `paywallResponseLoadFail`. It now has its own `paywallResourceLoadFail` event type.
 - Android: fixes the `integrationAttributes`, `reviewRequested`, `customerInfoDidChange`, `enrichmentStart`, `enrichmentComplete` and `enrichmentFail` events being delivered as `customPlacement`.
 - Android: fixes integration attributes set with `setIntegrationAttribute()` and `setIntegrationAttributes()` being dropped. They were sent as `$`-prefixed user attributes, which the Android SDK ignores, and are now set through its integration attributes API.
+- Android: fixes the log level passed in `SuperwallOptions.logging` being ignored and always set to debug.
 
 ## 2.8.0
 

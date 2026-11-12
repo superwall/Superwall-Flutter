@@ -94,6 +94,7 @@ class Superwall {
           options.isExternalDataCollectionEnabledIfSet;
     }
     generatedOptions.storeKitVersion = options.storeKitVersion?.toPigeon();
+    generatedOptions.localResources = options.localResources;
     generatedOptions.localeIdentifier = options.localeIdentifier;
     generatedOptions.isGameControllerEnabled = options.isGameControllerEnabled;
     generatedOptions.passIdentifiersToPlayStore =
@@ -309,6 +310,8 @@ class Superwall {
         return generated.PLogScope.nativePurchaseController;
       case LogScope.deepLinks:
         return generated.PLogScope.deepLinks;
+      case LogScope.billing:
+        return generated.PLogScope.billing;
       case LogScope.all:
         return generated.PLogScope.all;
     }
@@ -515,6 +518,38 @@ class Superwall {
   Future<CustomerInfo> getCustomerInfo() async {
     final customerInfo = await hostApi.getCustomerInfo();
     return CustomerInfo.fromPigeon(customerInfo);
+  }
+
+  /// Fetches the latest customer info from the store and Superwall, instead
+  /// of returning the cached value.
+  ///
+  /// This fetches fresh customer info on iOS when the plugin is built with
+  /// Swift Package Manager. In CocoaPods builds, and on Android, it returns
+  /// the same as [getCustomerInfo].
+  Future<CustomerInfo> refreshCustomerInfo() async {
+    final customerInfo = await hostApi.refreshCustomerInfo();
+    return CustomerInfo.fromPigeon(customerInfo);
+  }
+
+  /// iOS only. Gets the entitlements granted outside of the store, such as
+  /// by your own server, set via [setGrantedEntitlements].
+  ///
+  /// Returns an empty set on Android.
+  Future<Set<Entitlement>> getGrantedEntitlements() async {
+    final entitlements = await hostApi.getGrantedEntitlements();
+    return entitlements.map((e) => Entitlement.fromPigeon(e)).toSet();
+  }
+
+  /// iOS only. Sets the entitlements granted outside of the store, such as
+  /// by your own server.
+  ///
+  /// They persist across [reset] and [identify], and each call replaces the
+  /// previous set, so pass an empty set to remove them.
+  ///
+  /// Does nothing on Android.
+  Future<void> setGrantedEntitlements(Set<Entitlement> entitlements) async {
+    await hostApi
+        .setGrantedEntitlements(entitlements.map((e) => e.toPigeon()).toList());
   }
 
   // Gets the latest PaywallInfo object
@@ -789,6 +824,37 @@ class Superwall {
   /// Does nothing on iOS.
   Future<void> handleNotificationOpen(Map<String, String> data) async {
     await hostApi.handleNotificationOpen(data);
+  }
+
+  /// Android only. Shows an alert over the presented paywall.
+  ///
+  /// Completes with `true` when the action button was tapped and `false`
+  /// when the alert was closed. Completes with `false` on iOS, where no
+  /// alert is shown.
+  Future<bool> showAlert({
+    String? title,
+    String? message,
+    String? actionTitle,
+    String? closeActionTitle,
+  }) async {
+    return await hostApi.showAlert(
+        title, message, actionTitle, closeActionTitle);
+  }
+
+  /// Android only. Opens the page where the user restores their web
+  /// purchases.
+  ///
+  /// Does nothing on iOS.
+  Future<void> openRestoreOnWeb() async {
+    await hostApi.openRestoreOnWeb();
+  }
+
+  /// Android only. Gets the ID that purchases are attributed to in Google
+  /// Play.
+  ///
+  /// Returns `null` on iOS.
+  Future<String?> getExternalAccountId() async {
+    return await hostApi.getExternalAccountId();
   }
 
   /// Cancels the local notifications Superwall scheduled, such as free trial

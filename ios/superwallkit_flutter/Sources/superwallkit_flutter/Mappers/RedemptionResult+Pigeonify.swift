@@ -65,7 +65,8 @@ extension RedemptionResult.RedemptionInfo {
         variantId: paywallInfo.variantId,
         experimentId: paywallInfo.experimentId,
         // `productIdentifier` is deprecated, but older redemptions have it and no `product`.
-        productIdentifier: paywallInfo.product?.identifier ?? paywallInfo.productIdentifier
+        productIdentifier: paywallInfo.product?.identifier ?? paywallInfo.productIdentifier,
+        product: paywallInfo.product?.pigeonify()
       )
     }
 
@@ -76,6 +77,44 @@ extension RedemptionResult.RedemptionInfo {
       paywallInfo: paywallRedemptionInfo,
       entitlements: entitlements,
       userAttributes: userAttributes
+    )
+  }
+}
+
+extension RedemptionResult.RedemptionInfo.PaywallInfo.PaywallProduct {
+  func pigeonify() -> PRedemptionPaywallProduct {
+    return PRedemptionPaywallProduct(
+      identifier: identifier,
+      languageCode: languageCode,
+      locale: locale,
+      currencyCode: currencyCode,
+      currencySymbol: currencySymbol,
+      period: period,
+      periodly: periodly,
+      localizedPeriod: localizedPeriod,
+      periodAlt: periodAlt,
+      periodDays: Int64(periodDays),
+      periodWeeks: Int64(periodWeeks),
+      periodMonths: Int64(periodMonths),
+      periodYears: Int64(periodYears),
+      rawPrice: rawPrice,
+      price: price,
+      dailyPrice: dailyPrice,
+      weeklyPrice: weeklyPrice,
+      monthlyPrice: monthlyPrice,
+      yearlyPrice: yearlyPrice,
+      rawTrialPeriodPrice: rawTrialPeriodPrice,
+      trialPeriodPrice: trialPeriodPrice,
+      trialPeriodDailyPrice: trialPeriodDailyPrice,
+      trialPeriodWeeklyPrice: trialPeriodWeeklyPrice,
+      trialPeriodMonthlyPrice: trialPeriodMonthlyPrice,
+      trialPeriodYearlyPrice: trialPeriodYearlyPrice,
+      trialPeriodDays: Int64(trialPeriodDays),
+      trialPeriodWeeks: Int64(trialPeriodWeeks),
+      trialPeriodMonths: Int64(trialPeriodMonths),
+      trialPeriodYears: Int64(trialPeriodYears),
+      trialPeriodText: trialPeriodText,
+      trialPeriodEndDate: trialPeriodEndDate
     )
   }
 }

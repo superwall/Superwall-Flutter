@@ -51,9 +51,10 @@ class PaywallPresentationHandlerProxy
   }
 
   @override
-  void onSkip(PPaywallSkippedReason reason) {
+  void onSkip(PPaywallSkippedReason reason, PExperiment? experiment) {
     if (handler.onSkipHandler != null) {
-      handler.onSkipHandler!(PaywallSkippedReason.fromPigeon(reason)!!);
+      handler.onSkipHandler!(
+          PaywallSkippedReason.fromPigeon(reason, experiment)!!);
     }
   }
 

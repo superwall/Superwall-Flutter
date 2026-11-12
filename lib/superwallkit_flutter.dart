@@ -1,6 +1,7 @@
 library superwallkit_flutter;
 
 export 'src/public/AdConsent.dart';
+export 'src/public/AttributionMatchInfo.dart';
 export 'src/public/ComputedPropertyRequest.dart';
 export 'src/public/ConfirmedAssignments.dart';
 export 'src/public/CustomCallback.dart';
@@ -37,6 +38,7 @@ export 'src/public/SuperwallOptions.dart' hide SuperwallOptionsInternal;
 export 'src/public/Survey.dart';
 export 'src/public/StoreKitVersion.dart';
 export 'src/public/StoreProduct.dart';
+export 'src/public/StoreProductDiscount.dart';
 export 'src/public/StoreTransaction.dart';
 export 'src/public/SubscriptionPeriod.dart';
 export 'src/public/TransactionProduct.dart';

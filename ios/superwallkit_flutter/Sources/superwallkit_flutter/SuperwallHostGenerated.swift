@@ -253,6 +253,25 @@ enum PSubscriptionPeriodUnit: Int {
   case year = 3
 }
 
+/// How an App Store subscription is billed. iOS only.
+enum PBillingPlanType: Int {
+  case upFront = 0
+  case monthly = 1
+}
+
+/// How the price of a discount is charged. iOS only.
+enum PStoreProductDiscountPaymentMode: Int {
+  case payAsYouGo = 0
+  case payUpFront = 1
+  case freeTrial = 2
+}
+
+/// The kind of discount. iOS only.
+enum PStoreProductDiscountType: Int {
+  case introductory = 0
+  case promotional = 1
+}
+
 /// How a URL path in the Customer Center opens.
 enum PCustomerCenterOpenMethod: Int {
   case inApp = 0
@@ -369,6 +388,18 @@ enum PIntegrationAttribute: Int {
   case custom = 29
 }
 
+/// The Customer Center screen that was opened.
+enum PCustomerCenterScreenType: Int {
+  case management = 0
+  case noPurchases = 1
+}
+
+/// How the Customer Center was presented.
+enum PCustomerCenterPresentationStyle: Int {
+  case sheet = 0
+  case embedded = 1
+}
+
 /// The kind of transaction that completed.
 enum PTransactionType: Int {
   case nonRecurringProductPurchase = 0
@@ -431,7 +462,8 @@ enum PLogScope: Int {
   case paywallTransactions = 27
   case nativePurchaseController = 28
   case deepLinks = 29
-  case all = 30
+  case billing = 30
+  case all = 31
 }
 
 enum PConfigurationStatus: Int {
@@ -554,6 +586,8 @@ enum PPaywallSkippedReason: Int {
   case holdout = 0
   case noAudienceMatch = 1
   case placementNotFound = 2
+  /// The user is already subscribed. Android only.
+  case userIsSubscribed = 3
 }
 
 /// How the store should charge when a purchase replaces an existing
@@ -1031,6 +1065,8 @@ struct PRedemptionPaywallInfo: Hashable {
   var experimentId: String
   /// The identifier of the product that was purchased.
   var productIdentifier: String? = nil
+  /// The product that was purchased, with its pricing details.
+  var product: PRedemptionPaywallProduct? = nil
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -1041,6 +1077,7 @@ struct PRedemptionPaywallInfo: Hashable {
     let variantId = pigeonVar_list[3] as! String
     let experimentId = pigeonVar_list[4] as! String
     let productIdentifier: String? = nilOrValue(pigeonVar_list[5])
+    let product: PRedemptionPaywallProduct? = nilOrValue(pigeonVar_list[6])
 
     return PRedemptionPaywallInfo(
       identifier: identifier,
@@ -1048,7 +1085,8 @@ struct PRedemptionPaywallInfo: Hashable {
       placementParams: placementParams,
       variantId: variantId,
       experimentId: experimentId,
-      productIdentifier: productIdentifier
+      productIdentifier: productIdentifier,
+      product: product
     )
   }
   func toList() -> [Any?] {
@@ -1059,9 +1097,157 @@ struct PRedemptionPaywallInfo: Hashable {
       variantId,
       experimentId,
       productIdentifier,
+      product,
     ]
   }
   static func == (lhs: PRedemptionPaywallInfo, rhs: PRedemptionPaywallInfo) -> Bool {
+    return deepEqualsSuperwallHostGenerated(lhs.toList(), rhs.toList())  }
+  func hash(into hasher: inout Hasher) {
+    deepHashSuperwallHostGenerated(value: toList(), hasher: &hasher)
+  }
+}
+
+/// The product purchased from a paywall during a web checkout.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PRedemptionPaywallProduct: Hashable {
+  var identifier: String
+  var languageCode: String
+  var locale: String
+  var currencyCode: String
+  var currencySymbol: String
+  var period: String
+  var periodly: String
+  var localizedPeriod: String
+  var periodAlt: String
+  var periodDays: Int64
+  var periodWeeks: Int64
+  var periodMonths: Int64
+  var periodYears: Int64
+  var rawPrice: Double
+  var price: String
+  var dailyPrice: String
+  var weeklyPrice: String
+  var monthlyPrice: String
+  var yearlyPrice: String
+  var rawTrialPeriodPrice: Double
+  var trialPeriodPrice: String
+  var trialPeriodDailyPrice: String
+  var trialPeriodWeeklyPrice: String
+  var trialPeriodMonthlyPrice: String
+  var trialPeriodYearlyPrice: String
+  var trialPeriodDays: Int64
+  var trialPeriodWeeks: Int64
+  var trialPeriodMonths: Int64
+  var trialPeriodYears: Int64
+  var trialPeriodText: String
+  var trialPeriodEndDate: String
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PRedemptionPaywallProduct? {
+    let identifier = pigeonVar_list[0] as! String
+    let languageCode = pigeonVar_list[1] as! String
+    let locale = pigeonVar_list[2] as! String
+    let currencyCode = pigeonVar_list[3] as! String
+    let currencySymbol = pigeonVar_list[4] as! String
+    let period = pigeonVar_list[5] as! String
+    let periodly = pigeonVar_list[6] as! String
+    let localizedPeriod = pigeonVar_list[7] as! String
+    let periodAlt = pigeonVar_list[8] as! String
+    let periodDays = pigeonVar_list[9] as! Int64
+    let periodWeeks = pigeonVar_list[10] as! Int64
+    let periodMonths = pigeonVar_list[11] as! Int64
+    let periodYears = pigeonVar_list[12] as! Int64
+    let rawPrice = pigeonVar_list[13] as! Double
+    let price = pigeonVar_list[14] as! String
+    let dailyPrice = pigeonVar_list[15] as! String
+    let weeklyPrice = pigeonVar_list[16] as! String
+    let monthlyPrice = pigeonVar_list[17] as! String
+    let yearlyPrice = pigeonVar_list[18] as! String
+    let rawTrialPeriodPrice = pigeonVar_list[19] as! Double
+    let trialPeriodPrice = pigeonVar_list[20] as! String
+    let trialPeriodDailyPrice = pigeonVar_list[21] as! String
+    let trialPeriodWeeklyPrice = pigeonVar_list[22] as! String
+    let trialPeriodMonthlyPrice = pigeonVar_list[23] as! String
+    let trialPeriodYearlyPrice = pigeonVar_list[24] as! String
+    let trialPeriodDays = pigeonVar_list[25] as! Int64
+    let trialPeriodWeeks = pigeonVar_list[26] as! Int64
+    let trialPeriodMonths = pigeonVar_list[27] as! Int64
+    let trialPeriodYears = pigeonVar_list[28] as! Int64
+    let trialPeriodText = pigeonVar_list[29] as! String
+    let trialPeriodEndDate = pigeonVar_list[30] as! String
+
+    return PRedemptionPaywallProduct(
+      identifier: identifier,
+      languageCode: languageCode,
+      locale: locale,
+      currencyCode: currencyCode,
+      currencySymbol: currencySymbol,
+      period: period,
+      periodly: periodly,
+      localizedPeriod: localizedPeriod,
+      periodAlt: periodAlt,
+      periodDays: periodDays,
+      periodWeeks: periodWeeks,
+      periodMonths: periodMonths,
+      periodYears: periodYears,
+      rawPrice: rawPrice,
+      price: price,
+      dailyPrice: dailyPrice,
+      weeklyPrice: weeklyPrice,
+      monthlyPrice: monthlyPrice,
+      yearlyPrice: yearlyPrice,
+      rawTrialPeriodPrice: rawTrialPeriodPrice,
+      trialPeriodPrice: trialPeriodPrice,
+      trialPeriodDailyPrice: trialPeriodDailyPrice,
+      trialPeriodWeeklyPrice: trialPeriodWeeklyPrice,
+      trialPeriodMonthlyPrice: trialPeriodMonthlyPrice,
+      trialPeriodYearlyPrice: trialPeriodYearlyPrice,
+      trialPeriodDays: trialPeriodDays,
+      trialPeriodWeeks: trialPeriodWeeks,
+      trialPeriodMonths: trialPeriodMonths,
+      trialPeriodYears: trialPeriodYears,
+      trialPeriodText: trialPeriodText,
+      trialPeriodEndDate: trialPeriodEndDate
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      identifier,
+      languageCode,
+      locale,
+      currencyCode,
+      currencySymbol,
+      period,
+      periodly,
+      localizedPeriod,
+      periodAlt,
+      periodDays,
+      periodWeeks,
+      periodMonths,
+      periodYears,
+      rawPrice,
+      price,
+      dailyPrice,
+      weeklyPrice,
+      monthlyPrice,
+      yearlyPrice,
+      rawTrialPeriodPrice,
+      trialPeriodPrice,
+      trialPeriodDailyPrice,
+      trialPeriodWeeklyPrice,
+      trialPeriodMonthlyPrice,
+      trialPeriodYearlyPrice,
+      trialPeriodDays,
+      trialPeriodWeeks,
+      trialPeriodMonths,
+      trialPeriodYears,
+      trialPeriodText,
+      trialPeriodEndDate,
+    ]
+  }
+  static func == (lhs: PRedemptionPaywallProduct, rhs: PRedemptionPaywallProduct) -> Bool {
     return deepEqualsSuperwallHostGenerated(lhs.toList(), rhs.toList())  }
   func hash(into hasher: inout Hasher) {
     deepHashSuperwallHostGenerated(value: toList(), hasher: &hasher)
@@ -1103,6 +1289,10 @@ struct PSuperwallOptions: Hashable {
   /// The StoreKit version the SDK uses. `null` uses the native default.
   /// iOS only.
   var storeKitVersion: PStoreKitVersion? = nil
+  /// Local files paywalls can load instead of downloading them, keyed by
+  /// the resource ID set in the paywall editor. Each value is a file path
+  /// or a `file://` or `content://` URI.
+  var localResources: [String: String]? = nil
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -1124,6 +1314,7 @@ struct PSuperwallOptions: Hashable {
     let adConsent: PAdConsent? = nilOrValue(pigeonVar_list[14])
     let eventTrackingBehavior: PEventTrackingBehavior? = nilOrValue(pigeonVar_list[15])
     let storeKitVersion: PStoreKitVersion? = nilOrValue(pigeonVar_list[16])
+    let localResources: [String: String]? = nilOrValue(pigeonVar_list[17])
 
     return PSuperwallOptions(
       paywalls: paywalls,
@@ -1142,7 +1333,8 @@ struct PSuperwallOptions: Hashable {
       customerCenter: customerCenter,
       adConsent: adConsent,
       eventTrackingBehavior: eventTrackingBehavior,
-      storeKitVersion: storeKitVersion
+      storeKitVersion: storeKitVersion,
+      localResources: localResources
     )
   }
   func toList() -> [Any?] {
@@ -1164,6 +1356,7 @@ struct PSuperwallOptions: Hashable {
       adConsent,
       eventTrackingBehavior,
       storeKitVersion,
+      localResources,
     ]
   }
   static func == (lhs: PSuperwallOptions, rhs: PSuperwallOptions) -> Bool {
@@ -2081,6 +2274,61 @@ struct PSubscriptionPeriod: Hashable {
   }
 }
 
+/// An introductory or promotional offer of a product. iOS only.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PStoreProductDiscount: Hashable {
+  var offerIdentifier: String? = nil
+  var currencyCode: String? = nil
+  var price: Double
+  var localizedPriceString: String
+  var paymentMode: PStoreProductDiscountPaymentMode
+  var subscriptionPeriod: PSubscriptionPeriod
+  var numberOfPeriods: Int64
+  var type: PStoreProductDiscountType
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PStoreProductDiscount? {
+    let offerIdentifier: String? = nilOrValue(pigeonVar_list[0])
+    let currencyCode: String? = nilOrValue(pigeonVar_list[1])
+    let price = pigeonVar_list[2] as! Double
+    let localizedPriceString = pigeonVar_list[3] as! String
+    let paymentMode = pigeonVar_list[4] as! PStoreProductDiscountPaymentMode
+    let subscriptionPeriod = pigeonVar_list[5] as! PSubscriptionPeriod
+    let numberOfPeriods = pigeonVar_list[6] as! Int64
+    let type = pigeonVar_list[7] as! PStoreProductDiscountType
+
+    return PStoreProductDiscount(
+      offerIdentifier: offerIdentifier,
+      currencyCode: currencyCode,
+      price: price,
+      localizedPriceString: localizedPriceString,
+      paymentMode: paymentMode,
+      subscriptionPeriod: subscriptionPeriod,
+      numberOfPeriods: numberOfPeriods,
+      type: type
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      offerIdentifier,
+      currencyCode,
+      price,
+      localizedPriceString,
+      paymentMode,
+      subscriptionPeriod,
+      numberOfPeriods,
+      type,
+    ]
+  }
+  static func == (lhs: PStoreProductDiscount, rhs: PStoreProductDiscount) -> Bool {
+    return deepEqualsSuperwallHostGenerated(lhs.toList(), rhs.toList())  }
+  func hash(into hasher: inout Hasher) {
+    deepHashSuperwallHostGenerated(value: toList(), hasher: &hasher)
+  }
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct PStoreProduct: Hashable {
   var entitlements: [PEntitlement]
@@ -2135,8 +2383,18 @@ struct PStoreProduct: Hashable {
   /// checkout. Android only.
   var isCustomProduct: Bool? = nil
   /// The transaction ID the SDK made for a custom store product purchase.
-  /// Android only.
+  /// On iOS this needs SDK 4.19.0, which is only used when the plugin is
+  /// built with Swift Package Manager.
   var customTransactionId: String? = nil
+  /// The introductory offer of the product. iOS only.
+  var introductoryDiscount: PStoreProductDiscount? = nil
+  /// The promotional and introductory offers of the product. iOS only.
+  var discounts: [PStoreProductDiscount]? = nil
+  /// The billing plan the product is bought with. iOS only.
+  var billingPlanType: PBillingPlanType? = nil
+  /// Whether the product's billing plan is available on this device.
+  /// iOS only.
+  var isBillingPlanAvailable: Bool? = nil
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -2188,6 +2446,10 @@ struct PStoreProduct: Hashable {
     let storeFrontCountryCode: String? = nilOrValue(pigeonVar_list[44])
     let isCustomProduct: Bool? = nilOrValue(pigeonVar_list[45])
     let customTransactionId: String? = nilOrValue(pigeonVar_list[46])
+    let introductoryDiscount: PStoreProductDiscount? = nilOrValue(pigeonVar_list[47])
+    let discounts: [PStoreProductDiscount]? = nilOrValue(pigeonVar_list[48])
+    let billingPlanType: PBillingPlanType? = nilOrValue(pigeonVar_list[49])
+    let isBillingPlanAvailable: Bool? = nilOrValue(pigeonVar_list[50])
 
     return PStoreProduct(
       entitlements: entitlements,
@@ -2236,7 +2498,11 @@ struct PStoreProduct: Hashable {
       productType: productType,
       storeFrontCountryCode: storeFrontCountryCode,
       isCustomProduct: isCustomProduct,
-      customTransactionId: customTransactionId
+      customTransactionId: customTransactionId,
+      introductoryDiscount: introductoryDiscount,
+      discounts: discounts,
+      billingPlanType: billingPlanType,
+      isBillingPlanAvailable: isBillingPlanAvailable
     )
   }
   func toList() -> [Any?] {
@@ -2288,6 +2554,10 @@ struct PStoreProduct: Hashable {
       storeFrontCountryCode,
       isCustomProduct,
       customTransactionId,
+      introductoryDiscount,
+      discounts,
+      billingPlanType,
+      isBillingPlanAvailable,
     ]
   }
   static func == (lhs: PStoreProduct, rhs: PStoreProduct) -> Bool {
@@ -3781,6 +4051,35 @@ struct PSuperwallEventInfo: Hashable {
   var paywallCount: Int64? = nil
   /// The kind of transaction that completed. iOS only.
   var transactionType: PTransactionType? = nil
+  /// The result of an install attribution match, for `attributionMatch`.
+  var attributionMatchInfo: PAttributionMatchInfo? = nil
+  /// The Customer Center action, for `customerCenterAction` and
+  /// `customerCenterSurveyResponse`.
+  var customerCenterAction: PCustomerCenterAction? = nil
+  /// The ID of the Customer Center path the user selected.
+  var customerCenterPathId: String? = nil
+  /// The ID of the product a Customer Center event is about.
+  var customerCenterProductId: String? = nil
+  /// The ID of the Customer Center survey that was answered.
+  var customerCenterSurveyId: String? = nil
+  /// The ID of the option selected in a Customer Center survey.
+  var customerCenterSurveyOptionId: String? = nil
+  /// The outcome of a refund request made from the Customer Center.
+  var customerCenterRefundStatus: PCustomerCenterRefundStatus? = nil
+  /// The Customer Center screen that opened.
+  var customerCenterScreen: PCustomerCenterScreenType? = nil
+  /// How the Customer Center was presented. iOS only.
+  var customerCenterPresentationStyle: PCustomerCenterPresentationStyle? = nil
+  /// The customer info before a `customerInfoDidChange` event. Android only.
+  var fromCustomerInfo: PCustomerInfo? = nil
+  /// The customer info after a `customerInfoDidChange` event. Android only.
+  var toCustomerInfo: PCustomerInfo? = nil
+  /// The URL of the resource that failed to load, for
+  /// `paywallResourceLoadFail`. Android only.
+  var resourceUrl: String? = nil
+  /// How long the shimmer view was shown, in milliseconds, for
+  /// `shimmerViewComplete`. Android only.
+  var shimmerDuration: Double? = nil
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -3817,6 +4116,19 @@ struct PSuperwallEventInfo: Hashable {
     let paywallIdentifier: String? = nilOrValue(pigeonVar_list[29])
     let paywallCount: Int64? = nilOrValue(pigeonVar_list[30])
     let transactionType: PTransactionType? = nilOrValue(pigeonVar_list[31])
+    let attributionMatchInfo: PAttributionMatchInfo? = nilOrValue(pigeonVar_list[32])
+    let customerCenterAction: PCustomerCenterAction? = nilOrValue(pigeonVar_list[33])
+    let customerCenterPathId: String? = nilOrValue(pigeonVar_list[34])
+    let customerCenterProductId: String? = nilOrValue(pigeonVar_list[35])
+    let customerCenterSurveyId: String? = nilOrValue(pigeonVar_list[36])
+    let customerCenterSurveyOptionId: String? = nilOrValue(pigeonVar_list[37])
+    let customerCenterRefundStatus: PCustomerCenterRefundStatus? = nilOrValue(pigeonVar_list[38])
+    let customerCenterScreen: PCustomerCenterScreenType? = nilOrValue(pigeonVar_list[39])
+    let customerCenterPresentationStyle: PCustomerCenterPresentationStyle? = nilOrValue(pigeonVar_list[40])
+    let fromCustomerInfo: PCustomerInfo? = nilOrValue(pigeonVar_list[41])
+    let toCustomerInfo: PCustomerInfo? = nilOrValue(pigeonVar_list[42])
+    let resourceUrl: String? = nilOrValue(pigeonVar_list[43])
+    let shimmerDuration: Double? = nilOrValue(pigeonVar_list[44])
 
     return PSuperwallEventInfo(
       eventType: eventType,
@@ -3850,7 +4162,20 @@ struct PSuperwallEventInfo: Hashable {
       permissionName: permissionName,
       paywallIdentifier: paywallIdentifier,
       paywallCount: paywallCount,
-      transactionType: transactionType
+      transactionType: transactionType,
+      attributionMatchInfo: attributionMatchInfo,
+      customerCenterAction: customerCenterAction,
+      customerCenterPathId: customerCenterPathId,
+      customerCenterProductId: customerCenterProductId,
+      customerCenterSurveyId: customerCenterSurveyId,
+      customerCenterSurveyOptionId: customerCenterSurveyOptionId,
+      customerCenterRefundStatus: customerCenterRefundStatus,
+      customerCenterScreen: customerCenterScreen,
+      customerCenterPresentationStyle: customerCenterPresentationStyle,
+      fromCustomerInfo: fromCustomerInfo,
+      toCustomerInfo: toCustomerInfo,
+      resourceUrl: resourceUrl,
+      shimmerDuration: shimmerDuration
     )
   }
   func toList() -> [Any?] {
@@ -3887,9 +4212,71 @@ struct PSuperwallEventInfo: Hashable {
       paywallIdentifier,
       paywallCount,
       transactionType,
+      attributionMatchInfo,
+      customerCenterAction,
+      customerCenterPathId,
+      customerCenterProductId,
+      customerCenterSurveyId,
+      customerCenterSurveyOptionId,
+      customerCenterRefundStatus,
+      customerCenterScreen,
+      customerCenterPresentationStyle,
+      fromCustomerInfo,
+      toCustomerInfo,
+      resourceUrl,
+      shimmerDuration,
     ]
   }
   static func == (lhs: PSuperwallEventInfo, rhs: PSuperwallEventInfo) -> Bool {
+    return deepEqualsSuperwallHostGenerated(lhs.toList(), rhs.toList())  }
+  func hash(into hasher: inout Hasher) {
+    deepHashSuperwallHostGenerated(value: toList(), hasher: &hasher)
+  }
+}
+
+/// The result of matching an install to the ad click that led to it.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PAttributionMatchInfo: Hashable {
+  /// The provider that made the match, such as `mmp` or `apple_search_ads`.
+  var provider: String
+  var matched: Bool
+  var source: String? = nil
+  /// `high`, `medium` or `low`.
+  var confidence: String? = nil
+  var matchScore: Double? = nil
+  var reason: String? = nil
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PAttributionMatchInfo? {
+    let provider = pigeonVar_list[0] as! String
+    let matched = pigeonVar_list[1] as! Bool
+    let source: String? = nilOrValue(pigeonVar_list[2])
+    let confidence: String? = nilOrValue(pigeonVar_list[3])
+    let matchScore: Double? = nilOrValue(pigeonVar_list[4])
+    let reason: String? = nilOrValue(pigeonVar_list[5])
+
+    return PAttributionMatchInfo(
+      provider: provider,
+      matched: matched,
+      source: source,
+      confidence: confidence,
+      matchScore: matchScore,
+      reason: reason
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      provider,
+      matched,
+      source,
+      confidence,
+      matchScore,
+      reason,
+    ]
+  }
+  static func == (lhs: PAttributionMatchInfo, rhs: PAttributionMatchInfo) -> Bool {
     return deepEqualsSuperwallHostGenerated(lhs.toList(), rhs.toList())  }
   func hash(into hasher: inout Hasher) {
     deepHashSuperwallHostGenerated(value: toList(), hasher: &hasher)
@@ -4711,38 +5098,54 @@ private struct PigeonInternalCodecOverflow {
         
     switch type {
       case 0:
-        return PExperiment.fromList(wrapped as! [Any?]);
+        return PStatusReasonHoldout.fromList(wrapped as! [Any?]);
       case 1:
-        return PPlacementNotFoundTriggerResult.fromList(wrapped as! [Any?]);
+        return PStatusReasonNoAudienceMatch.fromList(wrapped as! [Any?]);
       case 2:
-        return PNoAudienceMatchTriggerResult.fromList(wrapped as! [Any?]);
+        return PStatusReasonPlacementNotFound.fromList(wrapped as! [Any?]);
       case 3:
-        return PPaywallTriggerResult.fromList(wrapped as! [Any?]);
+        return PStatusReasonNoPaywallVc.fromList(wrapped as! [Any?]);
       case 4:
-        return PHoldoutTriggerResult.fromList(wrapped as! [Any?]);
+        return PStatusReasonNoPresenter.fromList(wrapped as! [Any?]);
       case 5:
-        return PErrorTriggerResult.fromList(wrapped as! [Any?]);
+        return PStatusReasonNoConfig.fromList(wrapped as! [Any?]);
       case 6:
-        return PVariant.fromList(wrapped as! [Any?]);
+        return PStatusReasonSubsStatusTimeout.fromList(wrapped as! [Any?]);
       case 7:
-        return PConfirmedAssignment.fromList(wrapped as! [Any?]);
+        return PIdentityOptions.fromList(wrapped as! [Any?]);
       case 8:
-        return PPurchasedPaywallResult.fromList(wrapped as! [Any?]);
+        return PExperiment.fromList(wrapped as! [Any?]);
       case 9:
-        return PDeclinedPaywallResult.fromList(wrapped as! [Any?]);
+        return PPlacementNotFoundTriggerResult.fromList(wrapped as! [Any?]);
       case 10:
-        return PRestoredPaywallResult.fromList(wrapped as! [Any?]);
+        return PNoAudienceMatchTriggerResult.fromList(wrapped as! [Any?]);
       case 11:
-        return PPlacementNotFoundPresentationResult.fromList(wrapped as! [Any?]);
+        return PPaywallTriggerResult.fromList(wrapped as! [Any?]);
       case 12:
-        return PNoAudienceMatchPresentationResult.fromList(wrapped as! [Any?]);
+        return PHoldoutTriggerResult.fromList(wrapped as! [Any?]);
       case 13:
-        return PPaywallPresentationResult.fromList(wrapped as! [Any?]);
+        return PErrorTriggerResult.fromList(wrapped as! [Any?]);
       case 14:
-        return PHoldoutPresentationResult.fromList(wrapped as! [Any?]);
+        return PVariant.fromList(wrapped as! [Any?]);
       case 15:
-        return PPaywallNotAvailablePresentationResult.fromList(wrapped as! [Any?]);
+        return PConfirmedAssignment.fromList(wrapped as! [Any?]);
       case 16:
+        return PPurchasedPaywallResult.fromList(wrapped as! [Any?]);
+      case 17:
+        return PDeclinedPaywallResult.fromList(wrapped as! [Any?]);
+      case 18:
+        return PRestoredPaywallResult.fromList(wrapped as! [Any?]);
+      case 19:
+        return PPlacementNotFoundPresentationResult.fromList(wrapped as! [Any?]);
+      case 20:
+        return PNoAudienceMatchPresentationResult.fromList(wrapped as! [Any?]);
+      case 21:
+        return PPaywallPresentationResult.fromList(wrapped as! [Any?]);
+      case 22:
+        return PHoldoutPresentationResult.fromList(wrapped as! [Any?]);
+      case 23:
+        return PPaywallNotAvailablePresentationResult.fromList(wrapped as! [Any?]);
+      case 24:
         return PProductReplacement.fromList(wrapped as! [Any?]);
       default: 
         return nil
@@ -4840,311 +5243,331 @@ private class SuperwallHostGeneratedPigeonCodecReader: FlutterStandardReader {
     case 143:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PCustomerCenterOpenMethod(rawValue: enumResultAsInt)
+        return PBillingPlanType(rawValue: enumResultAsInt)
       }
       return nil
     case 144:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PCustomerCenterRefundStatus(rawValue: enumResultAsInt)
+        return PStoreProductDiscountPaymentMode(rawValue: enumResultAsInt)
       }
       return nil
     case 145:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PCustomCallbackResultStatus(rawValue: enumResultAsInt)
+        return PStoreProductDiscountType(rawValue: enumResultAsInt)
       }
       return nil
     case 146:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PProductStore(rawValue: enumResultAsInt)
+        return PCustomerCenterOpenMethod(rawValue: enumResultAsInt)
       }
       return nil
     case 147:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PEntitlementType(rawValue: enumResultAsInt)
+        return PCustomerCenterRefundStatus(rawValue: enumResultAsInt)
       }
       return nil
     case 148:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PLatestSubscriptionState(rawValue: enumResultAsInt)
+        return PCustomCallbackResultStatus(rawValue: enumResultAsInt)
       }
       return nil
     case 149:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PLatestSubscriptionOfferType(rawValue: enumResultAsInt)
+        return PProductStore(rawValue: enumResultAsInt)
       }
       return nil
     case 150:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PIntegrationAttribute(rawValue: enumResultAsInt)
+        return PEntitlementType(rawValue: enumResultAsInt)
       }
       return nil
     case 151:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PTransactionType(rawValue: enumResultAsInt)
+        return PLatestSubscriptionState(rawValue: enumResultAsInt)
       }
       return nil
     case 152:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PNetworkEnvironment(rawValue: enumResultAsInt)
+        return PLatestSubscriptionOfferType(rawValue: enumResultAsInt)
       }
       return nil
     case 153:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PLogLevel(rawValue: enumResultAsInt)
+        return PIntegrationAttribute(rawValue: enumResultAsInt)
       }
       return nil
     case 154:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PTransactionBackgroundView(rawValue: enumResultAsInt)
+        return PCustomerCenterScreenType(rawValue: enumResultAsInt)
       }
       return nil
     case 155:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PPresentationHost(rawValue: enumResultAsInt)
+        return PCustomerCenterPresentationStyle(rawValue: enumResultAsInt)
       }
       return nil
     case 156:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PLogScope(rawValue: enumResultAsInt)
+        return PTransactionType(rawValue: enumResultAsInt)
       }
       return nil
     case 157:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PConfigurationStatus(rawValue: enumResultAsInt)
+        return PNetworkEnvironment(rawValue: enumResultAsInt)
       }
       return nil
     case 158:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PEventType(rawValue: enumResultAsInt)
+        return PLogLevel(rawValue: enumResultAsInt)
       }
       return nil
     case 159:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PSubscriptionStatusType(rawValue: enumResultAsInt)
+        return PTransactionBackgroundView(rawValue: enumResultAsInt)
       }
       return nil
     case 160:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PPaywallPresentationRequestStatusType(rawValue: enumResultAsInt)
+        return PPresentationHost(rawValue: enumResultAsInt)
       }
       return nil
     case 161:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PVariantType(rawValue: enumResultAsInt)
+        return PLogScope(rawValue: enumResultAsInt)
       }
       return nil
     case 162:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PPaywallSkippedReason(rawValue: enumResultAsInt)
+        return PConfigurationStatus(rawValue: enumResultAsInt)
       }
       return nil
     case 163:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
       if let enumResultAsInt = enumResultAsInt {
-        return PProductReplacementMode(rawValue: enumResultAsInt)
+        return PEventType(rawValue: enumResultAsInt)
       }
       return nil
     case 164:
-      return PSuccessRedemptionResult.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return PSubscriptionStatusType(rawValue: enumResultAsInt)
+      }
+      return nil
     case 165:
-      return PErrorRedemptionResult.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return PPaywallPresentationRequestStatusType(rawValue: enumResultAsInt)
+      }
+      return nil
     case 166:
-      return PErrorInfo.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return PVariantType(rawValue: enumResultAsInt)
+      }
+      return nil
     case 167:
-      return PExpiredCodeRedemptionResult.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return PPaywallSkippedReason(rawValue: enumResultAsInt)
+      }
+      return nil
     case 168:
-      return PExpiredCodeInfo.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return PProductReplacementMode(rawValue: enumResultAsInt)
+      }
+      return nil
     case 169:
-      return PInvalidCodeRedemptionResult.fromList(self.readValue() as! [Any?])
+      return PSuccessRedemptionResult.fromList(self.readValue() as! [Any?])
     case 170:
-      return PExpiredSubscriptionCode.fromList(self.readValue() as! [Any?])
+      return PErrorRedemptionResult.fromList(self.readValue() as! [Any?])
     case 171:
-      return PRedemptionInfo.fromList(self.readValue() as! [Any?])
+      return PErrorInfo.fromList(self.readValue() as! [Any?])
     case 172:
-      return PAppUserOwnership.fromList(self.readValue() as! [Any?])
+      return PExpiredCodeRedemptionResult.fromList(self.readValue() as! [Any?])
     case 173:
-      return PDeviceOwnership.fromList(self.readValue() as! [Any?])
+      return PExpiredCodeInfo.fromList(self.readValue() as! [Any?])
     case 174:
-      return PPurchaserInfo.fromList(self.readValue() as! [Any?])
+      return PInvalidCodeRedemptionResult.fromList(self.readValue() as! [Any?])
     case 175:
-      return PStripeStoreIdentifiers.fromList(self.readValue() as! [Any?])
+      return PExpiredSubscriptionCode.fromList(self.readValue() as! [Any?])
     case 176:
-      return PPaddleStoreIdentifiers.fromList(self.readValue() as! [Any?])
+      return PRedemptionInfo.fromList(self.readValue() as! [Any?])
     case 177:
-      return PUnknownStoreIdentifiers.fromList(self.readValue() as! [Any?])
+      return PAppUserOwnership.fromList(self.readValue() as! [Any?])
     case 178:
-      return PRedemptionPaywallInfo.fromList(self.readValue() as! [Any?])
+      return PDeviceOwnership.fromList(self.readValue() as! [Any?])
     case 179:
-      return PSuperwallOptions.fromList(self.readValue() as! [Any?])
+      return PPurchaserInfo.fromList(self.readValue() as! [Any?])
     case 180:
-      return PAdConsent.fromList(self.readValue() as! [Any?])
+      return PStripeStoreIdentifiers.fromList(self.readValue() as! [Any?])
     case 181:
-      return PPaywallInfo.fromList(self.readValue() as! [Any?])
+      return PPaddleStoreIdentifiers.fromList(self.readValue() as! [Any?])
     case 182:
-      return PPaywallPresentationInfo.fromList(self.readValue() as! [Any?])
+      return PUnknownStoreIdentifiers.fromList(self.readValue() as! [Any?])
     case 183:
-      return PProduct.fromList(self.readValue() as! [Any?])
+      return PRedemptionPaywallInfo.fromList(self.readValue() as! [Any?])
     case 184:
-      return PLocalNotification.fromList(self.readValue() as! [Any?])
+      return PRedemptionPaywallProduct.fromList(self.readValue() as! [Any?])
     case 185:
-      return PComputedPropertyRequest.fromList(self.readValue() as! [Any?])
+      return PSuperwallOptions.fromList(self.readValue() as! [Any?])
     case 186:
-      return PSurvey.fromList(self.readValue() as! [Any?])
+      return PAdConsent.fromList(self.readValue() as! [Any?])
     case 187:
-      return PSurveyOption.fromList(self.readValue() as! [Any?])
+      return PPaywallInfo.fromList(self.readValue() as! [Any?])
     case 188:
-      return PPurchaseCancelled.fromList(self.readValue() as! [Any?])
+      return PPaywallPresentationInfo.fromList(self.readValue() as! [Any?])
     case 189:
-      return PPurchasePurchased.fromList(self.readValue() as! [Any?])
+      return PProduct.fromList(self.readValue() as! [Any?])
     case 190:
-      return PPurchasePending.fromList(self.readValue() as! [Any?])
+      return PLocalNotification.fromList(self.readValue() as! [Any?])
     case 191:
-      return PPurchaseFailed.fromList(self.readValue() as! [Any?])
+      return PComputedPropertyRequest.fromList(self.readValue() as! [Any?])
     case 192:
-      return PRestorationRestored.fromList(self.readValue() as! [Any?])
+      return PSurvey.fromList(self.readValue() as! [Any?])
     case 193:
-      return PRestorationFailed.fromList(self.readValue() as! [Any?])
+      return PSurveyOption.fromList(self.readValue() as! [Any?])
     case 194:
-      return PViaPurchase.fromList(self.readValue() as! [Any?])
+      return PPurchaseCancelled.fromList(self.readValue() as! [Any?])
     case 195:
-      return PViaRestore.fromList(self.readValue() as! [Any?])
+      return PPurchasePurchased.fromList(self.readValue() as! [Any?])
     case 196:
-      return PRestoreFailed.fromList(self.readValue() as! [Any?])
+      return PPurchasePending.fromList(self.readValue() as! [Any?])
     case 197:
-      return PLogging.fromList(self.readValue() as! [Any?])
+      return PPurchaseFailed.fromList(self.readValue() as! [Any?])
     case 198:
-      return PStorePayment.fromList(self.readValue() as! [Any?])
+      return PRestorationRestored.fromList(self.readValue() as! [Any?])
     case 199:
-      return PStoreTransaction.fromList(self.readValue() as! [Any?])
+      return PRestorationFailed.fromList(self.readValue() as! [Any?])
     case 200:
-      return PSubscriptionPeriod.fromList(self.readValue() as! [Any?])
+      return PViaPurchase.fromList(self.readValue() as! [Any?])
     case 201:
-      return PStoreProduct.fromList(self.readValue() as! [Any?])
+      return PViaRestore.fromList(self.readValue() as! [Any?])
     case 202:
-      return POwnedInAppPurchase.fromList(self.readValue() as! [Any?])
+      return PRestoreFailed.fromList(self.readValue() as! [Any?])
     case 203:
-      return PPaywallOptions.fromList(self.readValue() as! [Any?])
+      return PLogging.fromList(self.readValue() as! [Any?])
     case 204:
-      return PNotificationPermissionsDenied.fromList(self.readValue() as! [Any?])
+      return PStorePayment.fromList(self.readValue() as! [Any?])
     case 205:
-      return POnBackPressedHost.fromList(self.readValue() as! [Any?])
+      return PStoreTransaction.fromList(self.readValue() as! [Any?])
     case 206:
-      return PPurchaseControllerHost.fromList(self.readValue() as! [Any?])
+      return PSubscriptionPeriod.fromList(self.readValue() as! [Any?])
     case 207:
-      return PConfigureCompletionHost.fromList(self.readValue() as! [Any?])
+      return PStoreProductDiscount.fromList(self.readValue() as! [Any?])
     case 208:
-      return PPaywallPresentationHandlerHost.fromList(self.readValue() as! [Any?])
+      return PStoreProduct.fromList(self.readValue() as! [Any?])
     case 209:
-      return PFeatureHandlerHost.fromList(self.readValue() as! [Any?])
+      return POwnedInAppPurchase.fromList(self.readValue() as! [Any?])
     case 210:
-      return PCustomerCenterRestorePathType.fromList(self.readValue() as! [Any?])
+      return PPaywallOptions.fromList(self.readValue() as! [Any?])
     case 211:
-      return PCustomerCenterManageSubscriptionPathType.fromList(self.readValue() as! [Any?])
+      return PNotificationPermissionsDenied.fromList(self.readValue() as! [Any?])
     case 212:
-      return PCustomerCenterRefundPathType.fromList(self.readValue() as! [Any?])
+      return POnBackPressedHost.fromList(self.readValue() as! [Any?])
     case 213:
-      return PCustomerCenterChangePlanPathType.fromList(self.readValue() as! [Any?])
+      return PPurchaseControllerHost.fromList(self.readValue() as! [Any?])
     case 214:
-      return PCustomerCenterContactSupportPathType.fromList(self.readValue() as! [Any?])
+      return PConfigureCompletionHost.fromList(self.readValue() as! [Any?])
     case 215:
-      return PCustomerCenterUrlPathType.fromList(self.readValue() as! [Any?])
+      return PPaywallPresentationHandlerHost.fromList(self.readValue() as! [Any?])
     case 216:
-      return PCustomerCenterCustomPathType.fromList(self.readValue() as! [Any?])
+      return PFeatureHandlerHost.fromList(self.readValue() as! [Any?])
     case 217:
-      return PCustomerCenterSurveyOption.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterRestorePathType.fromList(self.readValue() as! [Any?])
     case 218:
-      return PCustomerCenterSurvey.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterManageSubscriptionPathType.fromList(self.readValue() as! [Any?])
     case 219:
-      return PCustomerCenterPath.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterRefundPathType.fromList(self.readValue() as! [Any?])
     case 220:
-      return PCustomerCenterScreen.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterChangePlanPathType.fromList(self.readValue() as! [Any?])
     case 221:
-      return PCustomerCenterSupport.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterContactSupportPathType.fromList(self.readValue() as! [Any?])
     case 222:
-      return PCustomerCenterColorPair.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterUrlPathType.fromList(self.readValue() as! [Any?])
     case 223:
-      return PCustomerCenterConfiguration.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterCustomPathType.fromList(self.readValue() as! [Any?])
     case 224:
-      return PCustomerCenterRestoreAction.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterSurveyOption.fromList(self.readValue() as! [Any?])
     case 225:
-      return PCustomerCenterManageSubscriptionAction.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterSurvey.fromList(self.readValue() as! [Any?])
     case 226:
-      return PCustomerCenterRefundAction.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterPath.fromList(self.readValue() as! [Any?])
     case 227:
-      return PCustomerCenterChangePlanAction.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterScreen.fromList(self.readValue() as! [Any?])
     case 228:
-      return PCustomerCenterContactSupportAction.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterSupport.fromList(self.readValue() as! [Any?])
     case 229:
-      return PCustomerCenterUrlAction.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterColorPair.fromList(self.readValue() as! [Any?])
     case 230:
-      return PCustomerCenterCustomAction.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterConfiguration.fromList(self.readValue() as! [Any?])
     case 231:
-      return PCustomerCenterPurchase.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterRestoreAction.fromList(self.readValue() as! [Any?])
     case 232:
-      return PCustomerCenterDelegateHost.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterManageSubscriptionAction.fromList(self.readValue() as! [Any?])
     case 233:
-      return PCustomCallback.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterRefundAction.fromList(self.readValue() as! [Any?])
     case 234:
-      return PCustomCallbackResult.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterChangePlanAction.fromList(self.readValue() as! [Any?])
     case 235:
-      return PSubscriptionTransaction.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterContactSupportAction.fromList(self.readValue() as! [Any?])
     case 236:
-      return PNonSubscriptionTransaction.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterUrlAction.fromList(self.readValue() as! [Any?])
     case 237:
-      return PEntitlement.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterCustomAction.fromList(self.readValue() as! [Any?])
     case 238:
-      return PCustomerInfo.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterPurchase.fromList(self.readValue() as! [Any?])
     case 239:
-      return PEntitlements.fromList(self.readValue() as! [Any?])
+      return PCustomerCenterDelegateHost.fromList(self.readValue() as! [Any?])
     case 240:
-      return PActive.fromList(self.readValue() as! [Any?])
+      return PCustomCallback.fromList(self.readValue() as! [Any?])
     case 241:
-      return PInactive.fromList(self.readValue() as! [Any?])
+      return PCustomCallbackResult.fromList(self.readValue() as! [Any?])
     case 242:
-      return PUnknown.fromList(self.readValue() as! [Any?])
+      return PSubscriptionTransaction.fromList(self.readValue() as! [Any?])
     case 243:
-      return PSuperwallEventInfo.fromList(self.readValue() as! [Any?])
+      return PNonSubscriptionTransaction.fromList(self.readValue() as! [Any?])
     case 244:
-      return PPageViewData.fromList(self.readValue() as! [Any?])
+      return PEntitlement.fromList(self.readValue() as! [Any?])
     case 245:
-      return PStatusReasonDebuggerPresented.fromList(self.readValue() as! [Any?])
+      return PCustomerInfo.fromList(self.readValue() as! [Any?])
     case 246:
-      return PStatusReasonPaywallAlreadyPresented.fromList(self.readValue() as! [Any?])
+      return PEntitlements.fromList(self.readValue() as! [Any?])
     case 247:
-      return PStatusReasonHoldout.fromList(self.readValue() as! [Any?])
+      return PActive.fromList(self.readValue() as! [Any?])
     case 248:
-      return PStatusReasonNoAudienceMatch.fromList(self.readValue() as! [Any?])
+      return PInactive.fromList(self.readValue() as! [Any?])
     case 249:
-      return PStatusReasonPlacementNotFound.fromList(self.readValue() as! [Any?])
+      return PUnknown.fromList(self.readValue() as! [Any?])
     case 250:
-      return PStatusReasonNoPaywallVc.fromList(self.readValue() as! [Any?])
+      return PSuperwallEventInfo.fromList(self.readValue() as! [Any?])
     case 251:
-      return PStatusReasonNoPresenter.fromList(self.readValue() as! [Any?])
+      return PAttributionMatchInfo.fromList(self.readValue() as! [Any?])
     case 252:
-      return PStatusReasonNoConfig.fromList(self.readValue() as! [Any?])
+      return PPageViewData.fromList(self.readValue() as! [Any?])
     case 253:
-      return PStatusReasonSubsStatusTimeout.fromList(self.readValue() as! [Any?])
+      return PStatusReasonDebuggerPresented.fromList(self.readValue() as! [Any?])
     case 254:
-      return PIdentityOptions.fromList(self.readValue() as! [Any?])
+      return PStatusReasonPaywallAlreadyPresented.fromList(self.readValue() as! [Any?])
     case 255:
       return PigeonInternalCodecOverflow.fromList(self.readValue() as! [Any?])
     default:
@@ -5197,408 +5620,440 @@ private class SuperwallHostGeneratedPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PSubscriptionPeriodUnit {
       super.writeByte(142)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PCustomerCenterOpenMethod {
+    } else if let value = value as? PBillingPlanType {
       super.writeByte(143)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PCustomerCenterRefundStatus {
+    } else if let value = value as? PStoreProductDiscountPaymentMode {
       super.writeByte(144)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PCustomCallbackResultStatus {
+    } else if let value = value as? PStoreProductDiscountType {
       super.writeByte(145)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PProductStore {
+    } else if let value = value as? PCustomerCenterOpenMethod {
       super.writeByte(146)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PEntitlementType {
+    } else if let value = value as? PCustomerCenterRefundStatus {
       super.writeByte(147)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PLatestSubscriptionState {
+    } else if let value = value as? PCustomCallbackResultStatus {
       super.writeByte(148)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PLatestSubscriptionOfferType {
+    } else if let value = value as? PProductStore {
       super.writeByte(149)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PIntegrationAttribute {
+    } else if let value = value as? PEntitlementType {
       super.writeByte(150)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PTransactionType {
+    } else if let value = value as? PLatestSubscriptionState {
       super.writeByte(151)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PNetworkEnvironment {
+    } else if let value = value as? PLatestSubscriptionOfferType {
       super.writeByte(152)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PLogLevel {
+    } else if let value = value as? PIntegrationAttribute {
       super.writeByte(153)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PTransactionBackgroundView {
+    } else if let value = value as? PCustomerCenterScreenType {
       super.writeByte(154)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PPresentationHost {
+    } else if let value = value as? PCustomerCenterPresentationStyle {
       super.writeByte(155)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PLogScope {
+    } else if let value = value as? PTransactionType {
       super.writeByte(156)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PConfigurationStatus {
+    } else if let value = value as? PNetworkEnvironment {
       super.writeByte(157)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PEventType {
+    } else if let value = value as? PLogLevel {
       super.writeByte(158)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PSubscriptionStatusType {
+    } else if let value = value as? PTransactionBackgroundView {
       super.writeByte(159)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PPaywallPresentationRequestStatusType {
+    } else if let value = value as? PPresentationHost {
       super.writeByte(160)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PVariantType {
+    } else if let value = value as? PLogScope {
       super.writeByte(161)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PPaywallSkippedReason {
+    } else if let value = value as? PConfigurationStatus {
       super.writeByte(162)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PProductReplacementMode {
+    } else if let value = value as? PEventType {
       super.writeByte(163)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PSuccessRedemptionResult {
+    } else if let value = value as? PSubscriptionStatusType {
       super.writeByte(164)
-      super.writeValue(value.toList())
-    } else if let value = value as? PErrorRedemptionResult {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? PPaywallPresentationRequestStatusType {
       super.writeByte(165)
-      super.writeValue(value.toList())
-    } else if let value = value as? PErrorInfo {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? PVariantType {
       super.writeByte(166)
-      super.writeValue(value.toList())
-    } else if let value = value as? PExpiredCodeRedemptionResult {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? PPaywallSkippedReason {
       super.writeByte(167)
-      super.writeValue(value.toList())
-    } else if let value = value as? PExpiredCodeInfo {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? PProductReplacementMode {
       super.writeByte(168)
-      super.writeValue(value.toList())
-    } else if let value = value as? PInvalidCodeRedemptionResult {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? PSuccessRedemptionResult {
       super.writeByte(169)
       super.writeValue(value.toList())
-    } else if let value = value as? PExpiredSubscriptionCode {
+    } else if let value = value as? PErrorRedemptionResult {
       super.writeByte(170)
       super.writeValue(value.toList())
-    } else if let value = value as? PRedemptionInfo {
+    } else if let value = value as? PErrorInfo {
       super.writeByte(171)
       super.writeValue(value.toList())
-    } else if let value = value as? PAppUserOwnership {
+    } else if let value = value as? PExpiredCodeRedemptionResult {
       super.writeByte(172)
       super.writeValue(value.toList())
-    } else if let value = value as? PDeviceOwnership {
+    } else if let value = value as? PExpiredCodeInfo {
       super.writeByte(173)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchaserInfo {
+    } else if let value = value as? PInvalidCodeRedemptionResult {
       super.writeByte(174)
       super.writeValue(value.toList())
-    } else if let value = value as? PStripeStoreIdentifiers {
+    } else if let value = value as? PExpiredSubscriptionCode {
       super.writeByte(175)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaddleStoreIdentifiers {
+    } else if let value = value as? PRedemptionInfo {
       super.writeByte(176)
       super.writeValue(value.toList())
-    } else if let value = value as? PUnknownStoreIdentifiers {
+    } else if let value = value as? PAppUserOwnership {
       super.writeByte(177)
       super.writeValue(value.toList())
-    } else if let value = value as? PRedemptionPaywallInfo {
+    } else if let value = value as? PDeviceOwnership {
       super.writeByte(178)
       super.writeValue(value.toList())
-    } else if let value = value as? PSuperwallOptions {
+    } else if let value = value as? PPurchaserInfo {
       super.writeByte(179)
       super.writeValue(value.toList())
-    } else if let value = value as? PAdConsent {
+    } else if let value = value as? PStripeStoreIdentifiers {
       super.writeByte(180)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallInfo {
+    } else if let value = value as? PPaddleStoreIdentifiers {
       super.writeByte(181)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallPresentationInfo {
+    } else if let value = value as? PUnknownStoreIdentifiers {
       super.writeByte(182)
       super.writeValue(value.toList())
-    } else if let value = value as? PProduct {
+    } else if let value = value as? PRedemptionPaywallInfo {
       super.writeByte(183)
       super.writeValue(value.toList())
-    } else if let value = value as? PLocalNotification {
+    } else if let value = value as? PRedemptionPaywallProduct {
       super.writeByte(184)
       super.writeValue(value.toList())
-    } else if let value = value as? PComputedPropertyRequest {
+    } else if let value = value as? PSuperwallOptions {
       super.writeByte(185)
       super.writeValue(value.toList())
-    } else if let value = value as? PSurvey {
+    } else if let value = value as? PAdConsent {
       super.writeByte(186)
       super.writeValue(value.toList())
-    } else if let value = value as? PSurveyOption {
+    } else if let value = value as? PPaywallInfo {
       super.writeByte(187)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchaseCancelled {
+    } else if let value = value as? PPaywallPresentationInfo {
       super.writeByte(188)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchasePurchased {
+    } else if let value = value as? PProduct {
       super.writeByte(189)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchasePending {
+    } else if let value = value as? PLocalNotification {
       super.writeByte(190)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchaseFailed {
+    } else if let value = value as? PComputedPropertyRequest {
       super.writeByte(191)
       super.writeValue(value.toList())
-    } else if let value = value as? PRestorationRestored {
+    } else if let value = value as? PSurvey {
       super.writeByte(192)
       super.writeValue(value.toList())
-    } else if let value = value as? PRestorationFailed {
+    } else if let value = value as? PSurveyOption {
       super.writeByte(193)
       super.writeValue(value.toList())
-    } else if let value = value as? PViaPurchase {
+    } else if let value = value as? PPurchaseCancelled {
       super.writeByte(194)
       super.writeValue(value.toList())
-    } else if let value = value as? PViaRestore {
+    } else if let value = value as? PPurchasePurchased {
       super.writeByte(195)
       super.writeValue(value.toList())
-    } else if let value = value as? PRestoreFailed {
+    } else if let value = value as? PPurchasePending {
       super.writeByte(196)
       super.writeValue(value.toList())
-    } else if let value = value as? PLogging {
+    } else if let value = value as? PPurchaseFailed {
       super.writeByte(197)
       super.writeValue(value.toList())
-    } else if let value = value as? PStorePayment {
+    } else if let value = value as? PRestorationRestored {
       super.writeByte(198)
       super.writeValue(value.toList())
-    } else if let value = value as? PStoreTransaction {
+    } else if let value = value as? PRestorationFailed {
       super.writeByte(199)
       super.writeValue(value.toList())
-    } else if let value = value as? PSubscriptionPeriod {
+    } else if let value = value as? PViaPurchase {
       super.writeByte(200)
       super.writeValue(value.toList())
-    } else if let value = value as? PStoreProduct {
+    } else if let value = value as? PViaRestore {
       super.writeByte(201)
       super.writeValue(value.toList())
-    } else if let value = value as? POwnedInAppPurchase {
+    } else if let value = value as? PRestoreFailed {
       super.writeByte(202)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallOptions {
+    } else if let value = value as? PLogging {
       super.writeByte(203)
       super.writeValue(value.toList())
-    } else if let value = value as? PNotificationPermissionsDenied {
+    } else if let value = value as? PStorePayment {
       super.writeByte(204)
       super.writeValue(value.toList())
-    } else if let value = value as? POnBackPressedHost {
+    } else if let value = value as? PStoreTransaction {
       super.writeByte(205)
       super.writeValue(value.toList())
-    } else if let value = value as? PPurchaseControllerHost {
+    } else if let value = value as? PSubscriptionPeriod {
       super.writeByte(206)
       super.writeValue(value.toList())
-    } else if let value = value as? PConfigureCompletionHost {
+    } else if let value = value as? PStoreProductDiscount {
       super.writeByte(207)
       super.writeValue(value.toList())
-    } else if let value = value as? PPaywallPresentationHandlerHost {
+    } else if let value = value as? PStoreProduct {
       super.writeByte(208)
       super.writeValue(value.toList())
-    } else if let value = value as? PFeatureHandlerHost {
+    } else if let value = value as? POwnedInAppPurchase {
       super.writeByte(209)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterRestorePathType {
+    } else if let value = value as? PPaywallOptions {
       super.writeByte(210)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterManageSubscriptionPathType {
+    } else if let value = value as? PNotificationPermissionsDenied {
       super.writeByte(211)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterRefundPathType {
+    } else if let value = value as? POnBackPressedHost {
       super.writeByte(212)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterChangePlanPathType {
+    } else if let value = value as? PPurchaseControllerHost {
       super.writeByte(213)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterContactSupportPathType {
+    } else if let value = value as? PConfigureCompletionHost {
       super.writeByte(214)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterUrlPathType {
+    } else if let value = value as? PPaywallPresentationHandlerHost {
       super.writeByte(215)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterCustomPathType {
+    } else if let value = value as? PFeatureHandlerHost {
       super.writeByte(216)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterSurveyOption {
+    } else if let value = value as? PCustomerCenterRestorePathType {
       super.writeByte(217)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterSurvey {
+    } else if let value = value as? PCustomerCenterManageSubscriptionPathType {
       super.writeByte(218)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterPath {
+    } else if let value = value as? PCustomerCenterRefundPathType {
       super.writeByte(219)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterScreen {
+    } else if let value = value as? PCustomerCenterChangePlanPathType {
       super.writeByte(220)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterSupport {
+    } else if let value = value as? PCustomerCenterContactSupportPathType {
       super.writeByte(221)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterColorPair {
+    } else if let value = value as? PCustomerCenterUrlPathType {
       super.writeByte(222)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterConfiguration {
+    } else if let value = value as? PCustomerCenterCustomPathType {
       super.writeByte(223)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterRestoreAction {
+    } else if let value = value as? PCustomerCenterSurveyOption {
       super.writeByte(224)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterManageSubscriptionAction {
+    } else if let value = value as? PCustomerCenterSurvey {
       super.writeByte(225)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterRefundAction {
+    } else if let value = value as? PCustomerCenterPath {
       super.writeByte(226)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterChangePlanAction {
+    } else if let value = value as? PCustomerCenterScreen {
       super.writeByte(227)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterContactSupportAction {
+    } else if let value = value as? PCustomerCenterSupport {
       super.writeByte(228)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterUrlAction {
+    } else if let value = value as? PCustomerCenterColorPair {
       super.writeByte(229)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterCustomAction {
+    } else if let value = value as? PCustomerCenterConfiguration {
       super.writeByte(230)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterPurchase {
+    } else if let value = value as? PCustomerCenterRestoreAction {
       super.writeByte(231)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerCenterDelegateHost {
+    } else if let value = value as? PCustomerCenterManageSubscriptionAction {
       super.writeByte(232)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomCallback {
+    } else if let value = value as? PCustomerCenterRefundAction {
       super.writeByte(233)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomCallbackResult {
+    } else if let value = value as? PCustomerCenterChangePlanAction {
       super.writeByte(234)
       super.writeValue(value.toList())
-    } else if let value = value as? PSubscriptionTransaction {
+    } else if let value = value as? PCustomerCenterContactSupportAction {
       super.writeByte(235)
       super.writeValue(value.toList())
-    } else if let value = value as? PNonSubscriptionTransaction {
+    } else if let value = value as? PCustomerCenterUrlAction {
       super.writeByte(236)
       super.writeValue(value.toList())
-    } else if let value = value as? PEntitlement {
+    } else if let value = value as? PCustomerCenterCustomAction {
       super.writeByte(237)
       super.writeValue(value.toList())
-    } else if let value = value as? PCustomerInfo {
+    } else if let value = value as? PCustomerCenterPurchase {
       super.writeByte(238)
       super.writeValue(value.toList())
-    } else if let value = value as? PEntitlements {
+    } else if let value = value as? PCustomerCenterDelegateHost {
       super.writeByte(239)
       super.writeValue(value.toList())
-    } else if let value = value as? PActive {
+    } else if let value = value as? PCustomCallback {
       super.writeByte(240)
       super.writeValue(value.toList())
-    } else if let value = value as? PInactive {
+    } else if let value = value as? PCustomCallbackResult {
       super.writeByte(241)
       super.writeValue(value.toList())
-    } else if let value = value as? PUnknown {
+    } else if let value = value as? PSubscriptionTransaction {
       super.writeByte(242)
       super.writeValue(value.toList())
-    } else if let value = value as? PSuperwallEventInfo {
+    } else if let value = value as? PNonSubscriptionTransaction {
       super.writeByte(243)
       super.writeValue(value.toList())
-    } else if let value = value as? PPageViewData {
+    } else if let value = value as? PEntitlement {
       super.writeByte(244)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonDebuggerPresented {
+    } else if let value = value as? PCustomerInfo {
       super.writeByte(245)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonPaywallAlreadyPresented {
+    } else if let value = value as? PEntitlements {
       super.writeByte(246)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonHoldout {
+    } else if let value = value as? PActive {
       super.writeByte(247)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonNoAudienceMatch {
+    } else if let value = value as? PInactive {
       super.writeByte(248)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonPlacementNotFound {
+    } else if let value = value as? PUnknown {
       super.writeByte(249)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonNoPaywallVc {
+    } else if let value = value as? PSuperwallEventInfo {
       super.writeByte(250)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonNoPresenter {
+    } else if let value = value as? PAttributionMatchInfo {
       super.writeByte(251)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonNoConfig {
+    } else if let value = value as? PPageViewData {
       super.writeByte(252)
       super.writeValue(value.toList())
-    } else if let value = value as? PStatusReasonSubsStatusTimeout {
+    } else if let value = value as? PStatusReasonDebuggerPresented {
       super.writeByte(253)
       super.writeValue(value.toList())
-    } else if let value = value as? PIdentityOptions {
+    } else if let value = value as? PStatusReasonPaywallAlreadyPresented {
       super.writeByte(254)
       super.writeValue(value.toList())
-    } else if let value = value as? PExperiment {
+    } else if let value = value as? PStatusReasonHoldout {
       let wrap = PigeonInternalCodecOverflow(type: 0, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PPlacementNotFoundTriggerResult {
+    } else if let value = value as? PStatusReasonNoAudienceMatch {
       let wrap = PigeonInternalCodecOverflow(type: 1, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PNoAudienceMatchTriggerResult {
+    } else if let value = value as? PStatusReasonPlacementNotFound {
       let wrap = PigeonInternalCodecOverflow(type: 2, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PPaywallTriggerResult {
+    } else if let value = value as? PStatusReasonNoPaywallVc {
       let wrap = PigeonInternalCodecOverflow(type: 3, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PHoldoutTriggerResult {
+    } else if let value = value as? PStatusReasonNoPresenter {
       let wrap = PigeonInternalCodecOverflow(type: 4, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PErrorTriggerResult {
+    } else if let value = value as? PStatusReasonNoConfig {
       let wrap = PigeonInternalCodecOverflow(type: 5, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PVariant {
+    } else if let value = value as? PStatusReasonSubsStatusTimeout {
       let wrap = PigeonInternalCodecOverflow(type: 6, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PConfirmedAssignment {
+    } else if let value = value as? PIdentityOptions {
       let wrap = PigeonInternalCodecOverflow(type: 7, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PPurchasedPaywallResult {
+    } else if let value = value as? PExperiment {
       let wrap = PigeonInternalCodecOverflow(type: 8, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PDeclinedPaywallResult {
+    } else if let value = value as? PPlacementNotFoundTriggerResult {
       let wrap = PigeonInternalCodecOverflow(type: 9, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PRestoredPaywallResult {
+    } else if let value = value as? PNoAudienceMatchTriggerResult {
       let wrap = PigeonInternalCodecOverflow(type: 10, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PPlacementNotFoundPresentationResult {
+    } else if let value = value as? PPaywallTriggerResult {
       let wrap = PigeonInternalCodecOverflow(type: 11, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PNoAudienceMatchPresentationResult {
+    } else if let value = value as? PHoldoutTriggerResult {
       let wrap = PigeonInternalCodecOverflow(type: 12, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PPaywallPresentationResult {
+    } else if let value = value as? PErrorTriggerResult {
       let wrap = PigeonInternalCodecOverflow(type: 13, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PHoldoutPresentationResult {
+    } else if let value = value as? PVariant {
       let wrap = PigeonInternalCodecOverflow(type: 14, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PPaywallNotAvailablePresentationResult {
+    } else if let value = value as? PConfirmedAssignment {
       let wrap = PigeonInternalCodecOverflow(type: 15, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
-    } else if let value = value as? PProductReplacement {
+    } else if let value = value as? PPurchasedPaywallResult {
       let wrap = PigeonInternalCodecOverflow(type: 16, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? PDeclinedPaywallResult {
+      let wrap = PigeonInternalCodecOverflow(type: 17, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? PRestoredPaywallResult {
+      let wrap = PigeonInternalCodecOverflow(type: 18, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? PPlacementNotFoundPresentationResult {
+      let wrap = PigeonInternalCodecOverflow(type: 19, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? PNoAudienceMatchPresentationResult {
+      let wrap = PigeonInternalCodecOverflow(type: 20, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? PPaywallPresentationResult {
+      let wrap = PigeonInternalCodecOverflow(type: 21, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? PHoldoutPresentationResult {
+      let wrap = PigeonInternalCodecOverflow(type: 22, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? PPaywallNotAvailablePresentationResult {
+      let wrap = PigeonInternalCodecOverflow(type: 23, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? PProductReplacement {
+      let wrap = PigeonInternalCodecOverflow(type: 24, wrapped: value.toList())
       super.writeByte(255)
       super.writeValue(wrap.toList())
     } else {
@@ -5659,6 +6114,7 @@ protocol PSuperwallHostApi {
   func getEntitlements() throws -> PEntitlements
   func getEntitlementsByProductIds(productIds: [String]) throws -> [PEntitlement]
   func getCustomerInfo(completion: @escaping (Result<PCustomerInfo, Error>) -> Void)
+  func refreshCustomerInfo(completion: @escaping (Result<PCustomerInfo, Error>) -> Void)
   func getSubscriptionStatus() throws -> PSubscriptionStatus
   func setSubscriptionStatus(subscriptionStatus: PSubscriptionStatus) throws
   func getConfigurationStatus() throws -> PConfigurationStatus
@@ -5681,6 +6137,11 @@ protocol PSuperwallHostApi {
   func optInToNotifications() throws
   func handleNotificationOpen(data: [String: String]) throws
   func cancelAllScheduledNotifications() throws
+  func showAlert(title: String?, message: String?, actionTitle: String?, closeActionTitle: String?, completion: @escaping (Result<Bool, Error>) -> Void)
+  func openRestoreOnWeb() throws
+  func getExternalAccountId() throws -> String?
+  func getGrantedEntitlements() throws -> [PEntitlement]
+  func setGrantedEntitlements(entitlements: [PEntitlement]) throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -6171,6 +6632,21 @@ class PSuperwallHostApiSetup {
     } else {
       getCustomerInfoChannel.setMessageHandler(nil)
     }
+    let refreshCustomerInfoChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.refreshCustomerInfo\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      refreshCustomerInfoChannel.setMessageHandler { _, reply in
+        api.refreshCustomerInfo { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      refreshCustomerInfoChannel.setMessageHandler(nil)
+    }
     let getSubscriptionStatusChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getSubscriptionStatus\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getSubscriptionStatusChannel.setMessageHandler { _, reply in
@@ -6489,6 +6965,80 @@ class PSuperwallHostApiSetup {
       }
     } else {
       cancelAllScheduledNotificationsChannel.setMessageHandler(nil)
+    }
+    let showAlertChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.showAlert\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      showAlertChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let titleArg: String? = nilOrValue(args[0])
+        let messageArg: String? = nilOrValue(args[1])
+        let actionTitleArg: String? = nilOrValue(args[2])
+        let closeActionTitleArg: String? = nilOrValue(args[3])
+        api.showAlert(title: titleArg, message: messageArg, actionTitle: actionTitleArg, closeActionTitle: closeActionTitleArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      showAlertChannel.setMessageHandler(nil)
+    }
+    let openRestoreOnWebChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.openRestoreOnWeb\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      openRestoreOnWebChannel.setMessageHandler { _, reply in
+        do {
+          try api.openRestoreOnWeb()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      openRestoreOnWebChannel.setMessageHandler(nil)
+    }
+    let getExternalAccountIdChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getExternalAccountId\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getExternalAccountIdChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.getExternalAccountId()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getExternalAccountIdChannel.setMessageHandler(nil)
+    }
+    let getGrantedEntitlementsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.getGrantedEntitlements\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getGrantedEntitlementsChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.getGrantedEntitlements()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getGrantedEntitlementsChannel.setMessageHandler(nil)
+    }
+    let setGrantedEntitlementsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.superwallkit_flutter.PSuperwallHostApi.setGrantedEntitlements\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setGrantedEntitlementsChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let entitlementsArg = args[0] as! [PEntitlement]
+        do {
+          try api.setGrantedEntitlements(entitlements: entitlementsArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setGrantedEntitlementsChannel.setMessageHandler(nil)
     }
   }
 }
@@ -6911,7 +7461,8 @@ protocol PPaywallPresentationHandlerGeneratedProtocol {
   func onWillDismiss(paywallInfo paywallInfoArg: PPaywallInfo, paywallResult paywallResultArg: PPaywallResult, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func onDismiss(paywallInfo paywallInfoArg: PPaywallInfo, paywallResult paywallResultArg: PPaywallResult, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func onError(error errorArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
-  func onSkip(reason reasonArg: PPaywallSkippedReason, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  /// [experiment] is set when [reason] is `holdout`.
+  func onSkip(reason reasonArg: PPaywallSkippedReason, experiment experimentArg: PExperiment?, completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Called when the paywall requests a custom callback.
   /// Returns a result indicating success/failure with optional data.
   func onCustomCallback(callback callbackArg: PCustomCallback, completion: @escaping (Result<PCustomCallbackResult, PigeonError>) -> Void)
@@ -6999,10 +7550,11 @@ class PPaywallPresentationHandlerGenerated: PPaywallPresentationHandlerGenerated
       }
     }
   }
-  func onSkip(reason reasonArg: PPaywallSkippedReason, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  /// [experiment] is set when [reason] is `holdout`.
+  func onSkip(reason reasonArg: PPaywallSkippedReason, experiment experimentArg: PExperiment?, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     let channelName: String = "dev.flutter.pigeon.superwallkit_flutter.PPaywallPresentationHandlerGenerated.onSkip\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([reasonArg] as [Any?]) { response in
+    channel.sendMessage([reasonArg, experimentArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
