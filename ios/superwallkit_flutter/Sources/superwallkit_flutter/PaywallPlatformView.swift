@@ -66,17 +66,20 @@ final class PaywallPlatformView: NSObject, FlutterPlatformView {
 
   /// Dart's `null` arrives as `NSNull`, which the SDK can't use as a param value.
   nonisolated static func removingNulls(from dictionary: [String: Any]) -> [String: Any] {
-    return dictionary.compactMapValues { removingNulls(from: $0) }
+    return dictionary.compactMapValues { removingNulls(fromValue: $0) }
   }
 
-  nonisolated private static func removingNulls(from value: Any) -> Any? {
+  // Not an overload of `removingNulls(from:)`. As one, Swift prefers it for a
+  // nested dictionary too, because its `Any?` result needs no conversion, and it
+  // calls itself forever.
+  nonisolated private static func removingNulls(fromValue value: Any) -> Any? {
     switch value {
     case is NSNull:
       return nil
     case let dictionary as [String: Any]:
       return removingNulls(from: dictionary)
     case let array as [Any]:
-      return array.compactMap { removingNulls(from: $0) }
+      return array.compactMap { removingNulls(fromValue: $0) }
     default:
       return value
     }

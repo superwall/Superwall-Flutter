@@ -38,6 +38,10 @@ extension PaywallSkippedReason {
 extension CustomCallback {
   /// Sends the callback to Flutter with `send` and waits for its answer.
   /// A failed call counts as a failed callback.
+  ///
+  /// On the main actor because Flutter's channels must be used on the main
+  /// thread, and an async function with no actor runs off it.
+  @MainActor
   func forwardToFlutter(
     _ send: (PCustomCallback, @escaping (Result<PCustomCallbackResult, PigeonError>) -> Void) -> Void
   ) async -> CustomCallbackResult {
