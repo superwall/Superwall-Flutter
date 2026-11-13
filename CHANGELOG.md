@@ -2,7 +2,15 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
-## 2.9.0
+## 3.0.0
+
+### Breaking Changes
+- `EventType`, `LogScope`, `IntegrationAttribute` and `ProductStore` have new values, and `PaywallSkippedReason` has the new `PaywallSkippedReasonUserIsSubscribed` subclass (Android only). An exhaustive `switch` over any of them needs the new cases or a `default`.
+- Several events now reach `SuperwallDelegate.handleSuperwallEvent` under a different `EventType` than before (the full list is under Fixes). If you matched them by their old type, match the new one instead:
+  - iOS: `transactionRestore` was delivered as `transactionComplete`, and `attributionMatch` as `customPlacement`.
+  - Android: `integrationAttributes`, `reviewRequested`, `customerInfoDidChange`, `enrichmentStart`, `enrichmentComplete` and `enrichmentFail` were delivered as `customPlacement`.
+  - A paywall resource that failed to load was delivered as `paywallResponseLoadFail`; it is now `paywallResourceLoadFail`.
+- Android: the log level in `SuperwallOptions.logging` is now respected. It was ignored and always set to debug, so apps that relied on debug logs need to set `LogLevel.debug` themselves.
 
 ### Enhancements
 - Updates Android SDK to 2.10.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.10.2).
