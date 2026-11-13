@@ -64,6 +64,24 @@ class PaywallOptions {
   ///
   /// Note: Android only. Has no effect on iOS.
   PresentationHost presentationHost = PresentationHost.activity;
+
+  /// Defines the messaging of the alert presented to the user when a paywall
+  /// asks for notification permissions that the user has denied. `null` (the
+  /// default) shows no alert.
+  ///
+  /// Note: iOS only. Has no effect on Android.
+  NotificationPermissionsDenied? notificationPermissionsDenied;
+
+  /// Shows the paywall before its products have loaded. Defaults to `false`.
+  ///
+  /// Note: Android only. Has no effect on iOS.
+  bool optimisticLoading = false;
+
+  /// How long to wait for a paywall to load before the presentation fails.
+  /// `null` (the default) waits without limit.
+  ///
+  /// Note: Android only. Has no effect on iOS.
+  Duration? timeoutAfter;
 }
 
 extension PaywallOptionsJson on PaywallOptions {
@@ -81,6 +99,9 @@ extension PaywallOptionsJson on PaywallOptions {
       'overrideProductsByName': overrideProductsByName,
       'shouldShowWebPurchaseConfirmationAlert': shouldShowWebPurchaseConfirmationAlert,
       'presentationHost': presentationHost.toJson(),
+      'notificationPermissionsDenied': notificationPermissionsDenied?.toJson(),
+      'optimisticLoading': optimisticLoading,
+      'timeoutAfterMillis': timeoutAfter?.inMilliseconds,
     };
   }
 }
@@ -105,6 +126,36 @@ extension RestoreFailedJson on RestoreFailed {
     return {
       'title': title,
       'message': message,
+      'closeButtonTitle': closeButtonTitle,
+    };
+  }
+}
+
+/// Defines the messaging of the alert presented to the user when a paywall
+/// asks for notification permissions that the user has denied.
+///
+/// iOS only.
+class NotificationPermissionsDenied {
+  /// The title of the alert.
+  String title = 'Notification Permissions Denied';
+
+  /// The message of the alert.
+  String message =
+      'Please enable notification permissions from the Settings app so we can notify you when your free trial ends.';
+
+  /// The title of the button that opens the Settings app.
+  String actionButtonTitle = 'Open Settings';
+
+  /// The title of the button that closes the alert.
+  String closeButtonTitle = 'Not now';
+}
+
+extension NotificationPermissionsDeniedJson on NotificationPermissionsDenied {
+  Map<dynamic, dynamic> toJson() {
+    return {
+      'title': title,
+      'message': message,
+      'actionButtonTitle': actionButtonTitle,
       'closeButtonTitle': closeButtonTitle,
     };
   }

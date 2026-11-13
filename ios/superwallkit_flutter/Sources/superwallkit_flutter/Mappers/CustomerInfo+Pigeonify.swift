@@ -59,7 +59,10 @@ extension Entitlement {
       isLifetime: isLifetime,
       willRenew: willRenew,
       state: state?.pigeonify(),
-      offerType: offerType?.pigeonify()
+      offerType: offerType?.pigeonify(),
+      isRevoked: isRevoked,
+      renewsAt: renewsAt.map { Int64($0.timeIntervalSince1970 * 1000) },
+      isInGracePeriod: isInGracePeriod
     )
   }
 }
@@ -95,6 +98,8 @@ extension ProductStore {
       return PProductStore.superwall
     case .other:
       return PProductStore.other
+    case .custom:
+      return PProductStore.custom
     @unknown default:
       return PProductStore.other
     }
@@ -114,6 +119,8 @@ extension ProductStore {
       return .superwall
     case .other:
       return .other
+    case .custom:
+      return .custom
     }
   }
 }

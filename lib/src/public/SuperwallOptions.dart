@@ -13,7 +13,41 @@ class SuperwallOptions {
   /// Enables the sending of non-Superwall tracked events and properties
   /// back to the Superwall servers.
   /// Defaults to `true`.
-  bool isExternalDataCollectionEnabled = true;
+  ///
+  /// It's ignored when [eventTrackingBehavior] is set.
+  @Deprecated('Use eventTrackingBehavior instead')
+  bool get isExternalDataCollectionEnabled =>
+      _isExternalDataCollectionEnabled ?? true;
+
+  @Deprecated('Use eventTrackingBehavior instead')
+  set isExternalDataCollectionEnabled(bool value) =>
+      _isExternalDataCollectionEnabled = value;
+
+  // `null` until it's set, so that it's only sent to the native SDK when it
+  // was set.
+  bool? _isExternalDataCollectionEnabled;
+
+  /// Which events the SDK sends to Superwall's servers.
+  ///
+  /// `null` (the default) uses the native SDK's default,
+  /// [EventTrackingBehavior.all]. Replaces [isExternalDataCollectionEnabled],
+  /// which is ignored when this is set.
+  ///
+  /// You can also change it at runtime via
+  /// `Superwall.shared.setEventTrackingBehavior()`.
+  EventTrackingBehavior? eventTrackingBehavior;
+
+  /// The StoreKit version the SDK uses. `null` (the default) uses the native
+  /// SDK's default, which is [StoreKitVersion.storeKit2] unless the app's
+  /// `Info.plist` sets `SKIncludeConsumableInAppPurchaseHistory` and it's
+  /// running on an OS older than iOS 18.
+  /// iOS only.
+  StoreKitVersion? storeKitVersion;
+
+  /// Local files that paywalls can load instead of downloading them, keyed
+  /// by the resource ID set in the paywall editor. Each value is a file path
+  /// or a `file://` or `content://` URI.
+  Map<String, String>? localResources;
 
   /// Sets the device locale identifier to use when evaluating rules.
   String? localeIdentifier;
@@ -72,12 +106,24 @@ class SuperwallOptions {
   AdConsent? adConsent;
 }
 
+/// Internal access to [SuperwallOptions] for the SDK. Not exported.
+extension SuperwallOptionsInternal on SuperwallOptions {
+  /// The value [SuperwallOptions.isExternalDataCollectionEnabled] was set to,
+  /// or `null` if it was never set.
+  bool? get isExternalDataCollectionEnabledIfSet =>
+      _isExternalDataCollectionEnabled;
+}
+
 extension SuperwallOptionsJson on SuperwallOptions {
   Map<dynamic, dynamic> toJson() {
     return {
       'paywalls': paywalls.toJson(),
       'networkEnvironment': networkEnvironment.toJson(),
-      'isExternalDataCollectionEnabled': isExternalDataCollectionEnabled,
+      'isExternalDataCollectionEnabled':
+          _isExternalDataCollectionEnabled ?? true,
+      'eventTrackingBehavior': eventTrackingBehavior?.toJson(),
+      'storeKitVersion': storeKitVersion?.toJson(),
+      'localResources': localResources,
       'localeIdentifier': localeIdentifier,
       'isGameControllerEnabled': isGameControllerEnabled,
       'logging': logging.toJson(),

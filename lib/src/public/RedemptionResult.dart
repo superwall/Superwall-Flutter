@@ -118,11 +118,15 @@ class RedemptionInfo {
   /// The entitlements array.
   final Set<Entitlement> entitlements;
 
+  /// The user attributes saved with the purchase. iOS only.
+  final Map<String, Object>? userAttributes;
+
   RedemptionInfo({
     required this.ownership,
     required this.purchaserInfo,
     this.paywallInfo,
     required this.entitlements,
+    this.userAttributes,
   });
 
   static RedemptionInfo fromPigeon(PRedemptionInfo pInfo) {
@@ -142,12 +146,7 @@ class RedemptionInfo {
     RedemptionPaywallInfo? paywallInfo;
 
     if (pInfo.paywallInfo != null) {
-      paywallInfo = RedemptionPaywallInfo(
-          identifier: pInfo.paywallInfo!.identifier,
-          placementName: pInfo.paywallInfo!.placementName,
-          placementParams: pInfo.paywallInfo!.placementParams,
-          variantId: pInfo.paywallInfo!.variantId,
-          experimentId: pInfo.paywallInfo!.experimentId);
+      paywallInfo = RedemptionPaywallInfo.fromPigeon(pInfo.paywallInfo!);
     }
 
     final entitlements =
@@ -157,7 +156,8 @@ class RedemptionInfo {
         ownership: ownership,
         purchaserInfo: purchaserInfo,
         paywallInfo: paywallInfo,
-        entitlements: entitlements);
+        entitlements: entitlements,
+        userAttributes: pInfo.userAttributes);
   }
 }
 
@@ -290,12 +290,20 @@ class RedemptionPaywallInfo {
   /// The ID of the experiment that the paywall belongs to.
   final String experimentId;
 
+  /// The identifier of the product that was purchased.
+  final String? productIdentifier;
+
+  /// The product that was purchased, with its pricing details.
+  final RedemptionPaywallProduct? product;
+
   RedemptionPaywallInfo({
     required this.identifier,
     required this.placementName,
     required this.placementParams,
     required this.variantId,
     required this.experimentId,
+    this.productIdentifier,
+    this.product,
   });
 
   static RedemptionPaywallInfo fromPigeon(PRedemptionPaywallInfo info) {
@@ -304,6 +312,176 @@ class RedemptionPaywallInfo {
         placementName: info.placementName,
         placementParams: info.placementParams,
         variantId: info.variantId,
-        experimentId: info.experimentId);
+        experimentId: info.experimentId,
+        productIdentifier: info.productIdentifier,
+        product: info.product != null
+            ? RedemptionPaywallProduct.fromPigeon(info.product!)
+            : null);
+  }
+}
+
+/// The product purchased from a paywall during a web checkout.
+class RedemptionPaywallProduct {
+  /// The product's identifier.
+  final String identifier;
+
+  /// The language code of the product's locale.
+  final String languageCode;
+
+  /// The product's locale.
+  final String locale;
+
+  /// The currency code of the product's price.
+  final String currencyCode;
+
+  /// The currency symbol of the product's price.
+  final String currencySymbol;
+
+  /// The subscription period unit, e.g., week.
+  final String period;
+
+  /// The subscription period as an adverb, e.g., weekly.
+  final String periodly;
+
+  /// The localized subscription period.
+  final String localizedPeriod;
+
+  /// An alternative description of the subscription period.
+  final String periodAlt;
+
+  /// The number of days in the subscription period.
+  final int periodDays;
+
+  /// The number of weeks in the subscription period.
+  final int periodWeeks;
+
+  /// The number of months in the subscription period.
+  final int periodMonths;
+
+  /// The number of years in the subscription period.
+  final int periodYears;
+
+  /// The price of the product in the local currency.
+  final double rawPrice;
+
+  /// The localized price.
+  final String price;
+
+  /// The localized daily price.
+  final String dailyPrice;
+
+  /// The localized weekly price.
+  final String weeklyPrice;
+
+  /// The localized monthly price.
+  final String monthlyPrice;
+
+  /// The localized yearly price.
+  final String yearlyPrice;
+
+  /// The price of the trial period in the local currency.
+  final double rawTrialPeriodPrice;
+
+  /// The localized price of the trial period.
+  final String trialPeriodPrice;
+
+  /// The localized daily price of the trial period.
+  final String trialPeriodDailyPrice;
+
+  /// The localized weekly price of the trial period.
+  final String trialPeriodWeeklyPrice;
+
+  /// The localized monthly price of the trial period.
+  final String trialPeriodMonthlyPrice;
+
+  /// The localized yearly price of the trial period.
+  final String trialPeriodYearlyPrice;
+
+  /// The trial period's duration in days.
+  final int trialPeriodDays;
+
+  /// The trial period's duration in weeks.
+  final int trialPeriodWeeks;
+
+  /// The trial period's duration in months.
+  final int trialPeriodMonths;
+
+  /// The trial period's duration in years.
+  final int trialPeriodYears;
+
+  /// The trial period's duration as text, e.g., 7-day.
+  final String trialPeriodText;
+
+  /// The formatted end date of the trial period.
+  final String trialPeriodEndDate;
+
+  RedemptionPaywallProduct({
+    required this.identifier,
+    required this.languageCode,
+    required this.locale,
+    required this.currencyCode,
+    required this.currencySymbol,
+    required this.period,
+    required this.periodly,
+    required this.localizedPeriod,
+    required this.periodAlt,
+    required this.periodDays,
+    required this.periodWeeks,
+    required this.periodMonths,
+    required this.periodYears,
+    required this.rawPrice,
+    required this.price,
+    required this.dailyPrice,
+    required this.weeklyPrice,
+    required this.monthlyPrice,
+    required this.yearlyPrice,
+    required this.rawTrialPeriodPrice,
+    required this.trialPeriodPrice,
+    required this.trialPeriodDailyPrice,
+    required this.trialPeriodWeeklyPrice,
+    required this.trialPeriodMonthlyPrice,
+    required this.trialPeriodYearlyPrice,
+    required this.trialPeriodDays,
+    required this.trialPeriodWeeks,
+    required this.trialPeriodMonths,
+    required this.trialPeriodYears,
+    required this.trialPeriodText,
+    required this.trialPeriodEndDate,
+  });
+
+  static RedemptionPaywallProduct fromPigeon(PRedemptionPaywallProduct product) {
+    return RedemptionPaywallProduct(
+      identifier: product.identifier,
+      languageCode: product.languageCode,
+      locale: product.locale,
+      currencyCode: product.currencyCode,
+      currencySymbol: product.currencySymbol,
+      period: product.period,
+      periodly: product.periodly,
+      localizedPeriod: product.localizedPeriod,
+      periodAlt: product.periodAlt,
+      periodDays: product.periodDays,
+      periodWeeks: product.periodWeeks,
+      periodMonths: product.periodMonths,
+      periodYears: product.periodYears,
+      rawPrice: product.rawPrice,
+      price: product.price,
+      dailyPrice: product.dailyPrice,
+      weeklyPrice: product.weeklyPrice,
+      monthlyPrice: product.monthlyPrice,
+      yearlyPrice: product.yearlyPrice,
+      rawTrialPeriodPrice: product.rawTrialPeriodPrice,
+      trialPeriodPrice: product.trialPeriodPrice,
+      trialPeriodDailyPrice: product.trialPeriodDailyPrice,
+      trialPeriodWeeklyPrice: product.trialPeriodWeeklyPrice,
+      trialPeriodMonthlyPrice: product.trialPeriodMonthlyPrice,
+      trialPeriodYearlyPrice: product.trialPeriodYearlyPrice,
+      trialPeriodDays: product.trialPeriodDays,
+      trialPeriodWeeks: product.trialPeriodWeeks,
+      trialPeriodMonths: product.trialPeriodMonths,
+      trialPeriodYears: product.trialPeriodYears,
+      trialPeriodText: product.trialPeriodText,
+      trialPeriodEndDate: product.trialPeriodEndDate,
+    );
   }
 }

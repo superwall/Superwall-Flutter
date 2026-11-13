@@ -22,21 +22,22 @@ final class PaywallPresentationHandlerHost {
       )
     }
 
+    // The host is only removed once `onDismiss` has been delivered, so it's
+    // still alive here.
+    handler.onWillDismiss { [weak self] paywallInfo, result in
+      self?.flutterHandler.onWillDismiss(
+        paywallInfo: paywallInfo.pigeonify(),
+        paywallResult: result.pigeonify(),
+        completion: { result in
+          // NO-OP
+        }
+      )
+    }
+
     handler.onDismiss { [weak self] paywallInfo, result in
-      let pResult: PPaywallResult
-
-      switch result {
-      case .purchased(let product):
-        pResult = PPurchasedPaywallResult(productId: product.productIdentifier)
-      case .restored:
-        pResult = PRestoredPaywallResult(ignore: false)
-      case .declined:
-        pResult = PDeclinedPaywallResult(ignore: false)
-      }
-
       self?.flutterHandler.onDismiss(
         paywallInfo: paywallInfo.pigeonify(),
-        paywallResult: pResult,
+        paywallResult: result.pigeonify(),
         completion: { [weak self] result in
           if paywallInfo.closeReason != .none {
             if let self = self {
@@ -57,19 +58,9 @@ final class PaywallPresentationHandlerHost {
     }
 
     handler.onSkip { [weak self] reason in
-      let pReason: PPaywallSkippedReason
-
-      switch reason {
-      case .holdout:
-        pReason = .holdout
-      case .noAudienceMatch:
-        pReason = .noAudienceMatch
-      case .placementNotFound:
-        pReason = .placementNotFound
-      }
-
       self?.flutterHandler.onSkip(
-        reason: pReason,
+        reason: reason.pigeonify(),
+        experiment: reason.pigeonExperiment,
         completion: { result in
           // NO-OP
           if let self = self {
@@ -84,26 +75,9 @@ final class PaywallPresentationHandlerHost {
         return CustomCallbackResult(status: .failure, data: nil)
       }
 
-      let pCallback = PCustomCallback(
-        name: callback.name,
-        variables: callback.variables
-      )
-
-      let result: CustomCallbackResult = await withCheckedContinuation { continuation in
-        self.flutterHandler.onCustomCallback(callback: pCallback) { pResult in
-          switch pResult {
-          case .success(let pCallbackResult):
-            continuation.resume(returning: CustomCallbackResult(
-              status: pCallbackResult.status == .success ? .success : .failure,
-              data: pCallbackResult.data
-            ))
-          case .failure:
-            continuation.resume(returning: CustomCallbackResult(status: .failure, data: nil))
-          }
-        }
+      return await callback.forwardToFlutter { pCallback, completion in
+        self.flutterHandler.onCustomCallback(callback: pCallback, completion: completion)
       }
-
-      return result
     }
   }
 }

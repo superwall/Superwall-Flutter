@@ -9,6 +9,7 @@ import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 class PaywallPresentationHandler {
   // Handlers for various events
   Function(PaywallInfo)? onPresentHandler;
+  Function(PaywallInfo, PaywallResult)? onWillDismissHandler;
   Function(PaywallInfo, PaywallResult)? onDismissHandler;
   Function(String)? onErrorHandler;
   Function(PaywallSkippedReason)? onSkipHandler;
@@ -17,6 +18,14 @@ class PaywallPresentationHandler {
   // Setters for the handlers
   void onPresent(Function(PaywallInfo) handler) {
     onPresentHandler = handler;
+  }
+
+  /// Sets the handler that will be called when the paywall is about to be
+  /// dismissed, before [onDismiss].
+  ///
+  /// Note: iOS only. It's never called on Android.
+  void onWillDismiss(Function(PaywallInfo, PaywallResult) handler) {
+    onWillDismissHandler = handler;
   }
 
   void onDismiss(Function(PaywallInfo, PaywallResult) handler) {

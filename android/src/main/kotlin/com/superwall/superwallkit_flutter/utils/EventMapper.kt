@@ -1,11 +1,16 @@
 package com.superwall.superwallkit_flutter.utils
 
+import PAttributionMatchInfo
+import PCustomerCenterScreenType
+import PPageViewData
 import PSuperwallEventInfo
 import PSurveyOption
 import com.superwall.sdk.analytics.superwall.AttributionMatchInfo
+import com.superwall.sdk.customercenter.CustomerCenterScreenType
 import com.superwall.sdk.analytics.superwall.SuperwallEvent
 import com.superwall.sdk.analytics.superwall.SuperwallEventInfo
 import com.superwall.superwallkit_flutter.json.pigeonify
+import com.superwall.superwallkit_flutter.utils.CustomerCenterMapper.toPigeon
 import pigeonify
 
 /**
@@ -33,6 +38,13 @@ class EventMapper {
                         params = params,
                     )
 
+                is SuperwallEvent.IntegrationAttributes ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.INTEGRATION_ATTRIBUTES,
+                        integrationAttributes = mapParamsForDart(event.audienceFilterParams),
+                        params = params,
+                    )
+
                 is SuperwallEvent.SubscriptionStatusDidChange -> PSuperwallEventInfo(eventType = PEventType.SUBSCRIPTION_STATUS_DID_CHANGE, params = params)
                 is SuperwallEvent.AppClose -> PSuperwallEventInfo(eventType = PEventType.APP_CLOSE, params = params)
                 is SuperwallEvent.DeepLink ->
@@ -53,6 +65,24 @@ class EventMapper {
                     PSuperwallEventInfo(
                         eventType = PEventType.PAYWALL_OPEN,
                         paywallInfo = event.paywallInfo.let { PaywallInfoMapper.toPPaywallInfo(it) },
+                        params = params,
+                    )
+
+                is SuperwallEvent.PaywallPageView ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.PAYWALL_PAGE_VIEW,
+                        paywallInfo = event.paywallInfo.let { PaywallInfoMapper.toPPaywallInfo(it) },
+                        pageViewData =
+                            PPageViewData(
+                                pageNodeId = event.data.pageNodeId,
+                                flowPosition = event.data.flowPosition.toLong(),
+                                pageName = event.data.pageName,
+                                navigationNodeId = event.data.navigationNodeId,
+                                previousPageNodeId = event.data.previousPageNodeId,
+                                previousFlowPosition = event.data.previousFlowPosition?.toLong(),
+                                navigationType = event.data.navigationType,
+                                timeOnPreviousPageMs = event.data.timeOnPreviousPageMs?.toLong(),
+                            ),
                         params = params,
                     )
 
@@ -251,12 +281,14 @@ class EventMapper {
                 is SuperwallEvent.PaywallPreloadStart ->
                     PSuperwallEventInfo(
                         eventType = PEventType.PAYWALL_PRELOAD_START,
+                        paywallCount = event.paywallCount.toLong(),
                         params = params,
                     )
 
                 is SuperwallEvent.PaywallPreloadComplete ->
                     PSuperwallEventInfo(
                         eventType = PEventType.PAYWALL_PRELOAD_COMPLETE,
+                        paywallCount = event.paywallCount.toLong(),
                         params = params,
                     )
 
@@ -264,6 +296,7 @@ class EventMapper {
                     PSuperwallEventInfo(
                         eventType = PEventType.PAYWALL_RESOURCE_LOAD_FAIL,
                         error = event.error,
+                        resourceUrl = event.url,
                         params = params,
                     )
 
@@ -305,6 +338,8 @@ class EventMapper {
                 is SuperwallEvent.ShimmerViewComplete ->
                     PSuperwallEventInfo(
                         eventType = PEventType.SHIMMER_VIEW_COMPLETE,
+                        // The native SDK reports this value in milliseconds already.
+                        shimmerDuration = event.duration,
                         params = params,
                     )
 
@@ -317,18 +352,124 @@ class EventMapper {
                         params = params,
                     )
 
-                is SuperwallEvent.PermissionRequested -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_REQUESTED, params = params)
-                is SuperwallEvent.PermissionGranted -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_GRANTED, params = params)
-                is SuperwallEvent.PermissionDenied -> PSuperwallEventInfo(eventType = PEventType.PERMISSION_DENIED, params = params)
-                is SuperwallEvent.CustomerCenterOpen -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_OPEN, params = params)
+                is SuperwallEvent.EnrichmentStart -> PSuperwallEventInfo(eventType = PEventType.ENRICHMENT_START, params = params)
+                is SuperwallEvent.EnrichmentFail -> PSuperwallEventInfo(eventType = PEventType.ENRICHMENT_FAIL, params = params)
+                is SuperwallEvent.EnrichmentComplete ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.ENRICHMENT_COMPLETE,
+                        userEnrichment = mapNullableParamsForDart(event.userEnrichment),
+                        deviceEnrichment = mapNullableParamsForDart(event.deviceEnrichment),
+                        params = params,
+                    )
+
+                is SuperwallEvent.ReviewRequested ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.REVIEW_REQUESTED,
+                        reviewRequestedCount = event.count.toLong(),
+                        params = params,
+                    )
+
+                is SuperwallEvent.ReviewGranted ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.REVIEW_GRANTED,
+                        reviewRequestedCount = event.count.toLong(),
+                        params = params,
+                    )
+
+                is SuperwallEvent.ReviewDenied ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.REVIEW_DENIED,
+                        reviewRequestedCount = event.count.toLong(),
+                        params = params,
+                    )
+
+                is SuperwallEvent.CustomerInfoDidChange ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_INFO_DID_CHANGE,
+                        fromCustomerInfo = CustomerInfoMapper.toPigeon(event.from),
+                        toCustomerInfo = CustomerInfoMapper.toPigeon(event.to),
+                        params = params,
+                    )
+
+                is SuperwallEvent.TestModeModalOpen -> PSuperwallEventInfo(eventType = PEventType.TEST_MODE_MODAL_OPEN, params = params)
+                is SuperwallEvent.TestModeModalClose -> PSuperwallEventInfo(eventType = PEventType.TEST_MODE_MODAL_CLOSE, params = params)
+                is SuperwallEvent.PermissionRequested ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.PERMISSION_REQUESTED,
+                        permissionName = event.permissionName,
+                        paywallIdentifier = event.paywallIdentifier,
+                        params = params,
+                    )
+
+                is SuperwallEvent.PermissionGranted ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.PERMISSION_GRANTED,
+                        permissionName = event.permissionName,
+                        paywallIdentifier = event.paywallIdentifier,
+                        params = params,
+                    )
+
+                is SuperwallEvent.PermissionDenied ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.PERMISSION_DENIED,
+                        permissionName = event.permissionName,
+                        paywallIdentifier = event.paywallIdentifier,
+                        params = params,
+                    )
+
+                is SuperwallEvent.CustomerCenterOpen ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_CENTER_OPEN,
+                        customerCenterScreen =
+                            when (event.screen) {
+                                CustomerCenterScreenType.MANAGEMENT -> PCustomerCenterScreenType.MANAGEMENT
+                                CustomerCenterScreenType.NO_PURCHASES -> PCustomerCenterScreenType.NO_PURCHASES
+                            },
+                        params = params,
+                    )
+
                 is SuperwallEvent.CustomerCenterClose -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_CLOSE, params = params)
-                is SuperwallEvent.CustomerCenterAction -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_ACTION, params = params)
-                is SuperwallEvent.CustomerCenterSurveyResponse -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_SURVEY_RESPONSE, params = params)
-                is SuperwallEvent.CustomerCenterRefundRequest -> PSuperwallEventInfo(eventType = PEventType.CUSTOMER_CENTER_REFUND_REQUEST, params = params)
+                is SuperwallEvent.CustomerCenterAction ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_CENTER_ACTION,
+                        customerCenterAction = event.action.toPigeon(),
+                        customerCenterPathId = event.pathId,
+                        customerCenterProductId = event.productId,
+                        params = params,
+                    )
+
+                is SuperwallEvent.CustomerCenterSurveyResponse ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_CENTER_SURVEY_RESPONSE,
+                        customerCenterAction = event.action.toPigeon(),
+                        customerCenterPathId = event.pathId,
+                        customerCenterProductId = event.productId,
+                        customerCenterSurveyId = event.surveyId,
+                        customerCenterSurveyOptionId = event.optionId,
+                        params = params,
+                    )
+
+                is SuperwallEvent.CustomerCenterRefundRequest ->
+                    PSuperwallEventInfo(
+                        eventType = PEventType.CUSTOMER_CENTER_REFUND_REQUEST,
+                        customerCenterProductId = event.productId,
+                        customerCenterRefundStatus = event.status.toPigeon(),
+                        params = params,
+                    )
+
 
                 is SuperwallEvent.AttributionMatch ->
                     PSuperwallEventInfo(
                         eventType = PEventType.ATTRIBUTION_MATCH,
+                        attributionMatchInfo =
+                            PAttributionMatchInfo(
+                                provider = event.info.provider.rawName,
+                                matched = event.info.matched,
+                                source = event.info.source,
+                                confidence = event.info.confidence?.rawName,
+                                matchScore = event.info.matchScore,
+                                reason = event.info.reason,
+                            ),
                         params = (params ?: emptyMap()) + attributionMatchParams(event.info),
                     )
 
@@ -355,6 +496,14 @@ class EventMapper {
                     info.reason?.let { "reason" to it },
                 ).toMap(),
             ) ?: emptyMap()
+
+        /**
+         * Like [mapParamsForDart], dropping the entries whose value is `null`.
+         */
+        private fun mapNullableParamsForDart(params: Map<String, Any?>): Map<String, Object>? =
+            mapParamsForDart(
+                params.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+            )
 
         /**
          * Maps Map<String, Any?> to Map<String, Object> for use in Dart
