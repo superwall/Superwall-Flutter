@@ -2,15 +2,7 @@
 
 The changelog for `Superwall`. Also see the [releases](https://github.com/superwall/Superwall-Flutter/releases) on GitHub.
 
-## 3.0.0
-
-### Breaking Changes
-- `EventType`, `LogScope`, `IntegrationAttribute` and `ProductStore` have new values, and `PaywallSkippedReason` has the new `PaywallSkippedReasonUserIsSubscribed` subclass (Android only). An exhaustive `switch` over any of them needs the new cases or a `default`.
-- Several events now reach `SuperwallDelegate.handleSuperwallEvent` under a different `EventType` than before (the full list is under Fixes). If you matched them by their old type, match the new one instead:
-  - iOS: `transactionRestore` was delivered as `transactionComplete`, and `attributionMatch` as `customPlacement`.
-  - Android: `integrationAttributes`, `reviewRequested`, `customerInfoDidChange`, `enrichmentStart`, `enrichmentComplete` and `enrichmentFail` were delivered as `customPlacement`.
-  - A paywall resource that failed to load was delivered as `paywallResponseLoadFail`; it is now `paywallResourceLoadFail`.
-- Android: the log level in `SuperwallOptions.logging` is now respected. It was ignored and always set to debug, so apps that relied on debug logs need to set `LogLevel.debug` themselves.
+## 2.9.0
 
 ### Enhancements
 - Updates Android SDK to 2.10.2 [View Android SDK release notes](https://github.com/superwall/Superwall-Android/releases/tag/2.10.2).
@@ -48,6 +40,7 @@ The changelog for `Superwall`. Also see the [releases](https://github.com/superw
 - Adds `introductoryDiscount` and `discounts` (each a `StoreProductDiscount`), `billingPlanType` (a `BillingPlanType`) and `isBillingPlanAvailable` to `StoreProduct` (iOS only). `StoreProduct.customTransactionId` is also available on iOS when the plugin is built with Swift Package Manager.
 - Adds typed event details to `SuperwallEvent`: `attributionMatchInfo` (an `AttributionMatchInfo`) for `attributionMatch`; `customerCenterAction`, `customerCenterPathId`, `customerCenterProductId`, `customerCenterSurveyId`, `customerCenterSurveyOptionId`, `customerCenterRefundStatus`, `customerCenterScreen` (a `CustomerCenterScreenType`) and the iOS-only `customerCenterPresentationStyle` (a `CustomerCenterPresentationStyle`) for the Customer Center events; and the Android-only `fromCustomerInfo` and `toCustomerInfo` for `customerInfoDidChange`, `resourceUrl` for a paywall resource that failed to load, and `shimmerDuration` for `shimmerViewComplete`.
 - Adds the `PaywallView` widget, which embeds the paywall of a placement in your own widget tree on Android and iOS instead of presenting it over the app. Give it a `placement` and optional `params`; `onPresent`, `onSkip` and `onError` report what happened, and `onFinished` delivers the `PaywallResult` (purchased, restored or declined) along with whether the paywall was dismissed, in which case your app should remove the widget. `loadingBuilder`, `skippedBuilder` and `errorBuilder` customise what's shown while the paywall loads, when it's skipped and when it can't be retrieved. `onLoadingStateChanged` (with the new `PaywallLoadingState`) and `onCustomCallback` are iOS only. Call `Superwall.configure()` first, and use a different placement for each `PaywallView` mounted at the same time.
+- `EventType`, `LogScope`, `IntegrationAttribute` and `ProductStore` have new values, and `PaywallSkippedReason` has the new `PaywallSkippedReasonUserIsSubscribed` subclass. An exhaustive `switch` over any of them without a `default` needs the new cases.
 
 ### Fixes
 - iOS: fixes `transactionRestore` events being delivered to `SuperwallDelegate.handleSuperwallEvent` as `transactionComplete`, and `attributionMatch` events being delivered as `customPlacement`. If you relied on either, update your event handling.

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the **Superwall Flutter SDK v3.0.0** - a Flutter plugin that wraps native Superwall SDKs for Android and iOS. Superwall provides remotely configurable in-app paywall infrastructure for mobile applications.
+This is the **Superwall Flutter SDK v2.9.0** - a Flutter plugin that wraps native Superwall SDKs for Android and iOS. Superwall provides remotely configurable in-app paywall infrastructure for mobile applications.
 
 ## Architecture
 
