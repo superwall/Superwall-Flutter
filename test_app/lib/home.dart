@@ -37,6 +37,11 @@ class Home extends StatelessWidget {
                     Navigator.pushNamed(context, '/handlerTest');
                   },
                   child: Text("Handler Test")),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/embeddedPaywallTest');
+                  },
+                  child: Text("Embedded Paywall Test")),
             ],
           ),
         ),

@@ -1,0 +1,374 @@
+# Bumps the wrapped native SDK when Superwall-Android or Superwall-iOS releases.
+#
+# Fired by the native repos' notify-wrappers.yml (repository_dispatch
+# `native-sdk-release`, payload {platform, version}), or by hand.
+#
+# There is at most one open bump PR per repo. A later release, for either
+# platform, is committed onto it (and the agent runs again for the new range)
+# instead of opening a second PR.
+#
+# Two stages, so a PR always exists even if the agent fails or finds nothing:
+#   1. Deterministic bump: native pin, pubspec version, CHANGELOG — committed
+#      and opened as a PR against develop.
+#   2. Claude Code (anthropics/claude-code-action) reads the native release
+#      notes for the whole skipped range and, if the public API changed,
+#      implements the plugin side and pushes it onto the same PR.
+#
+# Secrets:
+#   ANTHROPIC_API_KEY  — for the agent.
+#   SDK_BOT_TOKEN      — optional but recommended: PAT/App token with contents +
+#                        pull-requests write here. Pushes and PRs made with
+#                        GITHUB_TOKEN do not trigger other workflows. If unset,
+#                        GITHUB_TOKEN is used and "Allow GitHub Actions to create
+#                        and approve pull requests" must be enabled in the repo
+#                        settings.
+# Variables:
+#   AGENT_MODEL        — optional model override.
+#
+# Testing: run it by hand with dry_run: true — it applies the bump and prints
+# the diff and the agent prompt, but pushes nothing, opens no PR and skips the
+# agent. Locally, local-ci (https://agent-ci.dev) can run it through a caller
+# workflow that uses this one via workflow_call with dry_run: true.
+name: Native SDK bump
+
+on:
+  repository_dispatch:
+    types: [native-sdk-release]
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Native SDK that released
+        required: true
+        type: choice
+        options: [android, ios]
+      version:
+        description: Native version (blank = latest release)
+        required: false
+        type: string
+      dry_run:
+        description: Apply the bump and print the diff and agent prompt only — no push, PR or agent
+        required: false
+        type: boolean
+        default: false
+  # Same inputs for callers. Mainly so the workflow can be run locally with
+  # local-ci (https://agent-ci.dev), which cannot simulate dispatch events but
+  # does pass workflow_call inputs.
+  workflow_call:
+    inputs:
+      platform:
+        required: true
+        type: string
+      version:
+        required: false
+        type: string
+      dry_run:
+        required: false
+        type: boolean
+        default: false
+
+# One bump at a time per repo: an Android and an iOS run both target the one
+# open bump PR, so they must not race to create or push to it.
+concurrency:
+  group: native-sdk-bump
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  BASE_BRANCH: develop
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ secrets.SDK_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+      DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
+    steps:
+      # Values flow between steps through $GITHUB_ENV rather than step
+      # outputs: same behaviour on GitHub, and it also works under local-ci,
+      # which resolves steps.*.outputs.* to empty strings.
+      - name: Resolve target
+        env:
+          PLATFORM: ${{ github.event.client_payload.platform || inputs.platform }}
+          VERSION: ${{ github.event.client_payload.version || inputs.version }}
+        run: |
+          case "$PLATFORM" in
+            android) REPO=superwall/Superwall-Android; LABEL=Android ;;
+            ios)     REPO=superwall/Superwall-iOS;     LABEL=iOS ;;
+            *) echo "::error::Unknown platform '$PLATFORM'"; exit 1 ;;
+          esac
+          if [ -z "$VERSION" ]; then
+            VERSION="$(gh release view --repo "$REPO" --json tagName -q .tagName)"
+          fi
+          VERSION="${VERSION#v}"
+          # The payload is interpolated into commands and the agent prompt, so
+          # accept nothing but a stable x.y.z.
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::'$VERSION' is not a stable x.y.z version"; exit 1
+          fi
+          {
+            echo "PLATFORM=$PLATFORM"
+            echo "REPO=$REPO"
+            echo "LABEL=$LABEL"
+            echo "VERSION=$VERSION"
+            echo "BRANCH=native-sdk/$PLATFORM-$VERSION"
+          } >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ env.BASE_BRANCH }}
+          token: ${{ secrets.SDK_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+
+      # Workflow scripts live on the default branch with this YAML; BASE_BRANCH
+      # (develop) may not have .github/scripts yet. Load them from the commit
+      # that ran this workflow so we never depend on develop having them.
+      - name: Load workflow scripts
+        run: |
+          mkdir -p "$RUNNER_TEMP/workflow-scripts"
+          git fetch --depth=1 origin "${{ github.sha }}"
+          git show "${{ github.sha }}:.github/scripts/native-changelog.py" \
+            > "$RUNNER_TEMP/workflow-scripts/native-changelog.py"
+          git show "${{ github.sha }}:.github/scripts/changelog-entry.py" \
+            > "$RUNNER_TEMP/workflow-scripts/changelog-entry.py"
+          echo "WORKFLOW_SCRIPTS=$RUNNER_TEMP/workflow-scripts" >> "$GITHUB_ENV"
+
+      # One bump PR per repo. A release for the other platform, or a newer one
+      # for the same platform, lands on the bump PR that is already open instead
+      # of opening a second PR that would conflict with it on the version and
+      # CHANGELOG lines. The pin check below then runs against that PR's branch.
+      - name: Find open bump PR
+        run: |
+          EXISTING="$(gh pr list --state open --base "$BASE_BRANCH" --limit 100 \
+            --json number,headRefName \
+            -q '[.[] | select(.headRefName | startswith("native-sdk/"))] | sort_by(.number) | last // empty | "\(.number) \(.headRefName)"' \
+            || true)"
+          if [ -n "$EXISTING" ]; then
+            read -r PR BRANCH <<< "$EXISTING"
+            git fetch --quiet origin "$BRANCH"
+            git checkout --quiet -B "$BRANCH" "origin/$BRANCH"
+            echo "::notice::Updating open bump PR #$PR ($BRANCH)."
+            { echo "PR=$PR"; echo "BRANCH=$BRANCH"; echo "EXISTING_PR=true"; } >> "$GITHUB_ENV"
+          else
+            echo "EXISTING_PR=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Read current pin
+        run: |
+          if [ "$PLATFORM" = android ]; then
+            CURRENT="$(sed -nE 's/.*com\.superwall\.sdk:superwall-android:([^"]+)".*/\1/p' android/build.gradle)"
+          else
+            CURRENT="$(sed -nE "s/.*s\.dependency 'SuperwallKit', '([^']+)'.*/\1/p" ios/superwallkit_flutter.podspec)"
+          fi
+          [ -n "$CURRENT" ] || { echo "::error::Could not read the current $PLATFORM pin"; exit 1; }
+          echo "CURRENT=$CURRENT" >> "$GITHUB_ENV"
+
+          SKIP=false
+          if [ "$(printf '%s\n%s\n' "$CURRENT" "$VERSION" | sort -V | tail -1)" = "$CURRENT" ]; then
+            echo "::notice::$PLATFORM is already at $CURRENT (>= $VERSION) on $(git rev-parse --abbrev-ref HEAD), nothing to do."
+            SKIP=true
+          fi
+          echo "SKIP=$SKIP" >> "$GITHUB_ENV"
+
+      - name: Fetch native source and release notes
+        if: env.SKIP == 'false'
+        run: |
+          # Inside the workspace so the agent can read it, but excluded from git
+          # so the agent's commits never pick it up.
+          git clone --quiet --filter=blob:none "https://github.com/$REPO" .native-sdk
+          git -C .native-sdk checkout --quiet "$VERSION" 2>/dev/null \
+            || git -C .native-sdk checkout --quiet "v$VERSION"
+          echo ".native-sdk/" >> .git/info/exclude
+          python3 "$WORKFLOW_SCRIPTS/native-changelog.py" .native-sdk/CHANGELOG.md "$CURRENT" "$VERSION" \
+            > "$RUNNER_TEMP/native-changelog.md"
+          [ -s "$RUNNER_TEMP/native-changelog.md" ] \
+            || echo "_No CHANGELOG.md entries found between $CURRENT and $VERSION._" > "$RUNNER_TEMP/native-changelog.md"
+          cat "$RUNNER_TEMP/native-changelog.md"
+
+      - name: Apply version bump
+        if: env.SKIP == 'false'
+        run: |
+          if [ "$PLATFORM" = android ]; then
+            sed -i -E "s/(com\.superwall\.sdk:superwall-android:)[^\"]+\"/\1$VERSION\"/" android/build.gradle
+          else
+            # The podspec and the SPM manifest must pin the same version.
+            sed -i -E \
+              -e "s/('SuperwallKit', ')[^']+'/\1$VERSION'/" \
+              -e "s#(Superwall-iOS\.git\", exact: \")[^\"]+\"#\1$VERSION\"#" \
+              ios/superwallkit_flutter.podspec ios/superwallkit_flutter/Package.swift
+          fi
+
+          # Bump the patch version unless the pubspec version is not on pub.dev
+          # yet (a release is already staged on develop) — then this joins it.
+          # pub.dev rather than git tags: not every release gets tagged.
+          PLUGIN_VERSION="$(sed -nE 's/^version: *(.*)$/\1/p' pubspec.yaml)"
+          if curl -fsS https://pub.dev/api/packages/superwallkit_flutter \
+               | python3 -c 'import json,sys; v=sys.argv[1]; sys.exit(0 if any(x["version"]==v for x in json.load(sys.stdin)["versions"]) else 1)' "$PLUGIN_VERSION"; then
+            IFS=. read -r MA MI PA <<< "$PLUGIN_VERSION"
+            PLUGIN_VERSION="$MA.$MI.$((PA + 1))"
+            sed -i -E "s/^version: .*/version: $PLUGIN_VERSION/" pubspec.yaml
+          fi
+          echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> "$GITHUB_ENV"
+
+          python3 "$WORKFLOW_SCRIPTS/changelog-entry.py" CHANGELOG.md "$PLUGIN_VERSION" "### Enhancements" \
+            "Updates $LABEL SDK to $VERSION [View $LABEL SDK release notes](https://github.com/$REPO/releases/tag/$VERSION)." \
+            "Updates $LABEL SDK to"
+          git -c core.fileMode=false --no-pager diff
+
+      - name: Commit and open or update the bump PR
+        if: env.SKIP == 'false' && env.DRY_RUN == 'false'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          [ "$EXISTING_PR" = true ] || git checkout -b "$BRANCH"
+          git commit -am "Bump $LABEL SDK to $VERSION"
+          if [ "$EXISTING_PR" = true ]; then
+            git push origin "$BRANCH"
+          else
+            # A branch left behind by a closed bump PR would reject the push
+            # and block this version for good. Nothing else uses native-sdk/*.
+            git push --force -u origin "$BRANCH"
+          fi
+
+          # Title from what the branch changes against the base, so a PR that
+          # carries both platforms says so.
+          pins() {  # prints "<android> <ios>" pinned at git ref $1
+            echo "$(git show "$1:android/build.gradle" | sed -nE 's/.*com\.superwall\.sdk:superwall-android:([^"]+)".*/\1/p')" \
+                 "$(git show "$1:ios/superwallkit_flutter.podspec" | sed -nE "s/.*s\.dependency 'SuperwallKit', '([^']+)'.*/\1/p")"
+          }
+          read -r BASE_ANDROID BASE_IOS <<< "$(pins "origin/$BASE_BRANCH")"
+          read -r HEAD_ANDROID HEAD_IOS <<< "$(pins HEAD)"
+          PARTS=()
+          [ "$HEAD_ANDROID" != "$BASE_ANDROID" ] && PARTS+=("Android SDK to $HEAD_ANDROID")
+          [ "$HEAD_IOS" != "$BASE_IOS" ] && PARTS+=("iOS SDK to $HEAD_IOS")
+          if [ "${#PARTS[@]}" -eq 2 ]; then TITLE="Bump ${PARTS[0]} and ${PARTS[1]}"
+          elif [ "${#PARTS[@]}" -eq 1 ]; then TITLE="Bump ${PARTS[0]}"
+          else TITLE="Bump $LABEL SDK to $VERSION"; fi
+
+          {
+            echo "<details><summary>$LABEL release notes ($CURRENT → $VERSION)</summary>"
+            echo
+            cat "$RUNNER_TEMP/native-changelog.md"
+            echo
+            echo "</details>"
+          } > "$RUNNER_TEMP/release-notes.md"
+
+          if [ "$EXISTING_PR" = true ]; then
+            {
+              gh pr view "$PR" --json body -q .body
+              echo
+              echo "---"
+              echo
+              echo "**[$REPO $VERSION](https://github.com/$REPO/releases/tag/$VERSION) was released, so this PR now also bumps the $LABEL SDK from \`$CURRENT\` to \`$VERSION\`.**"
+              echo
+              cat "$RUNNER_TEMP/release-notes.md"
+            } > "$RUNNER_TEMP/pr-body.md"
+            gh pr edit "$PR" --title "$TITLE" --body-file "$RUNNER_TEMP/pr-body.md"
+          else
+            {
+              echo "Bumps the $LABEL SDK from \`$CURRENT\` to \`$VERSION\` and superwallkit_flutter to \`$PLUGIN_VERSION\`."
+              echo
+              echo "Opened automatically by \`native-sdk-bump.yml\` after [$REPO $VERSION](https://github.com/$REPO/releases/tag/$VERSION) was released. An agent then checks the release notes below for public API changes and pushes any integration work onto this PR. Later native releases, for either platform, are added to this PR while it is open."
+              echo
+              cat "$RUNNER_TEMP/release-notes.md"
+            } > "$RUNNER_TEMP/pr-body.md"
+            gh pr create --base "$BASE_BRANCH" --head "$BRANCH" \
+              --title "$TITLE" --body-file "$RUNNER_TEMP/pr-body.md"
+            echo "PR=$(gh pr view "$BRANCH" --json number -q .number)" >> "$GITHUB_ENV"
+          fi
+      # Toolchain for the agent to validate its changes with.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        if: env.SKIP == 'false' && env.DRY_RUN == 'false'
+        with:
+          node-version: 24
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        if: env.SKIP == 'false' && env.DRY_RUN == 'false'
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        if: env.SKIP == 'false' && env.DRY_RUN == 'false'
+        with:
+          channel: stable
+          cache: true
+      - name: flutter pub get
+        if: env.SKIP == 'false' && env.DRY_RUN == 'false'
+        run: flutter pub get
+
+      - name: Build agent prompt
+        if: env.SKIP == 'false'
+        run: |
+          if [ "$PLATFORM" = android ]; then
+            PLATFORM_NOTES="The Android host lives in android/src/main/kotlin. Besides flutter analyze and flutter test, check the Android side compiles with: (cd example && flutter build apk --debug)."
+          else
+            PLATFORM_NOTES="The iOS host lives in ios/superwallkit_flutter/Sources/superwallkit_flutter. This runner is Linux: Swift cannot be compiled here, so be careful and precise with Swift and say in the PR description that iOS was not compiled locally."
+          fi
+          if [ "$EXISTING_PR" = true ]; then
+            PR_NOTES="PR #$PR was already open for an earlier native release and may already contain integration work for it (see its description and commits). Keep all of it; only add what this release needs."
+          else
+            PR_NOTES=""
+          fi
+          DELIM="PROMPT_$(openssl rand -hex 8)"
+          {
+            echo "AGENT_PROMPT<<$DELIM"
+            cat <<EOF
+          You are integrating a native Superwall SDK release into Superwall-Flutter (the superwallkit_flutter plugin), which wraps Superwall-Android and Superwall-iOS.
+
+          $REPO was bumped from $CURRENT to $VERSION. That mechanical bump (native pin, pubspec version = $PLUGIN_VERSION, CHANGELOG entry) is already committed on PR #$PR (branch $BRANCH), which is checked out. Do not undo it. $PR_NOTES
+
+          The native SDK source is at .native-sdk/, checked out at tag $VERSION with full history. Use \`git -C .native-sdk diff $CURRENT $VERSION -- <paths>\` to see exactly how its public API changed. Do not modify anything under .native-sdk/ or .context/.
+
+          Native release notes for every version in the range:
+
+          $(cat "$RUNNER_TEMP/native-changelog.md")
+
+          Your job:
+          1. Read CLAUDE.md first and follow its "Adding New SDK Methods" workflow: models and APIs are defined in pigeons/configure.dart (P-prefixed), regenerated with \`dart run pigeon --input pigeons/configure.dart\` (never hand-edit generated files), implemented in the native hosts, then exposed in lib/src/public and exported from lib/superwallkit_flutter.dart.
+          2. Decide whether the plugin needs changes beyond the version bump. Work is needed for: new public methods, properties or options; changed signatures; new or renamed delegate callbacks, events or enum cases that the plugin maps; deprecated or removed APIs the plugin calls; behaviour changes the plugin or its docs describe. Internal fixes and performance work need nothing.
+          3. If work is needed, implement it end to end in Dart and the $LABEL host, with sensible behaviour on the other platform when the feature is $LABEL-only (document it as such). Add or update tests next to the existing ones. Validate with flutter analyze and flutter test. $PLATFORM_NOTES
+          4. Update docs (README.md, CLAUDE.md) that state the pinned $LABEL version $CURRENT so they say $VERSION — only where they describe the current pin, not historical changelog entries.
+          5. Add customer-facing bullets for anything you add to the "## $PLUGIN_VERSION" section of CHANGELOG.md. If you add public API, bump the minor version instead (pubspec.yaml and that CHANGELOG heading) unless the section is already a minor/major release.
+          6. Never commit code that does not compile. If part of the work cannot be done safely, leave it out and list it in the PR description as follow-up.
+          7. Commit your changes and push them with plain \`git push\` to $BRANCH, the checked-out branch of PR #$PR. Never create another branch or PR, never push to $BASE_BRANCH, never force push, never edit .github/. Then update the PR description with \`gh pr edit $PR --body-file <file>\`: start from \`gh pr view $PR --json body -q .body\`, keep the existing text and release notes, and add an "Integration changes" section listing what you changed and why. If nothing beyond the bump is needed, change no files and only add that section explaining why no integration work is needed.
+          EOF
+            echo "$DELIM"
+          } >> "$GITHUB_ENV"
+
+      - name: Dry-run summary
+        if: env.SKIP == 'false' && env.DRY_RUN == 'true'
+        run: |
+          echo "::notice::Dry run: nothing was pushed, no PR was opened, the agent did not run."
+          git -c core.fileMode=false --no-pager diff HEAD
+          echo "----- agent prompt -----"
+          printf '%s\n' "$AGENT_PROMPT"
+
+      # Bash is unrestricted: the agent needs flutter, dart, git and gh, and
+      # already has GH_TOKEN in its environment, so a command allowlist would
+      # not narrow what it can reach.
+      - name: Integrate with Claude Code
+        if: env.SKIP == 'false' && env.DRY_RUN == 'false'
+        id: agent
+        continue-on-error: true
+        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1
+        env:
+          CLAUDE_BRANCH: ${{ env.BRANCH }}
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.SDK_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          base_branch: ${{ env.BASE_BRANCH }}
+          prompt: ${{ env.AGENT_PROMPT }}
+          claude_args: |
+            --model ${{ vars.AGENT_MODEL || 'claude-opus-5-5' }}
+            --allowedTools "Read,Edit,Write,Glob,Grep,Bash,TodoWrite"
+
+      # The bump PR stands on its own; make it obvious that nobody reviewed the
+      # release notes for API changes.
+      - name: Flag failed integration
+        if: env.SKIP == 'false' && env.DRY_RUN == 'false' && steps.agent.outcome == 'failure'
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh pr comment "$PR" --body "The integration agent failed ([run]($RUN_URL)). This PR only contains the version bump — check the release notes above for public API changes by hand before merging."

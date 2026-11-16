@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
 import 'package:superwallkit_flutter_example/ConfigureTest.dart';
 import 'package:superwallkit_flutter_example/DelegateTest.dart';
+import 'package:superwallkit_flutter_example/EmbeddedPaywallTest.dart';
 import 'package:superwallkit_flutter_example/HandlerTest.dart';
 import 'package:superwallkit_flutter_example/PurchaseControllerTest.dart';
 import 'package:superwallkit_flutter_example/SubscriptionStatusTest.dart';
@@ -67,6 +68,7 @@ class _MyAppState extends State<MyApp> {
           '/purchaseControllerTest': (context) => PurchaseControllerTest(),
           '/delegateTest': (context) => DelegateTest(),
           '/handlerTest': (context) => HandlerTest(),
+          '/embeddedPaywallTest': (context) => EmbeddedPaywallTest(),
         },
       );
 }

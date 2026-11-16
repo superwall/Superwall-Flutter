@@ -541,3 +541,44 @@ abstract class CustomerCenterDelegate {
   /// Called when the Customer Center is dismissed.
   void customerCenterDidDismiss() {}
 }
+
+/// The Customer Center screen that opened, carried by the
+/// `customerCenterOpen` event.
+enum CustomerCenterScreenType {
+  /// The screen shown when the user has purchases to manage.
+  management,
+
+  /// The screen shown when the user has no purchases.
+  noPurchases;
+
+  static CustomerCenterScreenType fromPigeon(PCustomerCenterScreenType type) {
+    switch (type) {
+      case PCustomerCenterScreenType.management:
+        return CustomerCenterScreenType.management;
+      case PCustomerCenterScreenType.noPurchases:
+        return CustomerCenterScreenType.noPurchases;
+    }
+  }
+}
+
+/// How the Customer Center was presented, carried by the
+/// `customerCenterOpen` event.
+///
+/// iOS only.
+enum CustomerCenterPresentationStyle {
+  /// The Customer Center was presented as a sheet.
+  sheet,
+
+  /// The Customer Center was embedded in another view.
+  embedded;
+
+  static CustomerCenterPresentationStyle fromPigeon(
+      PCustomerCenterPresentationStyle style) {
+    switch (style) {
+      case PCustomerCenterPresentationStyle.sheet:
+        return CustomerCenterPresentationStyle.sheet;
+      case PCustomerCenterPresentationStyle.embedded:
+        return CustomerCenterPresentationStyle.embedded;
+    }
+  }
+}

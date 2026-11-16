@@ -70,6 +70,13 @@ class Home extends StatelessWidget {
                 },
               ),
               ElevatedButton(
+                // Show a paywall inside a screen with a PaywallView.
+                child: Text('Embedded Paywall'),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/embeddedPaywall');
+                },
+              ),
+              ElevatedButton(
                 // Identify action.
                 child: Text('Identify'),
                 onPressed: () {

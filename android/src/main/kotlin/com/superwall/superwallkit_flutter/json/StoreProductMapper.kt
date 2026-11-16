@@ -1,5 +1,7 @@
 import com.superwall.sdk.analytics.superwall.TransactionProduct
+import com.superwall.sdk.store.abstractions.product.StoreProduct
 import com.superwall.sdk.store.abstractions.product.StoreProductType
+import com.superwall.sdk.store.abstractions.product.SubscriptionPeriod
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -53,8 +55,26 @@ fun StoreProductType.pigeonify(): PStoreProduct {
         isFamilyShareable = false,
         regionCode = regionCode,
         price = price.toDouble(),
+        subscriptionPeriod = subscriptionPeriod?.pigeonify(),
+        fullIdentifier = fullIdentifier,
+        productType = productType,
+        storeFrontCountryCode = storeFrontCountryCode,
+        isCustomProduct = (this as? StoreProduct)?.isCustomProduct,
+        customTransactionId = (this as? StoreProduct)?.customTransactionId,
     )
 }
+
+private fun SubscriptionPeriod.pigeonify(): PSubscriptionPeriod =
+    PSubscriptionPeriod(
+        value = value.toLong(),
+        unit =
+            when (unit) {
+                SubscriptionPeriod.Unit.day -> PSubscriptionPeriodUnit.DAY
+                SubscriptionPeriod.Unit.week -> PSubscriptionPeriodUnit.WEEK
+                SubscriptionPeriod.Unit.month -> PSubscriptionPeriodUnit.MONTH
+                SubscriptionPeriod.Unit.year -> PSubscriptionPeriodUnit.YEAR
+            },
+    )
 
 fun com.superwall.sdk.analytics.superwall.TransactionProduct.pigeonify(): PStoreProduct {
     val trialPeriodEndDateStr =

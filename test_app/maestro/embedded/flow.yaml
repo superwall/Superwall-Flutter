@@ -1,0 +1,31 @@
+appId: com.superwall.superapp
+---
+- launchApp: ${PLATFORM_ID}
+- tapOn: "Configuration test"
+- tapOn: "Just configure"
+- runFlow: "../util/back.yaml"
+
+- tapOn: "Embedded Paywall Test"
+- assertVisible: "Embedded Status: None"
+
+# A paywall shown inside the screen
+- tapOn: "Embed Paywall"
+- assertVisible: "Embedded Status: Presented"
+- assertVisible: "Continue"
+# The screen's own widgets are still there around the paywall
+- assertVisible: "Remove Paywall"
+
+- tapOn: "Remove Paywall"
+- assertVisible: "Embedded Status: None"
+- assertNotVisible: "Continue"
+
+# The same paywall can be embedded again after it was removed
+- tapOn: "Embed Paywall"
+- assertVisible: "Embedded Status: Presented"
+- assertVisible: "Continue"
+- tapOn: "Remove Paywall"
+
+# A placement whose audience doesn't match shows no paywall
+- tapOn: "Embed Skip Audience"
+- assertVisible: "Embedded Status: Skipped"
+- stopApp

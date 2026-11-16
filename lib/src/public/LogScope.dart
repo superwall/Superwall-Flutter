@@ -21,6 +21,36 @@ enum LogScope {
   transactions,
   paywallViewController,
   cache,
+
+  /// iOS only.
+  analytics,
+
+  /// iOS only.
+  webEntitlements,
+
+  /// iOS only.
+  grantedEntitlements,
+
+  /// iOS only.
+  customerCenter,
+
+  /// Android only.
+  customerInfo,
+
+  /// Android only.
+  jsEvaluator,
+
+  /// Android only.
+  paywallTransactions,
+
+  /// Android only.
+  nativePurchaseController,
+
+  /// Android only.
+  deepLinks,
+
+  /// Android only.
+  billing,
   all
 }
 
@@ -69,6 +99,26 @@ extension LogScopeJson on LogScope {
         return 'paywallViewController';
       case LogScope.cache:
         return 'cache';
+      case LogScope.analytics:
+        return 'analytics';
+      case LogScope.webEntitlements:
+        return 'webEntitlements';
+      case LogScope.grantedEntitlements:
+        return 'grantedEntitlements';
+      case LogScope.customerCenter:
+        return 'customerCenter';
+      case LogScope.customerInfo:
+        return 'customerInfo';
+      case LogScope.jsEvaluator:
+        return 'jsEvaluator';
+      case LogScope.paywallTransactions:
+        return 'paywallTransactions';
+      case LogScope.nativePurchaseController:
+        return 'nativePurchaseController';
+      case LogScope.deepLinks:
+        return 'deepLinks';
+      case LogScope.billing:
+        return 'billing';
       case LogScope.all:
         return 'all';
     }

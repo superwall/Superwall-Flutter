@@ -35,6 +35,10 @@ class SuperwallkitFlutterPlugin :
                     )
             }
         }
+        flutterPluginBinding.platformViewRegistry.registerViewFactory(
+            PaywallPlatformViewFactory.VIEW_TYPE,
+            PaywallPlatformViewFactory(flutterPluginBinding.binaryMessenger),
+        )
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
