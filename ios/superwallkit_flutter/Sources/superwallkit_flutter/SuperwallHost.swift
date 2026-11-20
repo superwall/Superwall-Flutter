@@ -149,7 +149,12 @@ final class SuperwallHost : NSObject, PSuperwallHostApi {
   }
 
   func setUserAttributes(userAttributes: [String : Any?]) {
-    Superwall.shared.setUserAttributes(userAttributes)
+    // Pigeon passes a Dart `null` as `NSNull`, which the SDK would store as a
+    // value. Only `nil` removes the attribute.
+    let attributes = userAttributes.mapValues { value -> Any? in
+      value is NSNull ? nil : value
+    }
+    Superwall.shared.setUserAttributes(attributes)
   }
 
   func setIntegrationAttribute(attribute: PIntegrationAttribute, value: String?) {
