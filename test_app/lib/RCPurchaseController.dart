@@ -1,9 +1,22 @@
 import 'dart:io';
-
 import 'package:flutter/services.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_flutter/purchases_flutter.dart'
+    show
+        Purchases,
+        PurchasesConfiguration,
+        LogLevel,
+        CustomerInfo,
+        StoreProduct,
+        ProductCategory,
+        SubscriptionOption,
+        PurchaseParams,
+        PurchasesErrorHelper,
+        PurchasesErrorCode;
+import 'package:purchases_flutter/models/purchase_result.dart' as rc_models;
 import 'package:superwallkit_flutter/superwallkit_flutter.dart'
     hide LogLevel, StoreProduct, CustomerInfo;
+import 'package:superwallkit_flutter/superwallkit_flutter.dart' as sw
+    show Entitlement;
 
 class RCPurchaseController extends PurchaseController {
   // MARK: Configure RevenueCat
@@ -27,7 +40,7 @@ class RCPurchaseController extends PurchaseController {
     // Listen to RevenueCat customerInfo changes
     Purchases.addCustomerInfoUpdateListener((customerInfo) async {
       final rcEntitlements = customerInfo.entitlements.active.keys
-          .map((id) => Entitlement(id: id))
+          .map((id) => sw.Entitlement(id: id))
           .toSet();
       await _updateSubscriptionStatus(rcEntitlements);
     });
@@ -38,7 +51,7 @@ class RCPurchaseController extends PurchaseController {
       try {
         final currentRCCustomerInfo = await Purchases.getCustomerInfo();
         final rcEntitlements = currentRCCustomerInfo.entitlements.active.keys
-            .map((id) => Entitlement(id: id))
+            .map((id) => sw.Entitlement(id: id))
             .toSet();
         await _updateSubscriptionStatus(rcEntitlements);
       } catch (e) {
@@ -48,13 +61,13 @@ class RCPurchaseController extends PurchaseController {
   }
 
   /// Merges RevenueCat entitlements with Superwall web entitlements and updates subscription status
-  Future<void> _updateSubscriptionStatus(Set<Entitlement> rcEntitlements) async {
+  Future<void> _updateSubscriptionStatus(Set<sw.Entitlement> rcEntitlements) async {
     // Get web entitlements from Superwall
     final entitlements = await Superwall.shared.getEntitlements();
     final webEntitlements = entitlements.web;
 
     // Merge them with priority-based deduplication
-    final allEntitlements = Entitlement.mergePrioritized(rcEntitlements.union(webEntitlements));
+    final allEntitlements = sw.Entitlement.mergePrioritized(rcEntitlements.union(webEntitlements));
 
     // Update subscription status
     if (allEntitlements.isNotEmpty) {
@@ -178,10 +191,10 @@ class RCPurchaseController extends PurchaseController {
       SubscriptionOption subscriptionOption) async {
     // Define the async perform purchase function
     Future<CustomerInfo> performPurchase() async {
-      // Attempt to purchase product
-      CustomerInfo customerInfo =
-          await Purchases.purchaseSubscriptionOption(subscriptionOption);
-      return customerInfo;
+      final result = await Purchases.purchase(
+        PurchaseParams.subscriptionOption(subscriptionOption),
+      );
+      return result.customerInfo;
     }
 
     PurchaseResult purchaseResult =
@@ -191,12 +204,11 @@ class RCPurchaseController extends PurchaseController {
 
   Future<PurchaseResult> _purchaseStoreProduct(
       StoreProduct storeProduct) async {
-    // Define the async perform purchase function
     Future<CustomerInfo> performPurchase() async {
-      // Attempt to purchase product
-      CustomerInfo customerInfo =
-          await Purchases.purchaseStoreProduct(storeProduct);
-      return customerInfo;
+      final result = await Purchases.purchase(
+        PurchaseParams.storeProduct(storeProduct),
+      );
+      return result.customerInfo;
     }
 
     PurchaseResult purchaseResult =

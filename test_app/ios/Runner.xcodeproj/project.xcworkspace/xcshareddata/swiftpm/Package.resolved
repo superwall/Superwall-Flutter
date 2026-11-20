@@ -1,12 +1,30 @@
 {
   "pins" : [
     {
+      "identity" : "purchases-hybrid-common",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RevenueCat/purchases-hybrid-common.git",
+      "state" : {
+        "revision" : "82c71383d54f8a4aa1d8ed2f1a40ee5d62da5859",
+        "version" : "20.9.0"
+      }
+    },
+    {
+      "identity" : "purchases-ios-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RevenueCat/purchases-ios-spm",
+      "state" : {
+        "revision" : "7276de1d6f8b2cd1fe184c1239a6389a53383600",
+        "version" : "5.103.0"
+      }
+    },
+    {
       "identity" : "superscript-ios-next",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/superwall/superscript-ios-next",
       "state" : {
-        "revision" : "c3d1ee8d23ae6bf27e2d261c41a61001281166ec",
-        "version" : "1.0.15"
+        "revision" : "6388170521587bdad417485ba82bffe05d4d2a30",
+        "version" : "1.0.18"
       }
     },
     {
@@ -14,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/superwall/Superwall-iOS.git",
       "state" : {
-        "revision" : "a9990308209c27de2f3c74e666774f121149678e",
-        "version" : "4.16.3"
+        "revision" : "035d7d093b4f7ae837ae9b80b4ab9fd2b72f1e92",
+        "version" : "4.19.1"
       }
     }
   ],

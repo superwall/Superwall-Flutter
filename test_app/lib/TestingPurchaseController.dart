@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_flutter/purchases_flutter.dart' hide PurchaseResult;
 import 'package:superwallkit_flutter/superwallkit_flutter.dart' hide LogLevel;
 
 class TestingPurchaseController extends PurchaseController {
