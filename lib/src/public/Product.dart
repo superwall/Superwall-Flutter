@@ -12,10 +12,14 @@ class Product {
   /// The entitlements associated with this product.
   final Set<Entitlement> entitlements;
 
+  /// The store the product belongs to.
+  final ProductStore? store;
+
   Product({
     required this.id,
     required this.name,
     required this.entitlements,
+    this.store,
   });
 
   /// Creates a Product from a PProduct from the pigeon generated code
@@ -33,6 +37,9 @@ class Product {
       id: pProduct.id,
       name: pProduct.name,
       entitlements: entitlements,
+      store: pProduct.store != null
+          ? ProductStore.fromPigeon(pProduct.store!)
+          : null,
     );
   }
 
@@ -42,6 +49,7 @@ class Product {
       id: id,
       name: name,
       entitlements: entitlements.map((e) => e.toPigeon()).toList(),
+      store: store?.toPigeon(),
     );
   }
 }

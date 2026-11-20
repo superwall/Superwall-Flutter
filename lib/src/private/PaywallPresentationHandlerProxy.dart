@@ -28,6 +28,14 @@ class PaywallPresentationHandlerProxy
   }
 
   @override
+  void onWillDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult) {
+    if (handler.onWillDismissHandler != null) {
+      handler.onWillDismissHandler!(PaywallInfo.fromPigeon(paywallInfo)!,
+          PaywallResult.fromPigeon(paywallResult)!);
+    }
+  }
+
+  @override
   void onDismiss(PPaywallInfo paywallInfo, PPaywallResult paywallResult) {
     if (handler.onDismissHandler != null) {
       handler.onDismissHandler!(PaywallInfo.fromPigeon(paywallInfo)!!,
@@ -43,9 +51,10 @@ class PaywallPresentationHandlerProxy
   }
 
   @override
-  void onSkip(PPaywallSkippedReason reason) {
+  void onSkip(PPaywallSkippedReason reason, PExperiment? experiment) {
     if (handler.onSkipHandler != null) {
-      handler.onSkipHandler!(PaywallSkippedReason.fromPigeon(reason)!!);
+      handler.onSkipHandler!(
+          PaywallSkippedReason.fromPigeon(reason, experiment)!!);
     }
   }
 

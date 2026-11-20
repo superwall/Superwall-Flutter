@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:superwallkit_flutter/superwallkit_flutter.dart';
+import 'EmbeddedPaywall.dart';
 import 'MySuperwallDelegate.dart';
 import 'RCPurchaseController.dart';
 import 'ProductsTest.dart';
@@ -330,6 +331,8 @@ class _MyAppState extends State<MyApp> {
           '/launchedFeature': (context) => LaunchedFeature(),
           // Fetch products, purchase, and query in-app purchases outside a paywall.
           '/productsTest': (context) => ProductsTest(),
+          // Shows a paywall inside the screen with a PaywallView.
+          '/embeddedPaywall': (context) => const EmbeddedPaywall(),
         },
       );
 }

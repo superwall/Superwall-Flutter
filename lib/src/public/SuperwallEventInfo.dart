@@ -57,6 +57,7 @@ enum EventType {
   paywallResponseLoadStart,
   paywallResponseLoadNotFound,
   paywallResponseLoadFail,
+  paywallResourceLoadFail,
   paywallResponseLoadComplete,
   paywallWebviewLoadStart,
   paywallWebviewLoadFail,
@@ -137,7 +138,41 @@ enum EventType {
   /// to match. `params` include `provider` (`mmp`) and `matched`, and may
   /// include `source`, `confidence` (`high`, `medium` or `low`),
   /// `match_score` and `reason`.
-  attributionMatch
+  attributionMatch,
+
+  /// Android only. The user was shown the review prompt after a paywall asked
+  /// for a review.
+  reviewGranted,
+
+  /// Android only. The review prompt couldn't be shown after a paywall asked
+  /// for a review.
+  reviewDenied,
+
+  /// iOS only. The user started a Stripe checkout from a paywall. Carries the
+  /// paywall's [SuperwallEvent.paywallInfo].
+  stripeCheckoutStart,
+
+  /// iOS only. The user submitted a Stripe checkout. Carries the paywall's
+  /// [SuperwallEvent.paywallInfo].
+  stripeCheckoutSubmit,
+
+  /// iOS only. A Stripe checkout completed. Carries the paywall's
+  /// [SuperwallEvent.paywallInfo].
+  stripeCheckoutComplete,
+
+  /// iOS only. A Stripe checkout failed. Carries the paywall's
+  /// [SuperwallEvent.paywallInfo].
+  stripeCheckoutFail,
+
+  /// The test mode modal was shown.
+  testModeModalOpen,
+
+  /// The test mode modal was closed.
+  testModeModalClose,
+
+  /// The user viewed a page of a multi-page paywall. Carries the paywall's
+  /// [SuperwallEvent.paywallInfo] and the page's [SuperwallEvent.pageViewData].
+  paywallPageView
 }
 
 class SuperwallEvent {
@@ -165,6 +200,76 @@ class SuperwallEvent {
   final Map<dynamic, dynamic>? userAttributes;
   final String? token;
 
+  /// Describes the page that was viewed, for [EventType.paywallPageView].
+  final PageViewData? pageViewData;
+
+  /// The name of the permission, for [EventType.permissionRequested],
+  /// [EventType.permissionGranted] and [EventType.permissionDenied].
+  final String? permissionName;
+
+  /// The identifier of the paywall that asked for the permission, for
+  /// [EventType.permissionRequested], [EventType.permissionGranted] and
+  /// [EventType.permissionDenied].
+  final String? paywallIdentifier;
+
+  /// The number of paywalls being preloaded, for
+  /// [EventType.paywallPreloadStart] and [EventType.paywallPreloadComplete].
+  final int? paywallCount;
+
+  /// The kind of transaction that completed, for
+  /// [EventType.transactionComplete]. iOS only.
+  final TransactionType? transactionType;
+
+  /// The result of the install attribution match, for
+  /// [EventType.attributionMatch].
+  final AttributionMatchInfo? attributionMatchInfo;
+
+  /// The Customer Center action, for [EventType.customerCenterAction] and
+  /// [EventType.customerCenterSurveyResponse].
+  final CustomerCenterAction? customerCenterAction;
+
+  /// The ID of the Customer Center path the user selected.
+  final String? customerCenterPathId;
+
+  /// The ID of the product a Customer Center event is about.
+  final String? customerCenterProductId;
+
+  /// The ID of the Customer Center survey that was answered, for
+  /// [EventType.customerCenterSurveyResponse].
+  final String? customerCenterSurveyId;
+
+  /// The ID of the option selected in a Customer Center survey, for
+  /// [EventType.customerCenterSurveyResponse].
+  final String? customerCenterSurveyOptionId;
+
+  /// The outcome of a refund request made from the Customer Center, for
+  /// [EventType.customerCenterRefundRequest].
+  final CustomerCenterRefundStatus? customerCenterRefundStatus;
+
+  /// The Customer Center screen that opened, for
+  /// [EventType.customerCenterOpen].
+  final CustomerCenterScreenType? customerCenterScreen;
+
+  /// How the Customer Center was presented, for
+  /// [EventType.customerCenterOpen]. iOS only.
+  final CustomerCenterPresentationStyle? customerCenterPresentationStyle;
+
+  /// The customer info before the change, for
+  /// [EventType.customerInfoDidChange]. Android only.
+  final CustomerInfo? fromCustomerInfo;
+
+  /// The customer info after the change, for
+  /// [EventType.customerInfoDidChange]. Android only.
+  final CustomerInfo? toCustomerInfo;
+
+  /// The URL of the resource that failed to load, when a paywall resource
+  /// fails to load. Android only.
+  final String? resourceUrl;
+
+  /// How long the shimmer view was shown, for
+  /// [EventType.shimmerViewComplete]. Android only.
+  final Duration? shimmerDuration;
+
   SuperwallEvent._(
       {required this.type,
       this.placementName,
@@ -186,7 +291,25 @@ class SuperwallEvent {
       this.reason,
       this.restoreType,
       this.userAttributes,
-      this.token});
+      this.token,
+      this.pageViewData,
+      this.permissionName,
+      this.paywallIdentifier,
+      this.paywallCount,
+      this.transactionType,
+      this.attributionMatchInfo,
+      this.customerCenterAction,
+      this.customerCenterPathId,
+      this.customerCenterProductId,
+      this.customerCenterSurveyId,
+      this.customerCenterSurveyOptionId,
+      this.customerCenterRefundStatus,
+      this.customerCenterScreen,
+      this.customerCenterPresentationStyle,
+      this.fromCustomerInfo,
+      this.toCustomerInfo,
+      this.resourceUrl,
+      this.shimmerDuration});
 
   factory SuperwallEvent.fromPEventType(PSuperwallEventInfo eventInfo) {
     EventType type;
@@ -320,8 +443,7 @@ class SuperwallEvent {
         type = EventType.paywallPreloadComplete;
         break;
       case PEventType.paywallResourceLoadFail:
-        // No exact match in EventType, using closest equivalent
-        type = EventType.paywallResponseLoadFail;
+        type = EventType.paywallResourceLoadFail;
         break;
       case PEventType.surveyResponse:
         type = EventType.surveyResponse;
@@ -436,6 +558,33 @@ class SuperwallEvent {
         break;
       case PEventType.attributionMatch:
         type = EventType.attributionMatch;
+        break;
+      case PEventType.reviewGranted:
+        type = EventType.reviewGranted;
+        break;
+      case PEventType.reviewDenied:
+        type = EventType.reviewDenied;
+        break;
+      case PEventType.stripeCheckoutStart:
+        type = EventType.stripeCheckoutStart;
+        break;
+      case PEventType.stripeCheckoutSubmit:
+        type = EventType.stripeCheckoutSubmit;
+        break;
+      case PEventType.stripeCheckoutComplete:
+        type = EventType.stripeCheckoutComplete;
+        break;
+      case PEventType.stripeCheckoutFail:
+        type = EventType.stripeCheckoutFail;
+        break;
+      case PEventType.testModeModalOpen:
+        type = EventType.testModeModalOpen;
+        break;
+      case PEventType.testModeModalClose:
+        type = EventType.testModeModalClose;
+        break;
+      case PEventType.paywallPageView:
+        type = EventType.paywallPageView;
     }
 
     return SuperwallEvent._(
@@ -478,6 +627,47 @@ class SuperwallEvent {
           : null,
       userAttributes: eventInfo.userAttributes,
       token: eventInfo.token,
+      pageViewData: eventInfo.pageViewData != null
+          ? PageViewData.fromPigeon(eventInfo.pageViewData!)
+          : null,
+      permissionName: eventInfo.permissionName,
+      paywallIdentifier: eventInfo.paywallIdentifier,
+      paywallCount: eventInfo.paywallCount,
+      transactionType: eventInfo.transactionType != null
+          ? TransactionType.fromPigeon(eventInfo.transactionType!)
+          : null,
+      attributionMatchInfo: eventInfo.attributionMatchInfo != null
+          ? AttributionMatchInfo.fromPigeon(eventInfo.attributionMatchInfo!)
+          : null,
+      customerCenterAction: eventInfo.customerCenterAction != null
+          ? CustomerCenterAction.fromPigeon(eventInfo.customerCenterAction!)
+          : null,
+      customerCenterPathId: eventInfo.customerCenterPathId,
+      customerCenterProductId: eventInfo.customerCenterProductId,
+      customerCenterSurveyId: eventInfo.customerCenterSurveyId,
+      customerCenterSurveyOptionId: eventInfo.customerCenterSurveyOptionId,
+      customerCenterRefundStatus: eventInfo.customerCenterRefundStatus != null
+          ? CustomerCenterRefundStatus.fromPigeon(
+              eventInfo.customerCenterRefundStatus!)
+          : null,
+      customerCenterScreen: eventInfo.customerCenterScreen != null
+          ? CustomerCenterScreenType.fromPigeon(eventInfo.customerCenterScreen!)
+          : null,
+      customerCenterPresentationStyle:
+          eventInfo.customerCenterPresentationStyle != null
+              ? CustomerCenterPresentationStyle.fromPigeon(
+                  eventInfo.customerCenterPresentationStyle!)
+              : null,
+      fromCustomerInfo: eventInfo.fromCustomerInfo != null
+          ? CustomerInfo.fromPigeon(eventInfo.fromCustomerInfo!)
+          : null,
+      toCustomerInfo: eventInfo.toCustomerInfo != null
+          ? CustomerInfo.fromPigeon(eventInfo.toCustomerInfo!)
+          : null,
+      resourceUrl: eventInfo.resourceUrl,
+      shimmerDuration: eventInfo.shimmerDuration != null
+          ? Duration(microseconds: (eventInfo.shimmerDuration! * 1000).round())
+          : null,
     );
   }
 }

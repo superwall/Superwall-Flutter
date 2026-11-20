@@ -4,15 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the **Superwall Flutter SDK v2.7.0** - a Flutter plugin that wraps native Superwall SDKs for Android and iOS. Superwall provides remotely configurable in-app paywall infrastructure for mobile applications.
+This is the **Superwall Flutter SDK v2.9.0** - a Flutter plugin that wraps native Superwall SDKs for Android and iOS. Superwall provides remotely configurable in-app paywall infrastructure for mobile applications.
 
 ## Architecture
 
 ### Core Technology Stack
 - **Flutter Plugin**: Uses Pigeon for type-safe communication between Flutter and native platforms
 - **Native SDKs**:
-  - Android: SuperwallKit Android SDK v2.9.0 (Kotlin)
-  - iOS: SuperwallKit iOS SDK v4.18.3 (Swift)
+  - Android: SuperwallKit Android SDK v2.10.2 (Kotlin)
+  - iOS: SuperwallKit iOS SDK v4.18.3 with CocoaPods, v4.19.1 with Swift Package Manager (Swift)
 - **Code Generation**: Pigeon generates Dart, Kotlin, and Swift interfaces from `pigeons/configure.dart`
 
 ### Communication Flow
@@ -53,6 +53,7 @@ cd test_app && flutter test integration_test/sdk_methods_test.dart
 
 # Manual Maestro tests
 maestro test -e PLATFORM_ID=com.superwall.Advanced test_app/maestro/handler/flow.yaml
+maestro test -e PLATFORM_ID=com.superwall.superapp test_app/maestro/embedded/flow.yaml
 maestro test -e PLATFORM_ID=com.superwall.superapp test_app/maestro/purchasecontroller/no_pc_purchases.yaml
 ```
 
@@ -101,12 +102,12 @@ When adding new methods to the SDK, follow this workflow:
 - **Min SDK**: 26 (Android 8.0)
 - **Compile SDK**: 34
 - **Language**: Kotlin
-- **Dependencies**: SuperwallKit Android v2.9.0, Google Billing Client v9.1.0
+- **Dependencies**: SuperwallKit Android v2.10.2, Google Billing Client v9.1.0
 
 ### iOS  
 - **Min Version**: iOS 15.0
 - **Language**: Swift 5.0
-- **Dependencies**: SuperwallKit iOS v4.18.3
+- **Dependencies**: SuperwallKit iOS v4.18.3 in the podspec, v4.19.1 in `Package.swift`. 4.19 isn't on CocoaPods trunk, so the same sources build against both: wrap API that needs 4.19 in `#if SWIFT_PACKAGE` with a 4.18.3 fallback
 - **Build**: Uses CocoaPods for dependency management. SuperwallKit 4.18.3 requires Xcode 26 (Swift 6.2) or later
 
 ## Testing Strategy

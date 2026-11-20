@@ -17,8 +17,32 @@ extension StoreTransaction {
       isUpgraded: isUpgraded,
       expirationDate: expirationDate?.isoString,
       offerId: offerId,
-      revocationDate: revocationDate?.isoString
+      revocationDate: revocationDate?.isoString,
+      state: state.pigeonify(),
+      payment: PStorePayment(
+        productIdentifier: payment.productIdentifier,
+        quantity: Int64(payment.quantity),
+        discountIdentifier: payment.discountIdentifier
+      ),
+      appAccountToken: appAccountToken?.uuidString
     )
+  }
+}
+
+extension StoreTransactionState {
+  func pigeonify() -> PStoreTransactionState {
+    switch self {
+    case .purchasing:
+      return .purchasing
+    case .purchased:
+      return .purchased
+    case .failed:
+      return .failed
+    case .restored:
+      return .restored
+    case .deferred:
+      return .deferred
+    }
   }
 }
 
