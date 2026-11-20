@@ -188,8 +188,21 @@ class PaywallPlatformView(
                 result.fold(
                     onSuccess = { showPaywall(it) },
                     onFailure = { error ->
-                        if (error is PaywallSkippedReason) {
-                            callback.onSkip(error.toPigeon(), error.pigeonExperiment()) {}
+                        // The builder reports a skip as a request status reason; map those
+                        // back so a skip isn't surfaced as an error.
+                        val skipped =
+                            when (error) {
+                                is PaywallSkippedReason -> error
+                                is PaywallPresentationRequestStatusReason.Holdout ->
+                                    PaywallSkippedReason.Holdout(error.experiment)
+                                is PaywallPresentationRequestStatusReason.NoAudienceMatch ->
+                                    PaywallSkippedReason.NoAudienceMatch()
+                                is PaywallPresentationRequestStatusReason.PlacementNotFound ->
+                                    PaywallSkippedReason.PlacementNotFound()
+                                else -> null
+                            }
+                        if (skipped != null) {
+                            callback.onSkip(skipped.toPigeon(), skipped.pigeonExperiment()) {}
                         } else {
                             val message =
                                 if (error is PaywallPresentationRequestStatusReason) {
