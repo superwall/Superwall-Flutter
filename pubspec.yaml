@@ -12,7 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
   meta: ^1.9.0
-  pigeon: ^26.1.5
   plugin_platform_interface: ^2.0.2
   uuid: ^4.4.0
   yaml: ^3.1.2
@@ -21,6 +20,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.2
+  pigeon: ^26.1.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
