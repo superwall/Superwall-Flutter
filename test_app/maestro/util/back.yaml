@@ -1,13 +1,26 @@
 appId: com.superwall.superapp
 ---
+# Leaves the current screen or closes the presented paywall.
+- evalScript: ${output.closedPaywall = false}
 - runFlow:
     when:
       platform: iOS
       visible: Back
     commands:
       - tapOn: Back
+# On Android the SDK hands a back press to the paywall instead of dismissing
+# it, and the test paywalls don't act on it. Close them with their X button.
 - runFlow:
     when:
       platform: Android
+      visible: "Redeem Code"
+    commands:
+      - tapOn:
+          point: "8%,8%"
+      - evalScript: ${output.closedPaywall = true}
+- runFlow:
+    when:
+      platform: Android
+      true: ${output.closedPaywall == false}
     commands:
       - back
