@@ -15,6 +15,11 @@ public class SuperwallkitFlutterPlugin: NSObject, FlutterPlugin {
 
     // Initialize the SuperwallHost
     superwallProxy = SuperwallHost(flutterBinaryMessenger: registrar.messenger())
+
+    registrar.register(
+      PaywallPlatformViewFactory(binaryMessenger: registrar.messenger()),
+      withId: PaywallPlatformViewFactory.viewType
+    )
   }
 }
 

@@ -2,8 +2,10 @@ import 'package:superwallkit_flutter/src/generated/superwallhost.g.dart';
 import 'package:superwallkit_flutter/src/public/ComputedPropertyRequest.dart';
 import 'package:superwallkit_flutter/src/public/Experiment.dart';
 import 'package:superwallkit_flutter/src/public/FeatureGatingBehavior.dart';
+import 'package:superwallkit_flutter/src/public/IntroOfferEligibility.dart';
 import 'package:superwallkit_flutter/src/public/LocalNotification.dart';
 import 'package:superwallkit_flutter/src/public/PaywallCloseReason.dart';
+import 'package:superwallkit_flutter/src/public/PaywallPresentationInfo.dart';
 import 'package:superwallkit_flutter/src/public/Product.dart';
 import 'package:superwallkit_flutter/src/public/Survey.dart';
 
@@ -55,6 +57,19 @@ class PaywallInfo {
           .toList(),
       surveys: pigeonInfo.surveys?.map((s) => Survey.fromPigeon(s)).toList(),
       state: pigeonInfo.state,
+      cacheKey: pigeonInfo.cacheKey,
+      buildId: pigeonInfo.buildId,
+      shimmerLoadStartTime: pigeonInfo.shimmerLoadStartTime,
+      shimmerLoadCompleteTime: pigeonInfo.shimmerLoadCompleteTime,
+      presentation: pigeonInfo.presentation != null
+          ? PaywallPresentationInfo.fromPigeon(pigeonInfo.presentation!)
+          : null,
+      isScrollEnabled: pigeonInfo.isScrollEnabled,
+      presentationId: pigeonInfo.presentationId,
+      isLocal: pigeonInfo.isLocal,
+      introOfferEligibility: pigeonInfo.introOfferEligibility != null
+          ? IntroOfferEligibility.fromPigeon(pigeonInfo.introOfferEligibility!)
+          : null,
     );
   }
 
@@ -94,6 +109,15 @@ class PaywallInfo {
           computedPropertyRequests?.map((cpr) => cpr.toPigeon()).toList(),
       surveys: surveys?.map((s) => s.toPigeon()).toList(),
       state: state,
+      cacheKey: cacheKey,
+      buildId: buildId,
+      shimmerLoadStartTime: shimmerLoadStartTime,
+      shimmerLoadCompleteTime: shimmerLoadCompleteTime,
+      presentation: presentation?.toPigeon(),
+      isScrollEnabled: isScrollEnabled,
+      presentationId: presentationId,
+      isLocal: isLocal,
+      introOfferEligibility: introOfferEligibility?.toPigeon(),
     );
   }
 
@@ -191,6 +215,36 @@ class PaywallInfo {
   /// This allows retrieving dynamic state information from the paywall.
   final Map<String, Object>? state;
 
+  /// The key the paywall is cached under.
+  final String? cacheKey;
+
+  /// The build ID of the Superwall configuration.
+  final String? buildId;
+
+  /// An ISO date string indicating when the shimmer view began showing.
+  final String? shimmerLoadStartTime;
+
+  /// An ISO date string indicating when the shimmer view stopped showing.
+  final String? shimmerLoadCompleteTime;
+
+  /// How the paywall is presented.
+  final PaywallPresentationInfo? presentation;
+
+  /// Indicates whether scrolling is enabled in the paywall's webview.
+  final bool? isScrollEnabled;
+
+  /// Identifies one presentation of the paywall. `null` until the paywall
+  /// has been presented.
+  final String? presentationId;
+
+  /// Indicates whether the paywall was loaded from local resources.
+  /// iOS only.
+  final bool? isLocal;
+
+  /// How intro offer eligibility is decided for the paywall.
+  /// iOS only.
+  final IntroOfferEligibility? introOfferEligibility;
+
   PaywallInfo({
     this.identifier,
     this.name,
@@ -223,5 +277,14 @@ class PaywallInfo {
     this.computedPropertyRequests,
     this.surveys,
     this.state,
+    this.cacheKey,
+    this.buildId,
+    this.shimmerLoadStartTime,
+    this.shimmerLoadCompleteTime,
+    this.presentation,
+    this.isScrollEnabled,
+    this.presentationId,
+    this.isLocal,
+    this.introOfferEligibility,
   });
 }

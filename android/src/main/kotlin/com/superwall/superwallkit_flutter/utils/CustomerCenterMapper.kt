@@ -152,6 +152,9 @@ object CustomerCenterMapper {
             willRenew = willRenew,
             state = state?.toPigeon(),
             offerType = offerType?.toPigeon(),
+            isRevoked = isRevoked,
+            renewsAt = renewsAt?.time,
+            isInGracePeriod = isInGracePeriod,
         )
 
     private fun SubscriptionTransaction.toPigeon(): PSubscriptionTransaction =
@@ -187,6 +190,7 @@ object CustomerCenterMapper {
             Store.STRIPE -> PProductStore.STRIPE
             Store.PADDLE -> PProductStore.PADDLE
             Store.SUPERWALL -> PProductStore.SUPERWALL
+            Store.CUSTOM -> PProductStore.CUSTOM
             else -> PProductStore.OTHER
         }
 

@@ -9,7 +9,8 @@ extension PaywallInfo {
         PProduct(
           id: product.id,
           name: product.name,
-          entitlements: product.entitlements.map { $0.pigeonify() }
+          entitlements: product.entitlements.map { $0.pigeonify() },
+          store: product.type.pigeonifyStore()
         )
       }
     }
@@ -57,8 +58,84 @@ extension PaywallInfo {
         $0.pigeonify()
       },
       surveys: surveys.map { $0.pigeonify() },
-      state: state.isEmpty ? nil : state
+      state: state.isEmpty ? nil : state,
+      cacheKey: cacheKey,
+      buildId: buildId,
+      shimmerLoadStartTime: shimmerLoadStartTime,
+      shimmerLoadCompleteTime: shimmerLoadCompleteTime,
+      presentation: presentation.pigeonify(),
+      isScrollEnabled: isScrollEnabled,
+      presentationId: presentationId,
+      isLocal: isLocal,
+      introOfferEligibility: introOfferEligibility.pigeonify()
     )
+  }
+}
+
+extension SuperwallKit.Product.StoreProductType {
+  func pigeonifyStore() -> PProductStore {
+    switch self {
+    case .appStore:
+      return .appStore
+    case .stripe:
+      return .stripe
+    case .paddle:
+      return .paddle
+    case .custom:
+      return .custom
+    }
+  }
+}
+
+extension PaywallPresentationInfo {
+  func pigeonify() -> PPaywallPresentationInfo {
+    let pStyle: PPaywallPresentationStyle
+    var height: Double? = nil
+    var width: Double? = nil
+    var cornerRadius: Double? = nil
+
+    switch style {
+    case .modal:
+      pStyle = .modal
+    case .fullscreen:
+      pStyle = .fullscreen
+    case .fullscreenNoAnimation:
+      pStyle = .fullscreenNoAnimation
+    case .push:
+      pStyle = .push
+    case let .popup(popupHeight, popupWidth, popupCornerRadius):
+      pStyle = .popup
+      height = popupHeight
+      width = popupWidth
+      cornerRadius = popupCornerRadius
+    case let .drawer(drawerHeight, drawerCornerRadius):
+      pStyle = .drawer
+      height = drawerHeight
+      cornerRadius = drawerCornerRadius
+    case .none:
+      pStyle = .none
+    }
+
+    return PPaywallPresentationInfo(
+      style: pStyle,
+      delay: Int64(delay),
+      height: height,
+      width: width,
+      cornerRadius: cornerRadius
+    )
+  }
+}
+
+extension IntroOfferEligibility {
+  func pigeonify() -> PIntroOfferEligibility {
+    switch self {
+    case .eligible:
+      return .eligible
+    case .ineligible:
+      return .ineligible
+    case .automatic:
+      return .automatic
+    }
   }
 }
 

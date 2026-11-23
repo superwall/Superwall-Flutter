@@ -61,7 +61,9 @@ appId: com.superwall.superapp
     when:
       platform: iOS
     commands:
-      - tapOn: "Done"
+      # The in-app browser's button is "Close" on iOS 26 and "Done" before it.
+      - tapOn:
+          id: "Close|Done"
 - runFlow:
     when:
       platform: Android
